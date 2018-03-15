@@ -55,3 +55,13 @@
 14.03. - TA and Group meeting to work on use cases
 14.03. - TA and Group meeting to work on use cases
 14.03. - TA and Group meeting to work on use cases
+15.03. - started installing php
+15.03. - realized I need to install Apache and MySQL
+15.03. - some random YT tutorial seemd bad so I opted for the other one. was a bad decission
+15.03. - started the tutorial I first opened, but now, I needed the entire playlist of them. I went over the playlist of tutorials
+15.03. - after downloading everything several times and managing it I tried to run the pulled version with laravel project
+15.03. - googled "install laravel" realized I have lost 2,5 hours - I found XAMPP
+15.03. - deleted everything and installed XAMPP; spent few minutes in disbelief since it was this easy
+15.03. - was ashamed I use Windows when comunicating what should be done with the pulled version; decided to stick with it
+15.03. - managed to install everithing and get it going, but with Command Prompt.. XAMPP had nothing to do with it.. This had to be changed.. Decided to add some virtal hosts..
+15.03. - too much time, I am to tired and hungry.. I hardcoded the repository directory into the XAMPP - Apache config file.. It works this way.. Finally..
