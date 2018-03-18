@@ -62,6 +62,22 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+            #homeLink {
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                color: #000000;
+                font-size: 30px;
+                text-decoration: none;
+            }
+            #designerLink {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                color: #000000;
+                font-size: 30px;
+                text-decoration: none;
+            }
         </style>
     </head>
     <body>
@@ -76,9 +92,14 @@
                     @endauth
                 </div>
             @endif
-
+            <a id="homeLink" href="/public/index.php" >
+                Evidencio
+            </a>
+            <a id="designerLink" href="./designerView.php">
+               Designer Part
+            </a>
             <div class="content">
-                <div class="title m-b-md">
+                <div class="title m-b-md" >
                     Evidencio Patient Portal
                 </div>
             </div>
