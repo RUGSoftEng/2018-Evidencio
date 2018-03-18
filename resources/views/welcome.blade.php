@@ -62,6 +62,46 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            .topnav {
+                background-color: rgba(39, 106, 255, 0.31);
+                overflow: hidden;
+            }
+
+            .topnav #menuHomeItem {
+                float: left;
+                display: block;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+            .topnav #menuDesignerItem {
+                float: right;
+                display: block;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+            .topnav a:hover {
+                background-color: #ddd;
+                color: black;
+            }
+
+            active {
+                background-color: #276aff;
+                color: white;
+            }
+
+            .topnav .icon {
+                display: none;
+            }
+
             #homeLink {
                 position: absolute;
                 left: 10px;
@@ -81,6 +121,12 @@
         </style>
     </head>
     <body>
+        <div class="topnav" id="myTopnav">
+            <a id="menuHomeItem" href="/public/index.php" class="active">Home</a>
+            <a id="menuDesignerItem" href="./designerView.php">Designer</a>
+            {{--This can be uncommented for drop menu on smaller screens. But more files need to be added--}}
+            {{--<a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>--}}
+        </div>
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
@@ -92,12 +138,12 @@
                     @endauth
                 </div>
             @endif
-            <a id="homeLink" href="/public/index.php" >
-                Evidencio
-            </a>
-            <a id="designerLink" href="./designerView.php">
-               Designer Part
-            </a>
+            {{--<a id="homeLink" href="/public/index.php" >--}}
+                {{--Evidencio--}}
+            {{--</a>--}}
+            {{--<a id="designerLink" href="./designerView.php">--}}
+               {{--Designer Part--}}
+            {{--</a>--}}
             <div class="content">
                 <div class="title m-b-md" >
                     Evidencio Patient Portal
