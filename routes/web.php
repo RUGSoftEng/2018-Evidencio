@@ -12,5 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('patient');
 });
+
+Auth::routes();
+
+Route::get('/designer', 'DesignerController@index')->name('designer');
