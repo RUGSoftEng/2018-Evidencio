@@ -2,6 +2,7 @@
 
 return [
 
-    'Designer' => 'Designer',
+
+    'Designer' => 'Designer'
 
 ];
