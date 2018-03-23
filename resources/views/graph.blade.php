@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
-@section{'content'}
-<div class="graph">
+@section('content')
+
+<div class="card graphcard">
+  <div class="card-body graphcard">
+    <h4 class="card-title">Workflow</h4>
+    <!--<button onclick="addNode(0,'new')">Add</button>-->
+    <div id="cy">
 
 
 
@@ -9,9 +14,13 @@
 
 
 
+    </div>
+    <link href="{{ asset('css/workflow.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/workflow.js') }}" type="text/javascript"> </script>
+  </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.2.10/cytoscape.js"></script>
-<script src="{{ asset('js/workflow.js') }}"></script>
 
 
-@endsection{'content'}
+
+
+@endsection('content')

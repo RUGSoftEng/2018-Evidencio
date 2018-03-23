@@ -18,3 +18,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/designer', 'DesignerController@index')->name('designer');
+Route::get('/graph', function () {
+    return view('graph');
+});
