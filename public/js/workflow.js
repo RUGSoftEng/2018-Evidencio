@@ -2864,11 +2864,6 @@ cyCanvas(cytoscape);
 var cy = cytoscape({
   container: document.getElementById('cy'),
   elements: [
-  // Buttons
-  {
-    data: { id: 'addStep' },
-    position: { x: 100, y: 50 }
-  },
   // Nodes
   {
     data: { id: 'Start' },
@@ -2889,15 +2884,26 @@ var cy = cytoscape({
       'target-arrow-shape': 'triangle'
     }
   }, {
-    selector: '#addStep',
+    selector: '.buttonAddStep',
+    style: {
+      'shape': 'roundrectangle',
+      'width': '25',
+      'height': '25',
+      'label': '',
+      'background-color': '#46c637',
+      'border-width': 1,
+      'border-color': '#1f6b17'
+    }
+  }, {
+    selector: '.buttonAddOption',
     style: {
       'shape': 'roundrectangle',
       'width': '20',
       'height': '20',
       'label': '',
-      'background-color': '#46c637',
+      'background-color': '#00a5ff',
       'border-width': 1,
-      'border-color': '#1f6b17'
+      'border-color': '#0037ff'
     }
   }],
   autoungrabify: true,
@@ -2910,11 +2916,20 @@ var cy = cytoscape({
 
 // Data
 var delta = 50,
-    steps = 1,
-    maxOptions = 1;
+    steps = 2,
+    maxOptions = 1,
+    nodes = 0;
 var step = [{
-  options: [cy.getElementById('Start')]
+  options: [{
+    nodeRef: 'Start'
+  }]
+}, {
+  options: []
 }];
+var buttonAddStep = [];
+var buttonAddOption = [];
+updateButtonAddOption();
+updateButtonAddStep();
 
 //Canvas of background
 var bottomLayer = cy.cyCanvas({
@@ -2929,42 +2944,154 @@ cy.on("render cyCanvas.resize", function (evt) {
   ctx.save();
   for (var i = 0; i < steps; i++) {
     if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
-    var w = (maxOptions - 1) / 2 * delta;
-    ctx.fillRect(-w - 100, i * delta - delta / 2, 2 * (w + 100), delta);
+    var w = maxOptions / 2 * delta;
+    ctx.fillRect(-w - 125, i * delta - delta / 2, 2 * (w + 125), delta);
   }
-  //ctx.restore();
+  ctx.restore();
 });
 
 // Functions
-window.addNode = function (height, id) {
+/**
+ * Adds node to graph at a certain height, needs to be changed.
+ * @param {*} height 
+ * @param {*} id 
+ */
+window.addNode = function (height) {
+  nodes++;
   return cy.add({
-    group: "nodes", data: { id: id }, position: { x: cy.width() / 2, y: height }
+    group: "nodes",
+    data: { id: 'node_' + (nodes - 1) },
+    position: {
+      x: cy.width() / 2,
+      y: height
+    }
   });
 };
 
+/**
+ * Adds step to graph at given height, needs to be changed
+ * @param {*} height 
+ */
 window.addStep = function (height) {
   if (height <= steps) {
     steps += 1;
     step.splice(height, 0, { options: [] });
-    alert(step.length);
+    updateButtonAddStep();
+    updateButtonAddOption();
   }
 };
 
+/**
+ * Adds option to graph at given height, needs to be changed
+ * @param {} height 
+ */
 window.addOption = function (height) {
   if (height < steps) {
-    var node = addNode(height * delta, height + '_' + options.length);
-    step[height].options.push([node]);
+    var node = addNode(height * delta);
+    step[height].options.push({
+      nodeRef: node.id()
+    });
+    maxOptions = Math.max(maxOptions, step[height].options.length);
+    updateButtonAddOption();
+    updateButtonAddStep();
   }
 };
 
+/**
+ * Fits and centers the viewport on the graph
+ */
 window.graphFit = function () {
-  nodes = step[0].options;
+  nodes = [step[0].options[0].nodeRef];
   for (var i = 1; i < steps; i++) {
-    Array.prototype.push.apply(nodes, step[i].options);
+    step[i].options.forEach(function (element) {
+      step.push(cy.getElementById(element.nodeRef));
+    });
   }
-  cy.fit(nodes, 200);
-  cy.center(nodes);
+  cy.fit(nodes);
+  //cy.center(nodes);
 };
+
+/**
+ * Returns id of AddStep button that has the same reference as the argument, if it exists. Otherwise returns -1;
+ * @param {*} reference 
+ */
+function isButtonAddStep(reference) {
+  var id = buttonAddStep.length - 1;
+  while (id >= 0 && buttonAddStep[id].buttonRef != reference.id()) {
+    id--;
+  }return id;
+}
+
+/**
+ * Returns id of AddOption button that has the same reference as the argument, if it exists. Otherwise returns -1;
+ * @param {*} reference 
+ */
+function isButtonAddOption(reference) {
+  var id = buttonAddOption.length - 1;
+  while (id >= 0 && buttonAddOption[id].buttonRef != reference.id()) {
+    id--;
+  }return id;
+}
+
+/**
+ * Used for adding/removing/moving addStep-buttons
+ */
+function updateButtonAddStep() {
+  // Removing
+  while (buttonAddStep.length > steps) {
+    var element = buttonAddStep.pop();
+    cy.remove(cy.getElementById(element.buttonRef));
+  }
+  // Adding
+  while (buttonAddStep.length < steps) {
+    var newButtonData = {
+      data: { id: 'buttonAddStep_' + buttonAddStep.length },
+      classes: 'buttonAddStep'
+    };
+    var newButton = cy.add(newButtonData);
+    buttonAddStep.push({
+      buttonRef: newButton.id()
+    });
+  }
+  // Moving to correct positions
+  for (var index = 0; index < buttonAddStep.length; index++) {
+    var _element = buttonAddStep[index];
+    cy.getElementById(_element.buttonRef).position({
+      x: maxOptions / 2 * delta + 100,
+      y: index * delta + 25
+    });
+  }
+}
+
+/**
+ * Used for adding/removing/moving addOption-buttons
+ */
+function updateButtonAddOption() {
+  // Removing
+  while (buttonAddOption.length >= steps) {
+    var element = buttonAddOption.pop();
+    cy.remove(cy.getElementById(element.buttonRef));
+  }
+  // Adding
+  while (buttonAddOption.length < steps - 1) {
+    var newButtonData = {
+      data: { id: 'buttonAddOption_' + buttonAddOption.length },
+      classes: 'buttonAddOption'
+    };
+    var newButton = cy.add(newButtonData);
+    buttonAddOption.push({
+      buttonRef: newButton.id()
+    });
+  }
+  // Moving to correct positions
+  for (var index = 0; index < buttonAddOption.length; index++) {
+    var _element2 = buttonAddOption[index];
+    cy.getElementById(_element2.buttonRef).position({
+      x: step[index + 1].options.length / 2 * delta,
+      y: (index + 1) * delta
+    });
+  }
+}
 
 /**
  * Buttons
@@ -2983,12 +3110,18 @@ var popperFit = cy.popper({
   popper: {}
 });
 
-// Adding steps
+// Buttons made using nodes
 cy.on('tap', 'node', function (evt) {
   var node = evt.target;
-  alert(node.id());
-  if (node.id() == "addStep") {
-    addStep(0);
+  var height = isButtonAddStep(node);
+  if (height >= 0) {
+    addStep(height);
+    return;
+  }
+  height = isButtonAddOption(node);
+  if (height >= 0) {
+    addOption(height + 1);
+    return;
   }
 });
 
