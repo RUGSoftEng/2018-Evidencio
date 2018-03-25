@@ -2918,7 +2918,7 @@ var cy = cytoscape({
 var delta = 50,
     steps = 2,
     maxOptions = 1,
-    nodes = 0;
+    numNodes = 0;
 var step = [{
   options: [{
     nodeRef: 'Start'
@@ -2945,7 +2945,7 @@ cy.on("render cyCanvas.resize", function (evt) {
   for (var i = 0; i < steps; i++) {
     if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
     var w = maxOptions / 2 * delta;
-    ctx.fillRect(-w - 125, i * delta - delta / 2, 2 * (w + 125), delta);
+    ctx.fillRect(-w - 100, i * delta - delta / 2, 2 * w + 225, delta);
   }
   ctx.restore();
 });
@@ -2957,10 +2957,10 @@ cy.on("render cyCanvas.resize", function (evt) {
  * @param {*} id 
  */
 window.addNode = function (height) {
-  nodes++;
+  numNodes++;
   return cy.add({
     group: "nodes",
-    data: { id: 'node_' + (nodes - 1) },
+    data: { id: 'node_' + (numNodes - 1) },
     position: {
       x: cy.width() / 2,
       y: height
@@ -2975,9 +2975,10 @@ window.addNode = function (height) {
 window.addStep = function (height) {
   if (height <= steps) {
     steps += 1;
-    step.splice(height, 0, { options: [] });
-    updateButtonAddStep();
+    step.splice(height + 1, 0, { options: [] });
     updateButtonAddOption();
+    updateButtonAddStep();
+    updateNodes();
   }
 };
 
@@ -2994,6 +2995,7 @@ window.addOption = function (height) {
     maxOptions = Math.max(maxOptions, step[height].options.length);
     updateButtonAddOption();
     updateButtonAddStep();
+    updateNodes();
   }
 };
 
@@ -3087,9 +3089,24 @@ function updateButtonAddOption() {
   for (var index = 0; index < buttonAddOption.length; index++) {
     var _element2 = buttonAddOption[index];
     cy.getElementById(_element2.buttonRef).position({
-      x: step[index + 1].options.length / 2 * delta,
+      x: (step[index + 1].options.length / 2 + (step[index + 1].options.length > 0 ? 0.5 : 0)) * delta,
       y: (index + 1) * delta
     });
+  }
+}
+
+function updateNodes() {
+  for (var indexStep = 0; indexStep < steps; indexStep++) {
+    var elementStep = step[indexStep];
+    var _numNodes = elementStep.options.length;
+    var left = -(_numNodes - 1) * delta / 2;
+    for (var indexOption = 0; indexOption < _numNodes; indexOption++) {
+      var elementOption = elementStep.options[indexOption];
+      cy.getElementById(elementOption.nodeRef).position({
+        x: left + indexOption * delta,
+        y: indexStep * delta
+      });
+    }
   }
 }
 
