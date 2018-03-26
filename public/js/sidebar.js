@@ -10691,6 +10691,15 @@ $(document).ready(function () {
 
     $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><span><i class="fas fa-user"></i></span></button>');
 
+    //TODO: When the browser is resized, if below 390px, the brand name should wrap instead of the burger button (below)
+    //TODO: The width of the navbar should be tweaked
+    // $(window).resize(function() {
+    //     if (window.width() < 390) {
+    //         document.getElementById("theBrandName").innerHTML = "New text!";
+    //     }
+    // });
+
+
     $('#dismiss, .overlay').on('click', function () {
         $('#sidebar').removeClass('active');
         $('.overlay').fadeOut();

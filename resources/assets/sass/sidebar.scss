@@ -145,9 +145,19 @@ a.article, a.article:hover {
 }
 
 #sidebarPlaceholder {
-  margin-right: 25px;
+  margin-right: 40px;
+  position: fixed;
+  left: 10px;
+}
+
+#navbarContainer {
+  //max-width: 75%;
+  padding-left: 54px;
+  padding-right: 54px;
 }
 
 .paragraphInSideMenu {
   margin-top: 30px;
 }
+
+
