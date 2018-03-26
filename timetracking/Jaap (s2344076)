@@ -83,11 +83,17 @@
 22.03 - Making adding nodes in runtime possible
 22.03 - Making adding nodes in runtime possible
 22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
 23.03 - Figure out how to make buttons relative to the background using other nodes. Tried PopperJS, but that failed
 23.03 - Figure out how to make buttons relative to the background using other nodes. Steps can now be added.
 23.03 - Figure out how to make buttons relative to the background using other nodes.
 23.03 - Figure out how to make buttons relative to the background using other nodes.
 23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+24.03 - Tried to create background that moved with the nodes, failed.
 24.03 - Tried to create background that moved with the nodes, failed.
 24.03 - Tried to create background that moved with the nodes, failed.
 25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.

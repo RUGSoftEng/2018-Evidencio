@@ -69,6 +69,7 @@ const cy = cytoscape({
   layout: {
     name: 'preset',
     fit: true,
+    padding: '40vh',
     directed: true
   }
 });
@@ -165,14 +166,14 @@ window.addOption = function(height) {
  * Fits and centers the viewport on the graph
  */
 window.graphFit = function() {
-  nodes = [step[0].options[0].nodeRef];
+  var nodes = [step[0].options[0].nodeRef];
   for (var i = 1; i < steps; i++){
     step[i].options.forEach(element => {
       step.push(cy.getElementById(element.nodeRef));
     });
   }
   cy.fit(nodes);
-  //cy.center(nodes);
+  cy.center(nodes);
 }
 
 /**
