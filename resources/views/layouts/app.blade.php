@@ -24,6 +24,9 @@
     <div id="app" style="height:100%">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
+                <div id="sidebarPlaceholder">
+
+                </div>
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
@@ -33,6 +36,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
+
                     <ul class="navbar-nav mr-auto">
 
                     </ul>
