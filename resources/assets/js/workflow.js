@@ -6,12 +6,12 @@
  */
 
 //Include Cytoscape, Vue
-var cytoscape = require('cytoscape');
-var popper = require('cytoscape-popper');
+const cytoscape = require('cytoscape');
+const popper = require('cytoscape-popper');
 cytoscape.use( popper );
-var cyCanvas = require('cytoscape-canvas');
+const cyCanvas = require('cytoscape-canvas');
 cyCanvas(cytoscape);
-
+const typpe = require('tippy.js');
 
 //Init Cytoscape
 const cy = cytoscape({
@@ -49,7 +49,8 @@ const cy = cytoscape({
         'label': '',
         'background-color': '#46c637',
         'border-width': 1,
-        'border-color': '#1f6b17'
+        'border-color': '#1f6b17',
+        'background-image': '/images/plus.svg'
       }
     },
     {
@@ -61,7 +62,8 @@ const cy = cytoscape({
         'label': '',
         'background-color': '#00a5ff',
         'border-width': 1,
-        'border-color': '#0037ff'
+        'border-color': '#0037ff',
+        'background-image': '/images/plus.svg'
       }
     }
   ],
@@ -287,6 +289,8 @@ var popperFit = cy.popper({
   renderedPosition: () => ({ x: 50, y: 50 }),
   popper: {}
 });
+
+
 
 // Buttons made using nodes
 cy.on('tap', 'node', function(evt){
