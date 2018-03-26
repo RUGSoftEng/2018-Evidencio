@@ -10689,6 +10689,8 @@ $(document).ready(function () {
         theme: "minimal"
     });
 
+    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><span><i class="fas fa-user"></i></span></button>');
+
     $('#dismiss, .overlay').on('click', function () {
         $('#sidebar').removeClass('active');
         $('.overlay').fadeOut();
