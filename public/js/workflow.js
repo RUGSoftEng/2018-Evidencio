@@ -2910,6 +2910,7 @@ var cy = cytoscape({
   layout: {
     name: 'preset',
     fit: true,
+    padding: '40vh',
     directed: true
   }
 });
@@ -3010,7 +3011,7 @@ window.graphFit = function () {
     });
   }
   cy.fit(nodes);
-  //cy.center(nodes);
+  cy.center(nodes);
 };
 
 /**
