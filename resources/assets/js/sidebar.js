@@ -1,6 +1,8 @@
 var $ = require('jquery');
-require("malihu-custom-scrollbar-plugin")($);
-require("jquery-mousewheel")($);
+require("malihu-custom-scrollbar-plugin");
+require("jquery-mousewheel");
+require('octicons');
+
 
 $(document).ready(function () {
     $("#sidebar").mCustomScrollbar({

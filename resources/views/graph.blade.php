@@ -2,18 +2,22 @@
 
 @section('content')
 
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
+
+
   <nav id="sidebar">
     <div id="dismiss">
-      <i class="glyphicon glyphicon-arrow-left"></i>
+      <i class="fas fa-angle-left"></i>
     </div>
 
     <div class="sidebar-header">
-      <h3>Bootstrap Sidebar</h3>
+      <h3>Account</h3>
     </div>
 
     <ul class="list-unstyled components">
-      <p>Dummy Heading</p>
-      <li class="active">
+      <p>Account</p>
+      <li>
         <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Home</a>
         <ul class="collapse list-unstyled" id="homeSubmenu">
           <li><a href="#">Home 1</a></li>
@@ -50,10 +54,6 @@
     </div>
   </div>
 
-  {{--<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>--}}
-  {{--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>--}}
-  {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">--}}
-
   <script src="{{ asset('js/sidebar.js') }}"></script>
   <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
 
@@ -64,9 +64,6 @@
     <h4 class="card-title">Workflow</h4>
     <!--<button onclick="addNode(0,'new')">Add</button>-->
     <div id="cy">
-
-
-
 
 
 

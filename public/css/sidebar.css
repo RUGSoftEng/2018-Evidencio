@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 body {
   background: #fafafa;
 }
@@ -9,12 +11,14 @@ p {
   color: #999;
 }
 
-a, a:hover, a:focus {
+a,
+a:hover,
+a:focus {
   color: inherit;
   text-decoration: none;
+  -webkit-transition: all 0.3s;
   transition: all 0.3s;
 }
-
 
 .line {
   width: 100%;
@@ -32,9 +36,11 @@ a, a:hover, a:focus {
   z-index: 999;
   background: #7386D5;
   color: #fff;
+  -webkit-transition: all 0.3s;
   transition: all 0.3s;
   overflow-y: scroll;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+          box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
 }
 
 #sidebar.active {
@@ -52,7 +58,6 @@ a, a:hover, a:focus {
   right: 10px;
   cursor: pointer;
   -webkit-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
@@ -90,33 +95,35 @@ a, a:hover, a:focus {
   font-size: 1.1em;
   display: block;
 }
+
 #sidebar ul li a:hover {
   color: #7386D5;
   background: #fff;
 }
 
-#sidebar ul li.active > a, a[aria-expanded="true"] {
+#sidebar ul li.active > a,
+a[aria-expanded="true"] {
   color: #fff;
   background: #6d7fcc;
 }
-
 
 a[data-toggle="collapse"] {
   position: relative;
 }
 
-a[aria-expanded="false"]::before, a[aria-expanded="true"]::before {
-  content: "˅";
+a[aria-expanded="false"]::before,
+a[aria-expanded="true"]::before {
+  content: "\2C5";
   display: block;
   position: absolute;
   right: 20px;
   font-size: 0.9em;
 }
+
 a[aria-expanded="true"]::before {
-  content: "˄";
+  content: "\2C4";
   font-size: 0.9em;
 }
-
 
 ul ul a {
   font-size: 0.9em !important;
@@ -135,22 +142,28 @@ ul.CTAs a {
   border-radius: 5px;
   margin-bottom: 5px;
 }
+
 a.download {
   background: #fff;
   color: #7386D5;
 }
-a.article, a.article:hover {
+
+a.article,
+a.article:hover {
   background: #6d7fcc !important;
   color: #fff !important;
 }
-
 
 #content {
   width: 100%;
   padding: 20px;
   min-height: 100vh;
+  -webkit-transition: all 0.3s;
   transition: all 0.3s;
   position: absolute;
   top: 0;
   right: 0;
 }
+
+
+/*# sourceMappingURL=sidebar.css.map*/
