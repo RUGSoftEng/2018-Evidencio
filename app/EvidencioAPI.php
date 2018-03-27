@@ -4,7 +4,12 @@ namespace App;
 
 class EvidencioAPI
 {
-  public static function fetch($path, $params = [])
+  /*
+   * @return API response converted into a PHP variable.
+   * @throws JsonDecodeException if JSON response could not be decoded.
+   * Other possible exceptions are listed in Guzzle's documentation
+   */
+  private static function fetch($path, $params = [])
   {
     $client = new \GuzzleHttp\Client(['base_uri' => 'https://www.evidencio.com/api/']);
     $res = $client->post($path,
@@ -15,7 +20,12 @@ class EvidencioAPI
       ],
       'form_params' => $params
     ]);
-    return json_decode($res->getBody());
+    $json = json_decode($res->getBody());
+    if(is_null($json))
+    {
+      throw new Exceptions\JsonDecodeException("Could not decode API response to JSON: '".$res->getBody()."'.");
+    }
+    return $json;
   }
 
   public static function overview()
@@ -35,7 +45,7 @@ class EvidencioAPI
 
   public static function getModel($id)
   {
-    return self::fetch("model",["id" => "1222"]);
+    return self::fetch("model",["id" => $id]);
   }
 
   /*
