@@ -57,17 +57,22 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
+        <h5 class="modal-title" id="modelTitleId">Change options</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" id="modelTitleId">Change options</h4>
+        
       </div>
       <div class="modal-body">
-        Body
+        <div class="form-group">
+          <label for="OptionDescription"></label>
+          <input type="text" class="form-control" name="Description" id="optionDescription" aria-describedby="OptionDescriptionHelp" placeholder="Description of option">
+          <small id="OptionDescriptionHelp" class="form-text text-muted">Description of Option</small>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" id="changeOptionSave" data-dismiss="modal">Save changes</button>
       </div>
     </div>
   </div>

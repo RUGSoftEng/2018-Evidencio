@@ -21,7 +21,7 @@ const cy = cytoscape({
     // Nodes
     {
       data: { id: 'Start' },
-      scratch: { '_height': 0 },
+      scratch: { '_lvl': 0, '_num': 0 },
       classes: 'node',
       position: { x: 0, y: 0 }
     }
@@ -89,7 +89,8 @@ var step = [{
       options: [{
         nodeRef: 'Start',
         nodeType: 'input',
-        type: 'number'
+        type: 'number',
+        description: "This is the starting point of the workflow, the current input type is the number-input."
       }]
     },
     {
@@ -130,7 +131,7 @@ cy.on("render cyCanvas.resize", function(evt) {
  * @param {*} height 
  * @param {*} id 
  */
-window.addNode = function(height) {
+function addNode(height) {
   numNodes++;
   return cy.add({
     group: "nodes", 
@@ -147,7 +148,7 @@ window.addNode = function(height) {
  * Adds step to graph at given height, needs to be changed
  * @param {*} height 
  */
-window.addStep = function(height) {
+function addStep(height) {
   if (height <= steps) {
     steps += 1;
     step.splice(height+1, 0, { options: [] });
@@ -161,34 +162,20 @@ window.addStep = function(height) {
  * Adds option to graph at given height, needs to be changed
  * @param {} height 
  */
-window.addOption = function(height) {
+function addOption(height) {
   if (height < steps) {
     let node = addNode(height * delta);
-    node.scratch('_height', height);
     step[height].options.push({
       nodeRef: node.id(),
       nodeType: 'input',
-      type: 'text'
+      type: 'text',
+      description: ''
     });
     maxOptions = Math.max(maxOptions, step[height].options.length);
     updateButtonAddOption();
     updateButtonAddStep();
     updateNodes();
   }
-}
-
-/**
- * Fits and centers the viewport on the graph
- */
-window.graphFit = function() {
-  var nodes = [step[0].options[0].nodeRef];
-  for (var i = 1; i < steps; i++){
-    step[i].options.forEach(element => {
-      step.push(cy.getElementById(element.nodeRef));
-    });
-  }
-  cy.fit(nodes);
-  cy.center(nodes);
 }
 
 /**
@@ -288,7 +275,8 @@ function updateNodes() {
         x: left + indexOption * delta,
         y: indexStep * delta
       });
-      currentNode.scratch('_height', indexStep);
+      currentNode.scratch('_lvl', indexStep);
+      currentNode.scratch('_num', indexOption);
       if (elementOption.nodeType == 'input'){
         switch(elementOption.type) {
           case 'number':
@@ -305,6 +293,27 @@ function updateNodes() {
     }
   }
 }
+
+/**
+ * Fits and centers the viewport on the graph
+ */
+window.graphFit = function() {
+  var nodes = [step[0].options[0].nodeRef];
+  for (var i = 1; i < steps; i++){
+    step[i].options.forEach(element => {
+      step.push(cy.getElementById(element.nodeRef));
+    });
+  }
+  cy.fit(nodes);
+  cy.center(nodes);
+}
+
+window.changeOption = function(lvl, num) {
+  let popup = $('#changeOptionDialog');
+  let option = step[lvl].options[num];
+  option.description = popup.find('.modal-body #optionDescription').val();
+}
+
 
 /*function createRightClickMenu(target) {
   let ref = target.popperRef();
@@ -341,9 +350,13 @@ var popperFit = cy.popper({
 cy.on('tap', 'node', function(evt){
   let node = evt.target;
   if (node.hasClass('node')) {
-    $('#changeOptionDialog').modal();
-    let height = node.scratch('_height');
-    $('')
+    let lvl = node.scratch('_lvl');
+    let num = node.scratch('_num');
+    let popup = $('#changeOptionDialog'); 
+    popup.modal();
+    let currentOption = step[lvl].options[num]
+    popup.find('.modal-body #optionDescription').val(currentOption.description);
+    popup.find('.modal-footer #changeOptionSave').attr("onclick", "changeOption(" + lvl + ', ' + num + ")");
   } else if (node.hasClass('buttonAddStep')){
     let height = isButtonAddStep(node);
     if (height >= 0) {
