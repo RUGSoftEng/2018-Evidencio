@@ -2861,7 +2861,7 @@ var popper = __webpack_require__(48);
 cytoscape.use(popper);
 var cyCanvas = __webpack_require__(49);
 cyCanvas(cytoscape);
-var typpe = __webpack_require__(50);
+var tippy = __webpack_require__(50);
 
 //Init Cytoscape
 var cy = cytoscape({
@@ -2870,10 +2870,12 @@ var cy = cytoscape({
   // Nodes
   {
     data: { id: 'Start' },
+    scratch: { '_height': 0 },
+    classes: 'node',
     position: { x: 0, y: 0 }
   }],
   style: [{
-    selector: 'node',
+    selector: '.node',
     style: {
       'background-color': '#666',
       'label': 'data(id)'
@@ -2912,6 +2914,7 @@ var cy = cytoscape({
     }
   }],
   autoungrabify: true,
+  autounselectify: true,
   layout: {
     name: 'preset',
     fit: true,
@@ -2921,13 +2924,18 @@ var cy = cytoscape({
 });
 
 // Data
+var _icon_number = '/images/hashtag.svg';
+var _icon_text = '/images/text.svg';
+var _icon_multiplechoice = '/images/list.svg';
 var delta = 50,
     steps = 2,
     maxOptions = 1,
     numNodes = 0;
 var step = [{
   options: [{
-    nodeRef: 'Start'
+    nodeRef: 'Start',
+    nodeType: 'input',
+    type: 'number'
   }]
 }, {
   options: []
@@ -2936,6 +2944,7 @@ var buttonAddStep = [];
 var buttonAddOption = [];
 updateButtonAddOption();
 updateButtonAddStep();
+updateNodes();
 
 //Canvas of background
 var bottomLayer = cy.cyCanvas({
@@ -2967,6 +2976,7 @@ window.addNode = function (height) {
   return cy.add({
     group: "nodes",
     data: { id: 'node_' + (numNodes - 1) },
+    classes: 'node',
     position: {
       x: cy.width() / 2,
       y: height
@@ -2995,8 +3005,11 @@ window.addStep = function (height) {
 window.addOption = function (height) {
   if (height < steps) {
     var node = addNode(height * delta);
+    node.scratch('_height', height);
     step[height].options.push({
-      nodeRef: node.id()
+      nodeRef: node.id(),
+      nodeType: 'input',
+      type: 'text'
     });
     maxOptions = Math.max(maxOptions, step[height].options.length);
     updateButtonAddOption();
@@ -3101,6 +3114,9 @@ function updateButtonAddOption() {
   }
 }
 
+/**
+ * Updates position of nodes.
+ */
 function updateNodes() {
   for (var indexStep = 0; indexStep < steps; indexStep++) {
     var elementStep = step[indexStep];
@@ -3108,13 +3124,40 @@ function updateNodes() {
     var left = -(_numNodes - 1) * delta / 2;
     for (var indexOption = 0; indexOption < _numNodes; indexOption++) {
       var elementOption = elementStep.options[indexOption];
-      cy.getElementById(elementOption.nodeRef).position({
+      var currentNode = cy.getElementById(elementOption.nodeRef);
+      currentNode.position({
         x: left + indexOption * delta,
         y: indexStep * delta
       });
+      currentNode.scratch('_height', indexStep);
+      if (elementOption.nodeType == 'input') {
+        switch (elementOption.type) {
+          case 'number':
+            currentNode.style('background-image', _icon_number);
+            break;
+          case 'text':
+            currentNode.style('background-image', _icon_text);
+            break;
+          case 'multipleChoice':
+            currentNode.style('background-image', _icon_multiplechoice);
+            break;
+        }
+      }
     }
   }
 }
+
+/*function createRightClickMenu(target) {
+  let ref = target.popperRef();
+  let rightClick = document.createElement('div');
+      rightClick.innerHTML = '<div class="list-group"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button><button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button><button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button><button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button></div>';
+  let tpy = tippy(ref, {
+    html: rightClick,
+    hideOnClick: 'false',
+    trigger: 'manual'
+  }).tooltips[0];
+  tpy.show();
+}*/
 
 /**
  * Buttons
@@ -3136,17 +3179,29 @@ var popperFit = cy.popper({
 // Buttons made using nodes
 cy.on('tap', 'node', function (evt) {
   var node = evt.target;
-  var height = isButtonAddStep(node);
-  if (height >= 0) {
-    addStep(height);
-    return;
-  }
-  height = isButtonAddOption(node);
-  if (height >= 0) {
-    addOption(height + 1);
-    return;
+  if (node.hasClass('node')) {
+    $('#changeOptionDialog').modal();
+  } else if (node.hasClass('buttonAddStep')) {
+    var _height = isButtonAddStep(node);
+    if (_height >= 0) {
+      addStep(_height);
+      return;
+    }
+  } else {
+    height = isButtonAddOption(node);
+    if (height >= 0) {
+      addOption(height + 1);
+      return;
+    }
   }
 });
+
+/*cy.on('tap', 'node', function(evt){
+  let node = evt.target;
+  if (node.hasClass('node')) {
+    createRightClickMenu(node);
+  }
+});*/
 
 /***/ }),
 /* 42 */

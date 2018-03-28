@@ -11,7 +11,8 @@ const popper = require('cytoscape-popper');
 cytoscape.use( popper );
 const cyCanvas = require('cytoscape-canvas');
 cyCanvas(cytoscape);
-const typpe = require('tippy.js');
+//const tippy = require('tippy.js')
+
 
 //Init Cytoscape
 const cy = cytoscape({
@@ -20,12 +21,14 @@ const cy = cytoscape({
     // Nodes
     {
       data: { id: 'Start' },
+      scratch: { '_height': 0 },
+      classes: 'node',
       position: { x: 0, y: 0 }
     }
   ],
   style: [
     {
-      selector: 'node',
+      selector: '.node',
       style: {
         'background-color': '#666',
         'label': 'data(id)'
@@ -68,6 +71,7 @@ const cy = cytoscape({
     }
   ],
   autoungrabify: true,
+  autounselectify: true,
   layout: {
     name: 'preset',
     fit: true,
@@ -77,10 +81,15 @@ const cy = cytoscape({
 });
 
 // Data
+var _icon_number = '/images/hashtag.svg';
+var _icon_text = '/images/text.svg';
+var _icon_multiplechoice = '/images/list.svg';
 var delta = 50, steps = 2, maxOptions = 1, numNodes = 0;
 var step = [{
       options: [{
-        nodeRef: 'Start'
+        nodeRef: 'Start',
+        nodeType: 'input',
+        type: 'number'
       }]
     },
     {
@@ -90,7 +99,7 @@ var buttonAddStep = [];
 var buttonAddOption = [];
 updateButtonAddOption();
 updateButtonAddStep();
-
+updateNodes();
 
 //Canvas of background
 const bottomLayer = cy.cyCanvas({
@@ -125,7 +134,8 @@ window.addNode = function(height) {
   numNodes++;
   return cy.add({
     group: "nodes", 
-    data: { id: 'node_' + (numNodes-1) }, 
+    data: { id: 'node_' + (numNodes-1) },
+    classes: 'node',
     position: { 
       x: cy.width()/2, 
       y: height 
@@ -154,8 +164,11 @@ window.addStep = function(height) {
 window.addOption = function(height) {
   if (height < steps) {
     let node = addNode(height * delta);
+    node.scratch('_height', height);
     step[height].options.push({
-      nodeRef: node.id()
+      nodeRef: node.id(),
+      nodeType: 'input',
+      type: 'text'
     });
     maxOptions = Math.max(maxOptions, step[height].options.length);
     updateButtonAddOption();
@@ -260,6 +273,9 @@ function updateButtonAddOption() {
   }
 }
 
+/**
+ * Updates position of nodes.
+ */
 function updateNodes() {
   for (let indexStep = 0; indexStep < steps; indexStep++) {
     const elementStep = step[indexStep];
@@ -267,13 +283,40 @@ function updateNodes() {
     let left = (-(numNodes-1) * delta)/2;
     for (let indexOption = 0; indexOption < numNodes; indexOption++) {
       const elementOption = elementStep.options[indexOption];
-      cy.getElementById(elementOption.nodeRef).position({
+      let currentNode = cy.getElementById(elementOption.nodeRef);
+      currentNode.position({
         x: left + indexOption * delta,
         y: indexStep * delta
       });
+      currentNode.scratch('_height', indexStep);
+      if (elementOption.nodeType == 'input'){
+        switch(elementOption.type) {
+          case 'number':
+            currentNode.style('background-image', _icon_number);
+            break;
+          case 'text':
+            currentNode.style('background-image', _icon_text);
+            break;
+          case 'multipleChoice':
+            currentNode.style('background-image', _icon_multiplechoice);
+            break;
+        }
+      }  
     }
   }
 }
+
+/*function createRightClickMenu(target) {
+  let ref = target.popperRef();
+  let rightClick = document.createElement('div');
+      rightClick.innerHTML = '<div class="list-group"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button><button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button><button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button><button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button></div>';
+  let tpy = tippy(ref, {
+    html: rightClick,
+    hideOnClick: 'false',
+    trigger: 'manual'
+  }).tooltips[0];
+  tpy.show();
+}*/
 
 /**
  * Buttons
@@ -292,20 +335,36 @@ var popperFit = cy.popper({
 
 
 
+
+
 // Buttons made using nodes
 cy.on('tap', 'node', function(evt){
   let node = evt.target;
-  let height = isButtonAddStep(node);
-  if (height >= 0) {
-    addStep(height);
-    return;
-  }
-  height = isButtonAddOption(node);
-  if (height >= 0) {
-    addOption(height+1);
-    return;
+  if (node.hasClass('node')) {
+    $('#changeOptionDialog').modal();
+    let height = node.scratch('_height');
+    $('')
+  } else if (node.hasClass('buttonAddStep')){
+    let height = isButtonAddStep(node);
+    if (height >= 0) {
+      addStep(height);
+      return;
+    }
+  } else {
+    height = isButtonAddOption(node);
+    if (height >= 0) {
+      addOption(height+1);
+      return;
+    }
   }
 });
+
+/*cy.on('tap', 'node', function(evt){
+  let node = evt.target;
+  if (node.hasClass('node')) {
+    createRightClickMenu(node);
+  }
+});*/
 
 
 
