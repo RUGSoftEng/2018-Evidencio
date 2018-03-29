@@ -13,6 +13,17 @@ const cyCanvas = require('cytoscape-canvas');
 cyCanvas(cytoscape);
 //const tippy = require('tippy.js')
 
+window.model = [];
+
+$.ajax({
+  url: '/designer/fetch',
+  data: {
+    'modelID': 756
+  },
+  success: function (result) {
+    model = JSON.parse(result);
+  }
+})
 
 //Init Cytoscape
 const cy = cytoscape({

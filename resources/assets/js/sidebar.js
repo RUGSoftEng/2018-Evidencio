@@ -1,4 +1,5 @@
 var $ = require('jquery');
+window.$ = $;
 require("malihu-custom-scrollbar-plugin");
 require("jquery-mousewheel");
 require('octicons');

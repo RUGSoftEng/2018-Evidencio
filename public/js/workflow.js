@@ -2640,6 +2640,17 @@ var cyCanvas = __webpack_require__(49);
 cyCanvas(cytoscape);
 //const tippy = require('tippy.js')
 
+window.model = [];
+
+$.ajax({
+  url: '/designer/fetch',
+  data: {
+    'modelID': 756
+  },
+  success: function success(result) {
+    model = JSON.parse(result);
+  }
+});
 
 //Init Cytoscape
 var cy = cytoscape({
