@@ -11,7 +11,7 @@ A more detailed description is available in the Requirements Document under the 
 
 Follow the instructions in the [Laravel documentation](https://laravel.com/docs/5.6/installation) to install required dependencies and the Laravel package itself.
 
-Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Then run these commands inside the repository:
+Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Please provide Evidencio API key here as well. Then run these commands inside the repository:
 
     composer install
     php artisan key:generate
@@ -25,15 +25,15 @@ Run the following command:
 ### Troubleshooting
 
 
-#### NOTE: in Windows, this server will run from a command prompt. 
+#### NOTE: in Windows, this server will run from a command prompt.
 If you are using Apache through XAMPP (**maybe** even without XAMPP), you can change the following file:
 
     XAMPP\apache\conf\httpd.conf
-(If not through XAMPP, then in the respective apache directory) 
+(If not through XAMPP, then in the respective apache directory)
 Under the DocumentRoot setting in the file, you need to change the line:
 
     C:\xampp\htdocs
-    
+
 into:
 
     yourDirectory\2018-Evidencio\public
