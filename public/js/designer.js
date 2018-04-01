@@ -883,6 +883,7 @@ module.exports = __webpack_require__(59);
 
 window.cytoscape = __webpack_require__(7);
 window.Vue = __webpack_require__(60);
+Vue.component('vue-multiselect', window.VueMultiselect.default);
 window.cyCanvas = __webpack_require__(12);
 
 // ============================================================================================= //
@@ -923,7 +924,11 @@ vObj = new Vue({
     deltaX: 150,
     deltaY: 250,
     addLevelButtons: [],
-    addStepButtons: []
+    addStepButtons: [],
+
+    modalNodeID: -1,
+    selectedVariables: []
+
   },
 
   /**
@@ -932,6 +937,17 @@ vObj = new Vue({
   mounted: function mounted() {
     this.addLevel(0);
     this.addStep('Starter step', 'First step in the model shown to the patient. Change this step to fit your needs.', 0);
+  },
+
+  computed: {
+    possibleVariables: function possibleVariables() {
+      if (this.modelLoaded) {
+        this.model.variables.map(function (x, index) {
+          return x['ind'] = index;
+        });
+        return this.model.variables;
+      } else return [];
+    }
   },
 
   methods: {
@@ -1067,6 +1083,12 @@ vObj = new Vue({
       }
       return -1;
     },
+
+
+    /**
+     * Returns the index of the AddStepButton-node based on its id.
+     * @param {string} [id] of the AddStepButton-node that the index is wanted of.
+     */
     getAddStepButtonIndex: function getAddStepButtonIndex(id) {
       for (var index = 0; index < this.addStepButtons.length; index++) {
         var element = this.addStepButtons[index].nodeID;
@@ -1075,6 +1097,36 @@ vObj = new Vue({
         }
       }
       return -1;
+    },
+
+
+    /**
+     * Opens an option-modal for the node that is clicked on.
+     * @param {object} [nodeRef] is the reference to the node that is clicked on.
+     */
+    prepareModal: function prepareModal(nodeRef) {
+      this.modalNodeID = nodeRef.scratch('_nodeID');
+      this.selectedVariables = this.steps[this.modalNodeID].variables;
+    },
+
+
+    /**
+     * Returns the text shown when more than the limit of options are selected.
+     * @param {integer} [count] is the number of not-shown options.
+     */
+    multiselectVariablesText: function multiselectVariablesText(count) {
+      return ' and ' + count + ' other variable(s)';
+    },
+    saveChanges: function saveChanges() {
+      this.steps[this.modalNodeID].variables = this.selectedVariables;
+      this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf, 0);
+      for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
+        var elementStep = this.steps[indexStep];
+        for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+          var element = elementStep.variables[indexVariable].ind;
+          this.variablesUsed[element] += 1;
+        }
+      }
     }
   },
 
@@ -1089,6 +1141,9 @@ vObj = new Vue({
             classes: 'node',
             data: {
               id: 'node_' + this.nodeCounter
+            },
+            scratch: {
+              '_nodeID': index
             }
           }).id();
           this.steps[index].create = false;
@@ -1203,6 +1258,9 @@ cy.on('tap', 'node', function (evt) {
   } else if (ref.hasClass('buttonAddStep')) {
     var _nID = vObj.getAddStepButtonIndex(ref.id());
     if (_nID != -1) vObj.addStep('Default title', 'Default description', _nID + 1);
+  } else if (ref.hasClass('node')) {
+    vObj.prepareModal(ref);
+    $('#modalStep').modal();
   }
 });
 
