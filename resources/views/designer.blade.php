@@ -107,41 +107,58 @@
 
     <!-- Normal view -->
     <div class="row justify-content-center">
-        <div class="col-sm-3">
-        <div class="card">
+        <div id="variablesDiv" class="col-sm-3">
+        <div id="variablesDivCard" class="card">
             <div class="card-header">Variables <element v-if='!modelLoaded'><input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></element> </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center disabled" v-if='!modelLoaded'>
-                        No variables added yet...
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center" v-if='modelLoaded' v-for='(variable, index) in model.variables'>
-                        @{{ variable.title }}
-                        <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
-                    </li>
-                    
-                </ul>
+
+            <div class="card-body scrollbarAtProject">
+
+                <div id="accordion1">
+                    <div class="card" v-if='!modelLoaded'>
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                No variables added yet...
+                            </h5>
+                        </div>
+
+                    </div>
+
+                    <div class="card" v-if='modelLoaded' v-for='(variable, index) in model.variables'>
+                        <div class="card-header collapsed" :id="'heading' + index" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="true" aria-controls="'collapse' + index"  data-parent="#accordion1">
+                            <h5 class="mb-0">
+                                @{{ variable.title }}
+                                <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
+
+                            </h5>
+                        </div>
+
+                        <div :id="'collapse' + index" class="collapse" :aria-labelledby="'#heading' + index" data-parent="#accordion1">
+                            <pre class="language-json"><code>@{{ variable }}</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
         </div>
-        <div class="col-sm-9">
-            <div class="card">
+        <div id="graphDiv" class="col-sm-9">
+            <div id="graphDivCard" class="card" >
                 <div class="card-header">
                     Designer 
                     <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body" id="graphCardBody">
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
                         </div>
                     @endif
 
-                    <div id="graph">
+                    <div id="graphContainerForBorder">
+                        <div id="graph">
+                        </div>
                     </div>
-                    
                 </div>
             </div>
         </div>

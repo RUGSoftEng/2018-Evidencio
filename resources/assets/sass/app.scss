@@ -11,6 +11,8 @@
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  padding-right: 0;
+  margin-right: 0;
 }
 
 .hideOverflow {
@@ -24,4 +26,5 @@
 #sidebarPlaceholder {
   width: 40px;
   height: 40px;
+  position: fixed;
 }
