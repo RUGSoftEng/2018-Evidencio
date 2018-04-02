@@ -65,30 +65,68 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-4">
-                                
+                                <h4 v-if="modalNodeID != -1">ID: @{{ steps[modalNodeID].id }}</h4>
+                                <div class="form-group">
+                                    <label for="stepType">Select step-type:</label>
+                                    <select class="custom-select" name="stepType" id="stepType">
+                                        <option value="input" selected>Input</option>
+                                        <option value="result">Result</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="col-md-8">
-                                <div>
-                                    <label class="typo__label">Simple select / dropdown</label>
-                                    <vue-multiselect v-model="selectedVariables" :options="possibleVariables" :multiple="true" :close-on-select="false" :clear-on-select="false" label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :hide-selected="true" :preserve-search="true" placeholder="Choose variables" :preselect-first="true">
-                                        <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template> 
-                                    </vue-multiselect>
-                                </div>
-
-                                <div id="accordion">
-                                    <div class="card" v-for="(variable, index) in selectedVariables">
-                                        <div class="card-header" id="headingOne">
+                                <vue-multiselect v-model="selectedVariables" :options="possibleVariables" :multiple="true" :close-on-select="false" :clear-on-select="false" label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :hide-selected="true" :preserve-search="true" placeholder="Choose variables" :preselect-first="true">
+                                    <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template> 
+                                </vue-multiselect>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div id="accModalSections">
+                                    <div class="card">
+                                        <div class="card-header" id="headingVars" data-toggle="collapse" data-target="#collapseVars" aria-expanded="true" aria-controls="collapseVars">
                                             <h5 class="mb-0">
-                                                <button class="btn btn-link collapsed" data-toggle="collapse" :data-target="'#collap_' + index" aria-expanded="false" :aria-controls="'collap_' + index">
-                                                    @{{ variable.title }}
-                                                </button>
+                                                Variables
                                             </h5>
                                         </div>
 
-                                        <div :id="'collap_' + index" class="collapse" :aria-labelledby="'#collap_' + index" data-parent="#accordion">
+                                        <div id="collapseVars" class="collapse show" aria-labelledby="headingVars" data-parent="#accModalSections">
                                             <div class="card-body">
-                                                <pre class="language-json"><code>@{{ variable  }}</code></pre>
+                                                <div id="accModalVars">
+                                                    <div class="card" v-for="(variable, index) in selectedVariables">
+                                                        <div class="card-header collapsed" :id="'collapHeader_' + index" data-toggle="collapse" :data-target="'#collap_' + index" data-parent="#accModalVars" aria-expanded="false" :aria-controls="'collap_' + index">
+                                                            <h6 class="mb-0">
+                                                                    @{{ variable.title }}
+                                                            </h6>
+                                                        </div>
+
+                                                        <div :id="'collap_' + index" class="collapse" :aria-labelledby="'#collap_' + index" data-parent="#accModalVars">
+                                                            <div class="card-body">
+                                                                <form onsubmit="return false">
+                                                                    <div class="form-group">
+                                                                        <label for="titleText">Description: </label>
+                                                                        <textarea name="" id="descriptionText" cols="30" rows="3" v-model="variable.description" :disabled="!editVariableFlags[variable.ind]"></textarea>
+                                                                        &nbsp;&nbsp;
+                                                                        <input type="image" class="buttonIcon" :src="getImage(variable.ind)" @click="editVariable(variable.ind)" alt="Edit">
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header collapsed" id="headingLogic" data-toggle="collapse" data-target="#collapseLogic" aria-expanded="false" aria-controls="collapseLogic">
+                                            <h5 class="mb-0">
+                                                Logic
+                                            </h5>
+                                        </div>
+                                        <div id="collapseLogic" class="collapse" aria-labelledby="headingLogic" data-parent="#accModalSections">
+                                            <div class="card-body">
+                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
                                             </div>
                                         </div>
                                     </div>

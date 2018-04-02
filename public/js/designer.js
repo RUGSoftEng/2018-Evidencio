@@ -927,8 +927,8 @@ vObj = new Vue({
     addStepButtons: [],
 
     modalNodeID: -1,
-    selectedVariables: []
-
+    selectedVariables: [],
+    editVariableFlags: []
   },
 
   /**
@@ -966,6 +966,7 @@ vObj = new Vue({
           self.model = JSON.parse(result);
           self.modelLoaded = true;
           self.variablesUsed = Array.apply(null, Array(self.model.variables.length)).map(Number.prototype.valueOf, 0);
+          self.editVariableFlags = new Array(self.model.variables.length).fill(false);
         }
       });
     },
@@ -1127,6 +1128,12 @@ vObj = new Vue({
           this.variablesUsed[element] += 1;
         }
       }
+    },
+    getImage: function getImage(index) {
+      if (this.editVariableFlags[index]) return '/images/check.svg';else return '/images/pencil.svg';
+    },
+    editVariable: function editVariable(index) {
+      Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
     }
   },
 

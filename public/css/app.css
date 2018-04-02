@@ -9998,6 +9998,8 @@ a.text-dark:focus {
   background-color: #fff;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  padding-right: 0;
+  margin-right: 0;
 }
 
 .hideOverflow {
@@ -10011,6 +10013,7 @@ a.text-dark:focus {
 #sidebarPlaceholder {
   width: 40px;
   height: 40px;
+  position: fixed;
 }
 
 

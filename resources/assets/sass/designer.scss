@@ -58,3 +58,17 @@ html, body {
     max-height: 78vh;
     overflow-y: auto;
   }
+.badge-maxwidth {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-toggle~="collapse"] {
+  cursor: pointer;
+}
+
+.buttonIcon {
+  width: 20px;
+  height: 20px;
+}
