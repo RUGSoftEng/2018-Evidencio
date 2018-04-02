@@ -117,7 +117,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center" v-if='modelLoaded' v-for='(variable, index) in model.variables'>
                         @{{ variable.title }}
-                        <span class="badge badge-secondary badge-pill">@{{ variablesUsed[index] }}</span>
+                        <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
                     </li>
                     
                 </ul>

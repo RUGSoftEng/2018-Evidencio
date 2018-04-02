@@ -20,7 +20,8 @@ if (!mix.inProduction()) {
 mix.js('resources/assets/js/app.js', 'public/js')
    .js('resources/assets/js/workflow.js', 'public/js')
    .js('resources/assets/js/sidebar.js', 'public/js')
+   .js('resources/assets/js/designer.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
    .sass('resources/assets/sass/workflow.scss', 'public/css')
-   .sass('resources/assets/sass/sidebar.scss', 'public/css');
-
+   .sass('resources/assets/sass/sidebar.scss', 'public/css')
+   .sass('resources/assets/sass/designer.scss', 'public/css');
