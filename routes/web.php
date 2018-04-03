@@ -19,6 +19,7 @@ Auth::routes();
 
 Route::get('/designer', 'DesignerController@index')->name('designer');
 
+
 Route::get('/search',function(){
   return view('search');
 });
@@ -34,3 +35,6 @@ Route::get('/graph',function(){
 Route::post('/graph',function(){
   return view('graph');
 });
+
+Route::get('/designer/fetch', 'DesignerController@fetchVariables');
+

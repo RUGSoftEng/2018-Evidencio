@@ -1,12 +1,15 @@
+
 <?php
 use App\EvidencioAPI;
 if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
   $decodeRes = EvidencioAPI::run($_GET['model'],$_GET['answer']);
 }
 ?>
+
 @extends('layouts.app')
 
 @section('content')
+
 
 <?php
 $result=(int)$decodeRes['result'];
@@ -44,3 +47,4 @@ chart.render();
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 @endsection
+

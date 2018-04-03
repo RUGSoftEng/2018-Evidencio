@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,11 +21,15 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+    <div id="app" style="height:100%">
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel row">
+
+            <div id="navbarContainer" class="container">
+                <div id="sidebarPlaceholder">
+
+                </div>
+                <a id="theBrandName" class="navbar-brand" href="{{ url('/') }}">
+                <span class="hideOverflow">  {{ config('app.name', 'Laravel') }} </span>
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -33,6 +37,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
+
                     <ul class="navbar-nav mr-auto">
 
                     </ul>
@@ -51,7 +56,7 @@
 
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('designer') }}">
-                                        {{ __('Designer') }}
+                                        {{ __('designer.Designer') }}
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
@@ -70,7 +75,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4" style="height: calc(100% - 60px)">
             @yield('content')
         </main>
     </div>

@@ -12,11 +12,22 @@
     "devDependencies": {
         "axios": "^0.18",
         "bootstrap": "^4.0.0",
-        "popper.js": "^1.12",
         "cross-env": "^5.1",
-        "jquery": "^3.2",
+        "jquery": "^3.3.1",
         "laravel-mix": "^2.0",
         "lodash": "^4.17.4",
+        "popper.js": "^1.14.1",
         "vue": "^2.5.7"
+    },
+    "dependencies": {
+        "ajv": "^6.3.0",
+        "cytoscape": "^3.2.10",
+        "cytoscape-canvas": "^3.0.1",
+        "cytoscape-popper": "^1.0.1",
+        "jquery-mousewheel": "^3.1.13",
+        "malihu-custom-scrollbar-plugin": "^3.1.5",
+        "octicons": "^7.2.0",
+        "vue-multiselect": "^2.1.0",
+        "vue-select": "^2.4.0"
     }
 }
