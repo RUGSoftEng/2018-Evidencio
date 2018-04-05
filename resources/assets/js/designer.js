@@ -59,8 +59,9 @@ vObj = new Vue({
   computed: {
     possibleVariables: function() {
       if (this.modelLoaded) {
-        this.model.variables.map((x, index)=>x['ind'] = index);
-        return this.model.variables;
+        var deepCopy = JSON.parse(JSON.stringify(this.model.variables))
+        deepCopy.map((x, index)=>x['ind'] = index);
+        return deepCopy;
     } else
         return [];
     }
@@ -228,7 +229,7 @@ vObj = new Vue({
     },
 
     saveChanges() {
-      this.steps[this.modalNodeID].variables = this.selectedVariables;
+      this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
       this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
       for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
         const elementStep = this.steps[indexStep];
