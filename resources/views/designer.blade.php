@@ -3,6 +3,7 @@
 @section('content')
 <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
+
 <div class="wrapper">
     <nav id="sidebar">
         <div id="dismiss">
@@ -18,7 +19,7 @@
         <ul class="list-unstyled components">
             <p>My Account</p>
             <li>
-                <a class="sideCollapse" href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Workflow</a>
+                <a class="somethingSomething" href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Workflow</a>
                 <ul class="collapse list-unstyled" id="homeSubmenu">
                     <li><a href="#">Approved</a></li>
                     <li><a href="#">Rejected</a></li>
@@ -26,7 +27,7 @@
                 </ul>
             </li>
             <li>
-                <a class="sideCollapse" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
+                <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
                     <li><a href="#">Submitted Workflows</a></li>
                     <li><a href="#">User Questions</a></li>
@@ -43,9 +44,8 @@
             </li>
         </ul>
     </nav>
-
-    <div class="overlay"></div>
 </div>
+<script src="{{ asset('js/ya-simple-scrollbar.js') }}"></script>
 <script src="{{ asset('js/sidebar.js') }}"></script>
 <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
 
@@ -65,7 +65,12 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-4">
-                                <h4 v-if="modalNodeID != -1">ID: @{{ steps[modalNodeID].id }}</h4>
+                                <span v-if="modalNodeID != -1">ID: @{{ steps[modalNodeID].id }}</span>
+                                <label for="colorPick">Pick a color:</label>
+                                <button id="colorPick" type="button" class="btn btn-colorpick dropdown-toggle" data-toggle="dropdown" :style="{'background-color': selectedColor}"></button>
+                                <ul class="dropdown-menu">
+                                    <li><div id="colorPalette"></div></li>
+                                </ul>
                                 <div class="form-group">
                                     <label for="stepType">Select step-type:</label>
                                     <select class="custom-select" name="stepType" id="stepType">
@@ -208,6 +213,7 @@
 </div>
 
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>

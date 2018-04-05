@@ -33,8 +33,12 @@ a, a:hover, a:focus {
   background: #7386D5;
   color: #fff;
   transition: all 0.3s;
-  overflow-y: scroll;
+  //overflow-y: hidden;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar:hover {
+  //overflow: auto;
 }
 
 #sidebar.active {
@@ -146,8 +150,8 @@ a.article, a.article:hover {
 
 #sidebarPlaceholder {
   margin-right: 40px;
-  position: fixed;
-  left: 10px;
+  position: absolute;
+  left: 20px;
 }
 
 #navbarContainer {
@@ -159,5 +163,3 @@ a.article, a.article:hover {
 .paragraphInSideMenu {
   margin-top: 30px;
 }
-
-

@@ -45,7 +45,8 @@ vObj = new Vue({
 
     modalNodeID: -1,
     selectedVariables: [],
-    editVariableFlags: []
+    editVariableFlags: [],
+    selectedColor: '#000000'
   },
 
   /**
@@ -110,6 +111,7 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeID: -1,
+        color: '#0099ff',
         variables: [],
         create: true,
         destroy: false
@@ -217,7 +219,8 @@ vObj = new Vue({
      */
     prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
-      this.selectedVariables = this.steps[this.modalNodeID].variables;
+      this.selectedVariables = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].variables));
+      this.selectedColor = this.steps[this.modalNodeID].color;
     },
 
     /**
@@ -228,18 +231,37 @@ vObj = new Vue({
       return ' and ' + count + ' other variable(s)';
     },
 
+    /**
+     * Saves the changes made to a step (variables added, etc.)
+     */
     saveChanges() {
+      // Set new backgroundcolor
+      cy.getElementById(this.steps[this.modalNodeID].nodeID).style({
+        'background-color': this.selectedColor
+      });
+      this.steps[this.modalNodeID].color = this.selectedColor;
+      // Reset flags
+      for (let index = 0; index < this.editVariableFlags.length; index++) 
+        this.editVariableFlags[index] = false;
+      // Set new variables
       this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
-      this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
-      for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
-        const elementStep = this.steps[indexStep];
-        for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-          const element = elementStep.variables[indexVariable].ind;
-          this.variablesUsed[element] += 1;             
+      // Recount variable uses
+      if (this.modelLoaded) {
+        this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
+        for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
+          const elementStep = this.steps[indexStep];
+          for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+            const element = elementStep.variables[indexVariable].ind;
+            this.variablesUsed[element] += 1;             
+          }
         }
       }
     },
 
+    /**
+     * Returns a check-image if the image is set to be edited, pencil-image if not.
+     * @param {integer} [index] of the variable
+     */
     getImage(index) {
       if (this.editVariableFlags[index])
         return '/images/check.svg';
@@ -247,9 +269,15 @@ vObj = new Vue({
         return '/images/pencil.svg';
     },
 
+    /**
+     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
+     * @param {index} index 
+     */
     editVariable(index) {
       Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
     }
+
+
 
 
 
@@ -269,6 +297,9 @@ vObj = new Vue({
             },
             scratch: {
               '_nodeID': index
+            },
+            style: {
+              'background-color': this.steps[index].color
             }
           }).id();
           this.steps[index].create = false;
@@ -328,7 +359,7 @@ var cy = cytoscape({
         'width': '100px',
         'height': '100px',
         'background-color': '#0099ff',
-        'border-color': ' #005c99',
+        'border-color': ' #000000',
         'border-width': '4px'
       }
     },
@@ -425,7 +456,14 @@ cy.on("render cyCanvas.resize", function(evt) {
   ctx.restore();
 });
 
+// ============================================================================================= //
 
 window.onload = function() {
   vObj.fitView();
 }
+
+// ============================================================================================= //
+
+$('#colorPalette').colorPalette().on('selectColor', function(evt) {
+  vObj.selectedColor = evt.color;
+});
