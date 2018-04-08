@@ -246,7 +246,7 @@
                     <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
                 </div>
 
-                <div class="card-body" id="graphCardBody">
+                <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
