@@ -8,13 +8,15 @@ window.cyCanvas = require('cytoscape-canvas');
 
     /* Step-template:
     {
-      title: '',
-      description: '',
-      nodeID: {id},
-      variables: [],
-      ...
-      create: true,
-      destroy: false
+        id: -1,
+        title: title,
+        description: description,
+        nodeID: -1,
+        color: '#0099ff',
+        variables: [],
+        rules: [],
+        create: true,
+        destroy: false
     }
     */
 
@@ -45,6 +47,7 @@ vObj = new Vue({
 
     modalNodeID: -1,
     selectedVariables: [],
+    rules: [],
     editVariableFlags: [],
     selectedColor: '#000000'
   },
@@ -65,7 +68,28 @@ vObj = new Vue({
         return deepCopy;
     } else
         return [];
+    },
+
+    childrenNodes: function() {
+      if (this.modalNodeID == -1)
+        return [];
+      else {
+        let levelIndex = this.getStepLevel(this.modalNodeID);
+        if (levelIndex == -1 || levelIndex == this.levels.length-1)
+          return [];
+        let options = []
+        this.levels[levelIndex+1].steps.forEach(element => {
+          options.push({
+            stepID: element,
+            title: this.steps[element].title,
+            id: this.steps[element].id,
+            color: this.steps[element].color
+          });
+        });
+        return options;
+      }
     }
+
   },
 
   methods: {
@@ -113,6 +137,7 @@ vObj = new Vue({
         nodeID: -1,
         color: '#0099ff',
         variables: [],
+        rules: [],
         create: true,
         destroy: false
       });
@@ -220,6 +245,7 @@ vObj = new Vue({
     prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
       this.selectedVariables = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].variables));
+      this.rules = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].rules));
       this.selectedColor = this.steps[this.modalNodeID].color;
     },
 
@@ -262,8 +288,8 @@ vObj = new Vue({
      * Returns a check-image if the image is set to be edited, pencil-image if not.
      * @param {integer} [index] of the variable
      */
-    getImage(index) {
-      if (this.editVariableFlags[index])
+    getImage(indicator) {
+      if (indicator)
         return '/images/check.svg';
       else
         return '/images/pencil.svg';
@@ -275,12 +301,40 @@ vObj = new Vue({
      */
     editVariable(index) {
       Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+    },
+
+    addRule() {
+      this.rules.push({
+        name: 'Go to target',
+        rule: [],
+        target: -1,
+        editing: true
+      });
+    },
+
+    removeRule(ruleIndex) {
+      this.rules.splice(ruleIndex, 1);
+    },
+
+    editRule(index) {
+      this.rules[index].editing = !this.rules[index].editing;
+    },
+
+    getStepLevel(stepIndex) {
+      for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        const level = this.levels[levelIndex].steps;
+        for (let index = 0; index < level.length; index++) {
+          if (stepIndex == level[index])
+            return levelIndex;          
+        }
+      }
+      return -1;
+    },
+    
+    customLabel ({ desc }) {
+      return `${desc}`
     }
-
-
-
-
-
+    
   },
 
   watch: {
@@ -303,6 +357,9 @@ vObj = new Vue({
             }
           }).id();
           this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeID).style({
+            'label': this.steps[index].id
+          })
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -360,7 +417,13 @@ var cy = cytoscape({
         'height': '100px',
         'background-color': '#0099ff',
         'border-color': ' #000000',
-        'border-width': '4px'
+        'border-width': '4px',
+        'text-halign': 'center',
+        'text-valign': 'center',
+        'color': '#ffffff',
+        'font-size': '24px',
+        'text-outline-color': '#000000',
+        'text-outline-width': '1px'
       }
     },
 
@@ -460,6 +523,7 @@ cy.on("render cyCanvas.resize", function(evt) {
 
 window.onload = function() {
   vObj.fitView();
+  yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 }
 
 // ============================================================================================= //

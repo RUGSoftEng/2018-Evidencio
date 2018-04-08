@@ -891,13 +891,15 @@ window.cyCanvas = __webpack_require__(12);
 
 /* Step-template:
 {
-  title: '',
-  description: '',
-  nodeID: {id},
-  variables: [],
-  ...
-  create: true,
-  destroy: false
+    id: -1,
+    title: title,
+    description: description,
+    nodeID: -1,
+    color: '#0099ff',
+    variables: [],
+    rules: [],
+    create: true,
+    destroy: false
 }
 */
 
@@ -928,6 +930,7 @@ vObj = new Vue({
 
     modalNodeID: -1,
     selectedVariables: [],
+    rules: [],
     editVariableFlags: [],
     selectedColor: '#000000'
   },
@@ -949,7 +952,27 @@ vObj = new Vue({
         });
         return deepCopy;
       } else return [];
+    },
+
+    childrenNodes: function childrenNodes() {
+      var _this = this;
+
+      if (this.modalNodeID == -1) return [];else {
+        var levelIndex = this.getStepLevel(this.modalNodeID);
+        if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+        var options = [];
+        this.levels[levelIndex + 1].steps.forEach(function (element) {
+          options.push({
+            stepID: element,
+            title: _this.steps[element].title,
+            id: _this.steps[element].id,
+            color: _this.steps[element].color
+          });
+        });
+        return options;
+      }
     }
+
   },
 
   methods: {
@@ -999,6 +1022,7 @@ vObj = new Vue({
         nodeID: -1,
         color: '#0099ff',
         variables: [],
+        rules: [],
         create: true,
         destroy: false
       });
@@ -1111,6 +1135,7 @@ vObj = new Vue({
     prepareModal: function prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
       this.selectedVariables = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].variables));
+      this.rules = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].rules));
       this.selectedColor = this.steps[this.modalNodeID].color;
     },
 
@@ -1156,8 +1181,8 @@ vObj = new Vue({
      * Returns a check-image if the image is set to be edited, pencil-image if not.
      * @param {integer} [index] of the variable
      */
-    getImage: function getImage(index) {
-      if (this.editVariableFlags[index]) return '/images/check.svg';else return '/images/pencil.svg';
+    getImage: function getImage(indicator) {
+      if (indicator) return '/images/check.svg';else return '/images/pencil.svg';
     },
 
 
@@ -1167,6 +1192,34 @@ vObj = new Vue({
      */
     editVariable: function editVariable(index) {
       Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+    },
+    addRule: function addRule() {
+      this.rules.push({
+        name: 'Go to target',
+        rule: [],
+        target: -1,
+        editing: true
+      });
+    },
+    removeRule: function removeRule(ruleIndex) {
+      this.rules.splice(ruleIndex, 1);
+    },
+    editRule: function editRule(index) {
+      this.rules[index].editing = !this.rules[index].editing;
+    },
+    getStepLevel: function getStepLevel(stepIndex) {
+      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        var level = this.levels[levelIndex].steps;
+        for (var index = 0; index < level.length; index++) {
+          if (stepIndex == level[index]) return levelIndex;
+        }
+      }
+      return -1;
+    },
+    customLabel: function customLabel(_ref) {
+      var desc = _ref.desc;
+
+      return '' + desc;
     }
   },
 
@@ -1190,6 +1243,9 @@ vObj = new Vue({
             }
           }).id();
           this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeID).style({
+            'label': this.steps[index].id
+          });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -1247,7 +1303,13 @@ var cy = cytoscape({
       'height': '100px',
       'background-color': '#0099ff',
       'border-color': ' #000000',
-      'border-width': '4px'
+      'border-width': '4px',
+      'text-halign': 'center',
+      'text-valign': 'center',
+      'color': '#ffffff',
+      'font-size': '24px',
+      'text-outline-color': '#000000',
+      'text-outline-width': '1px'
     }
   }, {
     selector: '.edge',
@@ -1332,6 +1394,7 @@ cy.on("render cyCanvas.resize", function (evt) {
 
 window.onload = function () {
   vObj.fitView();
+  yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 };
 
 // ============================================================================================= //
@@ -37620,6 +37683,25 @@ function CanvasRenderer(options) {
         // then keep cached ele texture
       } else {
         r.data.eleTxrCache.invalidateElement(ele);
+
+        // NB this block of code should not be ported to 3.3 (unstable branch).
+        // - This check is unneccesary in 3.3 as caches will be stored without respect to opacity.
+        // - This fix may result in lowered performance for compound graphs.
+        // - Ref : Opacity of child node is not updated for certain zoom levels after parent opacity is overriden #2078
+        if (ele.isParent() && de['style']) {
+          var op1 = rs.prevParentOpacity;
+          var op2 = ele.pstyle('opacity').pfValue;
+
+          rs.prevParentOpacity = op2;
+
+          if (op1 !== op2) {
+            var descs = ele.descendants();
+
+            for (var j = 0; j < descs.length; j++) {
+              r.data.eleTxrCache.invalidateElement(descs[j]);
+            }
+          }
+        }
       }
     }
 
@@ -41380,7 +41462,7 @@ module.exports = Stylesheet;
 "use strict";
 
 
-module.exports = "3.2.10";
+module.exports = "3.2.11";
 
 /***/ })
 /******/ ]);
