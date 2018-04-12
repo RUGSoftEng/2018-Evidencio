@@ -182,4 +182,22 @@
 02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
 02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
 02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
-
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Tiny layout fixes
+09.04 - Tiny layout fixes
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
