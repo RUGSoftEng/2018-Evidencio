@@ -24,14 +24,6 @@ Route::get('/search',function(){
   return view('search');
 });
 
-Route::get('/workflow',function(){
-  return view('workflow');
-});
-
-Route::get('/graph',function(){
-  return view('graph');
-});
-
 Route::post('/graph',function(){
   return view('graph');
 });
