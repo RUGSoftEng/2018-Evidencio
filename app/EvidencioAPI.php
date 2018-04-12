@@ -20,14 +20,16 @@ class EvidencioAPI
       ],
       'form_params' => $params
     ]);
-    $json = json_decode($res->getBody());
+
+    $json = json_decode($res->getBody(),true);
+
     if(is_null($json))
     {
       throw new Exceptions\JsonDecodeException("Could not decode API response to JSON: '".$res->getBody()."'.");
     }
     return $json;
   }
-
+   
   public static function overview()
   {
     return self::fetch("overview");

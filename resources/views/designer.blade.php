@@ -1,153 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
 
-<nav id="sidebar">
-    <div id="dismiss">
-        <i class="fas fa-angle-left"></i>
-    </div>
-
-    <div class="sidebar-header">
-        <h3>
-            {{ Auth::user()->name }}
-        </h3>
-    </div>
-
-    <ul class="list-unstyled components">
-        <p>My Account</p>
-        <li>
-            <a class="somethingSomething" href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Workflow</a>
-            <ul class="collapse list-unstyled" id="homeSubmenu">
-                <li><a href="#">Approved</a></li>
-                <li><a href="#">Rejected</a></li>
-                <li><a href="#">Drafts</a></li>
-            </ul>
-        </li>
-        <li>
-            <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
-            <ul class="collapse list-unstyled" id="pageSubmenu">
-                <li><a href="#">Submitted Workflows</a></li>
-                <li><a href="#">User Questions</a></li>
-                <li><a href="#">User Requests</a></li>
-            </ul>
-            <a href="#">Edit Account Details</a>
-        </li>
-            <p class="paragraphInSideMenu" >Help</p>
-        <li>
-            <a href="#">Instructions</a>
-        </li>
-        <li>
-            <a href="#">Contact Us</a>
-        </li>
-    </ul>
-</nav>
-
-<div class="overlay"></div>
-
-<script src="{{ asset('js/sidebar.js') }}"></script>
-<link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+@include('partials.sidebar')
 
 <div class="container-fluid" id="designerDiv">
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalStep" tabindex="-1" role="dialog" aria-labelledby="modalStepOptions" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modelTitleId">Step Options</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h4 v-if="modalNodeID != -1">ID: @{{ steps[modalNodeID].id }}</h4>
-                                <div class="form-group">
-                                    <label for="stepType">Select step-type:</label>
-                                    <select class="custom-select" name="stepType" id="stepType">
-                                        <option value="input" selected>Input</option>
-                                        <option value="result">Result</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-8">
-                                <vue-multiselect v-model="selectedVariables" :options="possibleVariables" :multiple="true" :close-on-select="false" :clear-on-select="false" label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :hide-selected="true" :preserve-search="true" placeholder="Choose variables" :preselect-first="true">
-                                    <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template> 
-                                </vue-multiselect>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div id="accModalSections">
-                                    <div class="card">
-                                        <div class="card-header" id="headingVars" data-toggle="collapse" data-target="#collapseVars" aria-expanded="true" aria-controls="collapseVars">
-                                            <h5 class="mb-0">
-                                                Variables
-                                            </h5>
-                                        </div>
-
-                                        <div id="collapseVars" class="collapse show" aria-labelledby="headingVars" data-parent="#accModalSections">
-                                            <div class="card-body">
-                                                <div id="accModalVars">
-                                                    <div class="card" v-for="(variable, index) in selectedVariables">
-                                                        <div class="card-header collapsed" :id="'collapHeader_' + index" data-toggle="collapse" :data-target="'#collap_' + index" data-parent="#accModalVars" aria-expanded="false" :aria-controls="'collap_' + index">
-                                                            <h6 class="mb-0">
-                                                                    @{{ variable.title }}
-                                                            </h6>
-                                                        </div>
-
-                                                        <div :id="'collap_' + index" class="collapse" :aria-labelledby="'#collap_' + index" data-parent="#accModalVars">
-                                                            <div class="card-body">
-                                                                <form onsubmit="return false">
-                                                                    <div class="form-group">
-                                                                        <label for="titleText">Description: </label>
-                                                                        <textarea name="" id="descriptionText" cols="30" rows="3" v-model="variable.description" :disabled="!editVariableFlags[variable.ind]"></textarea>
-                                                                        &nbsp;&nbsp;
-                                                                        <input type="image" class="buttonIcon" :src="getImage(variable.ind)" @click="editVariable(variable.ind)" alt="Edit">
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>                                            
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header collapsed" id="headingLogic" data-toggle="collapse" data-target="#collapseLogic" aria-expanded="false" aria-controls="collapseLogic">
-                                            <h5 class="mb-0">
-                                                Logic
-                                            </h5>
-                                        </div>
-                                        <div id="collapseLogic" class="collapse" aria-labelledby="headingLogic" data-parent="#accModalSections">
-                                            <div class="card-body">
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" @click="saveChanges">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.designer_modal')
 
     <!-- Normal view -->
     <div class="row justify-content-center">
         <div id="variablesDiv" class="col-sm-3">
         <div id="variablesDivCard" class="card">
-            <div class="card-header">Variables <element v-if='!modelLoaded'><input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></element> </div>
+            <div class="card-header">Variables <template v-if='!modelLoaded'><input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></template> </div>
 
             <div class="card-body scrollbarAtProject">
 
@@ -161,19 +26,21 @@
 
                     </div>
 
-                    <div class="card" v-if='modelLoaded' v-for='(variable, index) in model.variables'>
-                        <div class="card-header collapsed" :id="'heading' + index" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="true" aria-controls="'collapse' + index"  data-parent="#accordion1">
-                            <h5 class="mb-0">
-                                @{{ variable.title }}
-                                <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
+                    <template v-if='modelLoaded'>
+                        <div class="card" v-for='(variable, index) in model.variables'>
+                            <div class="card-header collapsed" :id="'heading' + index" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="true" aria-controls="'collapse' + index"  data-parent="#accordion1">
+                                <h5 class="mb-0">
+                                    @{{ variable.title }}
+                                    <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
 
-                            </h5>
-                        </div>
+                                </h5>
+                            </div>
 
-                        <div :id="'collapse' + index" class="collapse" :aria-labelledby="'#heading' + index" data-parent="#accordion1">
-                            <pre class="language-json"><code>@{{ variable }}</code></pre>
+                            <div :id="'collapse' + index" class="collapse" :aria-labelledby="'#heading' + index" data-parent="#accordion1">
+                                <pre class="language-json"><code>@{{ variable }}</code></pre>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -186,7 +53,7 @@
                     <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
                 </div>
 
-                <div class="card-body" id="graphCardBody">
+                <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
@@ -204,6 +71,7 @@
 </div>
 
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>

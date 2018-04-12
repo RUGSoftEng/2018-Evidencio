@@ -4,12 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< Updated upstream
+
+
     "hash": "043e5af606856e383415b8db7c3ff1eb",
     "content-hash": "1088d10db89e5c954e921cc34e5c8a46",
-=======
-    "content-hash": "d7d80af7992d5bc1d82c93c08f35bdeb",
->>>>>>> Stashed changes
+
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -373,6 +372,7 @@
         },
         {
             "name": "guzzlehttp/guzzle",
+
             "version": "6.3.2",
             "source": {
                 "type": "git",
@@ -554,68 +554,9 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f4db5a78a5ea468d4831de7f0bf9d9415e348699",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/promises": "^1.0",
-                "guzzlehttp/psr7": "^1.4",
-                "php": ">=5.5"
-            },
-            "require-dev": {
-                "ext-curl": "*",
-                "phpunit/phpunit": "^4.0 || ^5.0",
-                "psr/log": "^1.0"
-            },
-            "suggest": {
-                "psr/log": "Required for using the Log middleware"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "6.2-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/functions_include.php"
-                ],
-                "psr-4": {
-                    "GuzzleHttp\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "Guzzle is a PHP HTTP client library",
-            "homepage": "http://guzzlephp.org/",
-            "keywords": [
-                "client",
-                "curl",
-                "framework",
-                "http",
-                "http client",
-                "rest",
-                "web service"
-            ],
+
             "time": "2017-06-22 18:50:49"
+
         },
         {
             "name": "guzzlehttp/promises",
@@ -666,7 +607,8 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20 10:07:11"
+
+            "time": "2016-12-20T10:07:11+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -731,7 +673,9 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20 17:10:46"
+
+            "time": "2017-03-20T17:10:46+00:00"
+
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -956,7 +900,9 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-03-28T14:17:03+00:00"
+
+            "time": "2018-03-14T17:29:38+00:00"
+
         },
         {
             "name": "laravel/tinker",
@@ -1234,7 +1180,9 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-03-19T15:50:49+00:00"
+
+            "time": "2018-03-10T10:10:14+00:00"
+
         },
         {
             "name": "nikic/php-parser",
@@ -1433,6 +1381,7 @@
                 "response"
             ],
             "time": "2016-08-06T14:39:51+00:00"
+
         },
         {
             "name": "psr/http-message",
@@ -1483,6 +1432,7 @@
                 "response"
             ],
             "time": "2016-08-06 14:39:51"
+
         },
         {
             "name": "psr/log",
@@ -3074,7 +3024,9 @@
                 "php",
                 "symfony"
             ],
-            "time": "2018-03-21T20:11:24+00:00"
+
+            "time": "2018-02-18T12:29:27+00:00"
+
         },
         {
             "name": "phar-io/manifest",
@@ -3719,8 +3671,9 @@
                 "phpunit",
                 "testing",
                 "xunit"
-            ],
-            "time": "2018-03-26T07:36:48+00:00"
+            ], 
+            "time": "2018-02-26T07:03:12+00:00"
+
         },
         {
             "name": "phpunit/phpunit-mock-objects",

@@ -8,13 +8,18 @@ window.cyCanvas = require('cytoscape-canvas');
 
     /* Step-template:
     {
-      title: '',
-      description: '',
-      nodeID: {id},
-      variables: [],
-      ...
-      create: true,
-      destroy: false
+        id: -1,
+        title: title,
+        description: description,
+        nodeID: -1,
+        color: '#0099ff',
+        type: 'input' or 'result',
+        create: true,
+        destroy: false,
+        [optional: 
+          variables: [],
+          rules: []
+        ]
     }
     */
 
@@ -43,9 +48,13 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,
+    modalNodeID: -1,    //ID in vue steps-array
+    nodeID: -1,         //ID in database
+    stepType: 'input',
     selectedVariables: [],
-    editVariableFlags: []
+    rules: [],
+    editVariableFlags: [],
+    selectedColor: '#000000'
   },
 
   /**
@@ -59,11 +68,33 @@ vObj = new Vue({
   computed: {
     possibleVariables: function() {
       if (this.modelLoaded) {
-        this.model.variables.map((x, index)=>x['ind'] = index);
-        return this.model.variables;
+        var deepCopy = JSON.parse(JSON.stringify(this.model.variables))
+        deepCopy.map((x, index)=>x['ind'] = index);
+        return deepCopy;
     } else
         return [];
+    },
+
+    childrenNodes: function() {
+      if (this.modalNodeID == -1)
+        return [];
+      else {
+        let levelIndex = this.getStepLevel(this.modalNodeID);
+        if (levelIndex == -1 || levelIndex == this.levels.length-1)
+          return [];
+        let options = []
+        this.levels[levelIndex+1].steps.forEach(element => {
+          options.push({
+            stepID: element,
+            title: this.steps[element].title,
+            id: this.steps[element].id,
+            color: this.steps[element].color
+          });
+        });
+        return options;
+      }
     }
+
   },
 
   methods: {
@@ -109,7 +140,11 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeID: -1,
+        color: '#0099ff',
+        type: 'input',
         variables: [],
+        rules: [],
+        widgetType: 'pieChart',
         create: true,
         destroy: false
       });
@@ -216,7 +251,12 @@ vObj = new Vue({
      */
     prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
-      this.selectedVariables = this.steps[this.modalNodeID].variables;
+      let step = this.steps[this.modalNodeID];
+      this.nodeID = step.id;
+      this.stepType = step.type;
+      this.selectedVariables = JSON.parse(JSON.stringify(step.variables));
+      this.rules = JSON.parse(JSON.stringify(step.rules));
+      this.selectedColor = step.color;
     },
 
     /**
@@ -227,31 +267,92 @@ vObj = new Vue({
       return ' and ' + count + ' other variable(s)';
     },
 
+    /**
+     * Saves the changes made to a step (variables added, etc.)
+     */
     saveChanges() {
-      this.steps[this.modalNodeID].variables = this.selectedVariables;
-      this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
-      for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
-        const elementStep = this.steps[indexStep];
-        for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-          const element = elementStep.variables[indexVariable].ind;
-          this.variablesUsed[element] += 1;             
+      // Set new backgroundcolor
+      cy.getElementById(this.steps[this.modalNodeID].nodeID).style({
+        'background-color': this.selectedColor
+      });
+      this.steps[this.modalNodeID].color = this.selectedColor; 
+      // Reset flags
+      for (let index = 0; index < this.editVariableFlags.length; index++) 
+        this.editVariableFlags[index] = false;
+      // Set (new) step-type
+      this.steps[this.modalNodeID].type = this.stepType;
+      // Set (new) variables
+      this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
+      // Recount variable uses
+      if (this.modelLoaded) {
+        this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
+        for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
+          const elementStep = this.steps[indexStep];
+          if (elementStep.type == 'input') {
+            for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+              const element = elementStep.variables[indexVariable].ind;
+              this.variablesUsed[element] += 1;             
+            }
+          }
         }
       }
     },
 
-    getImage(index) {
-      if (this.editVariableFlags[index])
+    /**
+     * Returns a check-image if the image is set to be edited, pencil-image if not.
+     * @param {integer} [index] of the variable
+     */
+    getImage(indicator) {
+      if (indicator)
         return '/images/check.svg';
       else
         return '/images/pencil.svg';
     },
 
+    /**
+     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
+     * @param {index} index 
+     */
     editVariable(index) {
       Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+    },
+
+    addRule() {
+      this.rules.push({
+        name: 'Go to target',
+        rule: [],
+        target: -1,
+        editing: true
+      });
+    },
+
+    removeRule(ruleIndex) {
+      this.rules.splice(ruleIndex, 1);
+    },
+
+    editRule(index) {
+      this.rules[index].editing = !this.rules[index].editing;
+    },
+
+    getStepLevel(stepIndex) {
+      for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        const level = this.levels[levelIndex].steps;
+        for (let index = 0; index < level.length; index++) {
+          if (stepIndex == level[index])
+            return levelIndex;          
+        }
+      }
+      return -1;
+    },
+    
+    customLabel ({ desc }) {
+      return `${desc}`
+    },
+
+    changeStepType(stepIndex, type) {
+      this.steps[stepIndex].type = type;
     }
-
-
-
+    
   },
 
   watch: {
@@ -268,9 +369,15 @@ vObj = new Vue({
             },
             scratch: {
               '_nodeID': index
+            },
+            style: {
+              'background-color': this.steps[index].color
             }
           }).id();
           this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeID).style({
+            'label': this.steps[index].id
+          })
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -327,8 +434,14 @@ var cy = cytoscape({
         'width': '100px',
         'height': '100px',
         'background-color': '#0099ff',
-        'border-color': ' #005c99',
-        'border-width': '4px'
+        'border-color': ' #000000',
+        'border-width': '4px',
+        'text-halign': 'center',
+        'text-valign': 'center',
+        'color': '#ffffff',
+        'font-size': '24px',
+        'text-outline-color': '#000000',
+        'text-outline-width': '1px'
       }
     },
 
@@ -424,7 +537,15 @@ cy.on("render cyCanvas.resize", function(evt) {
   ctx.restore();
 });
 
+// ============================================================================================= //
 
 window.onload = function() {
   vObj.fitView();
+  //yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 }
+
+// ============================================================================================= //
+
+$('#colorPalette').colorPalette().on('selectColor', function(evt) {
+  vObj.selectedColor = evt.color;
+});
