@@ -13,10 +13,13 @@ window.cyCanvas = require('cytoscape-canvas');
         description: description,
         nodeID: -1,
         color: '#0099ff',
-        variables: [],
-        rules: [],
+        type: 'input' or 'result',
         create: true,
-        destroy: false
+        destroy: false,
+        [optional: 
+          variables: [],
+          rules: []
+        ]
     }
     */
 
@@ -45,7 +48,9 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,
+    modalNodeID: -1,    //ID in vue steps-array
+    nodeID: -1,         //ID in database
+    stepType: 'input',
     selectedVariables: [],
     rules: [],
     editVariableFlags: [],
@@ -136,8 +141,10 @@ vObj = new Vue({
         description: description,
         nodeID: -1,
         color: '#0099ff',
+        type: 'input',
         variables: [],
         rules: [],
+        widgetType: 'pieChart',
         create: true,
         destroy: false
       });
@@ -244,9 +251,12 @@ vObj = new Vue({
      */
     prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
-      this.selectedVariables = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].variables));
-      this.rules = JSON.parse(JSON.stringify(this.steps[this.modalNodeID].rules));
-      this.selectedColor = this.steps[this.modalNodeID].color;
+      let step = this.steps[this.modalNodeID];
+      this.nodeID = step.id;
+      this.stepType = step.type;
+      this.selectedVariables = JSON.parse(JSON.stringify(step.variables));
+      this.rules = JSON.parse(JSON.stringify(step.rules));
+      this.selectedColor = step.color;
     },
 
     /**
@@ -265,20 +275,24 @@ vObj = new Vue({
       cy.getElementById(this.steps[this.modalNodeID].nodeID).style({
         'background-color': this.selectedColor
       });
-      this.steps[this.modalNodeID].color = this.selectedColor;
+      this.steps[this.modalNodeID].color = this.selectedColor; 
       // Reset flags
       for (let index = 0; index < this.editVariableFlags.length; index++) 
         this.editVariableFlags[index] = false;
-      // Set new variables
+      // Set (new) step-type
+      this.steps[this.modalNodeID].type = this.stepType;
+      // Set (new) variables
       this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
       // Recount variable uses
       if (this.modelLoaded) {
         this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
         for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
           const elementStep = this.steps[indexStep];
-          for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-            const element = elementStep.variables[indexVariable].ind;
-            this.variablesUsed[element] += 1;             
+          if (elementStep.type == 'input') {
+            for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+              const element = elementStep.variables[indexVariable].ind;
+              this.variablesUsed[element] += 1;             
+            }
           }
         }
       }
@@ -333,6 +347,10 @@ vObj = new Vue({
     
     customLabel ({ desc }) {
       return `${desc}`
+    },
+
+    changeStepType(stepIndex, type) {
+      this.steps[stepIndex].type = type;
     }
     
   },
@@ -523,7 +541,7 @@ cy.on("render cyCanvas.resize", function(evt) {
 
 window.onload = function() {
   vObj.fitView();
-  yaSimpleScrollbar.attach(document.getElementById('modalCard'));
+  //yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 }
 
 // ============================================================================================= //

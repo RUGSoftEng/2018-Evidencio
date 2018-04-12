@@ -48,9 +48,8 @@ body {
 
 .badge-maxwidth {
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: calc(100% - 19px);
+  max-width: calc(100% - 15px);
   display: inline-block;
 }
 
@@ -126,6 +125,11 @@ body {
 
 #modalCard {
   height: 50vh;
+  overflow-y: auto;
+}
+
+.yass-wrapper {
+  z-index: 0 !important;
 }
 
 
