@@ -29,7 +29,7 @@ class EvidencioAPI
     }
     return $json;
   }
-   
+
   public static function overview()
   {
     return self::fetch("overview");
@@ -55,6 +55,12 @@ class EvidencioAPI
    */
   public static function run($id,$values)
   {
+    foreach ($values as $answers) {
+      if (is_numeric($answers)) {
+        $answers = floatval($answers);
+
+      }
+    }
     $values["id"] = $id;
     return self::fetch("run",$values);
   }

@@ -11,7 +11,7 @@
 
     <div class="sidebar-header">
         <h3>
-            {{ Auth::user()->name }}
+          dammes
         </h3>
     </div>
 
@@ -77,7 +77,7 @@
 
                             <div class="col-md-8">
                                 <vue-multiselect v-model="selectedVariables" :options="possibleVariables" :multiple="true" :close-on-select="false" :clear-on-select="false" label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :hide-selected="true" :preserve-search="true" placeholder="Choose variables" :preselect-first="true">
-                                    <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template> 
+                                    <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template>
                                 </vue-multiselect>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>                                            
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -177,12 +177,12 @@
                 </div>
             </div>
         </div>
-        
+
         </div>
         <div id="graphDiv" class="col-sm-9">
             <div id="graphDivCard" class="card" >
                 <div class="card-header">
-                    Designer 
+                    Designer
                     <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
                 </div>
 

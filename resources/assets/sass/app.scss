@@ -28,3 +28,20 @@
   height: 40px;
   position: relative;
 }
+
+#topbox
+{
+	width:100%;
+	height:250px;
+	background-color:#290014;
+	float:top;
+	position: absolute;
+	top:0px;
+	left:-10px;
+	border-bottom: 3px solid #E68A5C;
+}
+
+.sliderInput{
+  display:grid;
+  grid-template-columns: 15% 2% 10%;
+}
