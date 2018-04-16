@@ -16,12 +16,7 @@
         <ul class="list-unstyled components">
             <p>My Account</p>
             <li>
-                <a class="somethingSomething" href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Workflow</a>
-                <ul class="collapse list-unstyled" id="homeSubmenu">
-                    <li><a href="#">Approved</a></li>
-                    <li><a href="#">Rejected</a></li>
-                    <li><a href="#">Drafts</a></li>
-                </ul>
+                <a href="/myworkflows">My Workflows</a>
             </li>
             <li>
                 <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>

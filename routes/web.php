@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('patient');
 });
 
+
+Route::get('/myworkflows', function () {
+    return view('myworkflows');
+});
+
 Auth::routes();
 
 Route::get('/designer', 'DesignerController@index')->name('designer');
