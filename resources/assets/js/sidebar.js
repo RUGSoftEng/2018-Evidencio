@@ -1,15 +1,11 @@
 var $ = require('jquery');
 window.$ = $;
-require("malihu-custom-scrollbar-plugin");
-require("jquery-mousewheel");
 require('octicons');
 
 
 $(document).ready(function () {
-    $("#sidebar").mCustomScrollbar({
-        theme: "minimal"
-    });
-
+    yaSimpleScrollbar.attach(document.getElementById('sidebar'));
+    
     $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><span><i class="fas fa-user"></i></span></button>');
 
 

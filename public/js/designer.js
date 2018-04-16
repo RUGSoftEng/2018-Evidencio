@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 58);
+/******/ 	return __webpack_require__(__webpack_require__.s = 55);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -611,7 +611,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -870,19 +870,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ 58:
+/***/ 55:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(59);
+module.exports = __webpack_require__(56);
 
 
 /***/ }),
 
-/***/ 59:
+/***/ 56:
 /***/ (function(module, exports, __webpack_require__) {
 
 window.cytoscape = __webpack_require__(7);
-window.Vue = __webpack_require__(60);
+window.Vue = __webpack_require__(57);
 Vue.component('vue-multiselect', window.VueMultiselect.default);
 window.cyCanvas = __webpack_require__(12);
 
@@ -891,13 +891,18 @@ window.cyCanvas = __webpack_require__(12);
 
 /* Step-template:
 {
-  title: '',
-  description: '',
-  nodeID: {id},
-  variables: [],
-  ...
-  create: true,
-  destroy: false
+    id: -1,
+    title: title,
+    description: description,
+    nodeID: -1,
+    color: '#0099ff',
+    type: 'input' or 'result',
+    create: true,
+    destroy: false,
+    [optional: 
+      variables: [],
+      rules: []
+    ]
 }
 */
 
@@ -926,9 +931,13 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,
+    modalNodeID: -1, //ID in vue steps-array
+    nodeID: -1, //ID in database
+    stepType: 'input',
     selectedVariables: [],
-    editVariableFlags: []
+    rules: [],
+    editVariableFlags: [],
+    selectedColor: '#000000'
   },
 
   /**
@@ -942,12 +951,33 @@ vObj = new Vue({
   computed: {
     possibleVariables: function possibleVariables() {
       if (this.modelLoaded) {
-        this.model.variables.map(function (x, index) {
+        var deepCopy = JSON.parse(JSON.stringify(this.model.variables));
+        deepCopy.map(function (x, index) {
           return x['ind'] = index;
         });
-        return this.model.variables;
+        return deepCopy;
       } else return [];
+    },
+
+    childrenNodes: function childrenNodes() {
+      var _this = this;
+
+      if (this.modalNodeID == -1) return [];else {
+        var levelIndex = this.getStepLevel(this.modalNodeID);
+        if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+        var options = [];
+        this.levels[levelIndex + 1].steps.forEach(function (element) {
+          options.push({
+            stepID: element,
+            title: _this.steps[element].title,
+            id: _this.steps[element].id,
+            color: _this.steps[element].color
+          });
+        });
+        return options;
+      }
     }
+
   },
 
   methods: {
@@ -995,7 +1025,11 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeID: -1,
+        color: '#0099ff',
+        type: 'input',
         variables: [],
+        rules: [],
+        widgetType: 'pieChart',
         create: true,
         destroy: false
       });
@@ -1107,7 +1141,12 @@ vObj = new Vue({
      */
     prepareModal: function prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
-      this.selectedVariables = this.steps[this.modalNodeID].variables;
+      var step = this.steps[this.modalNodeID];
+      this.nodeID = step.id;
+      this.stepType = step.type;
+      this.selectedVariables = JSON.parse(JSON.stringify(step.variables));
+      this.rules = JSON.parse(JSON.stringify(step.rules));
+      this.selectedColor = step.color;
     },
 
 
@@ -1118,22 +1157,86 @@ vObj = new Vue({
     multiselectVariablesText: function multiselectVariablesText(count) {
       return ' and ' + count + ' other variable(s)';
     },
+
+
+    /**
+     * Saves the changes made to a step (variables added, etc.)
+     */
     saveChanges: function saveChanges() {
-      this.steps[this.modalNodeID].variables = this.selectedVariables;
-      this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf, 0);
-      for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
-        var elementStep = this.steps[indexStep];
-        for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-          var element = elementStep.variables[indexVariable].ind;
-          this.variablesUsed[element] += 1;
+      // Set new backgroundcolor
+      cy.getElementById(this.steps[this.modalNodeID].nodeID).style({
+        'background-color': this.selectedColor
+      });
+      this.steps[this.modalNodeID].color = this.selectedColor;
+      // Reset flags
+      for (var index = 0; index < this.editVariableFlags.length; index++) {
+        this.editVariableFlags[index] = false;
+      } // Set (new) step-type
+      this.steps[this.modalNodeID].type = this.stepType;
+      // Set (new) variables
+      this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
+      // Recount variable uses
+      if (this.modelLoaded) {
+        this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf, 0);
+        for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
+          var elementStep = this.steps[indexStep];
+          if (elementStep.type == 'input') {
+            for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+              var element = elementStep.variables[indexVariable].ind;
+              this.variablesUsed[element] += 1;
+            }
+          }
         }
       }
     },
-    getImage: function getImage(index) {
-      if (this.editVariableFlags[index]) return '/images/check.svg';else return '/images/pencil.svg';
+
+
+    /**
+     * Returns a check-image if the image is set to be edited, pencil-image if not.
+     * @param {integer} [index] of the variable
+     */
+    getImage: function getImage(indicator) {
+      if (indicator) return '/images/check.svg';else return '/images/pencil.svg';
     },
+
+
+    /**
+     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
+     * @param {index} index 
+     */
     editVariable: function editVariable(index) {
       Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+    },
+    addRule: function addRule() {
+      this.rules.push({
+        name: 'Go to target',
+        rule: [],
+        target: -1,
+        editing: true
+      });
+    },
+    removeRule: function removeRule(ruleIndex) {
+      this.rules.splice(ruleIndex, 1);
+    },
+    editRule: function editRule(index) {
+      this.rules[index].editing = !this.rules[index].editing;
+    },
+    getStepLevel: function getStepLevel(stepIndex) {
+      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        var level = this.levels[levelIndex].steps;
+        for (var index = 0; index < level.length; index++) {
+          if (stepIndex == level[index]) return levelIndex;
+        }
+      }
+      return -1;
+    },
+    customLabel: function customLabel(_ref) {
+      var desc = _ref.desc;
+
+      return '' + desc;
+    },
+    changeStepType: function changeStepType(stepIndex, type) {
+      this.steps[stepIndex].type = type;
     }
   },
 
@@ -1151,9 +1254,15 @@ vObj = new Vue({
             },
             scratch: {
               '_nodeID': index
+            },
+            style: {
+              'background-color': this.steps[index].color
             }
           }).id();
           this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeID).style({
+            'label': this.steps[index].id
+          });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -1210,8 +1319,14 @@ var cy = cytoscape({
       'width': '100px',
       'height': '100px',
       'background-color': '#0099ff',
-      'border-color': ' #005c99',
-      'border-width': '4px'
+      'border-color': ' #000000',
+      'border-width': '4px',
+      'text-halign': 'center',
+      'text-valign': 'center',
+      'color': '#ffffff',
+      'font-size': '24px',
+      'text-outline-color': '#000000',
+      'text-outline-width': '1px'
     }
   }, {
     selector: '.edge',
@@ -1292,13 +1407,22 @@ cy.on("render cyCanvas.resize", function (evt) {
   ctx.restore();
 });
 
+// ============================================================================================= //
+
 window.onload = function () {
   vObj.fitView();
+  //yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 };
+
+// ============================================================================================= //
+
+$('#colorPalette').colorPalette().on('selectColor', function (evt) {
+  vObj.selectedColor = evt.color;
+});
 
 /***/ }),
 
-/***/ 60:
+/***/ 57:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37576,6 +37700,25 @@ function CanvasRenderer(options) {
         // then keep cached ele texture
       } else {
         r.data.eleTxrCache.invalidateElement(ele);
+
+        // NB this block of code should not be ported to 3.3 (unstable branch).
+        // - This check is unneccesary in 3.3 as caches will be stored without respect to opacity.
+        // - This fix may result in lowered performance for compound graphs.
+        // - Ref : Opacity of child node is not updated for certain zoom levels after parent opacity is overriden #2078
+        if (ele.isParent() && de['style']) {
+          var op1 = rs.prevParentOpacity;
+          var op2 = ele.pstyle('opacity').pfValue;
+
+          rs.prevParentOpacity = op2;
+
+          if (op1 !== op2) {
+            var descs = ele.descendants();
+
+            for (var j = 0; j < descs.length; j++) {
+              r.data.eleTxrCache.invalidateElement(descs[j]);
+            }
+          }
+        }
       }
     }
 
@@ -41336,7 +41479,7 @@ module.exports = Stylesheet;
 "use strict";
 
 
-module.exports = "3.2.10";
+module.exports = "3.2.11";
 
 /***/ })
 /******/ ]);
@@ -41535,7 +41678,7 @@ module.exports = "3.2.10";
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 

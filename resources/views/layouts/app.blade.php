@@ -27,6 +27,8 @@
 </head>
 <body>
     <div id="app" style="height:100%">
+        <div class="overlay"></div>
+
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel row">
 
             <div id="navbarContainer" class="container">
@@ -34,7 +36,7 @@
 
                 </div>
                 <a id="theBrandName" class="navbar-brand" href="{{ url('/') }}">
-                <span class="hideOverflow">  {{ config('app.name', 'Laravel') }} </span>
+                    <span class="d-none d-md-inline">Evidencio </span>Patient Portal
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
