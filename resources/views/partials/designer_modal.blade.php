@@ -27,13 +27,13 @@
                             </div>
                         </div>
 
-                        <div class="col-md-8" v-if="modalStepType == 'input'">
+                        <div class="col-md-8" v-if="modalStepType === 'input'">
                             <vue-multiselect v-model="modalMultiselectSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables" group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false" label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true" placeholder="Choose variables" @remove="modalRemoveVariables" @select="modalSelectVariables">
                                 <template slot="tag" slot-scope="props"><span class="badge badge-info badge-larger"><span class="badge-maxwidth">@{{ props.option.title }}</span>&nbsp;<span class="custom__remove" @click="props.remove(props.option)">❌</span></span></template> 
                             </vue-multiselect>
                         </div>
 
-                        <div class="col-md-8" v-if="modalStepType == 'result'">
+                        <div class="col-md-8" v-if="modalStepType === 'result'">
                             
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col">
                             
-                            <div class="card" v-if="modalStepType == 'input'">
+                            <div class="card" v-if="modalStepType === 'input'">
                                 <div class="card-header">
                                     <nav>
                                         <div class="nav nav-tabs card-header-tabs nav-scroll" id="nav-tab-modal" role="tablist">
@@ -131,11 +131,90 @@
                                 </div>
                             </div>
 
-                            <div class="card" v-if="modalStepType == 'result'">
-                                
+                            <div id="outputOptionsMenu" class="card" v-if="modalStepType === 'result'">
+                                <div id="outputCategories" class="row vdivide">
+                                    <div id="outputTypeLeft" class="col-sm-6">
 
+                                        <div id="outputCategoriesAccordion">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                                                        Item #1
+                                                    </a>
+                                                </div>
+                                                <div id="collapseOne" class="collapse show" data-parent="#outputCategoriesAccordion">
+                                                    <div class="card-body">
+                                                        Lorem ipsum..
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+                                                        Item #2
+                                                    </a>
+                                                </div>
+                                                <div id="collapseTwo" class="collapse" data-parent="#outputCategoriesAccordion">
+                                                    <div class="card-body">
+                                                        Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius referrentur. Ad ius semper iuvaret, albucius placerat mea ad. Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri viderer nominavi an, eu solet labores deserunt vim, te diceret adipiscing liberavisse qui. Eos in viris tacimates periculis, in pri consequat theophrastus, amet accusamus duo in. Aperiri verterem per et, augue congue cu vis.
+
+                                                        Ne inani erroribus cum. Essent tritani insolens eu pri. Ei dolore mucius detraxit sea, vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno patrioque intellegam.
+
+                                                        Te sit minimum albucius. Ad scripta consulatu vim, cu case laudem partem vix. Ei eos consul inimicus, ius id blandit deseruisse. Est purto idque ea, per cu eripuit saperet consetetur.
+
+                                                        Id vim error nihil noster, in illud oblique sententiae nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima aperiri legendos duo, ut rebum ullamcorper deterruisset his. Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit. Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus, alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae scribentur his cu.
+
+                                                        At eos vero noster. Ius vitae everti an, pro eu dicunt convenire splendide. Vim natum illum signiferumque et, numquam petentium per id. No duo adolescens vituperatoribus, luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi conclusionemque in vel.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+                                                        Item #3
+                                                    </a>
+                                                </div>
+                                                <div id="collapseThree" class="collapse" data-parent="#outputCategoriesAccordion">
+                                                    <div class="card-body">
+                                                        Lorem ipsum..
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
+                                                        Item #4
+                                                    </a>
+                                                </div>
+                                                <div id="collapseFour" class="collapse" data-parent="#outputCategoriesAccordion">
+                                                    <div class="card-body">
+                                                        Lorem ipsum..
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
+                                                        Item #5
+                                                    </a>
+                                                </div>
+                                                <div id="collapseFive" class="collapse" data-parent="#outputCategoriesAccordion">
+                                                    <div class="card-body">
+                                                        Lorem ipsum..
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div id="outputTypeRight" class="col-sm-6">
+                                        TODO: Preview..
+                                    </div>
+
+                                </div>
                             </div>
-            
                         </div>
                     </div>
                 </div>
