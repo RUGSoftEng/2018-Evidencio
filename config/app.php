@@ -114,7 +114,7 @@ return [
      |--------------------------------------------------------------------------
      */
 
-     'evidencio_key' => 'Bearer '.env('EVIDENCIO_KEY'),
+     'evidencio_key' => env('EVIDENCIO_KEY'),
 
 
     /*
