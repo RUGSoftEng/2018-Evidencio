@@ -12,7 +12,7 @@
     <div class="row justify-content-center">
         <div id="variablesDiv" class="col-sm-3">
         <div id="variablesDivCard" class="card">
-            <div class="card-header">Variables <template v-if='!modelLoaded'><input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></template> </div>
+            <div class="card-header">Variables<input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></template> </div>
 
             <div class="card-body scrollbarAtProject">
 
@@ -27,13 +27,13 @@
                     </div>
 
                     <template v-if='modelLoaded'>
-                        <div class="card" v-for='(variable, index) in model.variables'>
+                        <div class="card" v-for='(variable, index) in allVariables'>
                             <div class="card-header collapsed" :id="'heading' + index" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="true" aria-controls="'collapse' + index"  data-parent="#accordion1">
-                                <h5 class="mb-0">
+                                <h6 class="mb-0">
                                     @{{ variable.title }}
-                                    <span class="badge badge-pill" :class="{'badge-danger': variablesUsed[index]==0, 'badge-success': variablesUsed[index]>0}">@{{ variablesUsed[index] }}</span>
+                                    <span class="badge badge-pill" :class="{'badge-danger': timesUsedVariables[index]==0, 'badge-success': timesUsedVariables[index]>0}">@{{ timesUsedVariables[index] }}</span>
 
-                                </h5>
+                                </h6>
                             </div>
 
                             <div :id="'collapse' + index" class="collapse" :aria-labelledby="'#heading' + index" data-parent="#accordion1">

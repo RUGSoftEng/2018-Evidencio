@@ -33,8 +33,10 @@ vObj = new Vue({
   data: {
     modelLoaded: false,
     modelID: 0,
-    model: [],
-    variablesUsed: [],
+    models: [],
+    numVariables: 0,
+    usedVariables: {},
+    timesUsedVariables: [],
 
     steps: [],
     levels: [],
@@ -49,12 +51,20 @@ vObj = new Vue({
     addStepButtons: [],
 
     modalNodeID: -1,    //ID in vue steps-array
-    nodeID: -1,         //ID in database
-    stepType: 'input',
-    selectedVariables: [],
-    rules: [],
-    editVariableFlags: [],
-    selectedColor: '#000000'
+    modalDatabaseStepID: -1,         //ID in database
+    modalStepType: 'input',
+    modalSelectedColor: '#000000',
+    modalMultiselectSelectedVariables: [],
+    modalSelectedVariables: [],
+    modalVarCounter: -1,
+    modalUsedVariables: {},
+    modalEditVariableFlags: [],
+    modalRules: [],
+    modalEditRuleFlags: [],
+    modalApiCall: {
+      model: null,
+      variables: []
+    }    
   },
 
   /**
@@ -66,33 +76,67 @@ vObj = new Vue({
   },
 
   computed: {
+    allVariables: function() {
+      if (this.modelLoaded) {
+        var allvars = [];
+        this.models.forEach(element => {
+          allvars = allvars.concat(element.variables);
+        });
+        return allvars;
+      } else
+        return [];
+    },
+
     possibleVariables: function() {
       if (this.modelLoaded) {
-        var deepCopy = JSON.parse(JSON.stringify(this.model.variables))
-        deepCopy.map((x, index)=>x['ind'] = index);
+        deepCopy = JSON.parse(JSON.stringify(this.models));
+        let counter = 0;
+        deepCopy.forEach(element => {
+          element.variables.map((x, index)=>x['ind'] = counter + index);
+          counter += element.variables.length;
+        });
         return deepCopy;
-    } else
-        return [];
+      }
+      return [];
     },
 
     childrenNodes: function() {
       if (this.modalNodeID == -1)
         return [];
-      else {
-        let levelIndex = this.getStepLevel(this.modalNodeID);
-        if (levelIndex == -1 || levelIndex == this.levels.length-1)
-          return [];
-        let options = []
-        this.levels[levelIndex+1].steps.forEach(element => {
-          options.push({
-            stepID: element,
-            title: this.steps[element].title,
-            id: this.steps[element].id,
-            color: this.steps[element].color
-          });
+      let levelIndex = this.getStepLevel(this.modalNodeID);
+      if (levelIndex == -1 || levelIndex == this.levels.length-1)
+        return [];
+      let options = []
+      this.levels[levelIndex+1].steps.forEach(element => {
+        options.push({
+          stepID: element,
+          title: this.steps[element].title,
+          id: this.steps[element].id,
+          color: this.steps[element].color
         });
-        return options;
+      });
+      return options;
+    },
+
+    modelChoiceRepresentation: function() {
+      let representation = [];
+      this.models.forEach(element => {
+        representation.push({
+          title: element.title,
+          id: element.id
+        });
+      });
+      return representation;
+    },
+
+    editedVariables: function() {
+      let editedVars = [];
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          editedVars.push(this.usedVariables[key]);
+        }
       }
+      return editedVars;
     }
 
   },
@@ -104,20 +148,35 @@ vObj = new Vue({
      */
     loadModelEvidencio() {
       var self = this;
-      $.ajax({
-        url: '/designer/fetch',
-        data: {
-          modelID: self.modelID
-        },
-        success: function(result) {
-          self.model = JSON.parse(result);
-          self.modelLoaded = true;
-          self.variablesUsed = Array.apply(null, Array(self.model.variables.length)).map(Number.prototype.valueOf,0);
-          self.editVariableFlags = new Array(self.model.variables.length).fill(false);
-        }
-      });
+      if (!this.isModelLoaded(this.modelID)) {
+        $.ajax({
+          url: '/designer/fetch',
+          data: {
+            modelID: self.modelID
+          },
+          success: function(result) {
+            self.models.push(JSON.parse(result));
+            let newVars = self.models[self.models.length - 1].variables.length;
+            self.numVariables += newVars;
+            self.modelLoaded = true;
+            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf,0));
+          }
+        });
+      }
+      this.modelID = 0;
     },
 
+    /**
+     * Checks if a model is already loaded, to ensure models aren't loaded twice.
+     * @param {integer} [modelID] of the model to be checked.
+     */
+    isModelLoaded(modelID) {
+      this.models.forEach(element => {
+        if (element.id == modelID)
+          return true;
+      });
+      return false;
+    },
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {integer} [index] of position level should be added
@@ -143,8 +202,12 @@ vObj = new Vue({
         color: '#0099ff',
         type: 'input',
         variables: [],
+        varCounter: 0,
         rules: [],
-        widgetType: 'pieChart',
+        apiCall: {
+          model: null,
+          variables: []
+        },
         create: true,
         destroy: false
       });
@@ -252,11 +315,37 @@ vObj = new Vue({
     prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
       let step = this.steps[this.modalNodeID];
-      this.nodeID = step.id;
-      this.stepType = step.type;
-      this.selectedVariables = JSON.parse(JSON.stringify(step.variables));
-      this.rules = JSON.parse(JSON.stringify(step.rules));
-      this.selectedColor = step.color;
+      this.modalDatabaseStepID = step.id;
+      this.modalStepType = step.type;
+      this.modalSelectedColor = step.color;
+      this.modalSelectedVariables = step.variables.slice();
+      this.modalVarCounter = step.varCounter;
+      this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
+      this.modalRules = JSON.parse(JSON.stringify(step.rules));
+      this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
+      this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
+      this.setSelectedVariables();
+    },
+
+    /**
+     * Adds the selected variables to the selectedVariable part of the multiselect.
+     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
+     */
+    setSelectedVariables() {
+      this.modalMultiselectSelectedVariables = [];
+      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
+        let origID = this.modalUsedVariables[this.modalSelectedVariables[index]].id;
+        findVariable:
+        for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
+          const element = this.possibleVariables[indexOfMod];
+          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
+            if (element.variables[indexInMod].id == origID) {
+              this.modalMultiselectSelectedVariables.push(element.variables[indexInMod]);
+              break findVariable;
+            }
+          }
+        }
+      }
     },
 
     /**
@@ -271,31 +360,28 @@ vObj = new Vue({
      * Saves the changes made to a step (variables added, etc.)
      */
     saveChanges() {
+      let step = this.steps[this.modalNodeID];
       // Set new backgroundcolor
-      cy.getElementById(this.steps[this.modalNodeID].nodeID).style({
-        'background-color': this.selectedColor
+      cy.getElementById(step.nodeID).style({
+        'background-color': this.modalSelectedColor
       });
-      this.steps[this.modalNodeID].color = this.selectedColor; 
+      step.color = this.modalSelectedColor; 
       // Reset flags
-      for (let index = 0; index < this.editVariableFlags.length; index++) 
-        this.editVariableFlags[index] = false;
+      for (let index = 0; index < this.modalEditVariableFlags.length; index++) 
+        this.modalEditVariableFlags[index] = false;
       // Set (new) step-type
-      this.steps[this.modalNodeID].type = this.stepType;
+      step.type = this.modalStepType;
       // Set (new) variables
-      this.steps[this.modalNodeID].variables = JSON.parse(JSON.stringify(this.selectedVariables));
+      step.variables = this.modalSelectedVariables.slice();
+      step.varCounter = this.modalVarCounter;
+      this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
+      // Set (new) rules
+      step.rules = JSON.parse(JSON.stringify(this.modalRules));
+      // Set (new) API-call
+      step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
       // Recount variable uses
-      if (this.modelLoaded) {
-        this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf,0);
-        for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
-          const elementStep = this.steps[indexStep];
-          if (elementStep.type == 'input') {
-            for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-              const element = elementStep.variables[indexVariable].ind;
-              this.variablesUsed[element] += 1;             
-            }
-          }
-        }
-      }
+      this.modalSelectedVariables = [];
+      this.recountVariableUses();      
     },
 
     /**
@@ -314,26 +400,42 @@ vObj = new Vue({
      * @param {index} index 
      */
     editVariable(index) {
-      Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+      Vue.set(this.modalEditVariableFlags, index, !this.modalEditVariableFlags[index]);
     },
 
+    /**
+     * Adds a rule to the list of rules
+     */
     addRule() {
-      this.rules.push({
+      this.modalRules.push({
         name: 'Go to target',
         rule: [],
-        target: -1,
-        editing: true
+        target: -1
       });
+      this.modalEditRuleFlags.push(false);
     },
 
+    /**
+     * Removes the rule with the given index from the list
+     * @param {integer} [ruleIndex] of rule to be removed
+     */
     removeRule(ruleIndex) {
-      this.rules.splice(ruleIndex, 1);
+      this.modalRules.splice(ruleIndex, 1);
+      this.modalEditRuleFlags.splice(ruleIndex, 1);
     },
 
+    /**
+     * Allows for a rule to be edited.
+     * @param {integer} [index] of the rule to be edited
+     */
     editRule(index) {
-      this.rules[index].editing = !this.rules[index].editing;
+      Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
     },
 
+    /**
+     * Returns the level (height in graph) of a step
+     * @param {integer} [stepIndex] of step
+     */
     getStepLevel(stepIndex) {
       for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
         const level = this.levels[levelIndex].steps;
@@ -344,15 +446,113 @@ vObj = new Vue({
       }
       return -1;
     },
-    
-    customLabel ({ desc }) {
-      return `${desc}`
+
+    /**
+     * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
+     * @param {integer} [modelID] is the Evidencio model ID.
+     */
+    getModelIndex(modelID) {
+      for (let index = 0; index < this.models.length; index++) {
+        if(this.models[index].id == modelID)
+          return index;
+      }
+      return -1;      
     },
 
-    changeStepType(stepIndex, type) {
-      this.steps[stepIndex].type = type;
-    }
+    /**
+     * Sets the variables-array in the apiCall-object to the variables of the newly selected model
+     * @param {object} [selectedModel] is the newly selected model
+     */
+    apiCallModelChangeAction(selectedModel) {
+      let modID = this.getModelIndex(selectedModel.id);
+      if (modID == -1) {
+        this.modalApiCall.variables = [];
+        return;
+      }
+      let modVars = [];
+      this.models[modID].variables.forEach(element => {
+        modVars.push({
+          originalTitle: element.title,
+          originalID: element.id,
+          targetID: null
+        });  
+      });
+      this.modalApiCall.variables = modVars;
+    },
+
+    /**
+     * Recounts the number of times a variable is used, to be used whenever this changes.
+     */
+    recountVariableUses() {
+      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf,0);
+      this.modalSelectedVariables.forEach(element => {
+        this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
+      });
+      for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
+        const elementStep = this.steps[indexStep];
+        if (elementStep.type == 'input') {
+          for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+            const element = elementStep.variables[indexVariable];
+            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;             
+          }
+        }
+      }
+    },
+
+    /**
+     * Removes the variables from the step.
+     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     */
+    modalRemoveVariables(removedVariables) {
+      if (removedVariables.constructor == Array) {
+        removedVariables.forEach(element => {
+          this.modalRemoveSingleVariable(element);
+        });
+      } else {
+        this.modalRemoveSingleVariable(removedVariables);
+      }
+    },
+
+    /**
+     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
+     * @param {object} [removedVariable] the variable-object to be removed
+     */
+    modalRemoveSingleVariable(removedVariable) {
+      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
+        if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
+          delete this.modalUsedVariables[this.modalSelectedVariables[index]];
+          this.modalSelectedVariables.splice(index, 1);
+          this.modalEditVariableFlags.splice(index, 1);
+          return;
+        }
+      }
+    },
+
+    /**
+     * Selects the variables from the step.
+     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
+     */
+    modalSelectVariables(selectedVariables) {
+      if (selectedVariables.constructor == Array) {
+        selectedVariables.forEach(element => {
+          this.modalSelectSingleVariable(element);
+        });
+      } else {
+        this.modalSelectSingleVariable(selectedVariables);
+      }
+    },
     
+    /**
+     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
+     * @param {object} [selectedVariable] the variable-object to be selected
+     */
+    modalSelectSingleVariable(selectedVariable) {
+      let varName = 'var' + this.modalNodeID + '_' + this.modalVarCounter++;
+      this.modalSelectedVariables.push(varName);
+      this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+      this.modalEditVariableFlags.push(false);
+    }
+
   },
 
   watch: {
@@ -415,6 +615,10 @@ vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
+    },
+    
+    selectedVariables: function() {
+      this.recountVariableUses();
     }
 
   }
@@ -541,11 +745,10 @@ cy.on("render cyCanvas.resize", function(evt) {
 
 window.onload = function() {
   vObj.fitView();
-  //yaSimpleScrollbar.attach(document.getElementById('modalCard'));
 }
 
 // ============================================================================================= //
 
 $('#colorPalette').colorPalette().on('selectColor', function(evt) {
-  vObj.selectedColor = evt.color;
+  vObj.modalSelectedColor = evt.color;
 });
