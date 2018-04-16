@@ -111,8 +111,17 @@ body {
 /* ------------------- modal ----------------------- */
 
 .nav-link.active {
-  border-bottom-color: #fff !important;
+  border-bottom: none !important;
   background-color: #fff !important;
+}
+
+.nav-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: -webkit-box;
+  display: -moz-box;
+  -ms-flex-wrap: nowrap !important;
+      flex-wrap: nowrap !important;
 }
 
 .fade {
@@ -130,6 +139,76 @@ body {
 
 .yass-wrapper {
   z-index: 0 !important;
+}
+
+/* ------------------- Table responsive ------------------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: hidden;
+}
+
+/* Stack rows vertically on small screens */
+
+@media (max-width: 30em) {
+  /* Hide column labels */
+
+  thead tr {
+    position: absolute;
+    top: -9999em;
+    left: -9999em;
+  }
+
+  /* Leave a space between table rows */
+
+  tr + tr {
+    margin-top: 1.5em;
+  }
+
+  /* Get table cells to act like rows */
+
+  tr,
+  td {
+    display: block;
+  }
+
+  /* Leave a space for data labels */
+
+  td {
+    padding-left: 50%;
+  }
+
+  /* Add data labels */
+
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    margin-left: -100%;
+    width: 100%;
+  }
+
+  tr {
+    border: solid;
+    border-width: 1px 0;
+  }
+}
+
+/* Stack labels vertically on smaller screens */
+
+@media (max-width: 20em) {
+  td {
+    padding-left: 0;
+  }
+
+  td:before {
+    display: block;
+    margin-left: 0;
+  }
 }
 
 
