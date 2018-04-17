@@ -104,3 +104,127 @@
 25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
 25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
 25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+02.04 - Made number in badge after variable show the actual number of times a variable is assigned to a Step
+02.04 - Made badge change color depending on if used or not
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Tiny layout fixes
+09.04 - Tiny layout fixes
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Finished first version of API-call variable mapping
+16.04 - Working on Architecture document
+16.04 - Working on Architecture document
+16.04 - Working on Architecture document
+17.04 - Working on Architecture document
+17.04 - Meeting with customers (Rick and Rob)
+17.04 - Meeting with customers (Rick and Rob)
+17.04 - Working on Architecture document
+
