@@ -1,6 +1,7 @@
-html, body {
+html,
+body {
   height: 100%;
- }
+}
 
 #graph {
   width: 100%;
@@ -66,8 +67,8 @@ html, body {
   height: 20px;
 }
 
-
 /* ---------- Color palet ------------- */
+
 .btn-colorpick {
   width: 40px;
   height: 40px;
@@ -77,26 +78,22 @@ html, body {
 
 .outline {
   color: white;
-  text-shadow:
-  -1px -1px 0 #000,
-  1px -1px 0 #000,
-  -1px 1px 0 #000,
-  1px 1px 0 #000;    
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .btn-colorpick::after {
-  display:none !important
+  display: none !important
 }
 
 .bootstrap-colorpalette {
-  padding-left:4px;
-  padding-right:4px;
+  padding-left: 4px;
+  padding-right: 4px;
   white-space: normal;
-  line-height:1;
+  line-height: 1;
 }
 
 .bootstrap-colorpalette div {
-  line-height:0;
+  line-height: 0;
 }
 
 .bootstrap-colorpalette .btn-color {
@@ -112,9 +109,18 @@ html, body {
 }
 
 /* ------------------- modal ----------------------- */
+
 .nav-link.active {
-  border-bottom-color: #fff !important;
+  border-bottom: none !important;
   background-color: #fff !important;
+}
+
+.nav-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: -webkit-box;
+  display: -moz-box;
+  flex-wrap: nowrap !important;
 }
 
 .fade {
@@ -132,4 +138,63 @@ html, body {
 
 .yass-wrapper {
   z-index: 0 !important;
+}
+
+/* ------------------- Table responsive ------------------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: hidden;
+}
+
+/* Stack rows vertically on small screens */
+
+@media (max-width: 30em) {
+  /* Hide column labels */
+  thead tr {
+    position: absolute;
+    top: -9999em;
+    left: -9999em;
+  }
+  /* Leave a space between table rows */
+  tr+tr {
+    margin-top: 1.5em;
+  }
+  /* Get table cells to act like rows */
+  tr,
+  td {
+    display: block;
+  }
+  /* Leave a space for data labels */
+  td {
+    padding-left: 50%;
+  }
+  /* Add data labels */
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    margin-left: -100%;
+    width: 100%;
+  }
+  tr {
+    border: solid;
+    border-width: 1px 0;
+  }
+}
+
+/* Stack labels vertically on smaller screens */
+
+@media (max-width: 20em) {
+  td {
+    padding-left: 0;
+  }
+  td:before {
+    display: block;
+    margin-left: 0;
+  }
 }
