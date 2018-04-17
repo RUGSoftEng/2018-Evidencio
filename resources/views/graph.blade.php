@@ -2,14 +2,6 @@
 use App\EvidencioAPI;
 if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   $decodeRes = EvidencioAPI::run($_POST['model'],$_POST['answer']);
-  $test= $_POST['answer'];
-  foreach ($test as $answers) {
-    if (is_numeric($answers)) {
-      $answers = floatval($answers);
-    }
-  }
-  print_r($test);
-  echo json_encode($decodeRes);
 }
 ?>
 @extends('layouts.app')
@@ -96,6 +88,7 @@ $dataPoints = array(
 </script>
 
 @endif
+<!--if there is any additional information it will print out here (not complete)-->
 <div class="container">
   @if(!empty($decodeRes['additionalResultSet']))
   @foreach($decodeRes['additionalResultSet'] as $text)

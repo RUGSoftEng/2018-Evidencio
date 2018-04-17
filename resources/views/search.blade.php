@@ -1,9 +1,6 @@
 <?php
 use App\EvidencioAPI;
 if (!empty($_GET['search'])) {
-
-
-
   $decodeRes = EvidencioAPI::search($_GET['search']);
 }
 
@@ -13,6 +10,7 @@ if (!empty($_GET['search'])) {
 
 @section('content')
 <br>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -23,13 +21,15 @@ if (!empty($_GET['search'])) {
         </div>
     </div>
 </div>
-
+<!--provides all the models that was produced by the API call to Evidencio's search API-->
 <div class="container">
   <?php if (!empty($decodeRes)): ?>
     <ul class="list-group">
       <?php foreach ($decodeRes as $model): ?>
+        <!--Gives Title of model as link-->
         <li class="list-group-item"><a href="/workflow?model=<?php echo $model['id'] ?>"><h2><?php echo $model['title']; ?></h2></a>
           <ul>
+            <!--provides all the requires variable inputs for each model-->
             <?php foreach ($model['variableSet'] as $item): ?>
               <li><?php echo $item['title']; ?></li>
             <?php endforeach; ?>

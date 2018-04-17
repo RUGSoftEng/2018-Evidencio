@@ -3,6 +3,7 @@
 use App\EvidencioAPI;
 if (!empty($_GET['model'])) {
   $decodeRes = EvidencioAPI::getModel($_GET['model']);
+
 }
 ?>
 
@@ -10,8 +11,7 @@ if (!empty($_GET['model'])) {
 @extends('layouts.app')
 
 @section('content')
-
-
+<!--makes inputs for all the required variables-->
 <?php if (!empty($decodeRes)): ?>
 <div class="container">
   <h3><?php echo $decodeRes['title'] ?></h3>
@@ -23,6 +23,7 @@ if (!empty($_GET['model'])) {
     <ul class="list-group">
     <?php foreach ($decodeRes['variables'] as $item): ?>
       <li class="list-group-item">
+        <!--creates input for continuous variable-->
         <?php if ($item['type']=='continuous'): ?>
           <?php
             echo $item['title'].": ";
@@ -39,7 +40,7 @@ if (!empty($_GET['model'])) {
             <div></div>
             <input type="number" step="<?php echo $step ?>" id="answer[<?php echo $item['id']; ?>]" name="answer[<?php echo $item['id']; ?>]">
           </div>
-
+          <!--javascript for making the sliders-->
             <script type="text/javascript">
               var slider<?php echo $item['id']; ?> = document.getElementById("<?php echo $item['id']; ?>");
 
@@ -51,11 +52,7 @@ if (!empty($_GET['model'])) {
                   'min': <?php echo $min ?>,
                   'max': <?php echo $max ?>
                 },
-
-
               });
-
-
               var input<?php echo $item['id']; ?> = document.getElementById("answer[<?php echo $item['id']; ?>]");
 
               slider<?php echo $item['id']; ?>.noUiSlider.on('update', function( values, handle ) {
@@ -65,13 +62,9 @@ if (!empty($_GET['model'])) {
                input<?php echo $item['id']; ?>.addEventListener('change', function(){
 	                slider<?php echo $item['id']; ?>.noUiSlider.set(this.value);
                 });
-
-
             </script>
-
-
-
       <?php endif; ?>
+      <!--creates input for categorical variable-->
       <?php if ($item['type']=='categorical'): ?>
         <?php  echo $item['title'].": ";?>
         <br>
@@ -80,7 +73,6 @@ if (!empty($_GET['model'])) {
           <input type="radio" name="answer[<?php echo $item['id']; ?>]" value="<?php echo $value['title']; ?>" >
           <?php echo $value['title']; ?>
           <br>
-
         <?php endforeach; ?>
 
       <?php endif; ?>
@@ -92,10 +84,4 @@ if (!empty($_GET['model'])) {
   </form>
 </div>
 <?php endif; ?>
-
-
-
-
-
-
 @endsection
