@@ -20,7 +20,9 @@ class EvidencioAPI
       ],
       'form_params' => $params
     ]);
-    $json = json_decode($res->getBody());
+
+    $json = json_decode($res->getBody(),true);
+
     if(is_null($json))
     {
       throw new Exceptions\JsonDecodeException("Could not decode API response to JSON: '".$res->getBody()."'.");
@@ -53,6 +55,12 @@ class EvidencioAPI
    */
   public static function run($id,$values)
   {
+    foreach ($values as $answers) {
+      if (is_numeric($answers)) {
+        $answers = floatval($answers);
+
+      }
+    }
     $values["id"] = $id;
     return self::fetch("run",$values);
   }
