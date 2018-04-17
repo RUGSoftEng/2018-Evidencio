@@ -16,6 +16,12 @@ Clone the repository and create your own `.env` file by copying `.env.example` a
     composer install
     php artisan key:generate
 
+To create the database structure please run the following command:
+
+    php artisan migrate
+
+You will also need to run it every time there is a new database migration available.
+
 ### How to run
 
 Run the following command:
