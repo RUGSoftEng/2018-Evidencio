@@ -33,14 +33,6 @@ body {
   height: 100%;
 }
 
-#variablesDivCard {
-  height: 100%;
-}
-
-#inputModelID {
-  width: 50px;
-}
-
 .badge-larger {
   font-size: 16px;
   max-width: 80%;
@@ -78,11 +70,12 @@ body {
 
 .outline {
   color: white;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .btn-colorpick::after {
-  display: none !important
+  display: none !important;
 }
 
 .bootstrap-colorpalette {
@@ -161,7 +154,7 @@ tr {
     left: -9999em;
   }
   /* Leave a space between table rows */
-  tr+tr {
+  tr + tr {
     margin-top: 1.5em;
   }
   /* Get table cells to act like rows */

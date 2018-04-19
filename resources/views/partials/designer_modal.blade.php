@@ -56,33 +56,7 @@
                                     <div class="tab-content" id="nav-tabContent-modal">
 
                                         <div class="tab-pane fade show active" id="nav-variables" role="tabpanel" aria-labelledby="nav-variables-tab">
-                                            <div id="accModalVars">
-                                                <div class="card" v-for="(variable, index) in modalSelectedVariables">
-                                                    <div class="card-header collapsed" :id="'collapHeader_' + index" data-toggle="collapse" :data-target="'#collap_' + index" data-parent="#accModalVars" aria-expanded="false" :aria-controls="'collap_' + index">
-                                                        <h6 class="mb-0">
-                                                                @{{ modalUsedVariables[variable].title }}
-                                                        </h6>
-                                                    </div>
-
-                                                    <div :id="'collap_' + index" class="collapse" :aria-labelledby="'#collap_' + index" data-parent="#accModalVars">
-                                                        <div class="card-body">
-                                                            <form onsubmit="return false">
-                                                                <div class="form-group">
-                                                                    <label :for="'titleVar_' + index">Title: </label>
-                                                                    <input type="text" name="" :id="'titleVar_' + index" class="form-control" v-model="modalUsedVariables[variable].title" placeholder="Title" :disabled="!modalEditVariableFlags[modalUsedVariables[variable].ind]">
-                                                                    <small :id="'titleVarHelp_' + index" class="form-text text-muted">Title of the variable</small>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label :for="'descriptionVar_' + index">Description: </label>
-                                                                    <textarea class="form-control" :id="'descriptionVar_' + index" cols="30" rows="3" v-model="modalUsedVariables[variable].description" :disabled="!modalEditVariableFlags[modalUsedVariables[variable].ind]"></textarea>
-                                                                    <small :id="'descriptionVarHelp_' + index" class="form-text text-muted">Description of the variable</small>
-                                                                    <input type="image" class="buttonIcon" :src="getImage(modalEditVariableFlags[modalUsedVariables[variable].ind])" @click="editVariable(modalUsedVariables[variable].ind)" alt="Edit">
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>                                            
+                                            <variable-edit-list :selected-variables="modalSelectedVariables" :used-variables="modalUsedVariables"></variable-edit-list>
                                         </div>
 
                                         <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">

@@ -1,13 +1,15 @@
-window.cytoscape = require('cytoscape');
-window.Vue = require('vue');
-Vue.component('vue-multiselect', window.VueMultiselect.default)
-window.cyCanvas = require('cytoscape-canvas');
+window.cytoscape = require("cytoscape");
+window.Vue = require("vue");
+require("./event-dispatcher.js");
+Vue.component("vueMultiselect", window.VueMultiselect.default);
+Vue.component("variableViewList", require("./components/VariableViewList.vue"));
+Vue.component("variableEditList", require("./components/VariableEditList.vue"));
+window.cyCanvas = require("cytoscape-canvas");
 
 // ============================================================================================= //
 
-
-    /* Step-template:
-    {
+/* Step-template:
+    {-l
         id: -1,
         title: title,
         description: description,
@@ -23,16 +25,15 @@ window.cyCanvas = require('cytoscape-canvas');
     }
     */
 
-    /* Level-template:
+/* Level-template:
       {
         steps: []
       }
     */
 vObj = new Vue({
-  el: '#designerDiv',
+  el: "#designerDiv",
   data: {
     modelLoaded: false,
-    modelID: 0,
     models: [],
     numVariables: 0,
     usedVariables: {},
@@ -45,26 +46,31 @@ vObj = new Vue({
     levelsChanged: false,
     nodeCounter: 0,
 
-    deltaX: 150, 
+    deltaX: 150,
     deltaY: 250,
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,    //ID in vue steps-array
-    modalDatabaseStepID: -1,         //ID in database
-    modalStepType: 'input',
-    modalSelectedColor: '#000000',
+    modalNodeID: -1, //ID in vue steps-array
+    modalDatabaseStepID: -1, //ID in database
+    modalStepType: "input",
+    modalSelectedColor: "#000000",
     modalMultiselectSelectedVariables: [],
     modalSelectedVariables: [],
     modalVarCounter: -1,
     modalUsedVariables: {},
-    modalEditVariableFlags: [],
     modalRules: [],
     modalEditRuleFlags: [],
     modalApiCall: {
       model: null,
       variables: []
-    }    
+    }
+  },
+
+  created() {
+    Event.listen("modelLoad", modelID => {
+      this.loadModelEvidencio(modelID);
+    });
   },
 
   /**
@@ -72,7 +78,11 @@ vObj = new Vue({
    */
   mounted: function() {
     this.addLevel(0);
-    this.addStep('Starter step', 'First step in the model shown to the patient. Change this step to fit your needs.', 0);
+    this.addStep(
+      "Starter step",
+      "First step in the model shown to the patient. Change this step to fit your needs.",
+      0
+    );
   },
 
   computed: {
@@ -83,8 +93,7 @@ vObj = new Vue({
           allvars = allvars.concat(element.variables);
         });
         return allvars;
-      } else
-        return [];
+      } else return [];
     },
 
     possibleVariables: function() {
@@ -92,7 +101,7 @@ vObj = new Vue({
         deepCopy = JSON.parse(JSON.stringify(this.models));
         let counter = 0;
         deepCopy.forEach(element => {
-          element.variables.map((x, index)=>x['ind'] = counter + index);
+          element.variables.map((x, index) => (x["ind"] = counter + index));
           counter += element.variables.length;
         });
         return deepCopy;
@@ -101,13 +110,11 @@ vObj = new Vue({
     },
 
     childrenNodes: function() {
-      if (this.modalNodeID == -1)
-        return [];
+      if (this.modalNodeID == -1) return [];
       let levelIndex = this.getStepLevel(this.modalNodeID);
-      if (levelIndex == -1 || levelIndex == this.levels.length-1)
-        return [];
-      let options = []
-      this.levels[levelIndex+1].steps.forEach(element => {
+      if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+      let options = [];
+      this.levels[levelIndex + 1].steps.forEach(element => {
         options.push({
           stepID: element,
           title: this.steps[element].title,
@@ -138,28 +145,28 @@ vObj = new Vue({
       }
       return editedVars;
     }
-
   },
 
   methods: {
-    
     /**
      * Load model from Evidencio API, model is identified using variable modelID
      */
-    loadModelEvidencio() {
+    loadModelEvidencio(modelID) {
       var self = this;
-      if (!this.isModelLoaded(this.modelID)) {
+      if (!this.isModelLoaded(modelID)) {
         $.ajax({
-          url: '/designer/fetch',
+          url: "/designer/fetch",
           data: {
-            modelID: self.modelID
+            modelID: modelID
           },
           success: function(result) {
             self.models.push(JSON.parse(result));
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
             self.modelLoaded = true;
-            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf,0));
+            self.timesUsedVariables = self.timesUsedVariables.concat(
+              Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0)
+            );
           }
         });
       }
@@ -172,8 +179,7 @@ vObj = new Vue({
      */
     isModelLoaded(modelID) {
       this.models.forEach(element => {
-        if (element.id == modelID)
-          return true;
+        if (element.id == modelID) return true;
       });
       return false;
     },
@@ -199,8 +205,8 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeID: -1,
-        color: '#0099ff',
-        type: 'input',
+        color: "#0099ff",
+        type: "input",
         variables: [],
         varCounter: 0,
         rules: [],
@@ -212,7 +218,7 @@ vObj = new Vue({
         destroy: false
       });
       this.stepsChanged = !this.stepsChanged;
-      this.levels[level].steps.push(this.steps.length-1);
+      this.levels[level].steps.push(this.steps.length - 1);
       if (this.levels[level].steps.length > this.maxStepsPerLevel)
         this.maxStepsPerLevel = this.levels[level].steps.length;
     },
@@ -240,9 +246,9 @@ vObj = new Vue({
       for (let index = 0; index < this.addLevelButtons.length; index++) {
         const element = this.addLevelButtons[index].nodeID;
         cy.getElementById(element).position({
-          x: (this.maxStepsPerLevel/2 + 1) * this.deltaX,
-          y: (index+0.5) * this.deltaY
-        })
+          x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
+          y: (index + 0.5) * this.deltaY
+        });
       }
     },
 
@@ -254,9 +260,12 @@ vObj = new Vue({
         for (let index = 0; index < this.addStepButtons.length; index++) {
           const element = this.addStepButtons[index].nodeID;
           cy.getElementById(element).position({
-            x: (this.levels[index+1].steps.length/2 + (this.levels[index+1].steps.length>0?0.5:0)) * this.deltaX,
-            y: (index+1) * this.deltaY
-          })
+            x:
+              (this.levels[index + 1].steps.length / 2 +
+                (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) *
+              this.deltaX,
+            y: (index + 1) * this.deltaY
+          });
         }
       }
     },
@@ -267,22 +276,20 @@ vObj = new Vue({
     positionSteps() {
       for (let indexLevel = 0; indexLevel < this.levels.length; indexLevel++) {
         const elementLevel = this.levels[indexLevel].steps;
-        let left = (-(elementLevel.length-1) * this.deltaX)/2;
+        let left = -(elementLevel.length - 1) * this.deltaX / 2;
         for (let indexStep = 0; indexStep < elementLevel.length; indexStep++) {
           const elementStep = this.steps[elementLevel[indexStep]].nodeID;
           cy.getElementById(elementStep).position({
             x: left + indexStep * this.deltaX,
             y: indexLevel * this.deltaY
-          })
-          
+          });
         }
       }
-
     },
 
     /**
      * Returns the index of the AddLevelButton-node referred to by id.
-     * @param {string} [id] of the node for which the index has to be found 
+     * @param {string} [id] of the node for which the index has to be found
      */
     getAddLevelButtonIndex(id) {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
@@ -313,7 +320,7 @@ vObj = new Vue({
      * @param {object} [nodeRef] is the reference to the node that is clicked on.
      */
     prepareModal(nodeRef) {
-      this.modalNodeID = nodeRef.scratch('_nodeID');
+      this.modalNodeID = nodeRef.scratch("_nodeID");
       let step = this.steps[this.modalNodeID];
       this.modalDatabaseStepID = step.id;
       this.modalStepType = step.type;
@@ -334,13 +341,23 @@ vObj = new Vue({
     setSelectedVariables() {
       this.modalMultiselectSelectedVariables = [];
       for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        let origID = this.modalUsedVariables[this.modalSelectedVariables[index]].id;
-        findVariable:
-        for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
+        let origID = this.modalUsedVariables[this.modalSelectedVariables[index]]
+          .id;
+        findVariable: for (
+          let indexOfMod = 0;
+          indexOfMod < this.possibleVariables.length;
+          indexOfMod++
+        ) {
           const element = this.possibleVariables[indexOfMod];
-          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
+          for (
+            let indexInMod = 0;
+            indexInMod < element.variables.length;
+            indexInMod++
+          ) {
             if (element.variables[indexInMod].id == origID) {
-              this.modalMultiselectSelectedVariables.push(element.variables[indexInMod]);
+              this.modalMultiselectSelectedVariables.push(
+                element.variables[indexInMod]
+              );
               break findVariable;
             }
           }
@@ -353,7 +370,7 @@ vObj = new Vue({
      * @param {integer} [count] is the number of not-shown options.
      */
     multiselectVariablesText(count) {
-      return ' and ' + count + ' other variable(s)';
+      return " and " + count + " other variable(s)";
     },
 
     /**
@@ -363,12 +380,9 @@ vObj = new Vue({
       let step = this.steps[this.modalNodeID];
       // Set new backgroundcolor
       cy.getElementById(step.nodeID).style({
-        'background-color': this.modalSelectedColor
+        "background-color": this.modalSelectedColor
       });
-      step.color = this.modalSelectedColor; 
-      // Reset flags
-      for (let index = 0; index < this.modalEditVariableFlags.length; index++) 
-        this.modalEditVariableFlags[index] = false;
+      step.color = this.modalSelectedColor;
       // Set (new) step-type
       step.type = this.modalStepType;
       // Set (new) variables
@@ -381,26 +395,7 @@ vObj = new Vue({
       step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
       // Recount variable uses
       this.modalSelectedVariables = [];
-      this.recountVariableUses();      
-    },
-
-    /**
-     * Returns a check-image if the image is set to be edited, pencil-image if not.
-     * @param {integer} [index] of the variable
-     */
-    getImage(indicator) {
-      if (indicator)
-        return '/images/check.svg';
-      else
-        return '/images/pencil.svg';
-    },
-
-    /**
-     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
-     * @param {index} index 
-     */
-    editVariable(index) {
-      Vue.set(this.modalEditVariableFlags, index, !this.modalEditVariableFlags[index]);
+      this.recountVariableUses();
     },
 
     /**
@@ -408,7 +403,7 @@ vObj = new Vue({
      */
     addRule() {
       this.modalRules.push({
-        name: 'Go to target',
+        name: "Go to target",
         rule: [],
         target: -1
       });
@@ -440,8 +435,7 @@ vObj = new Vue({
       for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
         const level = this.levels[levelIndex].steps;
         for (let index = 0; index < level.length; index++) {
-          if (stepIndex == level[index])
-            return levelIndex;          
+          if (stepIndex == level[index]) return levelIndex;
         }
       }
       return -1;
@@ -453,10 +447,9 @@ vObj = new Vue({
      */
     getModelIndex(modelID) {
       for (let index = 0; index < this.models.length; index++) {
-        if(this.models[index].id == modelID)
-          return index;
+        if (this.models[index].id == modelID) return index;
       }
-      return -1;      
+      return -1;
     },
 
     /**
@@ -475,7 +468,7 @@ vObj = new Vue({
           originalTitle: element.title,
           originalID: element.id,
           targetID: null
-        });  
+        });
       });
       this.modalApiCall.variables = modVars;
     },
@@ -484,16 +477,23 @@ vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses() {
-      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf,0);
+      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(
+        Number.prototype.valueOf,
+        0
+      );
       this.modalSelectedVariables.forEach(element => {
         this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
       });
       for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
         const elementStep = this.steps[indexStep];
-        if (elementStep.type == 'input') {
-          for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+        if (elementStep.type == "input") {
+          for (
+            let indexVariable = 0;
+            indexVariable < elementStep.variables.length;
+            indexVariable++
+          ) {
             const element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;             
+            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
           }
         }
       }
@@ -519,10 +519,12 @@ vObj = new Vue({
      */
     modalRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
+        if (
+          this.modalUsedVariables[this.modalSelectedVariables[index]].id ==
+          removedVariable.id
+        ) {
           delete this.modalUsedVariables[this.modalSelectedVariables[index]];
           this.modalSelectedVariables.splice(index, 1);
-          this.modalEditVariableFlags.splice(index, 1);
           return;
         }
       }
@@ -541,18 +543,18 @@ vObj = new Vue({
         this.modalSelectSingleVariable(selectedVariables);
       }
     },
-    
+
     /**
      * Helper function for modalSelectVariables(selectedVariables), selects a single variable
      * @param {object} [selectedVariable] the variable-object to be selected
      */
     modalSelectSingleVariable(selectedVariable) {
-      let varName = 'var' + this.modalNodeID + '_' + this.modalVarCounter++;
+      let varName = "var" + this.modalNodeID + "_" + this.modalVarCounter++;
       this.modalSelectedVariables.push(varName);
-      this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
-      this.modalEditVariableFlags.push(false);
+      this.modalUsedVariables[varName] = JSON.parse(
+        JSON.stringify(selectedVariable)
+      );
     }
-
   },
 
   watch: {
@@ -562,22 +564,24 @@ vObj = new Vue({
     stepsChanged: function() {
       for (let index = 0; index < this.steps.length; index++) {
         if (this.steps[index].create) {
-          this.steps[index].nodeID = cy.add({
-            classes: 'node',
-            data: {
-              id: 'node_' + this.nodeCounter
-            },
-            scratch: {
-              '_nodeID': index
-            },
-            style: {
-              'background-color': this.steps[index].color
-            }
-          }).id();
+          this.steps[index].nodeID = cy
+            .add({
+              classes: "node",
+              data: {
+                id: "node_" + this.nodeCounter
+              },
+              scratch: {
+                _nodeID: index
+              },
+              style: {
+                "background-color": this.steps[index].color
+              }
+            })
+            .id();
           this.steps[index].create = false;
           cy.getElementById(this.steps[index].nodeID).style({
-            'label': this.steps[index].id
-          })
+            label: this.steps[index].id
+          });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -597,15 +601,19 @@ vObj = new Vue({
       while (this.levels.length > this.addLevelButtons.length) {
         if (this.addLevelButtons.length > 0) {
           this.addStepButtons.push({
-            nodeID: cy.add({
-              classes: 'buttonAddStep'
-            }).id()
+            nodeID: cy
+              .add({
+                classes: "buttonAddStep"
+              })
+              .id()
           });
         }
         this.addLevelButtons.push({
-          nodeID: cy.add({
-            classes: 'buttonAddLevel'
-          }).id()
+          nodeID: cy
+            .add({
+              classes: "buttonAddLevel"
+            })
+            .id()
         });
       }
       while (this.levels.length < this.addLevelButtons.length) {
@@ -616,106 +624,101 @@ vObj = new Vue({
       this.positionAddStepButtons();
       this.positionSteps();
     },
-    
+
     selectedVariables: function() {
       this.recountVariableUses();
     }
-
   }
-    
 });
 
 // ============================================================================================= //
 
 var cy = cytoscape({
-  container: $('#graph'),
-  style: [ // the stylesheet for the graph
+  container: $("#graph"),
+  style: [
+    // the stylesheet for the graph
     {
-      selector: '.node',
+      selector: ".node",
       style: {
-        'label': 'data(id)',
-        'shape': 'roundrectangle',
-        'width': '100px',
-        'height': '100px',
-        'background-color': '#0099ff',
-        'border-color': ' #000000',
-        'border-width': '4px',
-        'text-halign': 'center',
-        'text-valign': 'center',
-        'color': '#ffffff',
-        'font-size': '24px',
-        'text-outline-color': '#000000',
-        'text-outline-width': '1px'
+        label: "data(id)",
+        shape: "roundrectangle",
+        width: "100px",
+        height: "100px",
+        "background-color": "#0099ff",
+        "border-color": " #000000",
+        "border-width": "4px",
+        "text-halign": "center",
+        "text-valign": "center",
+        color: "#ffffff",
+        "font-size": "24px",
+        "text-outline-color": "#000000",
+        "text-outline-width": "1px"
       }
     },
 
     {
-      selector: '.edge',
+      selector: ".edge",
       style: {
-        'width': 3,
-        'line-color': '#ccc',
-        'target-arrow-color': '#ccc',
-        'target-arrow-shape': 'triangle'
+        width: 3,
+        "line-color": "#ccc",
+        "target-arrow-color": "#ccc",
+        "target-arrow-shape": "triangle"
       }
     },
 
     {
-      selector: '.buttonAddLevel',
+      selector: ".buttonAddLevel",
       style: {
-        'label': '',
-        'width': '75px',
-        'height': '75px',
-        'background-color': '#46c637',
-        'border-color': '#1f6b17',
-        'border-width': '4px',
-        'background-image': '/images/plus.svg',
-        'background-width': '50%',
-        'background-height': '50%'
+        label: "",
+        width: "75px",
+        height: "75px",
+        "background-color": "#46c637",
+        "border-color": "#1f6b17",
+        "border-width": "4px",
+        "background-image": "/images/plus.svg",
+        "background-width": "50%",
+        "background-height": "50%"
       }
     },
 
     {
-      selector: '.buttonAddStep',
+      selector: ".buttonAddStep",
       style: {
-        'label': '',
-        'width': '75px',
-        'height': '75px',
-        'background-color': '#00a5ff',
-        'border-color': '#0037ff',
-        'border-width': '4px',
-        'background-image': '/images/plus.svg',
-        'background-width': '50%',
-        'background-height': '50%'
+        label: "",
+        width: "75px",
+        height: "75px",
+        "background-color": "#00a5ff",
+        "border-color": "#0037ff",
+        "border-width": "4px",
+        "background-image": "/images/plus.svg",
+        "background-width": "50%",
+        "background-height": "50%"
       }
     }
-
   ],
 
   autoungrabify: true,
   autounselectify: true,
 
   layout: {
-    name: 'preset'
-  }
-})
-
-cy.on('tap', 'node', function(evt) {
-  let ref = evt.target;
-  if (ref.hasClass('buttonAddLevel')) {
-    let nID = vObj.getAddLevelButtonIndex(ref.id());
-    if (nID != -1)
-      vObj.addLevel(nID+1);
-  } else if (ref.hasClass('buttonAddStep')) {
-    let nID = vObj.getAddStepButtonIndex(ref.id());
-    if (nID != -1)
-      vObj.addStep('Default title', 'Default description', nID + 1);
-  } else if (ref.hasClass('node')) {
-    vObj.prepareModal(ref);
-    $('#modalStep').modal();
+    name: "preset"
   }
 });
 
-
+cy.on("tap", "node", function(evt) {
+  let ref = evt.target;
+  if (ref.hasClass("buttonAddLevel")) {
+    let nID = vObj.getAddLevelButtonIndex(ref.id());
+    if (nID != -1) vObj.addLevel(nID + 1);
+  } else if (ref.hasClass("buttonAddStep")) {
+    let nID = vObj.getAddStepButtonIndex(ref.id());
+    if (nID != -1)
+      vObj.addStep("Default title", "Default description", nID + 1);
+  } else if (ref.hasClass("node")) {
+    vObj.prepareModal(ref);
+    $("#modalStep").modal();
+  }
+});
 
 // ============================================================================================= //
 
@@ -730,13 +733,16 @@ cy.on("render cyCanvas.resize", function(evt) {
   bottomLayer.clear(ctx);
   bottomLayer.setTransform(ctx);
   ctx.save();
-  for (var i = 0; i < vObj.levels.length; i++){
-    if (i%2 == 0)
-      ctx.fillStyle = "#e3e7ed";
-    else
-      ctx.fillStyle = "#c6cad1";
-    let w = (vObj.maxStepsPerLevel/2)*vObj.deltaX;
-    ctx.fillRect(-w-500, i*vObj.deltaY-(vObj.deltaY/2), 2*w+1000, vObj.deltaY);
+  for (var i = 0; i < vObj.levels.length; i++) {
+    if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";
+    else ctx.fillStyle = "#c6cad1";
+    let w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
+    ctx.fillRect(
+      -w - 500,
+      i * vObj.deltaY - vObj.deltaY / 2,
+      2 * w + 1000,
+      vObj.deltaY
+    );
   }
   ctx.restore();
 });
@@ -745,10 +751,12 @@ cy.on("render cyCanvas.resize", function(evt) {
 
 window.onload = function() {
   vObj.fitView();
-}
+};
 
 // ============================================================================================= //
 
-$('#colorPalette').colorPalette().on('selectColor', function(evt) {
-  vObj.modalSelectedColor = evt.color;
-});
+$("#colorPalette")
+  .colorPalette()
+  .on("selectColor", function(evt) {
+    vObj.modalSelectedColor = evt.color;
+  });

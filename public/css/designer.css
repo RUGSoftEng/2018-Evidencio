@@ -13,7 +13,7 @@ body {
 #graphContainerForBorder {
   padding: 2px 2px 2px 2px;
   border: 1px solid #4e555b;
-  height: 71vh;
+  height: 100%;
 }
 
 #variablesDiv {
@@ -31,14 +31,6 @@ body {
 
 #graphDivCard {
   height: 100%;
-}
-
-#variablesDivCard {
-  height: 100%;
-}
-
-#inputModelID {
-  width: 50px;
 }
 
 .badge-larger {
