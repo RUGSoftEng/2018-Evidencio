@@ -155,7 +155,11 @@ vObj = new Vue({
       var self = this;
       if (!this.isModelLoaded(modelID)) {
         $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
           url: "/designer/fetch",
+          type: "POST",
           data: {
             modelID: modelID
           },

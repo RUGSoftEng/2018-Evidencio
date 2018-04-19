@@ -31087,7 +31087,6 @@ vObj = new Vue({
     modalSelectedVariables: [],
     modalVarCounter: -1,
     modalUsedVariables: {},
-    modalEditVariableFlags: [],
     modalRules: [],
     modalEditRuleFlags: [],
     modalApiCall: {
@@ -31187,7 +31186,11 @@ vObj = new Vue({
       var self = this;
       if (!this.isModelLoaded(modelID)) {
         $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
           url: "/designer/fetch",
+          type: "POST",
           data: {
             modelID: modelID
           },
@@ -31412,10 +31415,7 @@ vObj = new Vue({
         "background-color": this.modalSelectedColor
       });
       step.color = this.modalSelectedColor;
-      // Reset flags
-      for (var index = 0; index < this.modalEditVariableFlags.length; index++) {
-        this.modalEditVariableFlags[index] = false;
-      } // Set (new) step-type
+      // Set (new) step-type
       step.type = this.modalStepType;
       // Set (new) variables
       step.variables = this.modalSelectedVariables.slice();
@@ -31428,15 +31428,6 @@ vObj = new Vue({
       // Recount variable uses
       this.modalSelectedVariables = [];
       this.recountVariableUses();
-    },
-
-
-    /**
-     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
-     * @param {index} index
-     */
-    editVariable: function editVariable(index) {
-      Vue.set(this.modalEditVariableFlags, index, !this.modalEditVariableFlags[index]);
     },
 
 
@@ -31569,7 +31560,6 @@ vObj = new Vue({
         if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
           delete this.modalUsedVariables[this.modalSelectedVariables[index]];
           this.modalSelectedVariables.splice(index, 1);
-          this.modalEditVariableFlags.splice(index, 1);
           return;
         }
       }
@@ -31601,7 +31591,6 @@ vObj = new Vue({
       var varName = "var" + this.modalNodeID + "_" + this.modalVarCounter++;
       this.modalSelectedVariables.push(varName);
       this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
-      this.modalEditVariableFlags.push(false);
     }
   },
 

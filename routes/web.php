@@ -35,4 +35,4 @@ Route::get('/workflow',function(){
 });
 
 
-Route::get('/designer/fetch', 'DesignerController@fetchVariables');
+Route::post('/designer/fetch', 'DesignerController@fetchVariables');
