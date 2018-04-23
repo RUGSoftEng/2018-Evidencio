@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Option extends Model
+class Result extends Model
 {
     public $timestamps = false;
+
+    
 }
