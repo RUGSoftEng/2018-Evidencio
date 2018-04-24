@@ -191,3 +191,46 @@ tr {
     margin-left: 0;
   }
 }
+
+//The following part is for the modal when nodeType === output
+#outputTypeLeft {
+  padding: 0 10px 0 20px;
+  width: 48%;
+
+  //max-height: 45vh;
+}
+
+#outputTypeRight {
+  padding: 0 20px 0 10px;
+  width: 48%;
+}
+
+#modalOutputVerticalLine {
+  height: 90%;
+  width: 3px;
+}
+
+.row.vdivide [class*='col-']:not(:last-child):after {
+  background: #e0e0e0;
+  width: 1px;
+  content: "";
+  display:block;
+  position: absolute;
+  top:5px;
+  bottom: 5px;
+  right: 0;
+  min-height: calc(100% - 10px);
+}
+
+//#outputCategories {
+  //max-height: 45vh;
+//}
+
+#outputOptionsMenu {
+  //max-height: 45vh;
+}
+
+#outputCategoriesAccordion {
+  max-height: 45vh;
+  overflow: auto;
+}
