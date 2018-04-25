@@ -203,5 +203,37 @@ tr {
   }
 }
 
+#outputTypeLeft {
+  padding: 0 10px 0 20px;
+  width: 48%;
+}
+
+#outputTypeRight {
+  padding: 0 20px 0 10px;
+  width: 48%;
+}
+
+#modalOutputVerticalLine {
+  height: 90%;
+  width: 3px;
+}
+
+.row.vdivide [class*='col-']:not(:last-child):after {
+  background: #e0e0e0;
+  width: 1px;
+  content: "";
+  display: block;
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  right: 0;
+  min-height: calc(100% - 10px);
+}
+
+#outputCategoriesAccordion {
+  max-height: 45vh;
+  overflow: auto;
+}
+
 
 /*# sourceMappingURL=designer.css.map*/

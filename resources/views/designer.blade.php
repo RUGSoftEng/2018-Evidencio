@@ -6,13 +6,13 @@
 
 <div class="container-fluid" id="designerDiv">
 
-    @include('partials.designer_modal')
-
+    {{-- @include('partials.designer_modal') --}}
+    <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables" :child-nodes="childrenNodes" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
     <!-- Normal view -->
     <div class="row justify-content-center">
         <div id="variablesDiv" class="col-sm-3">
             <variable-view-list :all-variables="allVariables" :all-variables-used="timesUsedVariables"></variable-view-list>
-        </div>
+        </div> 
         <div id="graphDiv" class="col-sm-9">
             <div id="graphDivCard" class="card" >
                 <div class="card-header">

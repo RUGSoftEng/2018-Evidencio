@@ -3,7 +3,7 @@ window.Vue = require("vue");
 require("./event-dispatcher.js");
 Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
-Vue.component("variableEditList", require("./components/VariableEditList.vue"));
+Vue.component("modalStep", require("./components/ModalStep.vue"));
 window.cyCanvas = require("cytoscape-canvas");
 
 // ============================================================================================= //
@@ -13,7 +13,7 @@ window.cyCanvas = require("cytoscape-canvas");
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
+        nodeId: -1,
         color: '#0099ff',
         type: 'input' or 'result',
         create: true,
@@ -51,38 +51,32 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1, //ID in vue steps-array
-    modalDatabaseStepID: -1, //ID in database
-    modalStepType: "input",
-    modalSelectedColor: "#000000",
-    modalMultiselectSelectedVariables: [],
-    modalSelectedVariables: [],
-    modalVarCounter: -1,
-    modalUsedVariables: {},
-    modalRules: [],
-    modalEditRuleFlags: [],
-    modalApiCall: {
-      model: null,
-      variables: []
-    }
+    selectedStepId: 0,
+    modalChanged: false
   },
 
   created() {
     Event.listen("modelLoad", modelID => {
       this.loadModelEvidencio(modelID);
     });
-  },
-
-  /**
-   * This function adds the first basic level and the first step.
-   */
-  mounted: function() {
     this.addLevel(0);
     this.addStep(
       "Starter step",
       "First step in the model shown to the patient. Change this step to fit your needs.",
       0
     );
+  },
+
+  /**
+   * This function adds the first basic level and the first step.
+   */
+  mounted: function() {
+    // this.addLevel(0);
+    // this.addStep(
+    //   "Starter step",
+    //   "First step in the model shown to the patient. Change this step to fit your needs.",
+    //   0
+    // );
   },
 
   computed: {
@@ -110,16 +104,17 @@ vObj = new Vue({
     },
 
     childrenNodes: function() {
-      if (this.modalNodeID == -1) return [];
-      let levelIndex = this.getStepLevel(this.modalNodeID);
+      if (this.selectedStepId == -1) return [];
+      let levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
       let options = [];
       this.levels[levelIndex + 1].steps.forEach(element => {
         options.push({
-          stepID: element,
+          stepId: element,
           title: this.steps[element].title,
           id: this.steps[element].id,
-          color: this.steps[element].color
+          color: this.steps[element].color,
+          ind: options.length
         });
       });
       return options;
@@ -208,7 +203,7 @@ vObj = new Vue({
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
+        nodeId: -1,
         color: "#0099ff",
         type: "input",
         variables: [],
@@ -248,7 +243,7 @@ vObj = new Vue({
      */
     positionAddLevelButtons() {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
-        const element = this.addLevelButtons[index].nodeID;
+        const element = this.addLevelButtons[index].nodeId;
         cy.getElementById(element).position({
           x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
           y: (index + 0.5) * this.deltaY
@@ -262,7 +257,7 @@ vObj = new Vue({
     positionAddStepButtons() {
       if (this.levels.length > 0) {
         for (let index = 0; index < this.addStepButtons.length; index++) {
-          const element = this.addStepButtons[index].nodeID;
+          const element = this.addStepButtons[index].nodeId;
           cy.getElementById(element).position({
             x:
               (this.levels[index + 1].steps.length / 2 +
@@ -282,7 +277,7 @@ vObj = new Vue({
         const elementLevel = this.levels[indexLevel].steps;
         let left = -(elementLevel.length - 1) * this.deltaX / 2;
         for (let indexStep = 0; indexStep < elementLevel.length; indexStep++) {
-          const elementStep = this.steps[elementLevel[indexStep]].nodeID;
+          const elementStep = this.steps[elementLevel[indexStep]].nodeId;
           cy.getElementById(elementStep).position({
             x: left + indexStep * this.deltaX,
             y: indexLevel * this.deltaY
@@ -297,7 +292,7 @@ vObj = new Vue({
      */
     getAddLevelButtonIndex(id) {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
-        const element = this.addLevelButtons[index].nodeID;
+        const element = this.addLevelButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -311,7 +306,7 @@ vObj = new Vue({
      */
     getAddStepButtonIndex(id) {
       for (let index = 0; index < this.addStepButtons.length; index++) {
-        const element = this.addStepButtons[index].nodeID;
+        const element = this.addStepButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -324,111 +319,46 @@ vObj = new Vue({
      * @param {object} [nodeRef] is the reference to the node that is clicked on.
      */
     prepareModal(nodeRef) {
-      this.modalNodeID = nodeRef.scratch("_nodeID");
-      let step = this.steps[this.modalNodeID];
-      this.modalDatabaseStepID = step.id;
-      this.modalStepType = step.type;
-      this.modalSelectedColor = step.color;
-      this.modalSelectedVariables = step.variables.slice();
-      this.modalVarCounter = step.varCounter;
-      this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
-      this.modalRules = JSON.parse(JSON.stringify(step.rules));
-      this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
-      this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
-      this.setSelectedVariables();
-    },
-
-    /**
-     * Adds the selected variables to the selectedVariable part of the multiselect.
-     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
-     */
-    setSelectedVariables() {
-      this.modalMultiselectSelectedVariables = [];
-      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        let origID = this.modalUsedVariables[this.modalSelectedVariables[index]]
-          .id;
-        findVariable: for (
-          let indexOfMod = 0;
-          indexOfMod < this.possibleVariables.length;
-          indexOfMod++
-        ) {
-          const element = this.possibleVariables[indexOfMod];
-          for (
-            let indexInMod = 0;
-            indexInMod < element.variables.length;
-            indexInMod++
-          ) {
-            if (element.variables[indexInMod].id == origID) {
-              this.modalMultiselectSelectedVariables.push(
-                element.variables[indexInMod]
-              );
-              break findVariable;
-            }
-          }
-        }
-      }
-    },
-
-    /**
-     * Returns the text shown when more than the limit of options are selected.
-     * @param {integer} [count] is the number of not-shown options.
-     */
-    multiselectVariablesText(count) {
-      return " and " + count + " other variable(s)";
+      this.selectedStepId = nodeRef.scratch("_nodeId");
+      this.modalChanged = !this.modalChanged;
+      // let step = this.steps[this.modalnodeId];
+      // this.modalDatabaseStepID = step.id;
+      // this.modalStepType = step.type;
+      // this.modalSelectedColor = step.color;
+      // this.modalSelectedVariables = step.variables.slice();
+      // this.modalVarCounter = step.varCounter;
+      // this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
+      // this.modalRules = JSON.parse(JSON.stringify(step.rules));
+      // this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
+      // this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
+      // this.setSelectedVariables();
     },
 
     /**
      * Saves the changes made to a step (variables added, etc.)
      */
-    saveChanges() {
-      let step = this.steps[this.modalNodeID];
+    applyChanges(changedStep) {
+      this.steps[this.selectedStepId] = changedStep.step;
+      this.usedVariables = changedStep.usedVars;
+
       // Set new backgroundcolor
-      cy.getElementById(step.nodeID).style({
-        "background-color": this.modalSelectedColor
+      cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
+        "background-color": changedStep.step.color
       });
-      step.color = this.modalSelectedColor;
-      // Set (new) step-type
-      step.type = this.modalStepType;
-      // Set (new) variables
-      step.variables = this.modalSelectedVariables.slice();
-      step.varCounter = this.modalVarCounter;
-      this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
-      // Set (new) rules
-      step.rules = JSON.parse(JSON.stringify(this.modalRules));
-      // Set (new) API-call
-      step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
-      // Recount variable uses
-      this.modalSelectedVariables = [];
+      // step.color = this.modalSelectedColor;
+      // // Set (new) step-type
+      // step.type = this.modalStepType;
+      // // Set (new) variables
+      // step.variables = this.modalSelectedVariables.slice();
+      // step.varCounter = this.modalVarCounter;
+      // this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
+      // // Set (new) rules
+      // step.rules = JSON.parse(JSON.stringify(this.modalRules));
+      // // Set (new) API-call
+      // step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
+      // // Recount variable uses
+      // this.modalSelectedVariables = [];
       this.recountVariableUses();
-    },
-
-    /**
-     * Adds a rule to the list of rules
-     */
-    addRule() {
-      this.modalRules.push({
-        name: "Go to target",
-        rule: [],
-        target: -1
-      });
-      this.modalEditRuleFlags.push(false);
-    },
-
-    /**
-     * Removes the rule with the given index from the list
-     * @param {integer} [ruleIndex] of rule to be removed
-     */
-    removeRule(ruleIndex) {
-      this.modalRules.splice(ruleIndex, 1);
-      this.modalEditRuleFlags.splice(ruleIndex, 1);
-    },
-
-    /**
-     * Allows for a rule to be edited.
-     * @param {integer} [index] of the rule to be edited
-     */
-    editRule(index) {
-      Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
     },
 
     /**
@@ -446,38 +376,6 @@ vObj = new Vue({
     },
 
     /**
-     * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-     * @param {integer} [modelID] is the Evidencio model ID.
-     */
-    getModelIndex(modelID) {
-      for (let index = 0; index < this.models.length; index++) {
-        if (this.models[index].id == modelID) return index;
-      }
-      return -1;
-    },
-
-    /**
-     * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-     * @param {object} [selectedModel] is the newly selected model
-     */
-    apiCallModelChangeAction(selectedModel) {
-      let modID = this.getModelIndex(selectedModel.id);
-      if (modID == -1) {
-        this.modalApiCall.variables = [];
-        return;
-      }
-      let modVars = [];
-      this.models[modID].variables.forEach(element => {
-        modVars.push({
-          originalTitle: element.title,
-          originalID: element.id,
-          targetID: null
-        });
-      });
-      this.modalApiCall.variables = modVars;
-    },
-
-    /**
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses() {
@@ -485,9 +383,6 @@ vObj = new Vue({
         Number.prototype.valueOf,
         0
       );
-      this.modalSelectedVariables.forEach(element => {
-        this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
-      });
       for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
         const elementStep = this.steps[indexStep];
         if (elementStep.type == "input") {
@@ -497,67 +392,10 @@ vObj = new Vue({
             indexVariable++
           ) {
             const element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
+            this.timesUsedVariables[this.usedVariables[element].ind] += 1;
           }
         }
       }
-    },
-
-    /**
-     * Removes the variables from the step.
-     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
-     */
-    modalRemoveVariables(removedVariables) {
-      if (removedVariables.constructor == Array) {
-        removedVariables.forEach(element => {
-          this.modalRemoveSingleVariable(element);
-        });
-      } else {
-        this.modalRemoveSingleVariable(removedVariables);
-      }
-    },
-
-    /**
-     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
-     */
-    modalRemoveSingleVariable(removedVariable) {
-      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        if (
-          this.modalUsedVariables[this.modalSelectedVariables[index]].id ==
-          removedVariable.id
-        ) {
-          delete this.modalUsedVariables[this.modalSelectedVariables[index]];
-          this.modalSelectedVariables.splice(index, 1);
-          return;
-        }
-      }
-    },
-
-    /**
-     * Selects the variables from the step.
-     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
-     */
-    modalSelectVariables(selectedVariables) {
-      if (selectedVariables.constructor == Array) {
-        selectedVariables.forEach(element => {
-          this.modalSelectSingleVariable(element);
-        });
-      } else {
-        this.modalSelectSingleVariable(selectedVariables);
-      }
-    },
-
-    /**
-     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
-     * @param {object} [selectedVariable] the variable-object to be selected
-     */
-    modalSelectSingleVariable(selectedVariable) {
-      let varName = "var" + this.modalNodeID + "_" + this.modalVarCounter++;
-      this.modalSelectedVariables.push(varName);
-      this.modalUsedVariables[varName] = JSON.parse(
-        JSON.stringify(selectedVariable)
-      );
     }
   },
 
@@ -568,14 +406,14 @@ vObj = new Vue({
     stepsChanged: function() {
       for (let index = 0; index < this.steps.length; index++) {
         if (this.steps[index].create) {
-          this.steps[index].nodeID = cy
+          this.steps[index].nodeId = cy
             .add({
               classes: "node",
               data: {
                 id: "node_" + this.nodeCounter
               },
               scratch: {
-                _nodeID: index
+                _nodeId: index
               },
               style: {
                 "background-color": this.steps[index].color
@@ -583,13 +421,13 @@ vObj = new Vue({
             })
             .id();
           this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeID).style({
+          cy.getElementById(this.steps[index].nodeId).style({
             label: this.steps[index].id
           });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeID);
+          cy.remove(this.steps[index].nodeId);
           this.steps.splice(index, 1);
         }
       }
@@ -605,7 +443,7 @@ vObj = new Vue({
       while (this.levels.length > this.addLevelButtons.length) {
         if (this.addLevelButtons.length > 0) {
           this.addStepButtons.push({
-            nodeID: cy
+            nodeId: cy
               .add({
                 classes: "buttonAddStep"
               })
@@ -613,7 +451,7 @@ vObj = new Vue({
           });
         }
         this.addLevelButtons.push({
-          nodeID: cy
+          nodeId: cy
             .add({
               classes: "buttonAddLevel"
             })
@@ -621,8 +459,8 @@ vObj = new Vue({
         });
       }
       while (this.levels.length < this.addLevelButtons.length) {
-        cy.remove(this.addLevelButtons.pop().nodeID);
-        cy.remove(this.addStepButtons.pop().nodeID);
+        cy.remove(this.addLevelButtons.pop().nodeId);
+        cy.remove(this.addStepButtons.pop().nodeId);
       }
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
@@ -756,11 +594,3 @@ cy.on("render cyCanvas.resize", function(evt) {
 window.onload = function() {
   vObj.fitView();
 };
-
-// ============================================================================================= //
-
-$("#colorPalette")
-  .colorPalette()
-  .on("selectColor", function(evt) {
-    vObj.modalSelectedColor = evt.color;
-  });

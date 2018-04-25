@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 59);
+/******/ 	return __webpack_require__(__webpack_require__.s = 58);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -30631,45 +30631,13 @@ var __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-window.Event = new (function () {
-  function _class() {
-    _classCallCheck(this, _class);
-
-    this.vue = new Vue();
-  }
-
-  _createClass(_class, [{
-    key: "fire",
-    value: function fire(event) {
-      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      this.vue.$emit(event, data);
-    }
-  }, {
-    key: "listen",
-    value: function listen(event, callback) {
-      this.vue.$on(event, callback);
-    }
-  }]);
-
-  return _class;
-}())();
-
-/***/ }),
+/* 13 */,
 /* 14 */,
 /* 15 */,
 /* 16 */,
 /* 17 */,
 /* 18 */,
-/* 19 */,
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 /*
@@ -30751,7 +30719,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -30979,6 +30947,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
+/* 21 */,
 /* 22 */,
 /* 23 */,
 /* 24 */,
@@ -31015,23 +30984,22 @@ function applyToTag (styleElement, obj) {
 /* 55 */,
 /* 56 */,
 /* 57 */,
-/* 58 */,
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(60);
+module.exports = __webpack_require__(59);
 
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 window.cytoscape = __webpack_require__(7);
-window.Vue = __webpack_require__(61);
-__webpack_require__(13);
+window.Vue = __webpack_require__(60);
+__webpack_require__(61);
 Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("variableViewList", __webpack_require__(62));
-Vue.component("variableEditList", __webpack_require__(82));
+Vue.component("modalStep", __webpack_require__(82));
 window.cyCanvas = __webpack_require__(12);
 
 // ============================================================================================= //
@@ -31041,7 +31009,7 @@ window.cyCanvas = __webpack_require__(12);
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
+        nodeId: -1,
         color: '#0099ff',
         type: 'input' or 'result',
         create: true,
@@ -31079,20 +31047,8 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1, //ID in vue steps-array
-    modalDatabaseStepID: -1, //ID in database
-    modalStepType: "input",
-    modalSelectedColor: "#000000",
-    modalMultiselectSelectedVariables: [],
-    modalSelectedVariables: [],
-    modalVarCounter: -1,
-    modalUsedVariables: {},
-    modalRules: [],
-    modalEditRuleFlags: [],
-    modalApiCall: {
-      model: null,
-      variables: []
-    }
+    selectedStepId: 0,
+    modalChanged: false
   },
 
   created: function created() {
@@ -31101,6 +31057,8 @@ vObj = new Vue({
     Event.listen("modelLoad", function (modelID) {
       _this.loadModelEvidencio(modelID);
     });
+    this.addLevel(0);
+    this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
   },
 
 
@@ -31108,8 +31066,12 @@ vObj = new Vue({
    * This function adds the first basic level and the first step.
    */
   mounted: function mounted() {
-    this.addLevel(0);
-    this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
+    // this.addLevel(0);
+    // this.addStep(
+    //   "Starter step",
+    //   "First step in the model shown to the patient. Change this step to fit your needs.",
+    //   0
+    // );
   },
 
   computed: {
@@ -31141,16 +31103,17 @@ vObj = new Vue({
     childrenNodes: function childrenNodes() {
       var _this2 = this;
 
-      if (this.modalNodeID == -1) return [];
-      var levelIndex = this.getStepLevel(this.modalNodeID);
+      if (this.selectedStepId == -1) return [];
+      var levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
       var options = [];
       this.levels[levelIndex + 1].steps.forEach(function (element) {
         options.push({
-          stepID: element,
+          stepId: element,
           title: _this2.steps[element].title,
           id: _this2.steps[element].id,
-          color: _this2.steps[element].color
+          color: _this2.steps[element].color,
+          ind: options.length
         });
       });
       return options;
@@ -31240,7 +31203,7 @@ vObj = new Vue({
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
+        nodeId: -1,
         color: "#0099ff",
         type: "input",
         variables: [],
@@ -31282,7 +31245,7 @@ vObj = new Vue({
      */
     positionAddLevelButtons: function positionAddLevelButtons() {
       for (var index = 0; index < this.addLevelButtons.length; index++) {
-        var element = this.addLevelButtons[index].nodeID;
+        var element = this.addLevelButtons[index].nodeId;
         cy.getElementById(element).position({
           x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
           y: (index + 0.5) * this.deltaY
@@ -31297,7 +31260,7 @@ vObj = new Vue({
     positionAddStepButtons: function positionAddStepButtons() {
       if (this.levels.length > 0) {
         for (var index = 0; index < this.addStepButtons.length; index++) {
-          var element = this.addStepButtons[index].nodeID;
+          var element = this.addStepButtons[index].nodeId;
           cy.getElementById(element).position({
             x: (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) * this.deltaX,
             y: (index + 1) * this.deltaY
@@ -31315,7 +31278,7 @@ vObj = new Vue({
         var elementLevel = this.levels[indexLevel].steps;
         var left = -(elementLevel.length - 1) * this.deltaX / 2;
         for (var indexStep = 0; indexStep < elementLevel.length; indexStep++) {
-          var elementStep = this.steps[elementLevel[indexStep]].nodeID;
+          var elementStep = this.steps[elementLevel[indexStep]].nodeId;
           cy.getElementById(elementStep).position({
             x: left + indexStep * this.deltaX,
             y: indexLevel * this.deltaY
@@ -31331,7 +31294,7 @@ vObj = new Vue({
      */
     getAddLevelButtonIndex: function getAddLevelButtonIndex(id) {
       for (var index = 0; index < this.addLevelButtons.length; index++) {
-        var element = this.addLevelButtons[index].nodeID;
+        var element = this.addLevelButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -31346,7 +31309,7 @@ vObj = new Vue({
      */
     getAddStepButtonIndex: function getAddStepButtonIndex(id) {
       for (var index = 0; index < this.addStepButtons.length; index++) {
-        var element = this.addStepButtons[index].nodeID;
+        var element = this.addStepButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -31360,106 +31323,47 @@ vObj = new Vue({
      * @param {object} [nodeRef] is the reference to the node that is clicked on.
      */
     prepareModal: function prepareModal(nodeRef) {
-      this.modalNodeID = nodeRef.scratch("_nodeID");
-      var step = this.steps[this.modalNodeID];
-      this.modalDatabaseStepID = step.id;
-      this.modalStepType = step.type;
-      this.modalSelectedColor = step.color;
-      this.modalSelectedVariables = step.variables.slice();
-      this.modalVarCounter = step.varCounter;
-      this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
-      this.modalRules = JSON.parse(JSON.stringify(step.rules));
-      this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
-      this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
-      this.setSelectedVariables();
-    },
-
-
-    /**
-     * Adds the selected variables to the selectedVariable part of the multiselect.
-     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
-     */
-    setSelectedVariables: function setSelectedVariables() {
-      this.modalMultiselectSelectedVariables = [];
-      for (var index = 0; index < this.modalSelectedVariables.length; index++) {
-        var origID = this.modalUsedVariables[this.modalSelectedVariables[index]].id;
-        findVariable: for (var indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
-          var element = this.possibleVariables[indexOfMod];
-          for (var indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
-            if (element.variables[indexInMod].id == origID) {
-              this.modalMultiselectSelectedVariables.push(element.variables[indexInMod]);
-              break findVariable;
-            }
-          }
-        }
-      }
-    },
-
-
-    /**
-     * Returns the text shown when more than the limit of options are selected.
-     * @param {integer} [count] is the number of not-shown options.
-     */
-    multiselectVariablesText: function multiselectVariablesText(count) {
-      return " and " + count + " other variable(s)";
+      this.selectedStepId = nodeRef.scratch("_nodeId");
+      this.modalChanged = !this.modalChanged;
+      // let step = this.steps[this.modalnodeId];
+      // this.modalDatabaseStepID = step.id;
+      // this.modalStepType = step.type;
+      // this.modalSelectedColor = step.color;
+      // this.modalSelectedVariables = step.variables.slice();
+      // this.modalVarCounter = step.varCounter;
+      // this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
+      // this.modalRules = JSON.parse(JSON.stringify(step.rules));
+      // this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
+      // this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
+      // this.setSelectedVariables();
     },
 
 
     /**
      * Saves the changes made to a step (variables added, etc.)
      */
-    saveChanges: function saveChanges() {
-      var step = this.steps[this.modalNodeID];
+    applyChanges: function applyChanges(changedStep) {
+      this.steps[this.selectedStepId] = changedStep.step;
+      this.usedVariables = changedStep.usedVars;
+
       // Set new backgroundcolor
-      cy.getElementById(step.nodeID).style({
-        "background-color": this.modalSelectedColor
+      cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
+        "background-color": changedStep.step.color
       });
-      step.color = this.modalSelectedColor;
-      // Set (new) step-type
-      step.type = this.modalStepType;
-      // Set (new) variables
-      step.variables = this.modalSelectedVariables.slice();
-      step.varCounter = this.modalVarCounter;
-      this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
-      // Set (new) rules
-      step.rules = JSON.parse(JSON.stringify(this.modalRules));
-      // Set (new) API-call
-      step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
-      // Recount variable uses
-      this.modalSelectedVariables = [];
+      // step.color = this.modalSelectedColor;
+      // // Set (new) step-type
+      // step.type = this.modalStepType;
+      // // Set (new) variables
+      // step.variables = this.modalSelectedVariables.slice();
+      // step.varCounter = this.modalVarCounter;
+      // this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
+      // // Set (new) rules
+      // step.rules = JSON.parse(JSON.stringify(this.modalRules));
+      // // Set (new) API-call
+      // step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
+      // // Recount variable uses
+      // this.modalSelectedVariables = [];
       this.recountVariableUses();
-    },
-
-
-    /**
-     * Adds a rule to the list of rules
-     */
-    addRule: function addRule() {
-      this.modalRules.push({
-        name: "Go to target",
-        rule: [],
-        target: -1
-      });
-      this.modalEditRuleFlags.push(false);
-    },
-
-
-    /**
-     * Removes the rule with the given index from the list
-     * @param {integer} [ruleIndex] of rule to be removed
-     */
-    removeRule: function removeRule(ruleIndex) {
-      this.modalRules.splice(ruleIndex, 1);
-      this.modalEditRuleFlags.splice(ruleIndex, 1);
-    },
-
-
-    /**
-     * Allows for a rule to be edited.
-     * @param {integer} [index] of the rule to be edited
-     */
-    editRule: function editRule(index) {
-      Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
     },
 
 
@@ -31479,118 +31383,19 @@ vObj = new Vue({
 
 
     /**
-     * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-     * @param {integer} [modelID] is the Evidencio model ID.
-     */
-    getModelIndex: function getModelIndex(modelID) {
-      for (var index = 0; index < this.models.length; index++) {
-        if (this.models[index].id == modelID) return index;
-      }
-      return -1;
-    },
-
-
-    /**
-     * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-     * @param {object} [selectedModel] is the newly selected model
-     */
-    apiCallModelChangeAction: function apiCallModelChangeAction(selectedModel) {
-      var modID = this.getModelIndex(selectedModel.id);
-      if (modID == -1) {
-        this.modalApiCall.variables = [];
-        return;
-      }
-      var modVars = [];
-      this.models[modID].variables.forEach(function (element) {
-        modVars.push({
-          originalTitle: element.title,
-          originalID: element.id,
-          targetID: null
-        });
-      });
-      this.modalApiCall.variables = modVars;
-    },
-
-
-    /**
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this3 = this;
-
       this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf, 0);
-      this.modalSelectedVariables.forEach(function (element) {
-        _this3.timesUsedVariables[_this3.modalUsedVariables[element].ind] += 1;
-      });
       for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
         var elementStep = this.steps[indexStep];
         if (elementStep.type == "input") {
           for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
             var element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
+            this.timesUsedVariables[this.usedVariables[element].ind] += 1;
           }
         }
       }
-    },
-
-
-    /**
-     * Removes the variables from the step.
-     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
-     */
-    modalRemoveVariables: function modalRemoveVariables(removedVariables) {
-      var _this4 = this;
-
-      if (removedVariables.constructor == Array) {
-        removedVariables.forEach(function (element) {
-          _this4.modalRemoveSingleVariable(element);
-        });
-      } else {
-        this.modalRemoveSingleVariable(removedVariables);
-      }
-    },
-
-
-    /**
-     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
-     */
-    modalRemoveSingleVariable: function modalRemoveSingleVariable(removedVariable) {
-      for (var index = 0; index < this.modalSelectedVariables.length; index++) {
-        if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
-          delete this.modalUsedVariables[this.modalSelectedVariables[index]];
-          this.modalSelectedVariables.splice(index, 1);
-          return;
-        }
-      }
-    },
-
-
-    /**
-     * Selects the variables from the step.
-     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
-     */
-    modalSelectVariables: function modalSelectVariables(selectedVariables) {
-      var _this5 = this;
-
-      if (selectedVariables.constructor == Array) {
-        selectedVariables.forEach(function (element) {
-          _this5.modalSelectSingleVariable(element);
-        });
-      } else {
-        this.modalSelectSingleVariable(selectedVariables);
-      }
-    },
-
-
-    /**
-     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
-     * @param {object} [selectedVariable] the variable-object to be selected
-     */
-    modalSelectSingleVariable: function modalSelectSingleVariable(selectedVariable) {
-      var varName = "var" + this.modalNodeID + "_" + this.modalVarCounter++;
-      this.modalSelectedVariables.push(varName);
-      this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
     }
   },
 
@@ -31601,26 +31406,26 @@ vObj = new Vue({
     stepsChanged: function stepsChanged() {
       for (var index = 0; index < this.steps.length; index++) {
         if (this.steps[index].create) {
-          this.steps[index].nodeID = cy.add({
+          this.steps[index].nodeId = cy.add({
             classes: "node",
             data: {
               id: "node_" + this.nodeCounter
             },
             scratch: {
-              _nodeID: index
+              _nodeId: index
             },
             style: {
               "background-color": this.steps[index].color
             }
           }).id();
           this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeID).style({
+          cy.getElementById(this.steps[index].nodeId).style({
             label: this.steps[index].id
           });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeID);
+          cy.remove(this.steps[index].nodeId);
           this.steps.splice(index, 1);
         }
       }
@@ -31636,20 +31441,20 @@ vObj = new Vue({
       while (this.levels.length > this.addLevelButtons.length) {
         if (this.addLevelButtons.length > 0) {
           this.addStepButtons.push({
-            nodeID: cy.add({
+            nodeId: cy.add({
               classes: "buttonAddStep"
             }).id()
           });
         }
         this.addLevelButtons.push({
-          nodeID: cy.add({
+          nodeId: cy.add({
             classes: "buttonAddLevel"
           }).id()
         });
       }
       while (this.levels.length < this.addLevelButtons.length) {
-        cy.remove(this.addLevelButtons.pop().nodeID);
-        cy.remove(this.addStepButtons.pop().nodeID);
+        cy.remove(this.addLevelButtons.pop().nodeId);
+        cy.remove(this.addStepButtons.pop().nodeId);
       }
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
@@ -31770,14 +31575,8 @@ window.onload = function () {
   vObj.fitView();
 };
 
-// ============================================================================================= //
-
-$("#colorPalette").colorPalette().on("selectColor", function (evt) {
-  vObj.modalSelectedColor = evt.color;
-});
-
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42743,6 +42542,38 @@ module.exports = Vue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(5).setImmediate))
 
 /***/ }),
+/* 61 */
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+window.Event = new (function () {
+  function _class() {
+    _classCallCheck(this, _class);
+
+    this.vue = new Vue();
+  }
+
+  _createClass(_class, [{
+    key: "fire",
+    value: function fire(event) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      this.vue.$emit(event, data);
+    }
+  }, {
+    key: "listen",
+    value: function listen(event, callback) {
+      this.vue.$on(event, callback);
+    }
+  }]);
+
+  return _class;
+}())();
+
+/***/ }),
 /* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42804,7 +42635,7 @@ var content = __webpack_require__(64);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(21)("0218c20c", content, false, {});
+var update = __webpack_require__(20)("0218c20c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -42823,7 +42654,7 @@ if(false) {
 /* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(20)(true);
+exports = module.exports = __webpack_require__(19)(true);
 // imports
 
 
@@ -42995,7 +42826,7 @@ var content = __webpack_require__(69);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(21)("66c29602", content, false, {});
+var update = __webpack_require__(20)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -43014,7 +42845,7 @@ if(false) {
 /* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(20)(true);
+exports = module.exports = __webpack_require__(19)(true);
 // imports
 
 
@@ -43580,7 +43411,545 @@ var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(83)
 /* template */
-var __vue_template__ = __webpack_require__(87)
+var __vue_template__ = __webpack_require__(96)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/ModalStep.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-682a3b1c", Component.options)
+  } else {
+    hotAPI.reload("data-v-682a3b1c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    VariableEditList: __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default.a,
+    RuleEditList: __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default.a
+  },
+  props: {
+    stepId: {
+      type: Number,
+      required: true
+    },
+    step: {
+      type: Object,
+      required: true
+    },
+    usedVariables: {
+      type: Object,
+      required: true
+    },
+    possibleVariables: {
+      type: Array,
+      required: true
+    },
+    childNodes: {
+      type: Array,
+      required: true
+    },
+    changed: {
+      type: Boolean,
+      required: true
+    }
+  },
+
+  mounted: function mounted() {
+    this.reload();
+    var self = this;
+    $("#colorPalette").colorPalette().on("selectColor", function (evt) {
+      self.localStep.color = evt.color;
+    });
+  },
+
+  watch: {
+    changed: function changed() {
+      this.reload();
+    }
+  },
+
+  methods: {
+    reload: function reload() {
+      this.localStep = JSON.parse(JSON.stringify(this.step));
+      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
+      this.setSelectedVariables();
+    },
+    apply: function apply() {
+      this.$emit("change", {
+        step: this.localStep,
+        usedVars: this.localUsedVariables
+      });
+    },
+
+
+    /**
+     * Adds the selected variables to the selectedVariable part of the multiselect.
+     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
+     */
+    setSelectedVariables: function setSelectedVariables() {
+      this.multiSelectedVariables = [];
+      for (var index = 0; index < this.localStep.variables.length; index++) {
+        var origID = this.localUsedVariables[this.localStep.variables[index]].id;
+        findVariable: for (var indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
+          var element = this.possibleVariables[indexOfMod];
+          for (var indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
+            if (element.variables[indexInMod].id == origID) {
+              this.multiSelectedVariables.push(element.variables[indexInMod]);
+              break findVariable;
+            }
+          }
+        }
+      }
+    },
+
+
+    /**
+     * Returns the text shown when more than the limit of options are selected.
+     * @param {integer} [count] is the number of not-shown options.
+     */
+    multiselectVariablesText: function multiselectVariablesText(count) {
+      return " and " + count + " other variable(s)";
+    },
+
+    /**
+     * Removes the variables from the step.
+     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     */
+    multiRemoveVariables: function multiRemoveVariables(removedVariables) {
+      var _this = this;
+
+      if (removedVariables.constructor == Array) {
+        removedVariables.forEach(function (element) {
+          _this.multiRemoveSingleVariable(element);
+        });
+      } else {
+        this.multiRemoveSingleVariable(removedVariables);
+      }
+    },
+
+
+    /**
+     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
+     * @param {object} [removedVariable] the variable-object to be removed
+     */
+    multiRemoveSingleVariable: function multiRemoveSingleVariable(removedVariable) {
+      for (var index = 0; index < this.localStep.variables.length; index++) {
+        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {
+          delete this.localUsedVariables[this.localStep.variables[index]];
+          this.localStep.variables.splice(index, 1);
+          return;
+        }
+      }
+    },
+
+
+    /**
+     * Selects the variables from the step.
+     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
+     */
+    multiSelectVariables: function multiSelectVariables(selectedVariables) {
+      var _this2 = this;
+
+      if (selectedVariables.constructor == Array) {
+        selectedVariables.forEach(function (element) {
+          _this2.multiSelectSingleVariable(element);
+        });
+      } else {
+        this.multiSelectSingleVariable(selectedVariables);
+      }
+    },
+
+
+    /**
+     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
+     * @param {object} [selectedVariable] the variable-object to be selected
+     */
+    multiSelectSingleVariable: function multiSelectSingleVariable(selectedVariable) {
+      var varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
+      this.localStep.variables.push(varName);
+      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+    }
+
+    // /**
+    //  * Adds a rule to the list of rules
+    //  */
+    // addRule() {
+    //   this.modalRules.push({
+    //     name: "Go to target",
+    //     rule: [],
+    //     target: -1
+    //   });
+    //   this.modalEditRuleFlags.push(false);
+    // },
+
+    // /**
+    //  * Removes the rule with the given index from the list
+    //  * @param {integer} [ruleIndex] of rule to be removed
+    //  */
+    // removeRule(ruleIndex) {
+    //   this.modalRules.splice(ruleIndex, 1);
+    //   this.modalEditRuleFlags.splice(ruleIndex, 1);
+    // },
+
+    // /**
+    //  * Allows for a rule to be edited.
+    //  * @param {integer} [index] of the rule to be edited
+    //  */
+    // editRule(index) {
+    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
+    // },
+
+    // /**
+    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
+    //  * @param {integer} [modelID] is the Evidencio model ID.
+    //  */
+    // getModelIndex(modelID) {
+    //   for (let index = 0; index < this.models.length; index++) {
+    //     if (this.models[index].id == modelID) return index;
+    //   }
+    //   return -1;
+    // },
+
+    // /**
+    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model
+    //  * @param {object} [selectedModel] is the newly selected model
+    //  */
+    // apiCallModelChangeAction(selectedModel) {
+    //   let modID = this.getModelIndex(selectedModel.id);
+    //   if (modID == -1) {
+    //     this.modalApiCall.variables = [];
+    //     return;
+    //   }
+    //   let modVars = [];
+    //   this.models[modID].variables.forEach(element => {
+    //     modVars.push({
+    //       originalTitle: element.title,
+    //       originalID: element.id,
+    //       targetID: null
+    //     });
+    //   });
+    //   this.modalApiCall.variables = modVars;
+    // }
+
+  },
+
+  data: function data() {
+    return {
+      localStep: {},
+      localUsedVariables: {},
+      multiSelectedVariables: []
+      /*  
+      nodeID: -1, //ID in vue steps-array
+      DatabaseStepId: -1, //ID in database
+      modalStepType: "input",
+      modalSelectedColor: "#000000",
+      modalMultiselectSelectedVariables: [],
+      modalSelectedVariables: [],
+      modalVarCounter: -1,
+      modalUsedVariables: {},
+      modalRules: [],
+      modalApiCall: {
+        model: null,
+        variables: []
+      }*/
+    };
+  }
+});
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(85)
+/* template */
+var __vue_template__ = __webpack_require__(89)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43619,12 +43988,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__);
 //
 //
@@ -43662,15 +44031,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(2)
 /* script */
-var __vue_script__ = __webpack_require__(85)
+var __vue_script__ = __webpack_require__(87)
 /* template */
-var __vue_template__ = __webpack_require__(86)
+var __vue_template__ = __webpack_require__(88)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43709,7 +44078,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43778,7 +44147,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43931,7 +44300,7 @@ if (false) {
 }
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43961,6 +44330,1201 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-0c99109b", module.exports)
+  }
+}
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(91)
+/* template */
+var __vue_template__ = __webpack_require__(95)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/RuleEditList.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-424c86ca", Component.options)
+  } else {
+    hotAPI.reload("data-v-424c86ca", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__);
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    RuleEditItem: __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue___default.a
+  },
+
+  props: {
+    rules: {
+      type: Array,
+      required: true
+    },
+    children: {
+      type: Array,
+      required: true
+    }
+  },
+
+  methods: {
+    selectCard: function selectCard(index) {
+      for (var ind = 0; ind < this.rules.length; ind++) {
+        if (ind == index) $("#ruleEditCollapse_" + ind).collapse("toggle");else $("#ruleEditCollapse_" + ind).collapse("hide");
+      }
+    }
+  }
+});
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(93)
+/* template */
+var __vue_template__ = __webpack_require__(94)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/RuleEditItem.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-565776e0", Component.options)
+  } else {
+    hotAPI.reload("data-v-565776e0", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    rule: {
+      type: Object,
+      required: true
+    },
+    indexItem: {
+      type: Number,
+      required: true
+    },
+    options: {
+      type: Array,
+      required: true
+    }
+  },
+
+  data: function data() {
+    return {
+      editing: false
+    };
+  },
+
+
+  methods: {
+    toggleShow: function toggleShow() {
+      this.$emit("toggle", this.indexItem);
+    }
+  },
+
+  computed: {
+    getImage: function getImage() {
+      if (this.editing) return "/images/check.svg";else return "/images/pencil.svg";
+    }
+  }
+});
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "card" }, [
+    _c(
+      "a",
+      {
+        staticClass: "card-header collapsed",
+        attrs: {
+          href: "#",
+          id: "ruleEditCollapseHeader_" + _vm.indexItem,
+          "data-parent": "#accRulesEdit",
+          "aria-expanded": "false",
+          "aria-controls": "ruleEditCollapse_" + _vm.indexItem
+        },
+        on: { click: _vm.toggleShow }
+      },
+      [
+        _c("h6", { staticClass: "mb-0" }, [
+          _vm._v("\n            " + _vm._s(_vm.rule.title) + "\n        ")
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "collapse",
+        attrs: {
+          id: "ruleEditCollapse_" + _vm.indexItem,
+          "aria-labelledby": "#ruleEditCollapseHeader_" + _vm.indexItem
+        }
+      },
+      [
+        _c("div", { staticClass: "card-body" }, [
+          _c("form", { attrs: { onsubmit: "return false" } }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "titleRule_" + _vm.indexItem } }, [
+                _vm._v("Title: ")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.rule.title,
+                    expression: "rule.title"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  type: "text",
+                  name: "",
+                  id: "titleRule_" + _vm.indexItem,
+                  placeholder: "Title",
+                  disabled: !_vm.editing
+                },
+                domProps: { value: _vm.rule.title },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.rule, "title", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "small",
+                {
+                  staticClass: "form-text text-muted",
+                  attrs: { id: "titleRuleHelp_" + _vm.indexItem }
+                },
+                [_vm._v("Title of the variable")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                { attrs: { for: "conditionRule_" + _vm.indexItem } },
+                [_vm._v("Condition: ")]
+              ),
+              _vm._v(" "),
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.rule.condition,
+                    expression: "rule.condition"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  id: "conditionRule_" + _vm.indexItem,
+                  cols: "30",
+                  rows: "3",
+                  disabled: !_vm.editing
+                },
+                domProps: { value: _vm.rule.condition },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.rule, "condition", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "small",
+                {
+                  staticClass: "form-text text-muted",
+                  attrs: { id: "descriptionVarHelp_" + _vm.indexItem }
+                },
+                [_vm._v("Condition of the rule")]
+              ),
+              _vm._v(" "),
+              _c("input", {
+                staticClass: "buttonIcon",
+                attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
+                on: {
+                  click: function($event) {
+                    _vm.editing = !_vm.editing
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { staticClass: "typo__label" }, [
+                  _vm._v("Custom option template")
+                ]),
+                _vm._v(" "),
+                _c("vue-multiselect", {
+                  attrs: {
+                    label: "title",
+                    "track-by": "ind",
+                    options: _vm.options,
+                    "option-height": 44,
+                    "show-labels": false,
+                    "preselect-first": "",
+                    "allow-empty": false
+                  },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "singleLabel",
+                      fn: function(props) {
+                        return [
+                          _c("div", { staticClass: "container-fluid" }, [
+                            _c("div", { staticClass: "row" }, [
+                              _c("div", { staticClass: "col" }, [
+                                _c(
+                                  "svg",
+                                  {
+                                    staticClass: "option__image",
+                                    attrs: {
+                                      viewBox: "0 0 44 44",
+                                      width: "44",
+                                      height: "44"
+                                    }
+                                  },
+                                  [
+                                    _c("rect", {
+                                      style:
+                                        "fill:" +
+                                        props.option.color +
+                                        ";stroke-width:1;stroke:rgb(0,0,0)",
+                                      attrs: {
+                                        x: "2",
+                                        y: "2",
+                                        width: "40",
+                                        height: "40",
+                                        rx: "4",
+                                        ry: "4"
+                                      }
+                                    })
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col option__desc" }, [
+                                _c("span", { staticClass: "option__title" }, [
+                                  _vm._v(_vm._s(props.option.title))
+                                ]),
+                                _vm._v(" "),
+                                _c("span", [_vm._v(_vm._s(props.option.id))])
+                              ])
+                            ])
+                          ])
+                        ]
+                      }
+                    },
+                    {
+                      key: "option",
+                      fn: function(props) {
+                        return [
+                          _c("div", { staticClass: "container-fluid" }, [
+                            _c("div", { staticClass: "row" }, [
+                              _c("div", { staticClass: "col" }, [
+                                _c(
+                                  "svg",
+                                  {
+                                    staticClass: "option__image",
+                                    attrs: {
+                                      viewBox: "0 0 44 44",
+                                      width: "44",
+                                      height: "44"
+                                    }
+                                  },
+                                  [
+                                    _c("rect", {
+                                      style:
+                                        "fill:" +
+                                        props.option.color +
+                                        ";stroke-width:1;stroke:rgb(0,0,0)",
+                                      attrs: {
+                                        x: "2",
+                                        y: "2",
+                                        width: "40",
+                                        height: "40",
+                                        rx: "4",
+                                        ry: "4"
+                                      }
+                                    })
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col option__desc" }, [
+                                _c("span", { staticClass: "option__title" }, [
+                                  _vm._v(_vm._s(props.option.title))
+                                ]),
+                                _vm._v(" "),
+                                _c("span", [_vm._v(_vm._s(props.option.id))])
+                              ])
+                            ])
+                          ])
+                        ]
+                      }
+                    }
+                  ]),
+                  model: {
+                    value: _vm.rule.target,
+                    callback: function($$v) {
+                      _vm.$set(_vm.rule, "target", $$v)
+                    },
+                    expression: "rule.target"
+                  }
+                })
+              ],
+              1
+            )
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-565776e0", module.exports)
+  }
+}
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { attrs: { id: "accRulesEdit" } },
+    _vm._l(_vm.rules, function(rule, index) {
+      return _c("rule-edit-item", {
+        key: index,
+        attrs: { "index-item": index, rule: rule, options: _vm.children },
+        on: {
+          toggle: function($event) {
+            _vm.selectCard($event)
+          }
+        }
+      })
+    })
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-424c86ca", module.exports)
+  }
+}
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "modal fade",
+      attrs: {
+        id: "modalStep",
+        tabindex: "-1",
+        role: "dialog",
+        "aria-labelledby": "modalStepOptions",
+        "aria-hidden": "true"
+      }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
+        [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("div", { staticClass: "container-fluid" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-md-4" }, [
+                    _c("label", { attrs: { for: "colorPick" } }, [
+                      _vm._v("Pick a color:")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "btn btn-colorpick dropdown-toggle outline",
+                        style: { "background-color": _vm.localStep.color },
+                        attrs: {
+                          id: "colorPick",
+                          type: "button",
+                          "data-toggle": "dropdown"
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.localStep.id))]
+                    ),
+                    _vm._v(" "),
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "stepType" } }, [
+                        _vm._v("Select step-type:")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.localStep.type,
+                              expression: "localStep.type"
+                            }
+                          ],
+                          staticClass: "custom-select",
+                          attrs: {
+                            name: "stepType",
+                            id: "stepType",
+                            disabled: _vm.stepId == 0
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.localStep,
+                                "type",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "input" } }, [
+                            _vm._v("Input")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "result" } }, [
+                            _vm._v("Result")
+                          ])
+                        ]
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm.localStep.type == "input"
+                    ? _c(
+                        "div",
+                        { staticClass: "col-md-8" },
+                        [
+                          _c("vue-multiselect", {
+                            attrs: {
+                              options: _vm.possibleVariables,
+                              multiple: true,
+                              "group-values": "variables",
+                              "group-label": "title",
+                              "group-select": true,
+                              "close-on-select": false,
+                              "clear-on-select": false,
+                              label: "title",
+                              "track-by": "title",
+                              limit: 3,
+                              "limit-text": _vm.multiselectVariablesText,
+                              "preserve-search": true,
+                              placeholder: "Choose variables"
+                            },
+                            on: {
+                              remove: _vm.multiRemoveVariables,
+                              select: _vm.multiSelectVariables
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "tag",
+                                fn: function(props) {
+                                  return [
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "badge badge-info badge-larger"
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "badge-maxwidth" },
+                                          [_vm._v(_vm._s(props.option.title))]
+                                        ),
+                                        _vm._v(
+                                          " \n                                        "
+                                        ),
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass: "custom__remove",
+                                            on: {
+                                              click: function($event) {
+                                                props.remove(props.option)
+                                              }
+                                            }
+                                          },
+                                          [_vm._v("❌")]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                }
+                              }
+                            ]),
+                            model: {
+                              value: _vm.multiSelectedVariables,
+                              callback: function($$v) {
+                                _vm.multiSelectedVariables = $$v
+                              },
+                              expression: "multiSelectedVariables"
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.localStep.type == "result"
+                    ? _c("div", { staticClass: "col-md-8" })
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col" }, [
+                    _vm.localStep.type == "input"
+                      ? _c("div", { staticClass: "card" }, [
+                          _vm._m(2),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass: "card-body",
+                              attrs: { id: "modalCard" }
+                            },
+                            [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "tab-content",
+                                  attrs: { id: "nav-tabContent-modal" }
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "tab-pane fade show active",
+                                      attrs: {
+                                        id: "nav-variables",
+                                        role: "tabpanel",
+                                        "aria-labelledby": "nav-variables-tab"
+                                      }
+                                    },
+                                    [
+                                      _c("variable-edit-list", {
+                                        attrs: {
+                                          "selected-variables":
+                                            _vm.localStep.variables,
+                                          "used-variables":
+                                            _vm.localUsedVariables
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "tab-pane fade",
+                                      attrs: {
+                                        id: "nav-logic",
+                                        role: "tabpanel",
+                                        "aria-labelledby": "nav-logic-tab"
+                                      }
+                                    },
+                                    [
+                                      _c("rule-edit-list", {
+                                        attrs: {
+                                          rules: _vm.localStep.rules,
+                                          children: _vm.childNodes
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("div", {
+                                    staticClass: "tab-pane fade",
+                                    attrs: {
+                                      id: "nav-api",
+                                      role: "tabpanel",
+                                      "aria-labelledby": "nav-api-tab"
+                                    }
+                                  })
+                                ]
+                              )
+                            ]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.localStep.type == "result"
+                      ? _c(
+                          "div",
+                          {
+                            staticClass: "card",
+                            attrs: { id: "outputOptionsMenu" }
+                          },
+                          [_vm._m(3)]
+                        )
+                      : _vm._e()
+                  ])
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [_vm._v("Cancel")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button", "data-dismiss": "modal" },
+                  on: { click: _vm.apply }
+                },
+                [_vm._v("Apply")]
+              )
+            ])
+          ])
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h4", { staticClass: "modal-title", attrs: { id: "modelTitleId" } }, [
+        _vm._v("Step Options")
+      ]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ul", { staticClass: "dropdown-menu" }, [
+      _c("li", [_c("div", { attrs: { id: "colorPalette" } })])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("nav", [
+        _c(
+          "div",
+          {
+            staticClass: "nav nav-tabs card-header-tabs nav-scroll",
+            attrs: { id: "nav-tab-modal", role: "tablist" }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "nav-item nav-link active",
+                attrs: {
+                  id: "nav-variables-tab",
+                  "data-toggle": "tab",
+                  href: "#nav-variables",
+                  role: "tab",
+                  "aria-controls": "nav-variables",
+                  "aria-selected": "true"
+                }
+              },
+              [_vm._v("Variables")]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "nav-item nav-link",
+                attrs: {
+                  id: "nav-logic-tab",
+                  "data-toggle": "tab",
+                  href: "#nav-logic",
+                  role: "tab",
+                  "aria-controls": "nav-logic",
+                  "aria-selected": "false"
+                }
+              },
+              [_vm._v("Logic")]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "nav-item nav-link",
+                attrs: {
+                  id: "nav-api-tab",
+                  "data-toggle": "tab",
+                  href: "#nav-api",
+                  role: "tab",
+                  "aria-controls": "nav-api",
+                  "aria-selected": "false"
+                }
+              },
+              [_vm._v("Model calculation")]
+            )
+          ]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "row vdivide", attrs: { id: "outputCategories" } },
+      [
+        _c(
+          "div",
+          { staticClass: "col-sm-6", attrs: { id: "outputTypeLeft" } },
+          [
+            _c("div", { attrs: { id: "outputCategoriesAccordion" } }, [
+              _c("div", { staticClass: "card" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "card-link",
+                      attrs: { "data-toggle": "collapse", href: "#collapseOne" }
+                    },
+                    [
+                      _vm._v(
+                        "\n                                                        Item #1\n                                                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "collapse show",
+                    attrs: {
+                      id: "collapseOne",
+                      "data-parent": "#outputCategoriesAccordion"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "card-body" }, [
+                      _vm._v(
+                        "\n                                                        Lorem ipsum..\n                                                    "
+                      )
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "collapsed card-link",
+                      attrs: { "data-toggle": "collapse", href: "#collapseTwo" }
+                    },
+                    [
+                      _vm._v(
+                        "\n                                                        Item #2\n                                                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "collapse",
+                    attrs: {
+                      id: "collapseTwo",
+                      "data-parent": "#outputCategoriesAccordion"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "card-body" }, [
+                      _vm._v(
+                        "\n                                                        Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius\n                                                        referrentur. Ad ius semper iuvaret, albucius placerat mea ad.\n                                                        Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri\n                                                        viderer nominavi an, eu solet labores deserunt vim, te diceret\n                                                        adipiscing liberavisse qui. Eos in viris tacimates periculis,\n                                                        in pri consequat theophrastus, amet accusamus duo in. Aperiri\n                                                        verterem per et, augue congue cu vis. Ne inani erroribus cum.\n                                                        Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,\n                                                        vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno\n                                                        patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu\n                                                        vim, cu case laudem partem vix. Ei eos consul inimicus, ius id\n                                                        blandit deseruisse. Est purto idque ea, per cu eripuit saperet\n                                                        consetetur. Id vim error nihil noster, in illud oblique sententiae\n                                                        nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima\n                                                        aperiri legendos duo, ut rebum ullamcorper deterruisset his.\n                                                        Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.\n                                                        Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,\n                                                        alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae\n                                                        scribentur his cu. At eos vero noster. Ius vitae everti an, pro\n                                                        eu dicunt convenire splendide. Vim natum illum signiferumque\n                                                        et, numquam petentium per id. No duo adolescens vituperatoribus,\n                                                        luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant\n                                                        omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi\n                                                        conclusionemque in vel.\n                                                    "
+                      )
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "collapsed card-link",
+                      attrs: {
+                        "data-toggle": "collapse",
+                        href: "#collapseThree"
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                                                        Item #3\n                                                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "collapse",
+                    attrs: {
+                      id: "collapseThree",
+                      "data-parent": "#outputCategoriesAccordion"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "card-body" }, [
+                      _vm._v(
+                        "\n                                                        Lorem ipsum..\n                                                    "
+                      )
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "collapsed card-link",
+                      attrs: {
+                        "data-toggle": "collapse",
+                        href: "#collapseFour"
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                                                        Item #4\n                                                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "collapse",
+                    attrs: {
+                      id: "collapseFour",
+                      "data-parent": "#outputCategoriesAccordion"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "card-body" }, [
+                      _vm._v(
+                        "\n                                                        Lorem ipsum..\n                                                    "
+                      )
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "collapsed card-link",
+                      attrs: {
+                        "data-toggle": "collapse",
+                        href: "#collapseFive"
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                                                        Item #5\n                                                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "collapse",
+                    attrs: {
+                      id: "collapseFive",
+                      "data-parent": "#outputCategoriesAccordion"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "card-body" }, [
+                      _vm._v(
+                        "\n                                                        Lorem ipsum..\n                                                    "
+                      )
+                    ])
+                  ]
+                )
+              ])
+            ])
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-sm-6", attrs: { id: "outputTypeRight" } },
+          [
+            _vm._v(
+              "\n                                        TODO: Preview..\n                                    "
+            )
+          ]
+        )
+      ]
+    )
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-682a3b1c", module.exports)
   }
 }
 
