@@ -22,10 +22,10 @@ class DesignerController extends Controller
      * Fetch
      *
      */
-    public function fetchVariables()
+    public function fetchVariables(Request $request)
     {
-        $modelID = $_POST['modelID'];
-        $data = EvidencioAPI::getModel($modelID);
+        $modelId = $request->modelId;
+        $data = EvidencioAPI::getModel($modelId);
         return json_encode($data);
     }
 }

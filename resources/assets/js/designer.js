@@ -35,6 +35,7 @@ vObj = new Vue({
   data: {
     modelLoaded: false,
     models: [],
+    modelIds: [],
     numVariables: 0,
     usedVariables: {},
     timesUsedVariables: [],
@@ -56,8 +57,8 @@ vObj = new Vue({
   },
 
   created() {
-    Event.listen("modelLoad", modelID => {
-      this.loadModelEvidencio(modelID);
+    Event.listen("modelLoad", modelId => {
+      this.loadModelEvidencio(modelId);
     });
     this.addLevel(0);
     this.addStep(
@@ -146,9 +147,9 @@ vObj = new Vue({
     /**
      * Load model from Evidencio API, model is identified using variable modelID
      */
-    loadModelEvidencio(modelID) {
+    loadModelEvidencio(modelId) {
       var self = this;
-      if (!this.isModelLoaded(modelID)) {
+      if (!this.isModelLoaded(modelId)) {
         $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -156,7 +157,7 @@ vObj = new Vue({
           url: "/designer/fetch",
           type: "POST",
           data: {
-            modelID: modelID
+            modelId: modelId
           },
           success: function(result) {
             self.models.push(JSON.parse(result));
@@ -166,20 +167,20 @@ vObj = new Vue({
             self.timesUsedVariables = self.timesUsedVariables.concat(
               Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0)
             );
+            self.modelIds.push(modelId);
           }
         });
       }
-      this.modelID = 0;
     },
 
     /**
      * Checks if a model is already loaded, to ensure models aren't loaded twice.
      * @param {integer} [modelID] of the model to be checked.
      */
-    isModelLoaded(modelID) {
-      this.models.forEach(element => {
-        if (element.id == modelID) return true;
-      });
+    isModelLoaded(modelId) {
+      for (let index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return true;
+      }
       return false;
     },
     /**

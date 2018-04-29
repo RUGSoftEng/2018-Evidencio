@@ -38,7 +38,7 @@
                             <div class="col-md-8" v-if="localStep.type == 'input'">
                                 <vue-multiselect v-model="multiSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables"
                                     group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false"
-                                    label="title" track-by="title" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
+                                    label="title" track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
                                     placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
                                     <template slot="tag" slot-scope="props">
                                         <span class="badge badge-info badge-larger">

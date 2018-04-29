@@ -31031,6 +31031,7 @@ vObj = new Vue({
   data: {
     modelLoaded: false,
     models: [],
+    modelIds: [],
     numVariables: 0,
     usedVariables: {},
     timesUsedVariables: [],
@@ -31054,8 +31055,8 @@ vObj = new Vue({
   created: function created() {
     var _this = this;
 
-    Event.listen("modelLoad", function (modelID) {
-      _this.loadModelEvidencio(modelID);
+    Event.listen("modelLoad", function (modelId) {
+      _this.loadModelEvidencio(modelId);
     });
     this.addLevel(0);
     this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
@@ -31145,9 +31146,9 @@ vObj = new Vue({
     /**
      * Load model from Evidencio API, model is identified using variable modelID
      */
-    loadModelEvidencio: function loadModelEvidencio(modelID) {
+    loadModelEvidencio: function loadModelEvidencio(modelId) {
       var self = this;
-      if (!this.isModelLoaded(modelID)) {
+      if (!this.isModelLoaded(modelId)) {
         $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -31155,7 +31156,7 @@ vObj = new Vue({
           url: "/designer/fetch",
           type: "POST",
           data: {
-            modelID: modelID
+            modelId: modelId
           },
           success: function success(result) {
             self.models.push(JSON.parse(result));
@@ -31163,10 +31164,10 @@ vObj = new Vue({
             self.numVariables += newVars;
             self.modelLoaded = true;
             self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0));
+            self.modelIds.push(modelId);
           }
         });
       }
-      this.modelID = 0;
     },
 
 
@@ -31174,10 +31175,10 @@ vObj = new Vue({
      * Checks if a model is already loaded, to ensure models aren't loaded twice.
      * @param {integer} [modelID] of the model to be checked.
      */
-    isModelLoaded: function isModelLoaded(modelID) {
-      this.models.forEach(function (element) {
-        if (element.id == modelID) return true;
-      });
+    isModelLoaded: function isModelLoaded(modelId) {
+      for (var index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return true;
+      }
       return false;
     },
 
@@ -45023,7 +45024,7 @@ var render = function() {
                               "close-on-select": false,
                               "clear-on-select": false,
                               label: "title",
-                              "track-by": "title",
+                              "track-by": "id",
                               limit: 3,
                               "limit-text": _vm.multiselectVariablesText,
                               "preserve-search": true,
