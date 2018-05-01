@@ -121,3 +121,33 @@
 - 17.04 - adding databases to the architecture document
 - 17.04 - adding databases to the architecture document
 - 17.04 - adding databases to the architecture document
+- 17.04 - merging branches
+- 17.04 - merging branches
+- 19.04 - making multiple runs possible in DB design
+- 19.04 - experimenting with API calls of composite and sequential models
+- 20.04 - filling in the questionnaire
+- 22.04 - adding tables related to running API models as a migration
+- 22.04 - adding tables related to running API models as a migration
+- 23.04 - meeting to discuss the progress and set up future goals
+- 23.04 - meeting to discuss the progress and set up future goals
+- 23.04 - creating tables related to running models
+- 23.04 - creating tables related to running models
+- 23.04 - creating tables related to running models
+- 25.04 - meeting with Frank
+- 29.04 - understanding why we need to store loaded model ids and evidencio variable ids for the designer page
+- 29.04 - adding migrations for those
+- 29.04 - adding migrations for user-based tables
+- 29.04 - adding new mandatory fields of user to the registration form
+- 29.04 - adding models for newly created tables
+- 29.04 - testing models
+- 30.04 - amending the ORM diagram
+- 1.05 - commenting and cleaning Evidencio API class
+- 1.05 - reading about testing in Laravel
+- 1.05 - making unit tests for Evidencio API class
+- 1.05 - making unit tests for Evidencio API class
+- 1.05 - adding comments to migrations
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - reviewing Dammes' pull request
