@@ -1,6 +1,6 @@
-<!--This page where the user will fill in the variables of a step of the chosen workflow.
+{--This page where the user will fill in the variables of a step of the chosen workflow.
 The page will create a list of the variables of the step, either a slider for continuous values
-or radio buttons for categorical values.-->
+or radio buttons for categorical values.--}
 
 <?php
 /**
@@ -18,7 +18,7 @@ if (!empty($_GET['model'])) {
 @extends('layouts.app')
 
 @section('content')
-<!--makes inputs for all the required variables-->
+{--makes inputs for all the required variables--}
 <?php if (!empty($decodeRes)): ?>
 <div class="container">
   <h3><?php echo $decodeRes['title'] ?></h3>
@@ -30,7 +30,7 @@ if (!empty($_GET['model'])) {
     <ul class="list-group">
     <?php foreach ($decodeRes['variables'] as $item): ?>
       <li class="list-group-item">
-        <!--creates input for continuous variable-->
+        {--creates input for continuous variable--}
         <?php if ($item['type']=='continuous'): ?>
           <?php
             echo $item['title'].": ";
@@ -47,7 +47,7 @@ if (!empty($_GET['model'])) {
             <div></div>
             <input type="number" step="<?php echo $step ?>" id="answer[<?php echo $item['id']; ?>]" name="answer[<?php echo $item['id']; ?>]">
           </div>
-          <!--javascript for making the sliders-->
+          {--javascript for making the sliders--}
             <script type="text/javascript">
               var slider<?php echo $item['id']; ?> = document.getElementById("<?php echo $item['id']; ?>");
 
@@ -71,7 +71,7 @@ if (!empty($_GET['model'])) {
                 });
             </script>
       <?php endif; ?>
-      <!--creates input for categorical variable-->
+      {--creates input for categorical variable--}
       <?php if ($item['type']=='categorical'): ?>
         <?php  echo $item['title'].": ";?>
         <br>
