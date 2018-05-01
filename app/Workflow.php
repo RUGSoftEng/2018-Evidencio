@@ -23,4 +23,14 @@ class Workflow extends Model
     {
         return $this->hasMany('App\Step','workflowStepWorkflowId');
     }
+
+    public function loadedEvidencioModels()
+    {
+        return $this->hasMany('App\LoadedEvidencioModel','workflowId');
+    }
+
+    public function verificationComments()
+    {
+        return $this->hasMany('App\VerificationComment','workflowId');
+    }
 }

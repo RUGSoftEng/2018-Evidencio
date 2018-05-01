@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'firstName', 'lastName', 'languageCode', 'email', 'password',
     ];
 
     /**
@@ -35,5 +35,20 @@ class User extends Authenticatable
     public function verifiedWorkflows()
     {
         return $this->hasMany('App\Workflow','verifiedByReviewerId');
+    }
+
+    public function registrationDocuments()
+    {
+        return $this->hasMany('App\RegistrationDocument','registreeId');
+    }
+
+    public function verificationCommentsWritten()
+    {
+        return $this->hasMany('App\VerificationComment','reviewerId');
+    }
+
+    public function commentRepliesWritten()
+    {
+        return $this->hasMany('App\CommentReply','authorId');
     }
 }
