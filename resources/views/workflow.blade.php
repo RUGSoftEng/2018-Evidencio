@@ -1,5 +1,12 @@
+<!--This page where the user will fill in the variables of a step of the chosen workflow.
+The page will create a list of the variables of the step, either a slider for continuous values
+or radio buttons for categorical values.-->
 
 <?php
+/**
+ * post request to Evidencio model API
+ * returns array of all the parameters of the evidence models that was clicked on in the search page.
+ */
 use App\EvidencioAPI;
 if (!empty($_GET['model'])) {
   $decodeRes = EvidencioAPI::getModel($_GET['model']);
