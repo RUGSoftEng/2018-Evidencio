@@ -13,12 +13,22 @@ class EvidencioModelRunTables extends Migration
      */
     public function up()
     {
+        /*
+         * There can be multiple model runs per a step so we remove one-to-one
+         * relation between a step and an Evidencio model.
+         */
         Schema::table('steps', function (Blueprint $table) {
             $table->dropColumn("evidencioModelId");
             $table->dropColumn("resultStepExpectedResultType");
             $table->dropColumn("resultStepRepresentationType");
         });
 
+        /*
+         * Table representing a relationship between Evidencio models, fields
+         * and steps. It describes models that are run after a step and
+         * fields that are variables in the run with a mapping to corresponding
+         * Evidencio model variable ids.
+         */
         Schema::create('model_run_field_mappings', function (Blueprint $table) {
             $table->unsignedBigInteger("evidencioModelId");
             $table->unsignedInteger("fieldId");
@@ -31,6 +41,12 @@ class EvidencioModelRunTables extends Migration
             $table->foreign("stepId")->references("id")->on("steps");
         });
 
+        /*
+         * Table representing results of a model run (there can be multiple
+         * results per run). Attributes describing representation apply only
+         * to result steps. The resultNumber attribute is an index of the result
+         * in results array.
+         */
         Schema::create('results', function(Blueprint $table) {
             $table->increments("id");
             $table->unsignedBigInteger("evidencioModelId");

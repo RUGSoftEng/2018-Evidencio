@@ -13,6 +13,10 @@ class UserRelatedTables extends Migration
      */
     public function up()
     {
+        /*
+         * Add some more attributes to the user section, including basic
+         * information and permissions.
+         */
         Schema::table('users',function (Blueprint $table) {
             $table->string("firstName",30);
             $table->string("lastName",30);
@@ -33,6 +37,10 @@ class UserRelatedTables extends Migration
             $table->foreign("verifiedByAdminId")->references("id")->on("users");
         });
 
+        /*
+         * Table containing locations to documents which are provided during
+         * registration process to verify a user as a medical professional.
+         */
         Schema::create('registration_documents', function (Blueprint $table) {
             $table->increments('id');
 
@@ -44,6 +52,10 @@ class UserRelatedTables extends Migration
             $table->foreign("registreeId")->references("id")->on("users");
         });
 
+        /*
+         * Table containing comments which can be left by a reviewer when they
+         * have any remarks regarding a workflow.
+         */
         Schema::create('verification_comments', function (Blueprint $table) {
             $table->increments('id');
 
@@ -56,6 +68,10 @@ class UserRelatedTables extends Migration
             $table->foreign("workflowId")->references("id")->on("workflows");
         });
 
+        /*
+         * Table containing replies to a verification comment which can create
+         * a discussion between a reviewer and workflow creator.
+         */
         Schema::create('comment_replies', function (Blueprint $table) {
             $table->increments('id');
 

@@ -13,10 +13,18 @@ class DesignerApiIds extends Migration
      */
     public function up()
     {
+        /*
+         * Add mapping of a field to an Evidencio variable id for the designer
+         * page.
+         */
         Schema::table('fields', function (Blueprint $table) {
             $table->unsignedBigInteger("evidencioVariableId");
         });
 
+        /*
+         * Table containing Evidencio models that are loaded in a workflow's
+         * designer page.
+         */
         Schema::create('loaded_evidencio_models', function (Blueprint $table) {
             $table->unsignedInteger("workflowId");
             $table->unsignedBigInteger("modelId");
