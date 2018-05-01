@@ -68,18 +68,6 @@ vObj = new Vue({
     );
   },
 
-  /**
-   * This function adds the first basic level and the first step.
-   */
-  mounted: function() {
-    // this.addLevel(0);
-    // this.addStep(
-    //   "Starter step",
-    //   "First step in the model shown to the patient. Change this step to fit your needs.",
-    //   0
-    // );
-  },
-
   computed: {
     allVariables: function() {
       if (this.modelLoaded) {
@@ -322,17 +310,6 @@ vObj = new Vue({
     prepareModal(nodeRef) {
       this.selectedStepId = nodeRef.scratch("_nodeId");
       this.modalChanged = !this.modalChanged;
-      // let step = this.steps[this.modalnodeId];
-      // this.modalDatabaseStepID = step.id;
-      // this.modalStepType = step.type;
-      // this.modalSelectedColor = step.color;
-      // this.modalSelectedVariables = step.variables.slice();
-      // this.modalVarCounter = step.varCounter;
-      // this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
-      // this.modalRules = JSON.parse(JSON.stringify(step.rules));
-      // this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
-      // this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
-      // this.setSelectedVariables();
     },
 
     /**
@@ -346,19 +323,6 @@ vObj = new Vue({
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
         "background-color": changedStep.step.color
       });
-      // step.color = this.modalSelectedColor;
-      // // Set (new) step-type
-      // step.type = this.modalStepType;
-      // // Set (new) variables
-      // step.variables = this.modalSelectedVariables.slice();
-      // step.varCounter = this.modalVarCounter;
-      // this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
-      // // Set (new) rules
-      // step.rules = JSON.parse(JSON.stringify(this.modalRules));
-      // // Set (new) API-call
-      // step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
-      // // Recount variable uses
-      // this.modalSelectedVariables = [];
       this.recountVariableUses();
     },
 

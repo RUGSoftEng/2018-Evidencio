@@ -60,39 +60,12 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 58);
+/******/ 	return __webpack_require__(__webpack_require__.s = 49);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 1 */,
-/* 2 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -201,7 +174,35 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 3 */
+/* 2 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 3 */,
+/* 4 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -391,8 +392,96 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 4 */,
-/* 5 */
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -445,7 +534,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(8);
+__webpack_require__(52);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -456,16 +545,834 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 6 */,
-/* 7 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__(61)
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
+  }
+*/}
+
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
+var options = null
+var ssrIdKey = 'data-vue-ssr-id'
+
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
+
+module.exports = function (parentId, list, _isProduction, _options) {
+  isProduction = _isProduction
+
+  options = _options || {}
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
+    }
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
+      }
+    }
+  }
+}
+
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
+    }
+  }
+}
+
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
+
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[' + ssrIdKey + '~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+  if (options.ssrId) {
+    styleElement.setAttribute(ssrIdKey, obj.id)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
+
+/***/ }),
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(50);
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+window.cytoscape = __webpack_require__(51);
+window.Vue = __webpack_require__(56);
+__webpack_require__(57);
+Vue.component("vueMultiselect", window.VueMultiselect.default);
+Vue.component("variableViewList", __webpack_require__(58));
+Vue.component("modalStep", __webpack_require__(78));
+window.cyCanvas = __webpack_require__(93);
+
+// ============================================================================================= //
+
+/* Step-template:
+    {-l
+        id: -1,
+        title: title,
+        description: description,
+        nodeId: -1,
+        color: '#0099ff',
+        type: 'input' or 'result',
+        create: true,
+        destroy: false,
+        [optional: 
+          variables: [],
+          rules: []
+        ]
+    }
+    */
+
+/* Level-template:
+      {
+        steps: []
+      }
+    */
+vObj = new Vue({
+  el: "#designerDiv",
+  data: {
+    modelLoaded: false,
+    models: [],
+    modelIds: [],
+    numVariables: 0,
+    usedVariables: {},
+    timesUsedVariables: [],
+
+    steps: [],
+    levels: [],
+    maxStepsPerLevel: 0,
+    stepsChanged: false,
+    levelsChanged: false,
+    nodeCounter: 0,
+
+    deltaX: 150,
+    deltaY: 250,
+    addLevelButtons: [],
+    addStepButtons: [],
+
+    selectedStepId: 0,
+    modalChanged: false
+  },
+
+  created: function created() {
+    var _this = this;
+
+    Event.listen("modelLoad", function (modelId) {
+      _this.loadModelEvidencio(modelId);
+    });
+    this.addLevel(0);
+    this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
+  },
+
+
+  computed: {
+    allVariables: function allVariables() {
+      if (this.modelLoaded) {
+        var allvars = [];
+        this.models.forEach(function (element) {
+          allvars = allvars.concat(element.variables);
+        });
+        return allvars;
+      } else return [];
+    },
+
+    possibleVariables: function possibleVariables() {
+      if (this.modelLoaded) {
+        deepCopy = JSON.parse(JSON.stringify(this.models));
+        var counter = 0;
+        deepCopy.forEach(function (element) {
+          element.variables.map(function (x, index) {
+            return x["ind"] = counter + index;
+          });
+          counter += element.variables.length;
+        });
+        return deepCopy;
+      }
+      return [];
+    },
+
+    childrenNodes: function childrenNodes() {
+      var _this2 = this;
+
+      if (this.selectedStepId == -1) return [];
+      var levelIndex = this.getStepLevel(this.selectedStepId);
+      if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+      var options = [];
+      this.levels[levelIndex + 1].steps.forEach(function (element) {
+        options.push({
+          stepId: element,
+          title: _this2.steps[element].title,
+          id: _this2.steps[element].id,
+          color: _this2.steps[element].color,
+          ind: options.length
+        });
+      });
+      return options;
+    },
+
+    modelChoiceRepresentation: function modelChoiceRepresentation() {
+      var representation = [];
+      this.models.forEach(function (element) {
+        representation.push({
+          title: element.title,
+          id: element.id
+        });
+      });
+      return representation;
+    },
+
+    editedVariables: function editedVariables() {
+      var editedVars = [];
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          editedVars.push(this.usedVariables[key]);
+        }
+      }
+      return editedVars;
+    }
+  },
+
+  methods: {
+    /**
+     * Load model from Evidencio API, model is identified using variable modelID
+     */
+    loadModelEvidencio: function loadModelEvidencio(modelId) {
+      var self = this;
+      if (!this.isModelLoaded(modelId)) {
+        $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
+          url: "/designer/fetch",
+          type: "POST",
+          data: {
+            modelId: modelId
+          },
+          success: function success(result) {
+            self.models.push(JSON.parse(result));
+            var newVars = self.models[self.models.length - 1].variables.length;
+            self.numVariables += newVars;
+            self.modelLoaded = true;
+            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0));
+            self.modelIds.push(modelId);
+          }
+        });
+      }
+    },
+
+
+    /**
+     * Checks if a model is already loaded, to ensure models aren't loaded twice.
+     * @param {integer} [modelID] of the model to be checked.
+     */
+    isModelLoaded: function isModelLoaded(modelId) {
+      for (var index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return true;
+      }
+      return false;
+    },
+
+    /**
+     * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
+     * @param {integer} [index] of position level should be added
+     */
+    addLevel: function addLevel(index) {
+      this.levels.splice(index, 0, {
+        steps: []
+      });
+      this.levelsChanged = !this.levelsChanged;
+    },
+
+
+    /**
+     * Add step to workflow
+     * @param {string} [title] of step
+     * @param {string} [description] of step
+     */
+    addStep: function addStep(title, description, level) {
+      this.steps.push({
+        id: -1,
+        title: title,
+        description: description,
+        nodeId: -1,
+        color: "#0099ff",
+        type: "input",
+        variables: [],
+        varCounter: 0,
+        rules: [],
+        apiCall: {
+          model: null,
+          variables: []
+        },
+        create: true,
+        destroy: false
+      });
+      this.stepsChanged = !this.stepsChanged;
+      this.levels[level].steps.push(this.steps.length - 1);
+      if (this.levels[level].steps.length > this.maxStepsPerLevel) this.maxStepsPerLevel = this.levels[level].steps.length;
+    },
+
+
+    /**
+     * Removes step (and node) given by step-id id.
+     * @param {integer} [id] of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
+     */
+    removeStep: function removeStep(id) {
+      this.steps[id].destroy = true;
+      this.stepsChanged = !this.stepsChanged;
+    },
+
+
+    /**
+     * Fit the viewport around the nodes shown.
+     */
+    fitView: function fitView() {
+      cy.fit();
+    },
+
+
+    /**
+     * Positions the AddLevelButtons.
+     */
+    positionAddLevelButtons: function positionAddLevelButtons() {
+      for (var index = 0; index < this.addLevelButtons.length; index++) {
+        var element = this.addLevelButtons[index].nodeId;
+        cy.getElementById(element).position({
+          x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
+          y: (index + 0.5) * this.deltaY
+        });
+      }
+    },
+
+
+    /**
+     * Positions the AddStepButtons.
+     */
+    positionAddStepButtons: function positionAddStepButtons() {
+      if (this.levels.length > 0) {
+        for (var index = 0; index < this.addStepButtons.length; index++) {
+          var element = this.addStepButtons[index].nodeId;
+          cy.getElementById(element).position({
+            x: (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) * this.deltaX,
+            y: (index + 1) * this.deltaY
+          });
+        }
+      }
+    },
+
+
+    /**
+     * Positions the Steps.
+     */
+    positionSteps: function positionSteps() {
+      for (var indexLevel = 0; indexLevel < this.levels.length; indexLevel++) {
+        var elementLevel = this.levels[indexLevel].steps;
+        var left = -(elementLevel.length - 1) * this.deltaX / 2;
+        for (var indexStep = 0; indexStep < elementLevel.length; indexStep++) {
+          var elementStep = this.steps[elementLevel[indexStep]].nodeId;
+          cy.getElementById(elementStep).position({
+            x: left + indexStep * this.deltaX,
+            y: indexLevel * this.deltaY
+          });
+        }
+      }
+    },
+
+
+    /**
+     * Returns the index of the AddLevelButton-node referred to by id.
+     * @param {string} [id] of the node for which the index has to be found
+     */
+    getAddLevelButtonIndex: function getAddLevelButtonIndex(id) {
+      for (var index = 0; index < this.addLevelButtons.length; index++) {
+        var element = this.addLevelButtons[index].nodeId;
+        if (element == id) {
+          return index;
+        }
+      }
+      return -1;
+    },
+
+
+    /**
+     * Returns the index of the AddStepButton-node based on its id.
+     * @param {string} [id] of the AddStepButton-node that the index is wanted of.
+     */
+    getAddStepButtonIndex: function getAddStepButtonIndex(id) {
+      for (var index = 0; index < this.addStepButtons.length; index++) {
+        var element = this.addStepButtons[index].nodeId;
+        if (element == id) {
+          return index;
+        }
+      }
+      return -1;
+    },
+
+
+    /**
+     * Opens an option-modal for the node that is clicked on.
+     * @param {object} [nodeRef] is the reference to the node that is clicked on.
+     */
+    prepareModal: function prepareModal(nodeRef) {
+      this.selectedStepId = nodeRef.scratch("_nodeId");
+      this.modalChanged = !this.modalChanged;
+    },
+
+
+    /**
+     * Saves the changes made to a step (variables added, etc.)
+     */
+    applyChanges: function applyChanges(changedStep) {
+      this.steps[this.selectedStepId] = changedStep.step;
+      this.usedVariables = changedStep.usedVars;
+
+      // Set new backgroundcolor
+      cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
+        "background-color": changedStep.step.color
+      });
+      this.recountVariableUses();
+    },
+
+
+    /**
+     * Returns the level (height in graph) of a step
+     * @param {integer} [stepIndex] of step
+     */
+    getStepLevel: function getStepLevel(stepIndex) {
+      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        var level = this.levels[levelIndex].steps;
+        for (var index = 0; index < level.length; index++) {
+          if (stepIndex == level[index]) return levelIndex;
+        }
+      }
+      return -1;
+    },
+
+
+    /**
+     * Recounts the number of times a variable is used, to be used whenever this changes.
+     */
+    recountVariableUses: function recountVariableUses() {
+      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf, 0);
+      for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
+        var elementStep = this.steps[indexStep];
+        if (elementStep.type == "input") {
+          for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+            var element = elementStep.variables[indexVariable];
+            this.timesUsedVariables[this.usedVariables[element].ind] += 1;
+          }
+        }
+      }
+    }
+  },
+
+  watch: {
+    /**
+     * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
+     */
+    stepsChanged: function stepsChanged() {
+      for (var index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].create) {
+          this.steps[index].nodeId = cy.add({
+            classes: "node",
+            data: {
+              id: "node_" + this.nodeCounter
+            },
+            scratch: {
+              _nodeId: index
+            },
+            style: {
+              "background-color": this.steps[index].color
+            }
+          }).id();
+          this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeId).style({
+            label: this.steps[index].id
+          });
+          this.nodeCounter++;
+        }
+        if (this.steps[index].destroy) {
+          cy.remove(this.steps[index].nodeId);
+          this.steps.splice(index, 1);
+        }
+      }
+      this.positionAddStepButtons();
+      this.positionAddLevelButtons();
+      this.positionSteps();
+    },
+
+    /**
+     * levelsChanged is used to indicate if a level has been added or removed, this function does the actual work
+     */
+    levelsChanged: function levelsChanged() {
+      while (this.levels.length > this.addLevelButtons.length) {
+        if (this.addLevelButtons.length > 0) {
+          this.addStepButtons.push({
+            nodeId: cy.add({
+              classes: "buttonAddStep"
+            }).id()
+          });
+        }
+        this.addLevelButtons.push({
+          nodeId: cy.add({
+            classes: "buttonAddLevel"
+          }).id()
+        });
+      }
+      while (this.levels.length < this.addLevelButtons.length) {
+        cy.remove(this.addLevelButtons.pop().nodeId);
+        cy.remove(this.addStepButtons.pop().nodeId);
+      }
+      this.positionAddLevelButtons();
+      this.positionAddStepButtons();
+      this.positionSteps();
+    },
+
+    selectedVariables: function selectedVariables() {
+      this.recountVariableUses();
+    }
+  }
+});
+
+// ============================================================================================= //
+
+var cy = cytoscape({
+  container: $("#graph"),
+  style: [
+  // the stylesheet for the graph
+  {
+    selector: ".node",
+    style: {
+      label: "data(id)",
+      shape: "roundrectangle",
+      width: "100px",
+      height: "100px",
+      "background-color": "#0099ff",
+      "border-color": " #000000",
+      "border-width": "4px",
+      "text-halign": "center",
+      "text-valign": "center",
+      color: "#ffffff",
+      "font-size": "24px",
+      "text-outline-color": "#000000",
+      "text-outline-width": "1px"
+    }
+  }, {
+    selector: ".edge",
+    style: {
+      width: 3,
+      "line-color": "#ccc",
+      "target-arrow-color": "#ccc",
+      "target-arrow-shape": "triangle"
+    }
+  }, {
+    selector: ".buttonAddLevel",
+    style: {
+      label: "",
+      width: "75px",
+      height: "75px",
+      "background-color": "#46c637",
+      "border-color": "#1f6b17",
+      "border-width": "4px",
+      "background-image": "/images/plus.svg",
+      "background-width": "50%",
+      "background-height": "50%"
+    }
+  }, {
+    selector: ".buttonAddStep",
+    style: {
+      label: "",
+      width: "75px",
+      height: "75px",
+      "background-color": "#00a5ff",
+      "border-color": "#0037ff",
+      "border-width": "4px",
+      "background-image": "/images/plus.svg",
+      "background-width": "50%",
+      "background-height": "50%"
+    }
+  }],
+
+  autoungrabify: true,
+  autounselectify: true,
+
+  layout: {
+    name: "preset"
+  }
+});
+
+cy.on("tap", "node", function (evt) {
+  var ref = evt.target;
+  if (ref.hasClass("buttonAddLevel")) {
+    var nID = vObj.getAddLevelButtonIndex(ref.id());
+    if (nID != -1) vObj.addLevel(nID + 1);
+  } else if (ref.hasClass("buttonAddStep")) {
+    var _nID = vObj.getAddStepButtonIndex(ref.id());
+    if (_nID != -1) vObj.addStep("Default title", "Default description", _nID + 1);
+  } else if (ref.hasClass("node")) {
+    vObj.prepareModal(ref);
+    $("#modalStep").modal();
+  }
+});
+
+// ============================================================================================= //
+
+//Canvas of background
+var bottomLayer = cy.cyCanvas({
+  zIndex: -1
+});
+var canvas = bottomLayer.getCanvas();
+var ctx = canvas.getContext("2d");
+cy.on("render cyCanvas.resize", function (evt) {
+  bottomLayer.resetTransform(ctx);
+  bottomLayer.clear(ctx);
+  bottomLayer.setTransform(ctx);
+  ctx.save();
+  for (var i = 0; i < vObj.levels.length; i++) {
+    if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
+    var w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
+    ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
+  }
+  ctx.restore();
+});
+
+// ============================================================================================= //
+
+window.onload = function () {
+  vObj.fitView();
+};
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate) {(function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(9), __webpack_require__(10));
+		module.exports = factory(__webpack_require__(53), __webpack_require__(54));
 	else if(typeof define === 'function' && define.amd)
 		define(["lodash.debounce", "heap"], factory);
 	else if(typeof exports === 'object')
@@ -29536,10 +30443,10 @@ module.exports = "3.2.10";
 /***/ })
 /******/ ]);
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13).setImmediate))
 
 /***/ }),
-/* 8 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -29729,10 +30636,10 @@ module.exports = "3.2.10";
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
-/* 9 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -30113,17 +31020,17 @@ function toNumber(value) {
 
 module.exports = debounce;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 10 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(11);
+module.exports = __webpack_require__(55);
 
 
 /***/ }),
-/* 11 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.8.0
@@ -30507,1077 +31414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function () {
-	// registers the extension on a cytoscape lib ref
-	var register = function register(cytoscape) {
-		if (!cytoscape) {
-			return;
-		}
-
-		var cyCanvas = function cyCanvas(args) {
-			var cy = this;
-			var container = cy.container();
-
-			var canvas = document.createElement("canvas");
-
-			container.appendChild(canvas);
-
-			var defaults = {
-				zIndex: 1,
-				pixelRatio: "auto"
-			};
-
-			var options = Object.assign({}, defaults, args);
-
-			if (options.pixelRatio === "auto") {
-				options.pixelRatio = window.devicePixelRatio || 1;
-			}
-
-			function resize() {
-				var width = container.offsetWidth;
-				var height = container.offsetHeight;
-
-				var canvasWidth = width * options.pixelRatio;
-				var canvasHeight = height * options.pixelRatio;
-
-				canvas.width = canvasWidth;
-				canvas.height = canvasHeight;
-
-				canvas.style.width = width + "px";
-				canvas.style.height = height + "px";
-
-				cy.trigger("cyCanvas.resize");
-			}
-
-			cy.on("resize", function () {
-				resize();
-			});
-
-			canvas.setAttribute("style", "position:absolute; top:0; left:0; z-index:" + options.zIndex + ";");
-
-			resize();
-
-			return {
-				/**
-     * @return {Canvas} The generated canvas
-     */
-				getCanvas: function getCanvas() {
-					return canvas;
-				},
-
-				/**
-     * Helper: Clear the canvas
-     * @param {CanvasRenderingContext2D} ctx
-     */
-				clear: function clear(ctx) {
-					var width = cy.width();
-					var height = cy.height();
-					ctx.save();
-					ctx.setTransform(1, 0, 0, 1, 0, 0);
-					ctx.clearRect(0, 0, width * options.pixelRatio, height * options.pixelRatio);
-					ctx.restore();
-				},
-
-				/**
-     * Helper: Reset the context transform to an identity matrix
-     * @param {CanvasRenderingContext2D} ctx
-     */
-				resetTransform: function resetTransform(ctx) {
-					ctx.setTransform(1, 0, 0, 1, 0, 0);
-				},
-
-				/**
-     * Helper: Set the context transform to match Cystoscape's zoom & pan
-     * @param {CanvasRenderingContext2D} ctx
-     */
-				setTransform: function setTransform(ctx) {
-					var pan = cy.pan();
-					var zoom = cy.zoom();
-					ctx.setTransform(1, 0, 0, 1, 0, 0);
-					ctx.translate(pan.x * options.pixelRatio, pan.y * options.pixelRatio);
-					ctx.scale(zoom * options.pixelRatio, zoom * options.pixelRatio);
-				}
-			};
-		};
-
-		cytoscape("core", "cyCanvas", cyCanvas);
-	};
-
-	if (typeof module !== "undefined" && module.exports) {
-		// expose as a commonjs module
-		module.exports = function (cytoscape) {
-			register(cytoscape);
-		};
-	}
-
-	if (true) {
-		// expose as an amd/requirejs module
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-			return register;
-		}).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}
-
-	if (typeof cytoscape !== "undefined") {
-		// expose to global cytoscape (i.e. window.cytoscape)
-		register(cytoscape);
-	}
-})();
-
-/***/ }),
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function(useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if(item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-  Modified by Evan You @yyx990803
-*/
-
-var hasDocument = typeof document !== 'undefined'
-
-if (typeof DEBUG !== 'undefined' && DEBUG) {
-  if (!hasDocument) {
-    throw new Error(
-    'vue-style-loader cannot be used in a non-browser environment. ' +
-    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
-  ) }
-}
-
-var listToStyles = __webpack_require__(65)
-
-/*
-type StyleObject = {
-  id: number;
-  parts: Array<StyleObjectPart>
-}
-
-type StyleObjectPart = {
-  css: string;
-  media: string;
-  sourceMap: ?string
-}
-*/
-
-var stylesInDom = {/*
-  [id: number]: {
-    id: number,
-    refs: number,
-    parts: Array<(obj?: StyleObjectPart) => void>
-  }
-*/}
-
-var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
-var singletonElement = null
-var singletonCounter = 0
-var isProduction = false
-var noop = function () {}
-var options = null
-var ssrIdKey = 'data-vue-ssr-id'
-
-// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-// tags it will allow on a page
-var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
-
-module.exports = function (parentId, list, _isProduction, _options) {
-  isProduction = _isProduction
-
-  options = _options || {}
-
-  var styles = listToStyles(parentId, list)
-  addStylesToDom(styles)
-
-  return function update (newList) {
-    var mayRemove = []
-    for (var i = 0; i < styles.length; i++) {
-      var item = styles[i]
-      var domStyle = stylesInDom[item.id]
-      domStyle.refs--
-      mayRemove.push(domStyle)
-    }
-    if (newList) {
-      styles = listToStyles(parentId, newList)
-      addStylesToDom(styles)
-    } else {
-      styles = []
-    }
-    for (var i = 0; i < mayRemove.length; i++) {
-      var domStyle = mayRemove[i]
-      if (domStyle.refs === 0) {
-        for (var j = 0; j < domStyle.parts.length; j++) {
-          domStyle.parts[j]()
-        }
-        delete stylesInDom[domStyle.id]
-      }
-    }
-  }
-}
-
-function addStylesToDom (styles /* Array<StyleObject> */) {
-  for (var i = 0; i < styles.length; i++) {
-    var item = styles[i]
-    var domStyle = stylesInDom[item.id]
-    if (domStyle) {
-      domStyle.refs++
-      for (var j = 0; j < domStyle.parts.length; j++) {
-        domStyle.parts[j](item.parts[j])
-      }
-      for (; j < item.parts.length; j++) {
-        domStyle.parts.push(addStyle(item.parts[j]))
-      }
-      if (domStyle.parts.length > item.parts.length) {
-        domStyle.parts.length = item.parts.length
-      }
-    } else {
-      var parts = []
-      for (var j = 0; j < item.parts.length; j++) {
-        parts.push(addStyle(item.parts[j]))
-      }
-      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
-    }
-  }
-}
-
-function createStyleElement () {
-  var styleElement = document.createElement('style')
-  styleElement.type = 'text/css'
-  head.appendChild(styleElement)
-  return styleElement
-}
-
-function addStyle (obj /* StyleObjectPart */) {
-  var update, remove
-  var styleElement = document.querySelector('style[' + ssrIdKey + '~="' + obj.id + '"]')
-
-  if (styleElement) {
-    if (isProduction) {
-      // has SSR styles and in production mode.
-      // simply do nothing.
-      return noop
-    } else {
-      // has SSR styles but in dev mode.
-      // for some reason Chrome can't handle source map in server-rendered
-      // style tags - source maps in <style> only works if the style tag is
-      // created and inserted dynamically. So we remove the server rendered
-      // styles and inject new ones.
-      styleElement.parentNode.removeChild(styleElement)
-    }
-  }
-
-  if (isOldIE) {
-    // use singleton mode for IE9.
-    var styleIndex = singletonCounter++
-    styleElement = singletonElement || (singletonElement = createStyleElement())
-    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
-    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
-  } else {
-    // use multi-style-tag mode in all other cases
-    styleElement = createStyleElement()
-    update = applyToTag.bind(null, styleElement)
-    remove = function () {
-      styleElement.parentNode.removeChild(styleElement)
-    }
-  }
-
-  update(obj)
-
-  return function updateStyle (newObj /* StyleObjectPart */) {
-    if (newObj) {
-      if (newObj.css === obj.css &&
-          newObj.media === obj.media &&
-          newObj.sourceMap === obj.sourceMap) {
-        return
-      }
-      update(obj = newObj)
-    } else {
-      remove()
-    }
-  }
-}
-
-var replaceText = (function () {
-  var textStore = []
-
-  return function (index, replacement) {
-    textStore[index] = replacement
-    return textStore.filter(Boolean).join('\n')
-  }
-})()
-
-function applyToSingletonTag (styleElement, index, remove, obj) {
-  var css = remove ? '' : obj.css
-
-  if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = replaceText(index, css)
-  } else {
-    var cssNode = document.createTextNode(css)
-    var childNodes = styleElement.childNodes
-    if (childNodes[index]) styleElement.removeChild(childNodes[index])
-    if (childNodes.length) {
-      styleElement.insertBefore(cssNode, childNodes[index])
-    } else {
-      styleElement.appendChild(cssNode)
-    }
-  }
-}
-
-function applyToTag (styleElement, obj) {
-  var css = obj.css
-  var media = obj.media
-  var sourceMap = obj.sourceMap
-
-  if (media) {
-    styleElement.setAttribute('media', media)
-  }
-  if (options.ssrId) {
-    styleElement.setAttribute(ssrIdKey, obj.id)
-  }
-
-  if (sourceMap) {
-    // https://developer.chrome.com/devtools/docs/javascript-debugging
-    // this makes source maps inside style tags work properly in Chrome
-    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
-    // http://stackoverflow.com/a/26603875
-    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
-  }
-
-  if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = css
-  } else {
-    while (styleElement.firstChild) {
-      styleElement.removeChild(styleElement.firstChild)
-    }
-    styleElement.appendChild(document.createTextNode(css))
-  }
-}
-
-
-/***/ }),
-/* 21 */,
-/* 22 */,
-/* 23 */,
-/* 24 */,
-/* 25 */,
-/* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */,
-/* 30 */,
-/* 31 */,
-/* 32 */,
-/* 33 */,
-/* 34 */,
-/* 35 */,
-/* 36 */,
-/* 37 */,
-/* 38 */,
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */,
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(59);
-
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-window.cytoscape = __webpack_require__(7);
-window.Vue = __webpack_require__(60);
-__webpack_require__(61);
-Vue.component("vueMultiselect", window.VueMultiselect.default);
-Vue.component("variableViewList", __webpack_require__(62));
-Vue.component("modalStep", __webpack_require__(82));
-window.cyCanvas = __webpack_require__(12);
-
-// ============================================================================================= //
-
-/* Step-template:
-    {-l
-        id: -1,
-        title: title,
-        description: description,
-        nodeId: -1,
-        color: '#0099ff',
-        type: 'input' or 'result',
-        create: true,
-        destroy: false,
-        [optional: 
-          variables: [],
-          rules: []
-        ]
-    }
-    */
-
-/* Level-template:
-      {
-        steps: []
-      }
-    */
-vObj = new Vue({
-  el: "#designerDiv",
-  data: {
-    modelLoaded: false,
-    models: [],
-    modelIds: [],
-    numVariables: 0,
-    usedVariables: {},
-    timesUsedVariables: [],
-
-    steps: [],
-    levels: [],
-    maxStepsPerLevel: 0,
-    stepsChanged: false,
-    levelsChanged: false,
-    nodeCounter: 0,
-
-    deltaX: 150,
-    deltaY: 250,
-    addLevelButtons: [],
-    addStepButtons: [],
-
-    selectedStepId: 0,
-    modalChanged: false
-  },
-
-  created: function created() {
-    var _this = this;
-
-    Event.listen("modelLoad", function (modelId) {
-      _this.loadModelEvidencio(modelId);
-    });
-    this.addLevel(0);
-    this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
-  },
-
-
-  /**
-   * This function adds the first basic level and the first step.
-   */
-  mounted: function mounted() {
-    // this.addLevel(0);
-    // this.addStep(
-    //   "Starter step",
-    //   "First step in the model shown to the patient. Change this step to fit your needs.",
-    //   0
-    // );
-  },
-
-  computed: {
-    allVariables: function allVariables() {
-      if (this.modelLoaded) {
-        var allvars = [];
-        this.models.forEach(function (element) {
-          allvars = allvars.concat(element.variables);
-        });
-        return allvars;
-      } else return [];
-    },
-
-    possibleVariables: function possibleVariables() {
-      if (this.modelLoaded) {
-        deepCopy = JSON.parse(JSON.stringify(this.models));
-        var counter = 0;
-        deepCopy.forEach(function (element) {
-          element.variables.map(function (x, index) {
-            return x["ind"] = counter + index;
-          });
-          counter += element.variables.length;
-        });
-        return deepCopy;
-      }
-      return [];
-    },
-
-    childrenNodes: function childrenNodes() {
-      var _this2 = this;
-
-      if (this.selectedStepId == -1) return [];
-      var levelIndex = this.getStepLevel(this.selectedStepId);
-      if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
-      var options = [];
-      this.levels[levelIndex + 1].steps.forEach(function (element) {
-        options.push({
-          stepId: element,
-          title: _this2.steps[element].title,
-          id: _this2.steps[element].id,
-          color: _this2.steps[element].color,
-          ind: options.length
-        });
-      });
-      return options;
-    },
-
-    modelChoiceRepresentation: function modelChoiceRepresentation() {
-      var representation = [];
-      this.models.forEach(function (element) {
-        representation.push({
-          title: element.title,
-          id: element.id
-        });
-      });
-      return representation;
-    },
-
-    editedVariables: function editedVariables() {
-      var editedVars = [];
-      for (var key in this.usedVariables) {
-        if (this.usedVariables.hasOwnProperty(key)) {
-          editedVars.push(this.usedVariables[key]);
-        }
-      }
-      return editedVars;
-    }
-  },
-
-  methods: {
-    /**
-     * Load model from Evidencio API, model is identified using variable modelID
-     */
-    loadModelEvidencio: function loadModelEvidencio(modelId) {
-      var self = this;
-      if (!this.isModelLoaded(modelId)) {
-        $.ajax({
-          headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-          },
-          url: "/designer/fetch",
-          type: "POST",
-          data: {
-            modelId: modelId
-          },
-          success: function success(result) {
-            self.models.push(JSON.parse(result));
-            var newVars = self.models[self.models.length - 1].variables.length;
-            self.numVariables += newVars;
-            self.modelLoaded = true;
-            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0));
-            self.modelIds.push(modelId);
-          }
-        });
-      }
-    },
-
-
-    /**
-     * Checks if a model is already loaded, to ensure models aren't loaded twice.
-     * @param {integer} [modelID] of the model to be checked.
-     */
-    isModelLoaded: function isModelLoaded(modelId) {
-      for (var index = 0; index < this.modelIds.length; index++) {
-        if (this.modelIds[index] == modelId) return true;
-      }
-      return false;
-    },
-
-    /**
-     * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
-     * @param {integer} [index] of position level should be added
-     */
-    addLevel: function addLevel(index) {
-      this.levels.splice(index, 0, {
-        steps: []
-      });
-      this.levelsChanged = !this.levelsChanged;
-    },
-
-
-    /**
-     * Add step to workflow
-     * @param {string} [title] of step
-     * @param {string} [description] of step
-     */
-    addStep: function addStep(title, description, level) {
-      this.steps.push({
-        id: -1,
-        title: title,
-        description: description,
-        nodeId: -1,
-        color: "#0099ff",
-        type: "input",
-        variables: [],
-        varCounter: 0,
-        rules: [],
-        apiCall: {
-          model: null,
-          variables: []
-        },
-        create: true,
-        destroy: false
-      });
-      this.stepsChanged = !this.stepsChanged;
-      this.levels[level].steps.push(this.steps.length - 1);
-      if (this.levels[level].steps.length > this.maxStepsPerLevel) this.maxStepsPerLevel = this.levels[level].steps.length;
-    },
-
-
-    /**
-     * Removes step (and node) given by step-id id.
-     * @param {integer} [id] of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
-     */
-    removeStep: function removeStep(id) {
-      this.steps[id].destroy = true;
-      this.stepsChanged = !this.stepsChanged;
-    },
-
-
-    /**
-     * Fit the viewport around the nodes shown.
-     */
-    fitView: function fitView() {
-      cy.fit();
-    },
-
-
-    /**
-     * Positions the AddLevelButtons.
-     */
-    positionAddLevelButtons: function positionAddLevelButtons() {
-      for (var index = 0; index < this.addLevelButtons.length; index++) {
-        var element = this.addLevelButtons[index].nodeId;
-        cy.getElementById(element).position({
-          x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
-          y: (index + 0.5) * this.deltaY
-        });
-      }
-    },
-
-
-    /**
-     * Positions the AddStepButtons.
-     */
-    positionAddStepButtons: function positionAddStepButtons() {
-      if (this.levels.length > 0) {
-        for (var index = 0; index < this.addStepButtons.length; index++) {
-          var element = this.addStepButtons[index].nodeId;
-          cy.getElementById(element).position({
-            x: (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) * this.deltaX,
-            y: (index + 1) * this.deltaY
-          });
-        }
-      }
-    },
-
-
-    /**
-     * Positions the Steps.
-     */
-    positionSteps: function positionSteps() {
-      for (var indexLevel = 0; indexLevel < this.levels.length; indexLevel++) {
-        var elementLevel = this.levels[indexLevel].steps;
-        var left = -(elementLevel.length - 1) * this.deltaX / 2;
-        for (var indexStep = 0; indexStep < elementLevel.length; indexStep++) {
-          var elementStep = this.steps[elementLevel[indexStep]].nodeId;
-          cy.getElementById(elementStep).position({
-            x: left + indexStep * this.deltaX,
-            y: indexLevel * this.deltaY
-          });
-        }
-      }
-    },
-
-
-    /**
-     * Returns the index of the AddLevelButton-node referred to by id.
-     * @param {string} [id] of the node for which the index has to be found
-     */
-    getAddLevelButtonIndex: function getAddLevelButtonIndex(id) {
-      for (var index = 0; index < this.addLevelButtons.length; index++) {
-        var element = this.addLevelButtons[index].nodeId;
-        if (element == id) {
-          return index;
-        }
-      }
-      return -1;
-    },
-
-
-    /**
-     * Returns the index of the AddStepButton-node based on its id.
-     * @param {string} [id] of the AddStepButton-node that the index is wanted of.
-     */
-    getAddStepButtonIndex: function getAddStepButtonIndex(id) {
-      for (var index = 0; index < this.addStepButtons.length; index++) {
-        var element = this.addStepButtons[index].nodeId;
-        if (element == id) {
-          return index;
-        }
-      }
-      return -1;
-    },
-
-
-    /**
-     * Opens an option-modal for the node that is clicked on.
-     * @param {object} [nodeRef] is the reference to the node that is clicked on.
-     */
-    prepareModal: function prepareModal(nodeRef) {
-      this.selectedStepId = nodeRef.scratch("_nodeId");
-      this.modalChanged = !this.modalChanged;
-      // let step = this.steps[this.modalnodeId];
-      // this.modalDatabaseStepID = step.id;
-      // this.modalStepType = step.type;
-      // this.modalSelectedColor = step.color;
-      // this.modalSelectedVariables = step.variables.slice();
-      // this.modalVarCounter = step.varCounter;
-      // this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
-      // this.modalRules = JSON.parse(JSON.stringify(step.rules));
-      // this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
-      // this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
-      // this.setSelectedVariables();
-    },
-
-
-    /**
-     * Saves the changes made to a step (variables added, etc.)
-     */
-    applyChanges: function applyChanges(changedStep) {
-      this.steps[this.selectedStepId] = changedStep.step;
-      this.usedVariables = changedStep.usedVars;
-
-      // Set new backgroundcolor
-      cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
-        "background-color": changedStep.step.color
-      });
-      // step.color = this.modalSelectedColor;
-      // // Set (new) step-type
-      // step.type = this.modalStepType;
-      // // Set (new) variables
-      // step.variables = this.modalSelectedVariables.slice();
-      // step.varCounter = this.modalVarCounter;
-      // this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
-      // // Set (new) rules
-      // step.rules = JSON.parse(JSON.stringify(this.modalRules));
-      // // Set (new) API-call
-      // step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
-      // // Recount variable uses
-      // this.modalSelectedVariables = [];
-      this.recountVariableUses();
-    },
-
-
-    /**
-     * Returns the level (height in graph) of a step
-     * @param {integer} [stepIndex] of step
-     */
-    getStepLevel: function getStepLevel(stepIndex) {
-      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
-        var level = this.levels[levelIndex].steps;
-        for (var index = 0; index < level.length; index++) {
-          if (stepIndex == level[index]) return levelIndex;
-        }
-      }
-      return -1;
-    },
-
-
-    /**
-     * Recounts the number of times a variable is used, to be used whenever this changes.
-     */
-    recountVariableUses: function recountVariableUses() {
-      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf, 0);
-      for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
-        var elementStep = this.steps[indexStep];
-        if (elementStep.type == "input") {
-          for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-            var element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.usedVariables[element].ind] += 1;
-          }
-        }
-      }
-    }
-  },
-
-  watch: {
-    /**
-     * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
-     */
-    stepsChanged: function stepsChanged() {
-      for (var index = 0; index < this.steps.length; index++) {
-        if (this.steps[index].create) {
-          this.steps[index].nodeId = cy.add({
-            classes: "node",
-            data: {
-              id: "node_" + this.nodeCounter
-            },
-            scratch: {
-              _nodeId: index
-            },
-            style: {
-              "background-color": this.steps[index].color
-            }
-          }).id();
-          this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeId).style({
-            label: this.steps[index].id
-          });
-          this.nodeCounter++;
-        }
-        if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeId);
-          this.steps.splice(index, 1);
-        }
-      }
-      this.positionAddStepButtons();
-      this.positionAddLevelButtons();
-      this.positionSteps();
-    },
-
-    /**
-     * levelsChanged is used to indicate if a level has been added or removed, this function does the actual work
-     */
-    levelsChanged: function levelsChanged() {
-      while (this.levels.length > this.addLevelButtons.length) {
-        if (this.addLevelButtons.length > 0) {
-          this.addStepButtons.push({
-            nodeId: cy.add({
-              classes: "buttonAddStep"
-            }).id()
-          });
-        }
-        this.addLevelButtons.push({
-          nodeId: cy.add({
-            classes: "buttonAddLevel"
-          }).id()
-        });
-      }
-      while (this.levels.length < this.addLevelButtons.length) {
-        cy.remove(this.addLevelButtons.pop().nodeId);
-        cy.remove(this.addStepButtons.pop().nodeId);
-      }
-      this.positionAddLevelButtons();
-      this.positionAddStepButtons();
-      this.positionSteps();
-    },
-
-    selectedVariables: function selectedVariables() {
-      this.recountVariableUses();
-    }
-  }
-});
-
-// ============================================================================================= //
-
-var cy = cytoscape({
-  container: $("#graph"),
-  style: [
-  // the stylesheet for the graph
-  {
-    selector: ".node",
-    style: {
-      label: "data(id)",
-      shape: "roundrectangle",
-      width: "100px",
-      height: "100px",
-      "background-color": "#0099ff",
-      "border-color": " #000000",
-      "border-width": "4px",
-      "text-halign": "center",
-      "text-valign": "center",
-      color: "#ffffff",
-      "font-size": "24px",
-      "text-outline-color": "#000000",
-      "text-outline-width": "1px"
-    }
-  }, {
-    selector: ".edge",
-    style: {
-      width: 3,
-      "line-color": "#ccc",
-      "target-arrow-color": "#ccc",
-      "target-arrow-shape": "triangle"
-    }
-  }, {
-    selector: ".buttonAddLevel",
-    style: {
-      label: "",
-      width: "75px",
-      height: "75px",
-      "background-color": "#46c637",
-      "border-color": "#1f6b17",
-      "border-width": "4px",
-      "background-image": "/images/plus.svg",
-      "background-width": "50%",
-      "background-height": "50%"
-    }
-  }, {
-    selector: ".buttonAddStep",
-    style: {
-      label: "",
-      width: "75px",
-      height: "75px",
-      "background-color": "#00a5ff",
-      "border-color": "#0037ff",
-      "border-width": "4px",
-      "background-image": "/images/plus.svg",
-      "background-width": "50%",
-      "background-height": "50%"
-    }
-  }],
-
-  autoungrabify: true,
-  autounselectify: true,
-
-  layout: {
-    name: "preset"
-  }
-});
-
-cy.on("tap", "node", function (evt) {
-  var ref = evt.target;
-  if (ref.hasClass("buttonAddLevel")) {
-    var nID = vObj.getAddLevelButtonIndex(ref.id());
-    if (nID != -1) vObj.addLevel(nID + 1);
-  } else if (ref.hasClass("buttonAddStep")) {
-    var _nID = vObj.getAddStepButtonIndex(ref.id());
-    if (_nID != -1) vObj.addStep("Default title", "Default description", _nID + 1);
-  } else if (ref.hasClass("node")) {
-    vObj.prepareModal(ref);
-    $("#modalStep").modal();
-  }
-});
-
-// ============================================================================================= //
-
-//Canvas of background
-var bottomLayer = cy.cyCanvas({
-  zIndex: -1
-});
-var canvas = bottomLayer.getCanvas();
-var ctx = canvas.getContext("2d");
-cy.on("render cyCanvas.resize", function (evt) {
-  bottomLayer.resetTransform(ctx);
-  bottomLayer.clear(ctx);
-  bottomLayer.setTransform(ctx);
-  ctx.save();
-  for (var i = 0; i < vObj.levels.length; i++) {
-    if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
-    var w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
-    ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
-  }
-  ctx.restore();
-});
-
-// ============================================================================================= //
-
-window.onload = function () {
-  vObj.fitView();
-};
-
-/***/ }),
-/* 60 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42540,10 +42377,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(5).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(13).setImmediate))
 
 /***/ }),
-/* 61 */
+/* 57 */
 /***/ (function(module, exports) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -42575,19 +42412,19 @@ window.Event = new (function () {
 }())();
 
 /***/ }),
-/* 62 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(63)
+  __webpack_require__(59)
 }
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(66)
+var __vue_script__ = __webpack_require__(62)
 /* template */
-var __vue_template__ = __webpack_require__(81)
+var __vue_template__ = __webpack_require__(77)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -42626,17 +42463,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 63 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(64);
+var content = __webpack_require__(60);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(20)("0218c20c", content, false, {});
+var update = __webpack_require__(14)("0218c20c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -42652,10 +42489,10 @@ if(false) {
 }
 
 /***/ }),
-/* 64 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(true);
+exports = module.exports = __webpack_require__(12)(true);
 // imports
 
 
@@ -42666,7 +42503,7 @@ exports.push([module.i, "\n#variablesDivCard[data-v-63841236] {\n  height: 100%;
 
 
 /***/ }),
-/* 65 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -42699,14 +42536,14 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 66 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__);
 //
 //
@@ -42766,19 +42603,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 67 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(68)
+  __webpack_require__(64)
 }
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(70)
+var __vue_script__ = __webpack_require__(66)
 /* template */
-var __vue_template__ = __webpack_require__(71)
+var __vue_template__ = __webpack_require__(67)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -42817,17 +42654,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 68 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(69);
+var content = __webpack_require__(65);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(20)("66c29602", content, false, {});
+var update = __webpack_require__(14)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -42843,10 +42680,10 @@ if(false) {
 }
 
 /***/ }),
-/* 69 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(true);
+exports = module.exports = __webpack_require__(12)(true);
 // imports
 
 
@@ -42857,7 +42694,7 @@ exports.push([module.i, "\n#inputModelID[data-v-94266ff0] {\n  width: 50px;\n}\n
 
 
 /***/ }),
-/* 70 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42885,7 +42722,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 71 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -42945,15 +42782,15 @@ if (false) {
 }
 
 /***/ }),
-/* 72 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(73)
+var __vue_script__ = __webpack_require__(69)
 /* template */
-var __vue_template__ = __webpack_require__(80)
+var __vue_template__ = __webpack_require__(76)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -42992,14 +42829,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 73 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__);
 //
 //
@@ -43054,15 +42891,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 74 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(75)
+var __vue_script__ = __webpack_require__(71)
 /* template */
-var __vue_template__ = __webpack_require__(76)
+var __vue_template__ = __webpack_require__(72)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43101,7 +42938,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 75 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43123,7 +42960,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 76 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43148,15 +42985,15 @@ if (false) {
 }
 
 /***/ }),
-/* 77 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(78)
+var __vue_script__ = __webpack_require__(74)
 /* template */
-var __vue_template__ = __webpack_require__(79)
+var __vue_template__ = __webpack_require__(75)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43195,7 +43032,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 78 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43221,7 +43058,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 79 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43249,7 +43086,7 @@ if (false) {
 }
 
 /***/ }),
-/* 80 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43331,7 +43168,7 @@ if (false) {
 }
 
 /***/ }),
-/* 81 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -43404,15 +43241,15 @@ if (false) {
 }
 
 /***/ }),
-/* 82 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(83)
+var __vue_script__ = __webpack_require__(79)
 /* template */
-var __vue_template__ = __webpack_require__(96)
+var __vue_template__ = __webpack_require__(92)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43451,14 +43288,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 83 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__);
 //
 //
@@ -43942,15 +43779,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 84 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(85)
+var __vue_script__ = __webpack_require__(81)
 /* template */
-var __vue_template__ = __webpack_require__(89)
+var __vue_template__ = __webpack_require__(85)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43989,12 +43826,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 85 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__);
 //
 //
@@ -44032,15 +43869,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 86 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(87)
+var __vue_script__ = __webpack_require__(83)
 /* template */
-var __vue_template__ = __webpack_require__(88)
+var __vue_template__ = __webpack_require__(84)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -44079,7 +43916,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 87 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44148,7 +43985,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 88 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -44301,7 +44138,7 @@ if (false) {
 }
 
 /***/ }),
-/* 89 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -44335,15 +44172,15 @@ if (false) {
 }
 
 /***/ }),
-/* 90 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(91)
+var __vue_script__ = __webpack_require__(87)
 /* template */
-var __vue_template__ = __webpack_require__(95)
+var __vue_template__ = __webpack_require__(91)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -44382,12 +44219,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 91 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__);
 //
 //
@@ -44425,15 +44262,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 92 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(93)
+var __vue_script__ = __webpack_require__(89)
 /* template */
-var __vue_template__ = __webpack_require__(94)
+var __vue_template__ = __webpack_require__(90)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -44472,7 +44309,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 93 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44587,7 +44424,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 94 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -44868,7 +44705,7 @@ if (false) {
 }
 
 /***/ }),
-/* 95 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -44902,7 +44739,7 @@ if (false) {
 }
 
 /***/ }),
-/* 96 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -45528,6 +45365,130 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-682a3b1c", module.exports)
   }
 }
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function () {
+	// registers the extension on a cytoscape lib ref
+	var register = function register(cytoscape) {
+		if (!cytoscape) {
+			return;
+		}
+
+		var cyCanvas = function cyCanvas(args) {
+			var cy = this;
+			var container = cy.container();
+
+			var canvas = document.createElement("canvas");
+
+			container.appendChild(canvas);
+
+			var defaults = {
+				zIndex: 1,
+				pixelRatio: "auto"
+			};
+
+			var options = Object.assign({}, defaults, args);
+
+			if (options.pixelRatio === "auto") {
+				options.pixelRatio = window.devicePixelRatio || 1;
+			}
+
+			function resize() {
+				var width = container.offsetWidth;
+				var height = container.offsetHeight;
+
+				var canvasWidth = width * options.pixelRatio;
+				var canvasHeight = height * options.pixelRatio;
+
+				canvas.width = canvasWidth;
+				canvas.height = canvasHeight;
+
+				canvas.style.width = width + "px";
+				canvas.style.height = height + "px";
+
+				cy.trigger("cyCanvas.resize");
+			}
+
+			cy.on("resize", function () {
+				resize();
+			});
+
+			canvas.setAttribute("style", "position:absolute; top:0; left:0; z-index:" + options.zIndex + ";");
+
+			resize();
+
+			return {
+				/**
+     * @return {Canvas} The generated canvas
+     */
+				getCanvas: function getCanvas() {
+					return canvas;
+				},
+
+				/**
+     * Helper: Clear the canvas
+     * @param {CanvasRenderingContext2D} ctx
+     */
+				clear: function clear(ctx) {
+					var width = cy.width();
+					var height = cy.height();
+					ctx.save();
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
+					ctx.clearRect(0, 0, width * options.pixelRatio, height * options.pixelRatio);
+					ctx.restore();
+				},
+
+				/**
+     * Helper: Reset the context transform to an identity matrix
+     * @param {CanvasRenderingContext2D} ctx
+     */
+				resetTransform: function resetTransform(ctx) {
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
+				},
+
+				/**
+     * Helper: Set the context transform to match Cystoscape's zoom & pan
+     * @param {CanvasRenderingContext2D} ctx
+     */
+				setTransform: function setTransform(ctx) {
+					var pan = cy.pan();
+					var zoom = cy.zoom();
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
+					ctx.translate(pan.x * options.pixelRatio, pan.y * options.pixelRatio);
+					ctx.scale(zoom * options.pixelRatio, zoom * options.pixelRatio);
+				}
+			};
+		};
+
+		cytoscape("core", "cyCanvas", cyCanvas);
+	};
+
+	if (typeof module !== "undefined" && module.exports) {
+		// expose as a commonjs module
+		module.exports = function (cytoscape) {
+			register(cytoscape);
+		};
+	}
+
+	if (true) {
+		// expose as an amd/requirejs module
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return register;
+		}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	}
+
+	if (typeof cytoscape !== "undefined") {
+		// expose to global cytoscape (i.e. window.cytoscape)
+		register(cytoscape);
+	}
+})();
 
 /***/ })
 /******/ ]);
