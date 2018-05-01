@@ -19,7 +19,7 @@ class CategoryToColour extends Migration
          */
         Schema::table('steps',function (Blueprint $table) {
             $table->dropColumn("categoryName");
-            $table->string("colour",7); // Keep it in HTML format (#rrggbb)
+            $table->string("colour",7)->nullable(); // Keep it in HTML format (#rrggbb)
         });
     }
 
