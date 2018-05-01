@@ -7,15 +7,6 @@ use App\EvidencioAPI;
 
 class DesignerController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
@@ -28,10 +19,10 @@ class DesignerController extends Controller
     }
 
     /**
-     * Fetch 
-     * 
+     * Fetch
+     *
      */
-    public function fetchVariables() 
+    public function fetchVariables()
     {
         $modelID = $_GET['modelID'];
         $data = EvidencioAPI::getModel($modelID);

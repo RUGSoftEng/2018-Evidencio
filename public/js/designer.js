@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 58);
+/******/ 	return __webpack_require__(__webpack_require__.s = 55);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -611,7 +611,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -870,19 +870,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ 58:
+/***/ 55:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(59);
+module.exports = __webpack_require__(56);
 
 
 /***/ }),
 
-/***/ 59:
+/***/ 56:
 /***/ (function(module, exports, __webpack_require__) {
 
 window.cytoscape = __webpack_require__(7);
-window.Vue = __webpack_require__(60);
+window.Vue = __webpack_require__(57);
 Vue.component('vue-multiselect', window.VueMultiselect.default);
 window.cyCanvas = __webpack_require__(12);
 
@@ -891,13 +891,18 @@ window.cyCanvas = __webpack_require__(12);
 
 /* Step-template:
 {
-  title: '',
-  description: '',
-  nodeID: {id},
-  variables: [],
-  ...
-  create: true,
-  destroy: false
+    id: -1,
+    title: title,
+    description: description,
+    nodeID: -1,
+    color: '#0099ff',
+    type: 'input' or 'result',
+    create: true,
+    destroy: false,
+    [optional: 
+      variables: [],
+      rules: []
+    ]
 }
 */
 
@@ -911,8 +916,10 @@ vObj = new Vue({
   data: {
     modelLoaded: false,
     modelID: 0,
-    model: [],
-    variablesUsed: [],
+    models: [],
+    numVariables: 0,
+    usedVariables: {},
+    timesUsedVariables: [],
 
     steps: [],
     levels: [],
@@ -926,9 +933,21 @@ vObj = new Vue({
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,
-    selectedVariables: [],
-    editVariableFlags: []
+    modalNodeID: -1, //ID in vue steps-array
+    modalDatabaseStepID: -1, //ID in database
+    modalStepType: 'input',
+    modalSelectedColor: '#000000',
+    modalMultiselectSelectedVariables: [],
+    modalSelectedVariables: [],
+    modalVarCounter: -1,
+    modalUsedVariables: {},
+    modalEditVariableFlags: [],
+    modalRules: [],
+    modalEditRuleFlags: [],
+    modalApiCall: {
+      model: null,
+      variables: []
+    }
   },
 
   /**
@@ -940,14 +959,70 @@ vObj = new Vue({
   },
 
   computed: {
+    allVariables: function allVariables() {
+      if (this.modelLoaded) {
+        var allvars = [];
+        this.models.forEach(function (element) {
+          allvars = allvars.concat(element.variables);
+        });
+        return allvars;
+      } else return [];
+    },
+
     possibleVariables: function possibleVariables() {
       if (this.modelLoaded) {
-        this.model.variables.map(function (x, index) {
-          return x['ind'] = index;
+        deepCopy = JSON.parse(JSON.stringify(this.models));
+        var counter = 0;
+        deepCopy.forEach(function (element) {
+          element.variables.map(function (x, index) {
+            return x['ind'] = counter + index;
+          });
+          counter += element.variables.length;
         });
-        return this.model.variables;
-      } else return [];
+        return deepCopy;
+      }
+      return [];
+    },
+
+    childrenNodes: function childrenNodes() {
+      var _this = this;
+
+      if (this.modalNodeID == -1) return [];
+      var levelIndex = this.getStepLevel(this.modalNodeID);
+      if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+      var options = [];
+      this.levels[levelIndex + 1].steps.forEach(function (element) {
+        options.push({
+          stepID: element,
+          title: _this.steps[element].title,
+          id: _this.steps[element].id,
+          color: _this.steps[element].color
+        });
+      });
+      return options;
+    },
+
+    modelChoiceRepresentation: function modelChoiceRepresentation() {
+      var representation = [];
+      this.models.forEach(function (element) {
+        representation.push({
+          title: element.title,
+          id: element.id
+        });
+      });
+      return representation;
+    },
+
+    editedVariables: function editedVariables() {
+      var editedVars = [];
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          editedVars.push(this.usedVariables[key]);
+        }
+      }
+      return editedVars;
     }
+
   },
 
   methods: {
@@ -957,20 +1032,35 @@ vObj = new Vue({
      */
     loadModelEvidencio: function loadModelEvidencio() {
       var self = this;
-      $.ajax({
-        url: '/designer/fetch',
-        data: {
-          modelID: self.modelID
-        },
-        success: function success(result) {
-          self.model = JSON.parse(result);
-          self.modelLoaded = true;
-          self.variablesUsed = Array.apply(null, Array(self.model.variables.length)).map(Number.prototype.valueOf, 0);
-          self.editVariableFlags = new Array(self.model.variables.length).fill(false);
-        }
-      });
+      if (!this.isModelLoaded(this.modelID)) {
+        $.ajax({
+          url: '/designer/fetch',
+          data: {
+            modelID: self.modelID
+          },
+          success: function success(result) {
+            self.models.push(JSON.parse(result));
+            var newVars = self.models[self.models.length - 1].variables.length;
+            self.numVariables += newVars;
+            self.modelLoaded = true;
+            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0));
+          }
+        });
+      }
+      this.modelID = 0;
     },
 
+
+    /**
+     * Checks if a model is already loaded, to ensure models aren't loaded twice.
+     * @param {integer} [modelID] of the model to be checked.
+     */
+    isModelLoaded: function isModelLoaded(modelID) {
+      this.models.forEach(function (element) {
+        if (element.id == modelID) return true;
+      });
+      return false;
+    },
 
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
@@ -995,7 +1085,15 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeID: -1,
+        color: '#0099ff',
+        type: 'input',
         variables: [],
+        varCounter: 0,
+        rules: [],
+        apiCall: {
+          model: null,
+          variables: []
+        },
         create: true,
         destroy: false
       });
@@ -1107,7 +1205,38 @@ vObj = new Vue({
      */
     prepareModal: function prepareModal(nodeRef) {
       this.modalNodeID = nodeRef.scratch('_nodeID');
-      this.selectedVariables = this.steps[this.modalNodeID].variables;
+      var step = this.steps[this.modalNodeID];
+      this.modalDatabaseStepID = step.id;
+      this.modalStepType = step.type;
+      this.modalSelectedColor = step.color;
+      this.modalSelectedVariables = step.variables.slice();
+      this.modalVarCounter = step.varCounter;
+      this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
+      this.modalRules = JSON.parse(JSON.stringify(step.rules));
+      this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
+      this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
+      this.setSelectedVariables();
+    },
+
+
+    /**
+     * Adds the selected variables to the selectedVariable part of the multiselect.
+     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
+     */
+    setSelectedVariables: function setSelectedVariables() {
+      this.modalMultiselectSelectedVariables = [];
+      for (var index = 0; index < this.modalSelectedVariables.length; index++) {
+        var origID = this.modalUsedVariables[this.modalSelectedVariables[index]].id;
+        findVariable: for (var indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
+          var element = this.possibleVariables[indexOfMod];
+          for (var indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
+            if (element.variables[indexInMod].id == origID) {
+              this.modalMultiselectSelectedVariables.push(element.variables[indexInMod]);
+              break findVariable;
+            }
+          }
+        }
+      }
     },
 
 
@@ -1118,22 +1247,217 @@ vObj = new Vue({
     multiselectVariablesText: function multiselectVariablesText(count) {
       return ' and ' + count + ' other variable(s)';
     },
+
+
+    /**
+     * Saves the changes made to a step (variables added, etc.)
+     */
     saveChanges: function saveChanges() {
-      this.steps[this.modalNodeID].variables = this.selectedVariables;
-      this.variablesUsed = Array.apply(null, Array(this.model.variables.length)).map(Number.prototype.valueOf, 0);
+      var step = this.steps[this.modalNodeID];
+      // Set new backgroundcolor
+      cy.getElementById(step.nodeID).style({
+        'background-color': this.modalSelectedColor
+      });
+      step.color = this.modalSelectedColor;
+      // Reset flags
+      for (var index = 0; index < this.modalEditVariableFlags.length; index++) {
+        this.modalEditVariableFlags[index] = false;
+      } // Set (new) step-type
+      step.type = this.modalStepType;
+      // Set (new) variables
+      step.variables = this.modalSelectedVariables.slice();
+      step.varCounter = this.modalVarCounter;
+      this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
+      // Set (new) rules
+      step.rules = JSON.parse(JSON.stringify(this.modalRules));
+      // Set (new) API-call
+      step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
+      // Recount variable uses
+      this.modalSelectedVariables = [];
+      this.recountVariableUses();
+    },
+
+
+    /**
+     * Returns a check-image if the image is set to be edited, pencil-image if not.
+     * @param {integer} [index] of the variable
+     */
+    getImage: function getImage(indicator) {
+      if (indicator) return '/images/check.svg';else return '/images/pencil.svg';
+    },
+
+
+    /**
+     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
+     * @param {index} index 
+     */
+    editVariable: function editVariable(index) {
+      Vue.set(this.modalEditVariableFlags, index, !this.modalEditVariableFlags[index]);
+    },
+
+
+    /**
+     * Adds a rule to the list of rules
+     */
+    addRule: function addRule() {
+      this.modalRules.push({
+        name: 'Go to target',
+        rule: [],
+        target: -1
+      });
+      this.modalEditRuleFlags.push(false);
+    },
+
+
+    /**
+     * Removes the rule with the given index from the list
+     * @param {integer} [ruleIndex] of rule to be removed
+     */
+    removeRule: function removeRule(ruleIndex) {
+      this.modalRules.splice(ruleIndex, 1);
+      this.modalEditRuleFlags.splice(ruleIndex, 1);
+    },
+
+
+    /**
+     * Allows for a rule to be edited.
+     * @param {integer} [index] of the rule to be edited
+     */
+    editRule: function editRule(index) {
+      Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
+    },
+
+
+    /**
+     * Returns the level (height in graph) of a step
+     * @param {integer} [stepIndex] of step
+     */
+    getStepLevel: function getStepLevel(stepIndex) {
+      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        var level = this.levels[levelIndex].steps;
+        for (var index = 0; index < level.length; index++) {
+          if (stepIndex == level[index]) return levelIndex;
+        }
+      }
+      return -1;
+    },
+
+
+    /**
+     * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
+     * @param {integer} [modelID] is the Evidencio model ID.
+     */
+    getModelIndex: function getModelIndex(modelID) {
+      for (var index = 0; index < this.models.length; index++) {
+        if (this.models[index].id == modelID) return index;
+      }
+      return -1;
+    },
+
+
+    /**
+     * Sets the variables-array in the apiCall-object to the variables of the newly selected model
+     * @param {object} [selectedModel] is the newly selected model
+     */
+    apiCallModelChangeAction: function apiCallModelChangeAction(selectedModel) {
+      var modID = this.getModelIndex(selectedModel.id);
+      if (modID == -1) {
+        this.modalApiCall.variables = [];
+        return;
+      }
+      var modVars = [];
+      this.models[modID].variables.forEach(function (element) {
+        modVars.push({
+          originalTitle: element.title,
+          originalID: element.id,
+          targetID: null
+        });
+      });
+      this.modalApiCall.variables = modVars;
+    },
+
+
+    /**
+     * Recounts the number of times a variable is used, to be used whenever this changes.
+     */
+    recountVariableUses: function recountVariableUses() {
+      var _this2 = this;
+
+      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf, 0);
+      this.modalSelectedVariables.forEach(function (element) {
+        _this2.timesUsedVariables[_this2.modalUsedVariables[element].ind] += 1;
+      });
       for (var indexStep = 0; indexStep < this.steps.length; indexStep++) {
         var elementStep = this.steps[indexStep];
-        for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
-          var element = elementStep.variables[indexVariable].ind;
-          this.variablesUsed[element] += 1;
+        if (elementStep.type == 'input') {
+          for (var indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
+            var element = elementStep.variables[indexVariable];
+            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
+          }
         }
       }
     },
-    getImage: function getImage(index) {
-      if (this.editVariableFlags[index]) return '/images/check.svg';else return '/images/pencil.svg';
+
+
+    /**
+     * Removes the variables from the step.
+     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     */
+    modalRemoveVariables: function modalRemoveVariables(removedVariables) {
+      var _this3 = this;
+
+      if (removedVariables.constructor == Array) {
+        removedVariables.forEach(function (element) {
+          _this3.modalRemoveSingleVariable(element);
+        });
+      } else {
+        this.modalRemoveSingleVariable(removedVariables);
+      }
     },
-    editVariable: function editVariable(index) {
-      Vue.set(this.editVariableFlags, index, !this.editVariableFlags[index]);
+
+
+    /**
+     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
+     * @param {object} [removedVariable] the variable-object to be removed
+     */
+    modalRemoveSingleVariable: function modalRemoveSingleVariable(removedVariable) {
+      for (var index = 0; index < this.modalSelectedVariables.length; index++) {
+        if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
+          delete this.modalUsedVariables[this.modalSelectedVariables[index]];
+          this.modalSelectedVariables.splice(index, 1);
+          this.modalEditVariableFlags.splice(index, 1);
+          return;
+        }
+      }
+    },
+
+
+    /**
+     * Selects the variables from the step.
+     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
+     */
+    modalSelectVariables: function modalSelectVariables(selectedVariables) {
+      var _this4 = this;
+
+      if (selectedVariables.constructor == Array) {
+        selectedVariables.forEach(function (element) {
+          _this4.modalSelectSingleVariable(element);
+        });
+      } else {
+        this.modalSelectSingleVariable(selectedVariables);
+      }
+    },
+
+
+    /**
+     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
+     * @param {object} [selectedVariable] the variable-object to be selected
+     */
+    modalSelectSingleVariable: function modalSelectSingleVariable(selectedVariable) {
+      var varName = 'var' + this.modalNodeID + '_' + this.modalVarCounter++;
+      this.modalSelectedVariables.push(varName);
+      this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+      this.modalEditVariableFlags.push(false);
     }
   },
 
@@ -1151,9 +1475,15 @@ vObj = new Vue({
             },
             scratch: {
               '_nodeID': index
+            },
+            style: {
+              'background-color': this.steps[index].color
             }
           }).id();
           this.steps[index].create = false;
+          cy.getElementById(this.steps[index].nodeID).style({
+            'label': this.steps[index].id
+          });
           this.nodeCounter++;
         }
         if (this.steps[index].destroy) {
@@ -1191,6 +1521,10 @@ vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
+    },
+
+    selectedVariables: function selectedVariables() {
+      this.recountVariableUses();
     }
 
   }
@@ -1210,8 +1544,14 @@ var cy = cytoscape({
       'width': '100px',
       'height': '100px',
       'background-color': '#0099ff',
-      'border-color': ' #005c99',
-      'border-width': '4px'
+      'border-color': ' #000000',
+      'border-width': '4px',
+      'text-halign': 'center',
+      'text-valign': 'center',
+      'color': '#ffffff',
+      'font-size': '24px',
+      'text-outline-color': '#000000',
+      'text-outline-width': '1px'
     }
   }, {
     selector: '.edge',
@@ -1292,13 +1632,21 @@ cy.on("render cyCanvas.resize", function (evt) {
   ctx.restore();
 });
 
+// ============================================================================================= //
+
 window.onload = function () {
   vObj.fitView();
 };
 
+// ============================================================================================= //
+
+$('#colorPalette').colorPalette().on('selectColor', function (evt) {
+  vObj.modalSelectedColor = evt.color;
+});
+
 /***/ }),
 
-/***/ 60:
+/***/ 57:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37576,6 +37924,25 @@ function CanvasRenderer(options) {
         // then keep cached ele texture
       } else {
         r.data.eleTxrCache.invalidateElement(ele);
+
+        // NB this block of code should not be ported to 3.3 (unstable branch).
+        // - This check is unneccesary in 3.3 as caches will be stored without respect to opacity.
+        // - This fix may result in lowered performance for compound graphs.
+        // - Ref : Opacity of child node is not updated for certain zoom levels after parent opacity is overriden #2078
+        if (ele.isParent() && de['style']) {
+          var op1 = rs.prevParentOpacity;
+          var op2 = ele.pstyle('opacity').pfValue;
+
+          rs.prevParentOpacity = op2;
+
+          if (op1 !== op2) {
+            var descs = ele.descendants();
+
+            for (var j = 0; j < descs.length; j++) {
+              r.data.eleTxrCache.invalidateElement(descs[j]);
+            }
+          }
+        }
       }
     }
 
@@ -41336,7 +41703,7 @@ module.exports = Stylesheet;
 "use strict";
 
 
-module.exports = "3.2.10";
+module.exports = "3.2.11";
 
 /***/ })
 /******/ ]);
@@ -41535,7 +41902,7 @@ module.exports = "3.2.10";
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 

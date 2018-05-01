@@ -10,14 +10,10 @@ body {
   z-index: 0;
 }
 
-#graphCardBody {
-  height: 100%;
-}
-
 #graphContainerForBorder {
   padding: 2px 2px 2px 2px;
   border: 1px solid #4e555b;
-  height: 100%;
+  height: 71vh;
 }
 
 #variablesDiv {
@@ -30,6 +26,7 @@ body {
   height: 85vh;
   padding-left: 15px;
   padding-right: 15px;
+  display: block;
 }
 
 #graphDivCard {
@@ -51,19 +48,14 @@ body {
 
 .badge-maxwidth {
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: calc(100% - 15px);
+  display: inline-block;
 }
 
 .scrollbarAtProject {
   max-height: 78vh;
   overflow-y: auto;
-}
-
-.badge-maxwidth {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 [data-toggle~="collapse"] {
@@ -73,6 +65,150 @@ body {
 .buttonIcon {
   width: 20px;
   height: 20px;
+}
+
+/* ---------- Color palet ------------- */
+
+.btn-colorpick {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  border-color: #000;
+}
+
+.outline {
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.btn-colorpick::after {
+  display: none !important;
+}
+
+.bootstrap-colorpalette {
+  padding-left: 4px;
+  padding-right: 4px;
+  white-space: normal;
+  line-height: 1;
+}
+
+.bootstrap-colorpalette div {
+  line-height: 0;
+}
+
+.bootstrap-colorpalette .btn-color {
+  width: 17px;
+  height: 17px;
+  border: 1px solid #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.bootstrap-colorpalette .btn-color:hover {
+  border: 1px solid #000;
+}
+
+/* ------------------- modal ----------------------- */
+
+.nav-link.active {
+  border-bottom: none !important;
+  background-color: #fff !important;
+}
+
+.nav-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: -webkit-box;
+  display: -moz-box;
+  -ms-flex-wrap: nowrap !important;
+      flex-wrap: nowrap !important;
+}
+
+.fade {
+  display: none;
+}
+
+.fade.show {
+  display: block;
+}
+
+#modalCard {
+  height: 50vh;
+  overflow-y: auto;
+}
+
+.yass-wrapper {
+  z-index: 0 !important;
+}
+
+/* ------------------- Table responsive ------------------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr {
+  border: hidden;
+}
+
+/* Stack rows vertically on small screens */
+
+@media (max-width: 30em) {
+  /* Hide column labels */
+
+  thead tr {
+    position: absolute;
+    top: -9999em;
+    left: -9999em;
+  }
+
+  /* Leave a space between table rows */
+
+  tr + tr {
+    margin-top: 1.5em;
+  }
+
+  /* Get table cells to act like rows */
+
+  tr,
+  td {
+    display: block;
+  }
+
+  /* Leave a space for data labels */
+
+  td {
+    padding-left: 50%;
+  }
+
+  /* Add data labels */
+
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    margin-left: -100%;
+    width: 100%;
+  }
+
+  tr {
+    border: solid;
+    border-width: 1px 0;
+  }
+}
+
+/* Stack labels vertically on smaller screens */
+
+@media (max-width: 20em) {
+  td {
+    padding-left: 0;
+  }
+
+  td:before {
+    display: block;
+    margin-left: 0;
+  }
 }
 
 

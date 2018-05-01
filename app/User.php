@@ -26,4 +26,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function createdWorkflows()
+    {
+        return $this->hasMany('App\Workflow','authorId');
+    }
+
+    public function verifiedWorkflows()
+    {
+        return $this->hasMany('App\Workflow','verifiedByReviewerId');
+    }
 }

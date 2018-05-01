@@ -15,10 +15,16 @@ Route::get('/', function () {
     return view('patient');
 });
 
+
+Route::get('/myworkflows', function () {
+    return view('myworkflows');
+});
+
 Auth::routes();
 
 Route::get('/designer', 'DesignerController@index')->name('designer');
 
+Route::post('/graph', 'GraphController@index');
 
 Route::get('/search',function(){
   return view('search');
@@ -28,13 +34,5 @@ Route::get('/workflow',function(){
   return view('workflow');
 });
 
-Route::get('/graph',function(){
-  return view('graph');
-});
-
-Route::post('/graph',function(){
-  return view('graph');
-});
 
 Route::get('/designer/fetch', 'DesignerController@fetchVariables');
-
