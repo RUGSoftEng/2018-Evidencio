@@ -9,6 +9,8 @@ class CommentReply extends Model
     protected $table = 'comment_replies';
     public $timestamps = false;
 
+    protected $fillable = ['text'];
+
     public function author()
     {
         return $this->belongsTo('App\User','authorId');

@@ -8,6 +8,8 @@ class VerificationComment extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = ['text'];
+
     public function writtenByReviewer()
     {
         return $this->belongsTo('App\User','reviewerId');

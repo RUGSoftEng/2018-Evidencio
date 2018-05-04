@@ -8,6 +8,10 @@ class Field extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        'evidencioVariableId','friendlyTitle','friendlyDescription','continuousFieldMax','continuousFieldMin','continuousFieldStepBy','continuousFieldUnit'
+    ];
+
     public function options()
     {
         return $this->hasMany('App\Option','categoricalFieldId');

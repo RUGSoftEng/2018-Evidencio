@@ -9,6 +9,8 @@ class Workflow extends Model
     const CREATED_AT = 'created';
     const UPDATED_AT = 'updated';
 
+    protected $fillable = ['title','description','languageCode'];
+
     public function author()
     {
         return $this->belongsTo('App\User','authorId');
