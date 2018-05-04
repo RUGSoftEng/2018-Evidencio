@@ -40,7 +40,7 @@ class DesignerController extends Controller
     /**
      * Saves the workflow in the database. Should the workflowId be given, that workflow will be updated.
      * @param HTTP|Request, ,workflowID]
-     * @return Object with [workflowId, stepIds, variableIds]
+     * @return Object with workflowId, [stepIds], [variableIds], [optionIds]
      */
     public function saveWorkflow(Request $request, $workflowId = null)
     {
@@ -88,7 +88,7 @@ class DesignerController extends Controller
     /**
      * Saves the steps and variables in the database, deletes variables if they are removed.
      * @param [steps], [variables], App|Workflow
-     * @return Object with [stepIds], [variableIds] 
+     * @return Object with [stepIds], [variableIds], [optionIds] 
      */
     private function saveSteps($steps, $variables = [], $workflow)
     {
@@ -122,7 +122,7 @@ class DesignerController extends Controller
     /**
      * Saves the variables connected to a step
      * @param App|Step, Object Step, [variables]
-     * @return [variableIds]
+     * @return Object with [variableIds], [optionIds]
      */
     private function saveFields($dbStep, $step, $variables)
     {
@@ -185,7 +185,9 @@ class DesignerController extends Controller
     }
 
     /**
-     * 
+     * Saves/updates the options belonging to a categorical variable.
+     * @param App|Field, Array options
+     * @return [optionIds]
      */
     private function saveCategoricalOptions($dbField, $options)
     {
