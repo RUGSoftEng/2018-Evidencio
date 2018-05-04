@@ -17,7 +17,8 @@
             <div id="graphDivCard" class="card" >
                 <div class="card-header">
                     Designer
-                    <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
+                    <button type="button" class="btn btn-primary" @click='fitView'>Fit</button>
+                    <button type="button" class="btn btn-primary" @click='saveWorkflow'>Save</button>
                 </div>
 
                 <div class="card-body h-75" id="graphCardBody">

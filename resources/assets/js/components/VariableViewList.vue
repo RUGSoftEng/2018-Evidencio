@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <variable-view-item v-for="(variable, index) in allVariables" :key="index" :index-item="index" 
-                :variable="variable" :times-used="allVariablesUsed[index]" @toggle="selectCard($event)"></variable-view-item>
+                :variable="variable" :times-used="allVariablesUsed[variable.id.toString()]" @toggle="selectCard($event)"></variable-view-item>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@ export default {
       required: true
     },
     allVariablesUsed: {
-      type: Array,
+      type: Object,
       required: true
     }
   },

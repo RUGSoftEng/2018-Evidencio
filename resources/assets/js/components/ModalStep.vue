@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="colorPick">Pick a color:</label>
-                                <button id="colorPick" type="button" class="btn btn-colorpick dropdown-toggle outline" data-toggle="dropdown" :style="{'background-color': localStep.color}">{{ localStep.id }}</button>
+                                <button id="colorPick" type="button" class="btn btn-colorpick dropdown-toggle outline" data-toggle="dropdown" :style="{'background-color': localStep.colour}">{{ localStep.id }}</button>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <div id="colorPalette"></div>
@@ -283,7 +283,7 @@ export default {
     $("#colorPalette")
       .colorPalette()
       .on("selectColor", function(evt) {
-        self.localStep.color = evt.color;
+        self.localStep.colour = evt.color;
       });
   },
 
@@ -314,19 +314,10 @@ export default {
     setSelectedVariables() {
       this.multiSelectedVariables = [];
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        let origID = this.localUsedVariables[this.localStep.variables[index]]
-          .id;
-        findVariable: for (
-          let indexOfMod = 0;
-          indexOfMod < this.possibleVariables.length;
-          indexOfMod++
-        ) {
+        let origID = this.localUsedVariables[this.localStep.variables[index]].id;
+        findVariable: for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
           const element = this.possibleVariables[indexOfMod];
-          for (
-            let indexInMod = 0;
-            indexInMod < element.variables.length;
-            indexInMod++
-          ) {
+          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
             if (element.variables[indexInMod].id == origID) {
               this.multiSelectedVariables.push(element.variables[indexInMod]);
               break findVariable;
@@ -343,6 +334,7 @@ export default {
     multiselectVariablesText(count) {
       return " and " + count + " other variable(s)";
     },
+
     /**
      * Removes the variables from the step.
      * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
@@ -363,10 +355,7 @@ export default {
      */
     multiRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        if (
-          this.localUsedVariables[this.localStep.variables[index]].id ==
-          removedVariable.id
-        ) {
+        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {
           delete this.localUsedVariables[this.localStep.variables[index]];
           this.localStep.variables.splice(index, 1);
           return;
@@ -395,9 +384,7 @@ export default {
     multiSelectSingleVariable(selectedVariable) {
       let varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
-      this.localUsedVariables[varName] = JSON.parse(
-        JSON.stringify(selectedVariable)
-      );
+      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
     }
 
     // /**

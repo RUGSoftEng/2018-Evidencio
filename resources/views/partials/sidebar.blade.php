@@ -9,11 +9,7 @@
 
         <div class="sidebar-header">
             <h3>
-                @if (session('status'))
                     {{ Auth::user()->name }}
-                @else
-                    <h1>Failed</h1>
-                @endif
             </h3>
         </div>
 

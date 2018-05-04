@@ -14,7 +14,7 @@ window.cyCanvas = require("cytoscape-canvas");
         title: title,
         description: description,
         nodeId: -1,
-        color: '#0099ff',
+        colour: '#0099ff',
         type: 'input' or 'result',
         create: true,
         destroy: false,
@@ -38,8 +38,11 @@ vObj = new Vue({
     modelIds: [],
     numVariables: 0,
     usedVariables: {},
-    timesUsedVariables: [],
+    timesUsedVariables: {},
 
+    title: "Default title",
+    description: "Default description",
+    languageCode: "EN",
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
@@ -53,7 +56,10 @@ vObj = new Vue({
     addStepButtons: [],
 
     selectedStepId: 0,
-    modalChanged: false
+    modalChanged: false,
+
+    workflowIsSaved: false,
+    workflowId: -1
   },
 
   created() {
@@ -82,11 +88,6 @@ vObj = new Vue({
     possibleVariables: function() {
       if (this.modelLoaded) {
         deepCopy = JSON.parse(JSON.stringify(this.models));
-        let counter = 0;
-        deepCopy.forEach(element => {
-          element.variables.map((x, index) => (x["ind"] = counter + index));
-          counter += element.variables.length;
-        });
         return deepCopy;
       }
       return [];
@@ -102,7 +103,7 @@ vObj = new Vue({
           stepId: element,
           title: this.steps[element].title,
           id: this.steps[element].id,
-          color: this.steps[element].color,
+          colour: this.steps[element].colour,
           ind: options.length
         });
       });
@@ -148,17 +149,70 @@ vObj = new Vue({
             modelId: modelId
           },
           success: function(result) {
+            self.debug = result;
             self.models.push(JSON.parse(result));
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
+            self.models[self.models.length - 1].variables.map(x => {
+              x["databaseId"] = -1;
+              if (x["type"] == "categorical") {
+                x.options.map(y => {
+                  y["databaseId"] = -1;
+                });
+              }
+            });
             self.modelLoaded = true;
-            self.timesUsedVariables = self.timesUsedVariables.concat(
-              Array.apply(null, Array(newVars)).map(Number.prototype.valueOf, 0)
-            );
             self.modelIds.push(modelId);
+            self.recountVariableUses();
           }
         });
       }
+    },
+
+    saveWorkflow() {
+      var self = this;
+      let url = "/designer/save/";
+      if (this.workflowIsSaved) url = url + this.workflowId;
+      this.steps.map((x, index) => {
+        x["level"] = this.getStepLevel(index);
+      }),
+        $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
+          url: url,
+          type: "POST",
+          data: {
+            title: self.title,
+            description: self.description,
+            languageCode: self.languageCode,
+            steps: self.steps,
+            variables: self.usedVariables,
+            modelIds: self.modelIds
+          },
+          success: function(result) {
+            self.workflowId = Number(result.workflowId);
+            self.workflowIsSaved = true;
+            let numberOfSteps = self.steps.length;
+            for (let index = 0; index < numberOfSteps; index++) {
+              self.steps[index].id = result.stepIds[index];
+            }
+            let varIds = result.variableIds;
+            for (var key in varIds) {
+              if (varIds.hasOwnProperty(key)) {
+                self.usedVariables[key].databaseId = Number(varIds[key]);
+              }
+            }
+            let optIds = result.optionIds;
+            for (var key in optIds) {
+              if (optIds.hasOwnProperty(key)) {
+                optIds[key].forEach((element, index) => {
+                  self.usedVariables[key].options[index].databaseId = Number(element);
+                });
+              }
+            }
+          }
+        });
     },
 
     /**
@@ -193,7 +247,7 @@ vObj = new Vue({
         title: title,
         description: description,
         nodeId: -1,
-        color: "#0099ff",
+        colour: "#0099ff",
         type: "input",
         variables: [],
         varCounter: 0,
@@ -249,8 +303,7 @@ vObj = new Vue({
           const element = this.addStepButtons[index].nodeId;
           cy.getElementById(element).position({
             x:
-              (this.levels[index + 1].steps.length / 2 +
-                (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) *
+              (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) *
               this.deltaX,
             y: (index + 1) * this.deltaY
           });
@@ -321,7 +374,7 @@ vObj = new Vue({
 
       // Set new backgroundcolor
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
-        "background-color": changedStep.step.color
+        "background-color": changedStep.step.colour
       });
       this.recountVariableUses();
     },
@@ -344,20 +397,19 @@ vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses() {
-      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(
-        Number.prototype.valueOf,
-        0
-      );
+      this.timesUsedVariables = {};
+      this.models.forEach(element => {
+        element.variables.forEach(variable => {
+          this.timesUsedVariables[variable.id.toString()] = 0;
+        });
+      });
+
       for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
         const elementStep = this.steps[indexStep];
         if (elementStep.type == "input") {
-          for (
-            let indexVariable = 0;
-            indexVariable < elementStep.variables.length;
-            indexVariable++
-          ) {
+          for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
             const element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.usedVariables[element].ind] += 1;
+            this.timesUsedVariables[this.usedVariables[element].id.toString()] += 1;
           }
         }
       }
@@ -381,7 +433,7 @@ vObj = new Vue({
                 _nodeId: index
               },
               style: {
-                "background-color": this.steps[index].color
+                "background-color": this.steps[index].colour
               }
             })
             .id();
@@ -519,8 +571,7 @@ cy.on("tap", "node", function(evt) {
     if (nID != -1) vObj.addLevel(nID + 1);
   } else if (ref.hasClass("buttonAddStep")) {
     let nID = vObj.getAddStepButtonIndex(ref.id());
-    if (nID != -1)
-      vObj.addStep("Default title", "Default description", nID + 1);
+    if (nID != -1) vObj.addStep("Default title", "Default description", nID + 1);
   } else if (ref.hasClass("node")) {
     vObj.prepareModal(ref);
     $("#modalStep").modal();
@@ -544,12 +595,7 @@ cy.on("render cyCanvas.resize", function(evt) {
     if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";
     else ctx.fillStyle = "#c6cad1";
     let w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
-    ctx.fillRect(
-      -w - 500,
-      i * vObj.deltaY - vObj.deltaY / 2,
-      2 * w + 1000,
-      vObj.deltaY
-    );
+    ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
   }
   ctx.restore();
 });
