@@ -33,13 +33,8 @@ a:focus {
   z-index: 999;
   background: #7386d5;
   color: #fff;
-  transition: all 0.3s;
-  //overflow-y: hidden;
+  transition: all 0.3s; //overflow-y: hidden;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
-}
-
-#sidebar:hover {
-  //overflow: auto;
 }
 
 #sidebar.active {
@@ -95,12 +90,13 @@ a:focus {
   font-size: 1.1em;
   display: block;
 }
+
 #sidebar ul li a:hover {
   color: #7386d5;
   background: #fff;
 }
 
-#sidebar ul li.active > a[aria-expanded="true"] {
+#sidebar ul li.active>a[aria-expanded="true"] {
   color: #fff;
   background: #6d7fcc;
 }
@@ -117,6 +113,7 @@ a:focus {
   right: 20px;
   font-size: 0.9em;
 }
+
 .somethingSomething[aria-expanded="true"]::before {
   content: "˄";
   font-size: 0.9em;
@@ -139,10 +136,12 @@ ul.CTAs a {
   border-radius: 5px;
   margin-bottom: 5px;
 }
+
 a.download {
   background: #fff;
   color: #7386d5;
 }
+
 a.article,
 a.article:hover {
   background: #6d7fcc !important;

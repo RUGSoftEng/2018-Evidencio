@@ -1,10 +1,10 @@
 <template>
-    <div id="variablesDivCard" class="card">
+    <div id="variablesDivCard" class="card full-height">
         <div class="card-header">
             Variables <model-load></model-load>
         </div>
 
-        <div class="card-body scrollbarAtProject">
+        <div class="card-body scrollbarAtProject full-height">
             <div id="accVariablesView">
                 <div class="card" v-if="allVariables.length == 0">
                     <div class="card-header" id="headingOne">
@@ -39,10 +39,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-
-  mounted() {
-    console.log("Component mounted.");
   },
 
   methods: {

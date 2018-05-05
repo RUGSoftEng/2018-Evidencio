@@ -1,5 +1,4 @@
-html,
-body {
+.full-height {
   height: 100%;
 }
 
@@ -11,26 +10,19 @@ body {
 }
 
 #graphContainerForBorder {
-  padding: 2px 2px 2px 2px;
+  padding: 2px;
   border: 1px solid #4e555b;
-  height: 100%;
 }
 
 #variablesDiv {
-  height: 85vh;
   padding-left: 15px;
   padding-right: 15px;
 }
 
 #graphDiv {
-  height: 85vh;
   padding-left: 15px;
   padding-right: 15px;
   display: block;
-}
-
-#graphDivCard {
-  height: 100%;
 }
 
 .badge-larger {
@@ -46,7 +38,6 @@ body {
 }
 
 .scrollbarAtProject {
-  max-height: 78vh;
   overflow-y: auto;
 }
 
@@ -70,8 +61,7 @@ body {
 
 .outline {
   color: white;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .btn-colorpick::after {
@@ -154,7 +144,7 @@ tr {
     left: -9999em;
   }
   /* Leave a space between table rows */
-  tr + tr {
+  tr+tr {
     margin-top: 1.5em;
   }
   /* Get table cells to act like rows */
@@ -195,9 +185,7 @@ tr {
 //The following part is for the modal when nodeType === output
 #outputTypeLeft {
   padding: 0 10px 0 20px;
-  width: 48%;
-
-  //max-height: 45vh;
+  width: 48%; //max-height: 45vh;
 }
 
 #outputTypeRight {
@@ -214,22 +202,20 @@ tr {
   background: #e0e0e0;
   width: 1px;
   content: "";
-  display:block;
+  display: block;
   position: absolute;
-  top:5px;
+  top: 5px;
   bottom: 5px;
   right: 0;
   min-height: calc(100% - 10px);
 }
 
 //#outputCategories {
-  //max-height: 45vh;
+//max-height: 45vh;
 //}
-
-#outputOptionsMenu {
-  //max-height: 45vh;
-}
-
+// #outputOptionsMenu {
+//   //max-height: 45vh;
+// }
 #outputCategoriesAccordion {
   max-height: 45vh;
   overflow: auto;

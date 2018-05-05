@@ -257,7 +257,7 @@ export default {
     },
     step: {
       type: Object,
-      required: true
+      default: () => {}
     },
     usedVariables: {
       type: Object,
@@ -278,7 +278,6 @@ export default {
   },
 
   mounted: function() {
-    this.reload();
     let self = this;
     $("#colorPalette")
       .colorPalette()

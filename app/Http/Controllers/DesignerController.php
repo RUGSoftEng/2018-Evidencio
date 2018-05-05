@@ -26,9 +26,9 @@ class DesignerController extends Controller
     }
 
     /**
-     * Fetch model from Evidencio based on its id.
-     * Returns a JSON-structure of this model, contains things like the title, description, author, variables, etc.
-     *
+     * Fetch model from Evidencio based on its id, used for designer to retrieve variables.
+     * @param HTTP|Request -> WorkflowId
+     * @return JSON -> Evidencio model data
      */
     public function fetchVariables(Request $request)
     {
@@ -39,8 +39,9 @@ class DesignerController extends Controller
 
     /**
      * Saves the workflow in the database. Should the workflowId be given, that workflow will be updated.
-     * @param HTTP|Request, ,workflowID]
-     * @return Object with workflowId, [stepIds], [variableIds], [optionIds]
+     * @param HTTP|Request -> Workflow data (title/description, steps, variables, etc.)
+     * @param Number -> workflowId
+     * @return Array -> Arraywith workflowId, [stepIds], [variableIds], [optionIds]
      */
     public function saveWorkflow(Request $request, $workflowId = null)
     {
@@ -73,6 +74,8 @@ class DesignerController extends Controller
 
     /**
      * Saves the loaded evimodels of a workflow, is required for the designer side.
+     * @param Array -> IDs of loaded Evidencio models
+     * @param App|Workflow -> Database Model of current workflow
      */
     private function saveLoadedEvidencioModels($modelIds, $workflow)
     {
@@ -87,8 +90,10 @@ class DesignerController extends Controller
 
     /**
      * Saves the steps and variables in the database, deletes variables if they are removed.
-     * @param [steps], [variables], App|Workflow
-     * @return Object with [stepIds], [variableIds], [optionIds] 
+     * @param Array -> Steps of workflow
+     * @param Array -> Variables of workflow 
+     * @param App|Workflow -> Database Model of current workflow
+     * @return Array -> Array with [stepIds], [variableIds], [optionIds] 
      */
     private function saveSteps($steps, $variables = [], $workflow)
     {
@@ -121,8 +126,10 @@ class DesignerController extends Controller
 
     /**
      * Saves the variables connected to a step
-     * @param App|Step, Object Step, [variables]
-     * @return Object with [variableIds], [optionIds]
+     * @param App|Step -> Database Model of step
+     * @param Array -> Array containing data of step
+     * @param Array -> Array of variables of workflow
+     * @return Array -> Array with [variableIds], [optionIds], the IDs of the saved variables and options in the database.
      */
     private function saveFields($dbStep, $step, $variables)
     {
@@ -157,7 +164,8 @@ class DesignerController extends Controller
 
     /**
      * Updates the information of a single step
-     * @param App|Step, Object step
+     * @param App|Step -> Database Model of step
+     * @param Array -> Array containing data of step
      */
     private function saveSingleStep($dbStep, $step)
     {
@@ -169,7 +177,8 @@ class DesignerController extends Controller
 
     /**
      * Updates the information of a single variable
-     * @param App|Field, Object field
+     * @param App|Field -> Database Model of field (variable)
+     * @param Array -> Array containing data of field (variable)
      */
     private function saveSingleField($dbField, $field)
     {
@@ -186,8 +195,9 @@ class DesignerController extends Controller
 
     /**
      * Saves/updates the options belonging to a categorical variable.
-     * @param App|Field, Array options
-     * @return [optionIds]
+     * @param App|Field -> Database Model of Field (variable)
+     * @param Array -> Array of options
+     * @return Array -> Array filled with the database IDs of the saved options.
      */
     private function saveCategoricalOptions($dbField, $options)
     {
@@ -209,5 +219,29 @@ class DesignerController extends Controller
             $value->delete();
         });
         return $optionIds;
+    }
+
+    public function loadWorkflow($workflowId)
+    {
+        $retObj = [];
+        $workflow = Auth::user()->createdWorkflows()->where('id', '=', $workflowId)->first();
+        if ($workflow == null) {
+            $retObj['success'] = false;
+            return $retObj;
+        }
+        $retObj['success'] = true;
+        $retObj['title'] = $workflow->title;
+        $retObj['description'] = $workflow->description;
+        $retObj['languageCode'] = $workflow->languageCode;
+
+        $retObj['steps'] = [];
+        $counter = 0;
+        $steps = $workflow->steps()->get();
+        foreach ($steps as $step) {
+            $retObj['steps'][$counter] = [];
+            $retObj['steps'][$counter]['title'] = $step->title;
+            $counter++;
+        }
+        return $retObj;
     }
 }

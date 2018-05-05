@@ -1,10 +1,7 @@
-window.cytoscape = require("cytoscape");
-window.Vue = require("vue");
 require("./event-dispatcher.js");
 Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
-window.cyCanvas = require("cytoscape-canvas");
 
 // ============================================================================================= //
 
@@ -30,7 +27,7 @@ window.cyCanvas = require("cytoscape-canvas");
         steps: []
       }
     */
-vObj = new Vue({
+window.vObj = new Vue({
   el: "#designerDiv",
   data: {
     modelLoaded: false,
@@ -63,19 +60,27 @@ vObj = new Vue({
   },
 
   created() {
+    // Event called when the Cytoscape graph is ready for interaction.
+    Event.listen("graphReady", () => {
+      this.workflowId = this.urlParam("workflow");
+      if (this.workflowId == null) {
+        this.addLevel(0);
+        this.addStep(
+          "Starter step",
+          "First step in the model shown to the patient. Change this step to fit your needs.",
+          0
+        );
+      } else this.loadWorkflow(this.workflowId);
+    });
+    // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
-    this.addLevel(0);
-    this.addStep(
-      "Starter step",
-      "First step in the model shown to the patient. Change this step to fit your needs.",
-      0
-    );
   },
 
   computed: {
-    allVariables: function() {
+    // Array of all variables, pass by reference rather than by value.
+    allVariables: function () {
       if (this.modelLoaded) {
         var allvars = [];
         this.models.forEach(element => {
@@ -85,7 +90,8 @@ vObj = new Vue({
       } else return [];
     },
 
-    possibleVariables: function() {
+    // Deep-copy of the models and variables, used for MultiSelect
+    possibleVariables: function () {
       if (this.modelLoaded) {
         deepCopy = JSON.parse(JSON.stringify(this.models));
         return deepCopy;
@@ -93,7 +99,8 @@ vObj = new Vue({
       return [];
     },
 
-    childrenNodes: function() {
+    // Array containing children of currently selected step
+    childrenNodes: function () {
       if (this.selectedStepId == -1) return [];
       let levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
@@ -110,7 +117,8 @@ vObj = new Vue({
       return options;
     },
 
-    modelChoiceRepresentation: function() {
+    // Array of model-representations for API-call
+    modelChoiceRepresentation: function () {
       let representation = [];
       this.models.forEach(element => {
         representation.push({
@@ -119,22 +127,13 @@ vObj = new Vue({
         });
       });
       return representation;
-    },
-
-    editedVariables: function() {
-      let editedVars = [];
-      for (var key in this.usedVariables) {
-        if (this.usedVariables.hasOwnProperty(key)) {
-          editedVars.push(this.usedVariables[key]);
-        }
-      }
-      return editedVars;
     }
   },
 
   methods: {
     /**
-     * Load model from Evidencio API, model is identified using variable modelID
+     * Load model from Evidencio API, Model is prepared for later saving.
+     * @param {Number} -> modelId is the id of the Evidencio model that should be loaded.
      */
     loadModelEvidencio(modelId) {
       var self = this;
@@ -148,7 +147,7 @@ vObj = new Vue({
           data: {
             modelId: modelId
           },
-          success: function(result) {
+          success: function (result) {
             self.debug = result;
             self.models.push(JSON.parse(result));
             let newVars = self.models[self.models.length - 1].variables.length;
@@ -169,13 +168,16 @@ vObj = new Vue({
       }
     },
 
+    /**
+     * Save Workflow in database, IDs of saved data are set after saving.
+     */
     saveWorkflow() {
       var self = this;
       let url = "/designer/save/";
       if (this.workflowIsSaved) url = url + this.workflowId;
       this.steps.map((x, index) => {
-        x["level"] = this.getStepLevel(index);
-      }),
+          x["level"] = this.getStepLevel(index);
+        }),
         $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -190,7 +192,7 @@ vObj = new Vue({
             variables: self.usedVariables,
             modelIds: self.modelIds
           },
-          success: function(result) {
+          success: function (result) {
             self.workflowId = Number(result.workflowId);
             self.workflowIsSaved = true;
             let numberOfSteps = self.steps.length;
@@ -216,8 +218,42 @@ vObj = new Vue({
     },
 
     /**
+     * Load a Workflow from the database, as of now does nothing with the workflow
+     * @param {Number} workflowId 
+     */
+    loadWorkflow(workflowId) {
+      var self = this;
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/designer/load/" + workflowId,
+        type: "POST",
+        data: {},
+        success: function (result) {
+          console.log("Workflow loaded: " + result.success);
+        }
+      });
+    },
+
+    /**
+     * Get the value of a URL parameter.
+     * @param {String} name of the url parameter to get the value from
+     * @return {string} The value that was found, null if none.
+     */
+    urlParam(name) {
+      var results = new RegExp("[?&]" + name + "=([^]*)").exec(window.location.href);
+      if (results == null) {
+        return null;
+      } else {
+        return results[1] || 0;
+      }
+    },
+
+    /**
      * Checks if a model is already loaded, to ensure models aren't loaded twice.
-     * @param {integer} [modelID] of the model to be checked.
+     * @param {Number} modelID of the model to be checked.
+     * @return {Boolean} true if found, false if not
      */
     isModelLoaded(modelId) {
       for (let index = 0; index < this.modelIds.length; index++) {
@@ -227,7 +263,7 @@ vObj = new Vue({
     },
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
-     * @param {integer} [index] of position level should be added
+     * @param {Number} index of position level should be added
      */
     addLevel(index) {
       this.levels.splice(index, 0, {
@@ -238,8 +274,9 @@ vObj = new Vue({
 
     /**
      * Add step to workflow
-     * @param {string} [title] of step
-     * @param {string} [description] of step
+     * @param {String} title of step
+     * @param {String} description of step
+     * @param {Number} level at which to add the step (it should exist!)
      */
     addStep(title, description, level) {
       this.steps.push({
@@ -267,7 +304,7 @@ vObj = new Vue({
 
     /**
      * Removes step (and node) given by step-id id.
-     * @param {integer} [id] of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
+     * @param {Number} id of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
      */
     removeStep(id) {
       this.steps[id].destroy = true;
@@ -302,9 +339,7 @@ vObj = new Vue({
         for (let index = 0; index < this.addStepButtons.length; index++) {
           const element = this.addStepButtons[index].nodeId;
           cy.getElementById(element).position({
-            x:
-              (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) *
-              this.deltaX,
+            x: (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) * this.deltaX,
             y: (index + 1) * this.deltaY
           });
         }
@@ -330,7 +365,8 @@ vObj = new Vue({
 
     /**
      * Returns the index of the AddLevelButton-node referred to by id.
-     * @param {string} [id] of the node for which the index has to be found
+     * @param {String} id of the node for which the index has to be found
+     * @return {Number} index in button in array
      */
     getAddLevelButtonIndex(id) {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
@@ -344,7 +380,8 @@ vObj = new Vue({
 
     /**
      * Returns the index of the AddStepButton-node based on its id.
-     * @param {string} [id] of the AddStepButton-node that the index is wanted of.
+     * @param {String} id of the AddStepButton-node that the index is wanted of.
+     * @return {Number} index of button in array
      */
     getAddStepButtonIndex(id) {
       for (let index = 0; index < this.addStepButtons.length; index++) {
@@ -358,7 +395,7 @@ vObj = new Vue({
 
     /**
      * Opens an option-modal for the node that is clicked on.
-     * @param {object} [nodeRef] is the reference to the node that is clicked on.
+     * @param {Object} nodeRef is the reference to the node that is clicked on.
      */
     prepareModal(nodeRef) {
       this.selectedStepId = nodeRef.scratch("_nodeId");
@@ -367,6 +404,7 @@ vObj = new Vue({
 
     /**
      * Saves the changes made to a step (variables added, etc.)
+     * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
     applyChanges(changedStep) {
       this.steps[this.selectedStepId] = changedStep.step;
@@ -381,7 +419,8 @@ vObj = new Vue({
 
     /**
      * Returns the level (height in graph) of a step
-     * @param {integer} [stepIndex] of step
+     * @param {integer} stepIndex of step
+     * @return {Number} the level at which a step is.
      */
     getStepLevel(stepIndex) {
       for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
@@ -420,23 +459,21 @@ vObj = new Vue({
     /**
      * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
      */
-    stepsChanged: function() {
+    stepsChanged: function () {
       for (let index = 0; index < this.steps.length; index++) {
         if (this.steps[index].create) {
-          this.steps[index].nodeId = cy
-            .add({
-              classes: "node",
-              data: {
-                id: "node_" + this.nodeCounter
-              },
-              scratch: {
-                _nodeId: index
-              },
-              style: {
-                "background-color": this.steps[index].colour
-              }
-            })
-            .id();
+          this.steps[index].nodeId = cy.add({
+            classes: "node",
+            data: {
+              id: "node_" + this.nodeCounter
+            },
+            scratch: {
+              _nodeId: index
+            },
+            style: {
+              "background-color": this.steps[index].colour
+            }
+          }).id();
           this.steps[index].create = false;
           cy.getElementById(this.steps[index].nodeId).style({
             label: this.steps[index].id
@@ -451,28 +488,25 @@ vObj = new Vue({
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
       this.positionSteps();
+      this.fitView();
     },
 
     /**
      * levelsChanged is used to indicate if a level has been added or removed, this function does the actual work
      */
-    levelsChanged: function() {
+    levelsChanged: function () {
       while (this.levels.length > this.addLevelButtons.length) {
         if (this.addLevelButtons.length > 0) {
           this.addStepButtons.push({
-            nodeId: cy
-              .add({
-                classes: "buttonAddStep"
-              })
-              .id()
+            nodeId: cy.add({
+              classes: "buttonAddStep"
+            }).id()
           });
         }
         this.addLevelButtons.push({
-          nodeId: cy
-            .add({
-              classes: "buttonAddLevel"
-            })
-            .id()
+          nodeId: cy.add({
+            classes: "buttonAddLevel"
+          }).id()
         });
       }
       while (this.levels.length < this.addLevelButtons.length) {
@@ -482,126 +516,11 @@ vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
+      this.fitView();
     },
 
-    selectedVariables: function() {
+    selectedVariables: function () {
       this.recountVariableUses();
     }
   }
 });
-
-// ============================================================================================= //
-
-var cy = cytoscape({
-  container: $("#graph"),
-  style: [
-    // the stylesheet for the graph
-    {
-      selector: ".node",
-      style: {
-        label: "data(id)",
-        shape: "roundrectangle",
-        width: "100px",
-        height: "100px",
-        "background-color": "#0099ff",
-        "border-color": " #000000",
-        "border-width": "4px",
-        "text-halign": "center",
-        "text-valign": "center",
-        color: "#ffffff",
-        "font-size": "24px",
-        "text-outline-color": "#000000",
-        "text-outline-width": "1px"
-      }
-    },
-
-    {
-      selector: ".edge",
-      style: {
-        width: 3,
-        "line-color": "#ccc",
-        "target-arrow-color": "#ccc",
-        "target-arrow-shape": "triangle"
-      }
-    },
-
-    {
-      selector: ".buttonAddLevel",
-      style: {
-        label: "",
-        width: "75px",
-        height: "75px",
-        "background-color": "#46c637",
-        "border-color": "#1f6b17",
-        "border-width": "4px",
-        "background-image": "/images/plus.svg",
-        "background-width": "50%",
-        "background-height": "50%"
-      }
-    },
-
-    {
-      selector: ".buttonAddStep",
-      style: {
-        label: "",
-        width: "75px",
-        height: "75px",
-        "background-color": "#00a5ff",
-        "border-color": "#0037ff",
-        "border-width": "4px",
-        "background-image": "/images/plus.svg",
-        "background-width": "50%",
-        "background-height": "50%"
-      }
-    }
-  ],
-
-  autoungrabify: true,
-  autounselectify: true,
-
-  layout: {
-    name: "preset"
-  }
-});
-
-cy.on("tap", "node", function(evt) {
-  let ref = evt.target;
-  if (ref.hasClass("buttonAddLevel")) {
-    let nID = vObj.getAddLevelButtonIndex(ref.id());
-    if (nID != -1) vObj.addLevel(nID + 1);
-  } else if (ref.hasClass("buttonAddStep")) {
-    let nID = vObj.getAddStepButtonIndex(ref.id());
-    if (nID != -1) vObj.addStep("Default title", "Default description", nID + 1);
-  } else if (ref.hasClass("node")) {
-    vObj.prepareModal(ref);
-    $("#modalStep").modal();
-  }
-});
-
-// ============================================================================================= //
-
-//Canvas of background
-const bottomLayer = cy.cyCanvas({
-  zIndex: -1
-});
-const canvas = bottomLayer.getCanvas();
-const ctx = canvas.getContext("2d");
-cy.on("render cyCanvas.resize", function(evt) {
-  bottomLayer.resetTransform(ctx);
-  bottomLayer.clear(ctx);
-  bottomLayer.setTransform(ctx);
-  ctx.save();
-  for (var i = 0; i < vObj.levels.length; i++) {
-    if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";
-    else ctx.fillStyle = "#c6cad1";
-    let w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
-    ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
-  }
-  ctx.restore();
-});
-
-// ============================================================================================= //
-
-window.onload = function() {
-  vObj.fitView();
-};

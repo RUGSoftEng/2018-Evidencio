@@ -1,10 +1,7 @@
-require('octicons');
-
-
 $(document).ready(function () {
     yaSimpleScrollbar.attach(document.getElementById('sidebar'));
-    
-    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><span><i class="fas fa-user"></i></span></button>');
+
+    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fas fa-user"></i></button>');
 
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="full-height">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,8 +25,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.css" rel="stylesheet">
 
 </head>
-<body>
-    <div id="app" style="height:100%">
+<body class="full-height">
+    <div id="app" class="full-height">
         <div class="overlay"></div>
 
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel row">

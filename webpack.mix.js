@@ -1,5 +1,4 @@
 let mix = require("laravel-mix");
-
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -18,12 +17,14 @@ if (!mix.inProduction()) {
     .sourceMaps();
 }
 
+
+
 mix
   .js("resources/assets/js/app.js", "public/js")
   .js("resources/assets/js/sidebar.js", "public/js")
   .js("resources/assets/js/designer.js", "public/js")
+  .js("resources/assets/js/designerGraph.js", "public/js")
   .js("resources/assets/js/bootstrap-colorpalette.js", "public/js")
-  .js("resources/assets/js/ya-simple-scrollbar.js", "public/js")
   .sass("resources/assets/sass/app.scss", "public/css")
   .sass("resources/assets/sass/workflow.scss", "public/css")
   .sass("resources/assets/sass/sidebar.scss", "public/css")
