@@ -227,3 +227,59 @@
 17.04 - Meeting with customers (Rick and Rob)
 17.04 - Meeting with customers (Rick and Rob)
 17.04 - Working on Architecture document
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Changed GET request to POST request
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+23.04 - Started reading up on how Laravel Eloquent works
+23.04 - Started reading up on how Laravel Eloquent works
+24.04 - First tries in saving in database, change to tables required
+24.04 - First tries in saving in database, change to tables required
+24.04 - First tries in saving in database, change to tables required
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component, some functionality lost
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+01.05 - Tiny real start on database, also fixed code based on comments Frank
+01.05 - Tiny real start on database, also fixed code based on comments Frank
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+04.05 - Biggest part done for saving in database (except for rules/api variable mapping)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (general styling)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (function commenting)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (function commenting)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn), most of the time spend with getting npm-version of fontawesome working
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (splitting of files)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (splitting of files), extra time lost due to bug fixes 
+05.05 - Hadn't seen comments by Daan, started working on fixing those (Minimizing fontawesome, failed for now)
+06.05 - Trying to minify FontAwesome again, again failing to get the webpack plugin to work
+06.05 - Alternative found for minimizing fontawesome, fontello allows for selection of icons to be included only
+06.05 - Alternative found for minimizing fontawesome, testing it
+
