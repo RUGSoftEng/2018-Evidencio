@@ -1,7 +1,7 @@
 <div class="wrapper">
     <nav id="sidebar">
         <div id="dismiss">
-            <i class="fas fa-angle-left"></i>
+            <i class="fo-icon icon-left-open">&#xe801;</i>
         </div>
 
         <div class="sidebar-header">

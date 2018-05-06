@@ -1,5 +1,4 @@
-html,
-body {
+.full-height {
   height: 100%;
 }
 
@@ -11,26 +10,19 @@ body {
 }
 
 #graphContainerForBorder {
-  padding: 2px 2px 2px 2px;
+  padding: 2px;
   border: 1px solid #4e555b;
-  height: 100%;
 }
 
 #variablesDiv {
-  height: 85vh;
   padding-left: 15px;
   padding-right: 15px;
 }
 
 #graphDiv {
-  height: 85vh;
   padding-left: 15px;
   padding-right: 15px;
   display: block;
-}
-
-#graphDivCard {
-  height: 100%;
 }
 
 .badge-larger {
@@ -46,7 +38,6 @@ body {
 }
 
 .scrollbarAtProject {
-  max-height: 78vh;
   overflow-y: auto;
 }
 

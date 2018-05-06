@@ -7,5 +7,3 @@
 require('./bootstrap');
 window.Vue = require("vue");
 window.simpleScrollbar = require('ya-simple-scrollbar');
-require('@fortawesome/fontawesome');
-require('@fortawesome/fontawesome-free-solid');

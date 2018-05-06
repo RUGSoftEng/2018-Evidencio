@@ -1,18 +1,7 @@
 $(document).ready(function () {
     yaSimpleScrollbar.attach(document.getElementById('sidebar'));
 
-    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fas fa-user"></i></button>');
-
-
-
-    //TODO: When the browser is resized, if below 390px, the brand name should wrap instead of the burger button (below)
-    //TODO: The width of the navbar should be tweaked
-    // $(window).resize(function() {
-    //     if (window.width() < 390) {
-    //         document.getElementById("theBrandName").innerHTML = "New text!";
-    //     }
-    // });
-
+    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fo-icon icon-user">&#xe800;</i></button>');
 
 
     $('#dismiss, .overlay').on('click', function () {
