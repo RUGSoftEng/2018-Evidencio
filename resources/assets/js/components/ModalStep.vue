@@ -135,7 +135,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <a class="card-link" data-toggle="collapse" href="#collapseOne">
-                                                            Item #1
+                                                            Pie Chart
                                                         </a>
                                                     </div>
                                                     <div id="collapseOne" class="collapse show" data-parent="#outputCategoriesAccordion">
@@ -148,7 +148,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
-                                                            Item #2
+                                                            Bar Plot
                                                         </a>
                                                     </div>
                                                     <div id="collapseTwo" class="collapse" data-parent="#outputCategoriesAccordion">
@@ -184,7 +184,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
-                                                            Item #3
+                                                            Doughnut chart
                                                         </a>
                                                     </div>
                                                     <div id="collapseThree" class="collapse" data-parent="#outputCategoriesAccordion">
@@ -196,7 +196,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
-                                                            Item #4
+                                                            Polar area Chart
                                                         </a>
                                                     </div>
                                                     <div id="collapseFour" class="collapse" data-parent="#outputCategoriesAccordion">
@@ -208,7 +208,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-                                                            Item #5
+                                                            Smiley Faces
                                                         </a>
                                                     </div>
                                                     <div id="collapseFive" class="collapse" data-parent="#outputCategoriesAccordion">
