@@ -4,6 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model loaded in the designer page of the workflow
+ *
+ * @property int modelId
+ */
 class LoadedEvidencioModel extends Model
 {
     public $timestamps = false;

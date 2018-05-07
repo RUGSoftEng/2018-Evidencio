@@ -4,6 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+
+/**
+ * Remarks to a workflow written by a reviewer
+ *
+ * @property timestamp created_at
+ * @property string text
+ */
 class VerificationComment extends Model
 {
     public $timestamps = false;
@@ -20,6 +27,9 @@ class VerificationComment extends Model
         return $this->belongsTo('App\Workflow','workflowId');
     }
 
+    /**
+     * Replies written to the comment
+     */
     public function commentReplies()
     {
         return $this->hasMany('App\CommentReply','verificationCommentId');

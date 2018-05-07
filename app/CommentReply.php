@@ -4,6 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Reply written to a VerificationComment
+ *
+ * @property timestamp created_at
+ * @property string text
+ */
 class CommentReply extends Model
 {
     protected $table = 'comment_replies';
