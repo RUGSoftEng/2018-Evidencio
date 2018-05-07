@@ -16,17 +16,25 @@ class EvidencioAPITest extends TestCase
     {
         $overview = EvidencioAPI::overview();
 
-        $this->assertArrayHasKey("allModels",$overview, "API response for method 'overview' missing 'allModels' attribute");
-        $this->assertArrayHasKey("myModels",$overview, "API response for method 'overview' missing 'myModels' attribute");
+        $this->assertArrayHasKey("allModels",$overview,
+            "API response for method 'overview' missing 'allModels' attribute");
+            
+        $this->assertArrayHasKey("myModels",$overview,
+            "API response for method 'overview' missing 'myModels' attribute");
     }
 
     public function testSearch()
     {
         $results = EvidencioAPI::search("cancer");
 
-        $this->assertArrayHasKey("id",$results[0], "API response for method 'search' missing 'id' attribute");
-        $this->assertArrayHasKey("title",$results[0], "API response for method 'search' missing 'title' attribute");
-        $this->assertArrayHasKey("variableSet",$results[0], "API response for method 'search' missing 'variableSet' attribute");
+        $this->assertArrayHasKey("id",$results[0],
+            "API response for method 'search' missing 'id' attribute");
+
+        $this->assertArrayHasKey("title",$results[0],
+            "API response for method 'search' missing 'title' attribute");
+
+        $this->assertArrayHasKey("variableSet",$results[0],
+            "API response for method 'search' missing 'variableSet' attribute");
     }
 
     /* Omitting models() method test because it returns a huge amount of data */
@@ -35,9 +43,14 @@ class EvidencioAPITest extends TestCase
     {
         $model = EvidencioAPI::getModel(576);
 
-        $this->assertEquals($model["id"],576, "API response for method 'getModel' returned different model than requested");
-        $this->assertArrayHasKey("title",$model, "API response for method 'getModel' missing 'title' attribute");
-        $this->assertArrayHasKey("variables",$model, "API response for method 'getModel' missing 'title' attribute");
+        $this->assertEquals($model["id"],576,
+            "API response for method 'getModel' returned different model than requested");
+
+        $this->assertArrayHasKey("title",$model,
+            "API response for method 'getModel' missing 'title' attribute");
+
+        $this->assertArrayHasKey("variables",$model,
+            "API response for method 'getModel' missing 'title' attribute");
     }
 
     public function testRun()
@@ -53,9 +66,14 @@ class EvidencioAPITest extends TestCase
 
         $result = EvidencioAPI::run(170,$values);
 
-        $this->assertEquals($result["id"],170, "API response for method 'run' returned result of different model than requested");
-        $this->assertArrayHasKey("title",$result, "API response for method 'run' missing 'title' attribute");
-        $this->assertArrayHasKey("result",$result, "API response for method 'run' missing 'result' attribute");
+        $this->assertEquals($result["id"],170,
+            "API response for method 'run' returned result of different model than requested");
+
+        $this->assertArrayHasKey("title",$result,
+            "API response for method 'run' missing 'title' attribute");
+
+        $this->assertArrayHasKey("result",$result,
+            "API response for method 'run' missing 'result' attribute");
 
     }
 
