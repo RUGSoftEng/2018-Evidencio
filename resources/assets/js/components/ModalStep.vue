@@ -223,7 +223,6 @@
                                         <div id="outputTypeRight" class="col-sm-6">
                                             <chart-preview></chart-preview>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
