@@ -177,7 +177,7 @@ window.vObj = new Vue({
     saveWorkflow() {
       var self = this;
       let url = "/designer/save/";
-      if (this.workflowId != -1) url = url + this.workflowId;
+      if (this.workflowId !== -1) url = url + this.workflowId;
       this.steps.map((x, index) => {
           x["level"] = this.getStepLevel(index);
         }),

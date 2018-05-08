@@ -221,7 +221,7 @@
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            TODO: Preview..
+                                            <chart-preview></chart-preview>
                                         </div>
 
                                     </div>
@@ -244,11 +244,13 @@
 <script>
 import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
+import ChartPreview from "./ChartDisplay.vue";
 
 export default {
   components: {
     VariableEditList,
-    RuleEditList
+    RuleEditList,
+      ChartPreview,
   },
   props: {
     stepId: {
