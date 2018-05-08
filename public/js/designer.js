@@ -596,7 +596,6 @@ window.vObj = new Vue({
     selectedStepId: 0,
     modalChanged: false,
 
-    workflowIsSaved: false,
     workflowId: -1
   },
 
@@ -607,9 +606,13 @@ window.vObj = new Vue({
     Event.listen("graphReady", function () {
       _this.workflowId = _this.urlParam("workflow");
       if (_this.workflowId == null) {
-        _this.addLevel(0);
-        _this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
+        Event.fire("NormalStart");
       } else _this.loadWorkflow(_this.workflowId);
+    });
+    // Event called when a normal (empty) start should occur.
+    Event.listen("NormalStart", function () {
+      _this.addLevel(0);
+      _this.addStep("Starter step", "First step in the model shown to the patient. Change this step to fit your needs.", 0);
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", function (modelId) {
@@ -719,7 +722,7 @@ window.vObj = new Vue({
 
       var self = this;
       var url = "/designer/save/";
-      if (this.workflowIsSaved) url = url + this.workflowId;
+      if (this.workflowId != -1) url = url + this.workflowId;
       this.steps.map(function (x, index) {
         x["level"] = _this3.getStepLevel(index);
       }), $.ajax({
@@ -738,7 +741,6 @@ window.vObj = new Vue({
         },
         success: function success(result) {
           self.workflowId = Number(result.workflowId);
-          self.workflowIsSaved = true;
           var numberOfSteps = self.steps.length;
           for (var index = 0; index < numberOfSteps; index++) {
             self.steps[index].id = result.stepIds[index];
@@ -777,6 +779,31 @@ window.vObj = new Vue({
         data: {},
         success: function success(result) {
           console.log("Workflow loaded: " + result.success);
+          if (result.success) {
+            result.evidencioModels.forEach(function (element) {
+              self.loadModelEvidencio(element);
+            });
+            var currentSteps = self.stepsChanged;
+            var currentLevels = self.levelsChanged;
+            self.title = result.title;
+            self.description = result.description;
+            self.languageCode = result.languageCode;
+            result.steps.forEach(function (element, index) {
+              while (self.levels.length <= element.level) {
+                self.addLevel(self.levels.length);
+              }console.log("Index: " + index + ", #steps: " + self.steps.length);
+              self.addStep(element.title, element.description, element.level);
+              self.steps[index].id = element.id;
+              self.steps[index].colour = element.colour;
+              self.steps[index].variables = element.variables;
+            });
+            self.usedVariables = result.usedVariables;
+            self.recountVariableUses();
+            self.stepsChanged = !currentSteps;
+            self.levelsChanged = !currentLevels;
+          } else {
+            Event.fire('NormalStart');
+          }
         }
       });
     },
@@ -1049,7 +1076,6 @@ window.vObj = new Vue({
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
       this.positionSteps();
-      this.fitView();
     },
 
     /**
@@ -1077,7 +1103,6 @@ window.vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
-      this.fitView();
     },
 
     selectedVariables: function selectedVariables() {
@@ -1297,7 +1322,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
   methods: {
     selectCard: function selectCard(index) {
-      for (var ind = 0; ind < this.allVariablesUsed.length; ind++) {
+      var numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;
+      for (var ind = 0; ind < numberOfUsedVariables; ind++) {
         if (ind == index) $("#varViewCollapse_" + ind).collapse("toggle");else $("#varViewCollapse_" + ind).collapse("hide");
       }
     }
@@ -2341,7 +2367,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     /**
      * Removes the variables from the step.
-     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     * @param {array||object} [removedVariables] are the variables to be removed 
      */
     multiRemoveVariables: function multiRemoveVariables(removedVariables) {
       var _this = this;
@@ -2373,7 +2399,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     /**
      * Selects the variables from the step.
-     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
+     * @param {array||object} [selectedVariables] are the variables to be selected 
      */
     multiSelectVariables: function multiSelectVariables(selectedVariables) {
       var _this2 = this;

@@ -55,7 +55,6 @@ window.vObj = new Vue({
     selectedStepId: 0,
     modalChanged: false,
 
-    workflowIsSaved: false,
     workflowId: -1
   },
 
@@ -64,13 +63,17 @@ window.vObj = new Vue({
     Event.listen("graphReady", () => {
       this.workflowId = this.urlParam("workflow");
       if (this.workflowId == null) {
-        this.addLevel(0);
-        this.addStep(
-          "Starter step",
-          "First step in the model shown to the patient. Change this step to fit your needs.",
-          0
-        );
+        Event.fire("NormalStart");
       } else this.loadWorkflow(this.workflowId);
+    });
+    // Event called when a normal (empty) start should occur.
+    Event.listen("NormalStart", () => {
+      this.addLevel(0);
+      this.addStep(
+        "Starter step",
+        "First step in the model shown to the patient. Change this step to fit your needs.",
+        0
+      );
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
@@ -174,7 +177,7 @@ window.vObj = new Vue({
     saveWorkflow() {
       var self = this;
       let url = "/designer/save/";
-      if (this.workflowIsSaved) url = url + this.workflowId;
+      if (this.workflowId != -1) url = url + this.workflowId;
       this.steps.map((x, index) => {
           x["level"] = this.getStepLevel(index);
         }),
@@ -194,7 +197,6 @@ window.vObj = new Vue({
           },
           success: function (result) {
             self.workflowId = Number(result.workflowId);
-            self.workflowIsSaved = true;
             let numberOfSteps = self.steps.length;
             for (let index = 0; index < numberOfSteps; index++) {
               self.steps[index].id = result.stepIds[index];
@@ -232,6 +234,31 @@ window.vObj = new Vue({
         data: {},
         success: function (result) {
           console.log("Workflow loaded: " + result.success);
+          if (result.success) {
+            result.evidencioModels.forEach(element => {
+              self.loadModelEvidencio(element);
+            });
+            let currentSteps = self.stepsChanged;
+            let currentLevels = self.levelsChanged;
+            self.title = result.title;
+            self.description = result.description;
+            self.languageCode = result.languageCode;
+            result.steps.forEach((element, index) => {
+              while (self.levels.length <= element.level)
+                self.addLevel(self.levels.length);
+              console.log("Index: " + index + ", #steps: " + self.steps.length);
+              self.addStep(element.title, element.description, element.level);
+              self.steps[index].id = element.id;
+              self.steps[index].colour = element.colour;
+              self.steps[index].variables = element.variables;
+            });
+            self.usedVariables = result.usedVariables;
+            self.recountVariableUses();
+            self.stepsChanged = !currentSteps;
+            self.levelsChanged = !currentLevels;
+          } else {
+            Event.fire('NormalStart');
+          }
         }
       });
     },
@@ -488,7 +515,6 @@ window.vObj = new Vue({
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
       this.positionSteps();
-      this.fitView();
     },
 
     /**
@@ -516,7 +542,6 @@ window.vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
-      this.fitView();
     },
 
     selectedVariables: function () {

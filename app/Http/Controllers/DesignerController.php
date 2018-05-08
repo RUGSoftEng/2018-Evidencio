@@ -12,6 +12,9 @@ use App\Step;
 use App\Field;
 use App\Option;
 
+/**
+ * DesignerController class, handles database- and API-calls for Designerpage.
+ */
 class DesignerController extends Controller
 {
 
@@ -27,8 +30,9 @@ class DesignerController extends Controller
 
     /**
      * Fetch model from Evidencio based on its id, used for designer to retrieve variables.
-     * @param HTTP|Request -> WorkflowId
-     * @return JSON -> Evidencio model data
+     * 
+     * @param HTTP|Request $request Post request containing a Evidencio modelId
+     * @return JSON Evidencio model data
      */
     public function fetchVariables(Request $request)
     {
@@ -38,10 +42,12 @@ class DesignerController extends Controller
     }
 
     /**
-     * Saves the workflow in the database. Should the workflowId be given, that workflow will be updated.
-     * @param HTTP|Request -> Workflow data (title/description, steps, variables, etc.)
-     * @param Number -> workflowId
-     * @return Array -> Arraywith workflowId, [stepIds], [variableIds], [optionIds]
+     * Saves the workflow in the database. 
+     * Should the workflowId be given, that workflow will be updated.
+     * 
+     * @param HTTP|Request $request Post request withWorkflow data (title/description, steps, etc.)
+     * @param Number $workflowId
+     * @return Array Array with workflowId, [stepIds], [variableIds], [optionIds]
      */
     public function saveWorkflow(Request $request, $workflowId = null)
     {
@@ -74,8 +80,9 @@ class DesignerController extends Controller
 
     /**
      * Saves the loaded evimodels of a workflow, is required for the designer side.
-     * @param Array -> IDs of loaded Evidencio models
-     * @param App|Workflow -> Database Model of current workflow
+     * 
+     * @param Array $modelIds IDs of loaded Evidencio models
+     * @param App|Workflow $workflow Database Model of current workflow
      */
     private function saveLoadedEvidencioModels($modelIds, $workflow)
     {
@@ -90,12 +97,13 @@ class DesignerController extends Controller
 
     /**
      * Saves the steps and variables in the database, deletes variables if they are removed.
-     * @param Array -> Steps of workflow
-     * @param Array -> Variables of workflow 
-     * @param App|Workflow -> Database Model of current workflow
-     * @return Array -> Array with [stepIds], [variableIds], [optionIds] 
+     * 
+     * @param Array $steps Steps of workflow
+     * @param Array $variables Variables of workflow 
+     * @param App|Workflow $workflow Database Model of current workflow
+     * @return Array Array with [stepIds], [variableIds], [optionIds] 
      */
-    private function saveSteps($steps, $variables = [], $workflow)
+    private function saveSteps($steps, $variables, $workflow)
     {
         $savedSteps = $workflow->steps()->get();
         $stepIds = [];
@@ -114,7 +122,7 @@ class DesignerController extends Controller
                 $this->saveSingleStep($stp, $step, $variables);
                 $workflow->steps()->save($stp);
             }
-            if ($variables != [])
+            if (isset($step['variables']))
                 $fieldIds = array_merge($variableIds, $this->saveFields($stp, $step, $variables));
             $stepIds[] = $stp->id;
         }
@@ -126,10 +134,11 @@ class DesignerController extends Controller
 
     /**
      * Saves the variables connected to a step
-     * @param App|Step -> Database Model of step
-     * @param Array -> Array containing data of step
-     * @param Array -> Array of variables of workflow
-     * @return Array -> Array with [variableIds], [optionIds], the IDs of the saved variables and options in the database.
+     * 
+     * @param App|Step $dbStep Database Model of step
+     * @param Array $step Array containing data of step
+     * @param Array $variables Array of variables of workflow
+     * @return Array Array with [variableIds], [optionIds], the IDs of the saved variables and options in the database.
      */
     private function saveFields($dbStep, $step, $variables)
     {
@@ -157,6 +166,10 @@ class DesignerController extends Controller
         }
         foreach ($savedFields as $value) {
             $dbStep->fields()->detach($value);
+            $options = $value->options()->get();
+            foreach ($options as $option) {
+                $option->delete();
+            }
             $value->delete();
         }
         return ['variableIds' => $variableIds, 'optionIds' => $optionIds];
@@ -164,8 +177,9 @@ class DesignerController extends Controller
 
     /**
      * Updates the information of a single step
-     * @param App|Step -> Database Model of step
-     * @param Array -> Array containing data of step
+     * 
+     * @param App|Step $dbStep Database Model of step
+     * @param Array $step Array containing data of step
      */
     private function saveSingleStep($dbStep, $step)
     {
@@ -177,8 +191,9 @@ class DesignerController extends Controller
 
     /**
      * Updates the information of a single variable
-     * @param App|Field -> Database Model of field (variable)
-     * @param Array -> Array containing data of field (variable)
+     * 
+     * @param App|Field $dbField Database Model of field (variable)
+     * @param Array $field Array containing data of field (variable)
      */
     private function saveSingleField($dbField, $field)
     {
@@ -195,9 +210,10 @@ class DesignerController extends Controller
 
     /**
      * Saves/updates the options belonging to a categorical variable.
-     * @param App|Field -> Database Model of Field (variable)
-     * @param Array -> Array of options
-     * @return Array -> Array filled with the database IDs of the saved options.
+     * 
+     * @param App|Field $dbField Database Model of Field (variable)
+     * @param Array $options Array of options
+     * @return Array Array filled with the database IDs of the saved options.
      */
     private function saveCategoricalOptions($dbField, $options)
     {
@@ -221,9 +237,16 @@ class DesignerController extends Controller
         return $optionIds;
     }
 
+    /**
+     * Loads a workflow from the database based on the workflowId
+     *
+     * @param Number $workflowId
+     * @return Array
+     */
     public function loadWorkflow($workflowId)
     {
         $retObj = [];
+        $usedVariables = [];
         $workflow = Auth::user()->createdWorkflows()->where('id', '=', $workflowId)->first();
         if ($workflow == null) {
             $retObj['success'] = false;
@@ -233,14 +256,94 @@ class DesignerController extends Controller
         $retObj['title'] = $workflow->title;
         $retObj['description'] = $workflow->description;
         $retObj['languageCode'] = $workflow->languageCode;
+        $retObj['evidencioModels'] = $this->getLoadedEvidencioModels($workflow);
 
         $retObj['steps'] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
         foreach ($steps as $step) {
-            $retObj['steps'][$counter] = [];
-            $retObj['steps'][$counter]['title'] = $step->title;
+            $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
+            $retObj['steps'][$counter] = $stepLoaded['step'];
+            $usedVariables = array_merge($usedVariables, $stepLoaded['usedVariables']);
             $counter++;
+        }
+
+        $retObj['usedVariables'] = $usedVariables;
+        return $retObj;
+    }
+
+    /**
+     * Returns the IDs of the loaded Evidencio Models of the Workflow
+     *
+     * @param App|Workflow $workflow Workflow to get loaded Evidencio Model IDs from.
+     * @return Array
+     */
+    private function getLoadedEvidencioModels($workflow)
+    {
+        $array = [];
+        $models = $workflow->loadedEvidencioModels()->get();
+        foreach ($models as $model)
+            $array[] = $model->modelId;
+        return $array;
+    }
+
+    /**
+     * Loads the relevant information for a step (NOT including the variables)
+     *
+     * @param App|Step $dbStep Database Model of Step
+     * @param Number $stepNum Number that indicates what step in workflow it is.
+     * @return Array Array containing information of step and the used variables.
+     */
+    private function loadStep($dbStep, $stepNum)
+    {
+        $retObj = [];
+        $retObj['id'] = $dbStep->id;
+        $retObj['title'] = $dbStep->title;
+        $retObj['description'] = $dbStep->description;
+        $retObj['colour'] = $dbStep->colour;
+        $retObj['level'] = $dbStep->workflowStepLevel;
+        $variables = $this->loadVariablesOfStep($dbStep, $stepNum);
+        $retObj['variables'] = $variables['varIds'];
+        return ['step' => $retObj, 'usedVariables' => $variables['usedVariables']];
+    }
+
+    private function loadVariablesOfStep($dbStep, $stepNum)
+    {
+        $usedVariables = [];
+        $varIds = [];
+        $variables = $dbStep->fields()->get();
+        foreach ($variables as $key => $value) {
+            $name = 'var' . $stepNum . '_' . $key;
+            $varIds[] = $name;
+            $usedVariables[$name] = $this->loadVariable($value);
+        }
+        return ['varIds' => $varIds, 'usedVariables' => $usedVariables];
+    }
+
+    private function loadVariable($dbVariable)
+    {
+        $retObj = [];
+        $retObj['databaseId'] = $dbVariable->id;
+        $retObj['title'] = $dbVariable->friendlyTitle;
+        $retObj['description'] = $dbVariable->friendlyDescription;
+        $retObj['id'] = $dbVariable->evidencioVariableId;
+        $options = $dbVariable->options()->get();
+        if ($options->isEmpty()) {
+            $retObj['type'] = 'continuous';
+            $retObj['options']['max'] = $dbVariable->continuousFieldMax;
+            $retObj['options']['min'] = $dbVariable->continuousFieldMin;
+            $retObj['options']['step'] = $dbVariable->continuousFieldStepBy;
+            $retObj['options']['unit'] = $dbVariable->continuousFieldUnit;
+        } else {
+            $retObj['type'] = 'categorical';
+
+            $retObj['options'] = [];
+            foreach ($options as $key => $option) {
+                $retObj['options'][$key] = [
+                    'title' => $option->value,
+                    'databaseId' => $option->id
+                ];
+            }
         }
         return $retObj;
     }

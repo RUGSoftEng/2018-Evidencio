@@ -233,7 +233,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply Changes</button>
                 </div>
             </div>
         </div>
@@ -336,7 +336,7 @@ export default {
 
     /**
      * Removes the variables from the step.
-     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     * @param {array||object} [removedVariables] are the variables to be removed
      */
     multiRemoveVariables(removedVariables) {
       if (removedVariables.constructor == Array) {
@@ -364,7 +364,7 @@ export default {
 
     /**
      * Selects the variables from the step.
-     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
+     * @param {array||object} [selectedVariables] are the variables to be selected
      */
     multiSelectVariables(selectedVariables) {
       if (selectedVariables.constructor == Array) {

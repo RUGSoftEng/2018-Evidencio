@@ -37,6 +37,6 @@ Route::get('/workflow', function () {
 
 Route::post('/designer/fetch', 'DesignerController@fetchVariables')->middleware('auth');
 
-Route::post('/designer/save', 'DesignerController@saveWorkflow')->middleware('auth');
+Route::post('/designer/save/', 'DesignerController@saveWorkflow')->middleware('auth');
 Route::post('/designer/save/{workflowId}', 'DesignerController@saveWorkflow')->middleware('auth');
 Route::post('/designer/load/{workflowId}', 'DesignerController@loadWorkflow')->middleware('auth');

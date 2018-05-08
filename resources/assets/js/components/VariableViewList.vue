@@ -43,7 +43,8 @@ export default {
 
   methods: {
     selectCard(index) {
-      for (let ind = 0; ind < this.allVariablesUsed.length; ind++) {
+      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;
+      for (let ind = 0; ind < numberOfUsedVariables; ind++) {
         if (ind == index) $("#varViewCollapse_" + ind).collapse("toggle");
         else $("#varViewCollapse_" + ind).collapse("hide");
       }
