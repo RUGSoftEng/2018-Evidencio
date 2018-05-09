@@ -26,28 +26,28 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="firstName" class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
+                            <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="firstName" maxlength="30" type="text" class="form-control{{ $errors->has('firstName') ? ' is-invalid' : '' }}" name="firstName" value="{{ old('firstName') }}" required autofocus>
+                                <input id="first_name" maxlength="30" type="text" class="form-control{{ $errors->has('first_name') ? ' is-invalid' : '' }}" name="first_name" value="{{ old('first_name') }}" required autofocus>
 
-                                @if ($errors->has('firstName'))
+                                @if ($errors->has('first_name'))
                                     <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('firstName') }}</strong>
+                                        <strong>{{ $errors->first('first_name') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="lastName" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
+                            <label for="last_name" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="lastName" maxlength="30" type="text" class="form-control{{ $errors->has('lastName') ? ' is-invalid' : '' }}" name="lastName" value="{{ old('lastName') }}" required autofocus>
+                                <input id="last_name" maxlength="30" type="text" class="form-control{{ $errors->has('last_name') ? ' is-invalid' : '' }}" name="last_name" value="{{ old('last_name') }}" required autofocus>
 
-                                @if ($errors->has('lastName'))
+                                @if ($errors->has('last_name'))
                                     <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('lastName') }}</strong>
+                                        <strong>{{ $errors->first('last_name') }}</strong>
                                     </span>
                                 @endif
                             </div>
