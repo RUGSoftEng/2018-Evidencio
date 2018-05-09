@@ -14,22 +14,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string remember_token
  * @property timestamp created_at
  * @property timestamp updated_at
- * @property string firstName
- * @property string lastName
- * @property string languageCode Language used by the User as a 2-character code
- * @property string photoURL
- * @property string academicDegree
+ * @property string first_name
+ * @property string last_name
+ * @property string language_code Language used by the User as a 2-character code
+ * @property string photo_url
+ * @property string academic_degree
  * @property string bio Description of the user, it can contain achievments etc.
- * @property bool isAdministrator
- * @property bool isDeactivated If set to true, users personal data should be
+ * @property bool is_administrator
+ * @property bool is_deactivated If set to true, users personal data should be
  * removed and it is not possible to log in onto the users account anymore
- * @property bool isReviewer If set to true, the user can comment and approve
+ * @property bool is_reviewer If set to true, the user can comment and approve
  * other user's workflows
- * @property bool isVerified Needs to be set to true for the user to be able to
+ * @property bool is_verified Needs to be set to true for the user to be able to
  * create new workflows
  * @property string organisation Name of the organisation/institution etc. where
  * the user currently works
- * @property timestamp verificationDate
+ * @property timestamp verification_date
  */
 class User extends Authenticatable
 {
@@ -41,7 +41,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'firstName', 'lastName', 'languageCode', 'email', 'password',
+        'name', 'first_name', 'last_name', 'language_code', 'email', 'password',
     ];
 
     /**
@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public function createdWorkflows()
     {
-        return $this->hasMany('App\Workflow','authorId');
+        return $this->hasMany('App\Workflow','author_id');
     }
 
     /**
@@ -63,7 +63,7 @@ class User extends Authenticatable
      */
     public function verifiedWorkflows()
     {
-        return $this->hasMany('App\Workflow','verifiedByReviewerId');
+        return $this->hasMany('App\Workflow','verified_by_reviewer_id');
     }
 
     /**
@@ -71,7 +71,7 @@ class User extends Authenticatable
      */
     public function registrationDocuments()
     {
-        return $this->hasMany('App\RegistrationDocument','registreeId');
+        return $this->hasMany('App\RegistrationDocument','registree_id');
     }
 
     /**
@@ -80,7 +80,7 @@ class User extends Authenticatable
      */
     public function verificationCommentsWritten()
     {
-        return $this->hasMany('App\VerificationComment','reviewerId');
+        return $this->hasMany('App\VerificationComment','reviewer_id');
     }
 
     /**
@@ -88,6 +88,6 @@ class User extends Authenticatable
      */
     public function commentRepliesWritten()
     {
-        return $this->hasMany('App\CommentReply','authorId');
+        return $this->hasMany('App\CommentReply','author_id');
     }
 }

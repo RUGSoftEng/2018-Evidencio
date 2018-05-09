@@ -19,12 +19,12 @@ class VerificationComment extends Model
 
     public function writtenByReviewer()
     {
-        return $this->belongsTo('App\User','reviewerId');
+        return $this->belongsTo('App\User','reviewer_id');
     }
 
     public function workflow()
     {
-        return $this->belongsTo('App\Workflow','workflowId');
+        return $this->belongsTo('App\Workflow','workflow_id');
     }
 
     /**
@@ -32,6 +32,6 @@ class VerificationComment extends Model
      */
     public function commentReplies()
     {
-        return $this->hasMany('App\CommentReply','verificationCommentId');
+        return $this->hasMany('App\CommentReply','verification_comment_id');
     }
 }

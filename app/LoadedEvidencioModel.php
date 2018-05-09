@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Model loaded in the designer page of the workflow
  *
- * @property int modelId
+ * @property int model_id
  */
 class LoadedEvidencioModel extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['modelId'];
+    protected $fillable = ['model_id'];
 
     public function workflow()
     {
-        return $this->belongsTo('App\Workflow', 'workflowId');
+        return $this->belongsTo('App\Workflow', 'workflow_id');
     }
 }

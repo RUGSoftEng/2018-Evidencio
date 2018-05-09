@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Possible value of a categorial field
  *
- * @property string value Name of the option
+ * @property string title Title of the option as in Evindecio API
+ * @property friendly_title Title of the option shown to the patient
  */
 class Option extends Model
 {
-    protected $fillable = ['value'];
+    protected $fillable = ['title', 'friendly_title'];
     public $timestamps = false;
 
     /**
@@ -19,6 +20,6 @@ class Option extends Model
      */
     public function categoricalField()
     {
-        return $this->belongsTo('App\Field','categoricalFieldId');
+        return $this->belongsTo('App\Field','categorical_field_id');
     }
 }
