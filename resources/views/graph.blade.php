@@ -147,6 +147,11 @@ $dataPoints = array(
     init();
 
   }
+  
+  function loadData(){
+    var canv = document.getElementById("graph");
+    document.getElementById("chartdata").value = canv.toDataURL("image/jpg");
+  }
 
 </script>
 
@@ -190,7 +195,7 @@ $dataPoints = array(
     <?php
     echo '<input type="hidden" name="remarks[]" value="'. $decodeRes['conditionalResultText'] . '"/>';
     ?>
-    <input type="submit" onclick="showSmiley()" name="generatePDF" id="export" value="Export Result to PDF" class="btn btn-info"/>
+    <input type="submit" onclick="loadData()" name="generatePDF" id="export" value="Export Result to PDF" class="btn btn-info"/>
   </form>
 </div>
 @endsection
