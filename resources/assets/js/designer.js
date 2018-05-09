@@ -166,6 +166,7 @@ window.vObj = new Vue({
               if (x["type"] == "categorical") {
                 x.options.map(y => {
                   y["databaseId"] = -1;
+                  y["friendlyTitle"] = y.title;
                 });
               }
             });

@@ -61,8 +61,8 @@ class DesignerController extends Controller
         } else {
             $workflow = new Workflow;
         }
-        $workflow->authorId = $user->id;
-        $workflow->languageCode = $request->languageCode;
+        $workflow->author_id = $user->id;
+        $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
         $workflow->save();
@@ -88,8 +88,8 @@ class DesignerController extends Controller
     {
         $savedLoadedModels = $workflow->loadedEvidencioModels()->get();
         foreach ($modelIds as $modelId) {
-            if ($savedLoadedModels->where('modelId', $modelId)->isEmpty()) {
-                $loadedModel = new LoadedEvidencioModel(['modelId' => $modelId]);
+            if ($savedLoadedModels->where('model_id', $modelId)->isEmpty()) {
+                $loadedModel = new LoadedEvidencioModel(['model_id' => $modelId]);
                 $workflow->loadedEvidencioModels()->save($loadedModel);
             }
         }
@@ -186,7 +186,7 @@ class DesignerController extends Controller
         $dbStep->title = $step['title'];
         $dbStep->description = $step['description'];
         $dbStep->colour = $step['colour'];
-        $dbStep->workflowStepLevel = $step['level'];
+        $dbStep->workflow_step_level = $step['level'];
     }
 
     /**
@@ -197,14 +197,14 @@ class DesignerController extends Controller
      */
     private function saveSingleField($dbField, $field)
     {
-        $dbField->friendlyTitle = $field['title'];
-        $dbField->friendlyDescription = $field['description'];
-        $dbField->evidencioVariableId = $field['id'];
+        $dbField->friendly_title = $field['title'];
+        $dbField->friendly_description = $field['description'];
+        $dbField->evidencio_variable_id = $field['id'];
         if ($field['type'] == 'continuous') {
-            $dbField->continuousFieldMax = $field['options']['max'];
-            $dbField->continuousFieldMin = $field['options']['min'];
-            $dbField->continuousFieldUnit = $field['options']['unit'];
-            $dbField->continuousFieldStepBy = $field['options']['step'];
+            $dbField->continuous_field_max = $field['options']['max'];
+            $dbField->continuous_field_min = $field['options']['min'];
+            $dbField->continuous_field_unit = $field['options']['unit'];
+            $dbField->continuous_field_step_by = $field['options']['step'];
         }
     }
 
@@ -222,11 +222,12 @@ class DesignerController extends Controller
         foreach ($options as $option) {
             if ($savedOptions->isNotEmpty() && ($opt = $savedOptions->where('id', $option['databaseId']))->isNotEmpty()) {
                 $opt = $opt->first();
-                $opt->value = $option['title'];
+                $opt->friendly_title = $option["friendlyTitle"];
                 $opt->save();
             } else {
                 $opt = new Option;
-                $opt->value = $option['title'];
+                $opt->title = $option["title"];
+                $opt->friendly_title = $option["friendlyTitle"];
                 $dbField->options()->save($opt);
             }
             $optionIds[] = $opt->id;
@@ -255,7 +256,7 @@ class DesignerController extends Controller
         $retObj['success'] = true;
         $retObj['title'] = $workflow->title;
         $retObj['description'] = $workflow->description;
-        $retObj['languageCode'] = $workflow->languageCode;
+        $retObj['languageCode'] = $workflow->language_code;
         $retObj['evidencioModels'] = $this->getLoadedEvidencioModels($workflow);
 
         $retObj['steps'] = [];
@@ -283,7 +284,7 @@ class DesignerController extends Controller
         $array = [];
         $models = $workflow->loadedEvidencioModels()->get();
         foreach ($models as $model)
-            $array[] = $model->modelId;
+            $array[] = $model->model_id;
         return $array;
     }
 
@@ -301,7 +302,7 @@ class DesignerController extends Controller
         $retObj['title'] = $dbStep->title;
         $retObj['description'] = $dbStep->description;
         $retObj['colour'] = $dbStep->colour;
-        $retObj['level'] = $dbStep->workflowStepLevel;
+        $retObj['level'] = $dbStep->workflow_step_level;
         $variables = $this->loadVariablesOfStep($dbStep, $stepNum);
         $retObj['variables'] = $variables['varIds'];
         return ['step' => $retObj, 'usedVariables' => $variables['usedVariables']];
@@ -324,23 +325,24 @@ class DesignerController extends Controller
     {
         $retObj = [];
         $retObj['databaseId'] = $dbVariable->id;
-        $retObj['title'] = $dbVariable->friendlyTitle;
-        $retObj['description'] = $dbVariable->friendlyDescription;
-        $retObj['id'] = $dbVariable->evidencioVariableId;
+        $retObj['title'] = $dbVariable->friendly_title;
+        $retObj['description'] = $dbVariable->friendly_description;
+        $retObj['id'] = $dbVariable->evidencio_variable_id;
         $options = $dbVariable->options()->get();
         if ($options->isEmpty()) {
             $retObj['type'] = 'continuous';
-            $retObj['options']['max'] = $dbVariable->continuousFieldMax;
-            $retObj['options']['min'] = $dbVariable->continuousFieldMin;
-            $retObj['options']['step'] = $dbVariable->continuousFieldStepBy;
-            $retObj['options']['unit'] = $dbVariable->continuousFieldUnit;
+            $retObj['options']['max'] = $dbVariable->continuous_field_max;
+            $retObj['options']['min'] = $dbVariable->continuous_field_min;
+            $retObj['options']['step'] = $dbVariable->continuous_field_step_by;
+            $retObj['options']['unit'] = $dbVariable->continuous_field_unit;
         } else {
             $retObj['type'] = 'categorical';
 
             $retObj['options'] = [];
             foreach ($options as $key => $option) {
                 $retObj['options'][$key] = [
-                    'title' => $option->value,
+                    'title' => $option->title,
+                    'friendlyTitle' => $option->friendly_title,
                     'databaseId' => $option->id
                 ];
             }
