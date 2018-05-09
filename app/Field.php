@@ -11,11 +11,16 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string friendly_title Title that is friendly to a patient
  * @property string friendly_description Description that is friendly to a patient
- * @property int continuous_field_max Maximum input value (Applies only to continuous fields)
- * @property int continuous_field_min Minimum input value (Applies only to continuous fields)
- * @property int continuous_field_step_by Interval between possible input values (Applies only to continuous fields)
- * @property int continuous_field_unit Unit of the value (kilograms, years, etc.) (Applies only to continuous fields)
- * @property int evidencio_variable_id #TODO desc
+ * @property int continuous_field_max Maximum input value (Applies only to
+ * continuous fields)
+ * @property int continuous_field_min Minimum input value (Applies only to
+ * continuous fields)
+ * @property int continuous_field_step_by Interval between possible input values
+ * (Applies only to continuous fields)
+ * @property int continuous_field_unit Unit of the value (kilograms, years, etc.)
+ * (Applies only to continuous fields)
+ * @property int evidencio_variable_id Evidencio API variable id associated with
+ * this field in the designer page
  */
 class Field extends Model
 {
