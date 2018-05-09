@@ -36,3 +36,7 @@ Route::get('/workflow',function(){
 
 
 Route::get('/designer/fetch', 'DesignerController@fetchVariables');
+
+Route::post('/PDF', function(){
+  return view('PDF');
+});
