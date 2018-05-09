@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="full-height">
+<html lang="en" class="height-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,8 +25,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.1.0/nouislider.css" rel="stylesheet">
 
 </head>
-<body class="full-height">
-    <div id="app" class="full-height">
+<body class="height-100">
+    <div id="app" class="height-100">
         <div class="overlay"></div>
 
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel row">
@@ -82,7 +82,7 @@
             </div>
         </nav>
 
-        <main class="py-4" style="height: calc(100% - 60px)">
+        <main class="py-4 content">
             @yield('content')
         </main>
     </div>

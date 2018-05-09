@@ -1,10 +1,10 @@
 <template>
-    <div id="variablesDivCard" class="card full-height">
+    <div class="card height-100">
         <div class="card-header">
             Variables <model-load></model-load>
         </div>
 
-        <div class="card-body scrollbarAtProject full-height">
+        <div class="card-body height-100 scrollbarAtProject">
             <div id="accVariablesView">
                 <div class="card" v-if="allVariables.length == 0">
                     <div class="card-header" id="headingOne">
@@ -52,9 +52,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-#variablesDivCard {
-  height: 100%;
-}
-</style>

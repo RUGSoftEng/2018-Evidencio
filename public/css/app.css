@@ -10067,5 +10067,9 @@ a.text-dark:focus {
   grid-template-columns: 15% 2% 10%;
 }
 
+.content {
+  height: calc(100% - 60px);
+}
+
 
 /*# sourceMappingURL=app.css.map*/

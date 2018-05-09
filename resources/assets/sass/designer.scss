@@ -1,5 +1,17 @@
-.full-height {
+.height-100 {
   height: 100%;
+}
+
+.height-40 {
+  height: 40%;
+}
+
+.height-50 {
+  height: 50%;
+}
+
+.height-60 {
+  height: 60%;
 }
 
 #graph {
@@ -14,14 +26,7 @@
   border: 1px solid #4e555b;
 }
 
-#variablesDiv {
-  padding-left: 15px;
-  padding-right: 15px;
-}
-
 #graphDiv {
-  padding-left: 15px;
-  padding-right: 15px;
   display: block;
 }
 

@@ -1,5 +1,6 @@
 require("./event-dispatcher.js");
 Vue.component("vueMultiselect", window.VueMultiselect.default);
+Vue.component("workflowInformation", require("./components/WorkflowInformation.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
 
@@ -55,29 +56,34 @@ window.vObj = new Vue({
     selectedStepId: 0,
     modalChanged: false,
 
-    workflowId: -1
+    workflowId: null
   },
 
   created() {
     // Event called when the Cytoscape graph is ready for interaction.
     Event.listen("graphReady", () => {
       this.workflowId = this.urlParam("workflow");
-      if (this.workflowId == null) {
-        Event.fire("NormalStart");
+      if (this.workflowId === null) {
+        Event.fire("normalStart");
       } else this.loadWorkflow(this.workflowId);
     });
     // Event called when a normal (empty) start should occur.
-    Event.listen("NormalStart", () => {
+    Event.listen("normalStart", () => {
       this.addLevel(0);
       this.addStep(
         "Starter step",
         "First step in the model shown to the patient. Change this step to fit your needs.",
         0
       );
+      this.fitView();
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
+    });
+    // Event called when the user tries to save a workflow
+    Event.listen("save", () => {
+      this.saveWorkflow();
     });
   },
 
@@ -176,8 +182,8 @@ window.vObj = new Vue({
      */
     saveWorkflow() {
       var self = this;
-      let url = "/designer/save/";
-      if (this.workflowId != -1) url = url + this.workflowId;
+      let url = "/designer/save";
+      if (this.workflowId != null) url = url + "/" + this.workflowId;
       this.steps.map((x, index) => {
           x["level"] = this.getStepLevel(index);
         }),
@@ -252,12 +258,14 @@ window.vObj = new Vue({
               self.steps[index].colour = element.colour;
               self.steps[index].variables = element.variables;
             });
-            self.usedVariables = result.usedVariables;
+            if (result.usedVariables.constructor !== Array)
+              self.usedVariables = result.usedVariables;
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
           } else {
-            Event.fire('NormalStart');
+            self.workflowId = null;
+            Event.fire("normalStart");
           }
         }
       });
@@ -479,6 +487,15 @@ window.vObj = new Vue({
           }
         }
       }
+    },
+
+    /**
+     * Changes the details of the currently loaded workflow.
+     * @param {Object} newDetails contains an object with the new details (fiels title, description)
+     */
+    changeWorkflowDetails(newDetails) {
+      this.title = newDetails.title;
+      this.description = newDetails.description;
     }
   },
 
