@@ -1,4 +1,8 @@
 <?php
+/**
+ * post request to Evidencio search API
+ * returns array of all the evidencio models that matched the query entered in the search form
+ */
 use App\EvidencioAPI;
 if (!empty($_GET['search'])) {
   $decodeRes = EvidencioAPI::search($_GET['search']);
@@ -10,7 +14,7 @@ if (!empty($_GET['search'])) {
 
 @section('content')
 <br>
-
+{{--the search bar--}}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -21,7 +25,7 @@ if (!empty($_GET['search'])) {
         </div>
     </div>
 </div>
-<!--provides all the models that was produced by the API call to Evidencio's search API-->
+{{--provides all the models that was produced by the API call to Evidencio's search API--}}
 <div class="container">
   <?php if (!empty($decodeRes)): ?>
     <ul class="list-group">

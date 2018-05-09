@@ -26,25 +26,25 @@ class DatabaseWorkflowTest extends TestCase
 
         $this->user = \App\User::create([
             'name' => 'testUser',
-            'firstName' => 'John',
-            'lastName' => 'Smith',
+            'first_name' => 'John',
+            'last_name' => 'Smith',
             'email' => 'johnsmith@evidencio.com',
             'password' => 'abcdef',
-            'languageCode' => 'en'
+            'language_code' => 'en'
         ]);
 
         $this->reviewer = \App\User::create([
             'name' => 'reviewerUser',
-            'firstName' => 'Jan',
-            'lastName' => 'Jansen',
+            'first_name' => 'Jan',
+            'last_name' => 'Jansen',
             'email' => 'janjansen@evidencio.com',
             'password' => '123456',
-            'languageCode' => 'nl'
+            'language_code' => 'nl'
         ]);
 
         $this->workflow = new \App\Workflow([
             'title' => 'Breast cancer survival',
-            'languageCode' => 'en'
+            'language_code' => 'en'
         ]);
 
         $this->workflow->author()->associate($this->user);
@@ -53,7 +53,7 @@ class DatabaseWorkflowTest extends TestCase
 
         $this->workflow->save();
 
-        $this->loadedEvidencioModel = $this->workflow->loadedEvidencioModels()->create(['modelId' => '576']);
+        $this->loadedEvidencioModel = $this->workflow->loadedEvidencioModels()->create(['model_id' => '576']);
 
         $this->step1 = \App\Step::create(['title' => 'Step 1']);
         $this->step2 = \App\Step::create(['title' => 'Step 2']);
@@ -64,15 +64,15 @@ class DatabaseWorkflowTest extends TestCase
 
         $this->step1->nextSteps()->attach($this->step2,['condition' => '']);
 
-        $this->field = \App\Field::create(['friendlyTitle' => "Are you sick?", 'evidencioVariableId' => '1234']);
+        $this->field = \App\Field::create(['friendly_title' => "Are you sick?", 'evidencio_variable_id' => '1234']);
 
         $this->step1->fields()->attach($this->field);
 
-        $this->option = $this->field->options()->create(['value' => 'Yes']);
+        $this->option = $this->field->options()->create(['title' => 'Yes', 'friendly_title' => 'No']);
 
-        $this->step1->modelRunFields()->attach($this->field,['evidencioModelId' => '576', 'evidencioFieldId' => '1234']);
+        $this->step1->modelRunFields()->attach($this->field,['evidencio_model_id' => '576', 'evidencio_field_id' => '1234']);
 
-        $this->result = $this->step1->modelRunResults()->create(['resultName' => 'breastSurvival', 'resultNumber' => '0', 'evidencioModelId' => '576']);
+        $this->result = $this->step1->modelRunResults()->create(['result_name' => 'breastSurvival', 'result_number' => '0', 'evidencio_model_id' => '576']);
 
     }
 
@@ -109,7 +109,7 @@ class DatabaseWorkflowTest extends TestCase
         $this->assertEquals($this->step1['id'], $this->result->step['id']);
 
         $this->assertEquals($this->field['id'], $this->step1->modelRunFields->first()['id']);
-        $this->assertEquals('1234', $this->step1->modelRunFields->first()->pivot['evidencioFieldId']);
+        $this->assertEquals('1234', $this->step1->modelRunFields->first()->pivot['evidencio_field_id']);
         $this->assertEquals($this->field['id'], $this->step1->modelRunFieldsById('576')->first()['id']);
         $this->assertEquals($this->step1['id'], $this->field->usedInRunsInSteps->first()['id']);
     }

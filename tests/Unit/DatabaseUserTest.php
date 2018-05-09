@@ -23,32 +23,32 @@ class DatabaseUserTest extends TestCase
 
         $this->user = \App\User::create([
             'name' => 'testUser',
-            'firstName' => 'John',
-            'lastName' => 'Smith',
+            'first_name' => 'John',
+            'last_name' => 'Smith',
             'email' => 'johnsmith@evidencio.com',
             'password' => 'abcdef',
-            'languageCode' => 'en'
+            'language_code' => 'en'
         ]);
 
         $this->workflow = new \App\Workflow([
             'title' => 'Breast cancer survival',
-            'languageCode' => 'en'
+            'language_code' => 'en'
         ]);
 
         $this->reviewer = \App\User::create([
             'name' => 'reviewerUser',
-            'firstName' => 'Jan',
-            'lastName' => 'Jansen',
+            'first_name' => 'Jan',
+            'last_name' => 'Jansen',
             'email' => 'janjansen@evidencio.com',
             'password' => '123456',
-            'languageCode' => 'nl'
+            'language_code' => 'nl'
         ]);
 
         $this->workflow->author()->associate($this->user);
 
         $this->workflow->save();
 
-        $this->registrationDoc = $this->user->registrationDocuments()->create(['name' => 'Diploma', 'URL' => 'www.diplomas.com/123456.html']);
+        $this->registrationDoc = $this->user->registrationDocuments()->create(['name' => 'Diploma', 'url' => 'www.diplomas.com/123456.html']);
 
         $this->verificationComment = new \App\VerificationComment(['text' => 'Lorem ipsum dolor sit amet.']);
 
