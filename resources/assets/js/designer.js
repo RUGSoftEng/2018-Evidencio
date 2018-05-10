@@ -1,8 +1,8 @@
-require("./event-dispatcher.js");
 Vue.component("vueMultiselect", window.VueMultiselect.default);
-Vue.component("workflowInformation", require("./components/WorkflowInformation.vue"));
+Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
+Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
 
 // ============================================================================================= //
 
@@ -46,7 +46,9 @@ window.vObj = new Vue({
     maxStepsPerLevel: 0,
     stepsChanged: false,
     levelsChanged: false,
+    connectionsChanged: false,
     nodeCounter: 0,
+    edgeCounter: 0,
 
     deltaX: 150,
     deltaY: 250,
@@ -55,6 +57,13 @@ window.vObj = new Vue({
 
     selectedStepId: 0,
     modalChanged: false,
+    confirmDialog: {
+      title: "",
+      message: "",
+      type: "",
+      data: 0,
+      approvalFunction: () => {}
+    },
 
     workflowId: null
   },
@@ -81,9 +90,18 @@ window.vObj = new Vue({
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
-    // Event called when the user tries to save a workflow
-    Event.listen("save", () => {
-      this.saveWorkflow();
+    // Event called when the user tries to remove a step
+    Event.listen("dialogRemoveStep", confirmInfo => {
+      this.confirmDialog.title = confirmInfo.title;
+      this.confirmDialog.message = confirmInfo.message;
+      this.confirmDialog.data = confirmInfo.data;
+      switch (confirmInfo.type) {
+        case 'removeStep':
+          this.confirmDialog.approvalFunction = () => {
+            this.removeStep(this.confirmDialog.data);
+          }
+          break;
+      }
     });
   },
 
@@ -207,6 +225,9 @@ window.vObj = new Vue({
             let numberOfSteps = self.steps.length;
             for (let index = 0; index < numberOfSteps; index++) {
               self.steps[index].id = result.stepIds[index];
+              cy.getElementById(self.steps[index].nodeId).style({
+                label: self.steps[index].id
+              });
             }
             let varIds = result.variableIds;
             for (var key in varIds) {
@@ -446,6 +467,7 @@ window.vObj = new Vue({
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
 
+      this.connectionsChanged = !this.connectionsChanged;
       // Set new backgroundcolor
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
         "background-color": changedStep.step.colour
@@ -455,7 +477,7 @@ window.vObj = new Vue({
 
     /**
      * Returns the level (height in graph) of a step
-     * @param {integer} stepIndex of step
+     * @param {Number} stepIndex of step
      * @return {Number} the level at which a step is.
      */
     getStepLevel(stepIndex) {
@@ -466,6 +488,36 @@ window.vObj = new Vue({
         }
       }
       return -1;
+    },
+
+    /**
+     * Removes the step from the level, if it exists.
+     * @param {Number} stepIndex of step
+     */
+    removeStepLevel(stepIndex) {
+      for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        const level = this.levels[levelIndex].steps;
+        for (let index = level.length; index >= 0; index--) {
+          if (stepIndex == level[index]) {
+            this.levels[levelIndex].steps.splice(index, 1);
+          }
+        }
+        for (let index = level.length; index >= 0; index--) {
+          if (level[index] > stepIndex) this.levels[levelIndex].steps[index]--;
+        }
+      }
+      this.calculateMaxStepsPerLevel();
+    },
+
+    /**
+     * Calculates the maximum number of steps per level.
+     */
+    calculateMaxStepsPerLevel() {
+      this.maxStepsPerLevel = 0;
+      this.levels.forEach(element => {
+        if (element.steps.length > this.maxStepsPerLevel)
+          this.maxStepsPerLevel = element.steps.length;
+      });
     },
 
     /**
@@ -505,9 +557,10 @@ window.vObj = new Vue({
      * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
      */
     stepsChanged: function () {
-      for (let index = 0; index < this.steps.length; index++) {
-        if (this.steps[index].create) {
-          this.steps[index].nodeId = cy.add({
+      for (let index = this.steps.length - 1; index >= 0; index--) {
+        let currentStep = this.steps[index];
+        if (currentStep.create) {
+          currentStep.nodeId = cy.add({
             classes: "node",
             data: {
               id: "node_" + this.nodeCounter
@@ -516,23 +569,24 @@ window.vObj = new Vue({
               _nodeId: index
             },
             style: {
-              "background-color": this.steps[index].colour
+              "background-color": currentStep.colour
             }
           }).id();
-          this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeId).style({
-            label: this.steps[index].id
+          currentStep.create = false;
+          cy.getElementById(currentStep.nodeId).style({
+            label: currentStep.id
           });
           this.nodeCounter++;
         }
-        if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeId);
+        if (currentStep.destroy) {
+          cy.remove(cy.getElementById(currentStep.nodeId));
+          this.removeStepLevel(index);
           this.steps.splice(index, 1);
         }
       }
+      this.positionSteps();
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
-      this.positionSteps();
     },
 
     /**
@@ -560,6 +614,37 @@ window.vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
+    },
+
+    connectionsChanged: function () {
+      this.steps.forEach((element, index) => {
+        for (let index = element.rules.length - 1; index >= 0; index--) {
+          let currentRule = element.rules[index];
+          if (currentRule.create) {
+            let source = element.nodeId;
+            let target = this.steps[currentRule.target.stepId].nodeId;
+            currentRule.edgeId = cy.add({
+              classes: "edge",
+              data: {
+                id: "edge_" + this.edgeCounter,
+                source: source,
+                target: target
+              }
+            }).id();
+            currentRule.create = false;
+            this.edgeCounter++;
+          } else if (currentRule.change) {
+            let target = this.steps[currentRule.id].nodeId;
+            cy.getElementById(currentRule.edgeId).move({
+              target: target
+            });
+            currentRule.change = false;
+          } else if (currentRule.destroy) {
+            cy.remove(currentRule.edgeId);
+            element.rules.splice(index, 1);
+          }
+        }
+      });
     },
 
     selectedVariables: function () {

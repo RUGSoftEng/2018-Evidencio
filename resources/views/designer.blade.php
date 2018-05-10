@@ -5,15 +5,25 @@
     {{-- @include('partials.designer_modal') --}}
     <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables"
         :child-nodes="childrenNodes" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+    <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
     <!-- Normal view -->
     <div class="row justify-content-center height-100">
         <div class="col-sm-3">
-            <div class="row height-40 pb-2">
+            <div class="row height-35 pb-2">
                 <div class="col px-2">
-                    <workflow-information :title="title" :description="description" @change="changeWorkflowDetails"></workflow-information>
+                    <div class="card height-100">
+                        <div class="card-header d-flex align-items-center">
+                            Workflow
+                            <button type="button" class="btn btn-primary ml-2" @click="saveWorkflow">Save Workflow</button>
+                        </div>
+
+                        <div class="card-body scrollbarAtProject full-height">
+                            <details-editable :title="title" :description="description" @change="changeWorkflowDetails"></details-editable>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row height-60">
+            <div class="row height-65">
                 <div class="col px-2 pt-2">
                     <variable-view-list :all-variables="allVariables" :all-variables-used="timesUsedVariables"></variable-view-list>
                 </div>

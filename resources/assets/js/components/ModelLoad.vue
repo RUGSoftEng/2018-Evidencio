@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <input type="number" id="inputModelID" name="inputModelID" v-model="modelID" @keyup.enter="modelLoad">
-    <button type="button" class="btn btn-primary ml-2" @click="modelLoad">Load Model</button>
-  </div>
+    <div>
+        <input type="number" id="inputModelID" name="inputModelID" v-model="modelID" @keyup.enter="modelLoad">
+        <button type="button" class="btn btn-primary ml-2" @click="modelLoad">Load Model</button>
+    </div>
 </template>
 
 <script>

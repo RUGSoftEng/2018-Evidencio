@@ -27,8 +27,8 @@ window.cy = cytoscape({
         {
             selector: ".edge",
             style: {
-                width: 3,
-                "line-color": "#ccc",
+                width: 4,
+                "line-color": "#000",
                 "target-arrow-color": "#ccc",
                 "target-arrow-shape": "triangle"
             }

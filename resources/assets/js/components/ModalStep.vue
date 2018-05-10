@@ -35,22 +35,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-8" v-if="localStep.type == 'input'">
-                                <vue-multiselect v-model="multiSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables"
-                                    group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false"
-                                    label="title" track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
-                                    placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
-                                    <template slot="tag" slot-scope="props">
-                                        <span class="badge badge-info badge-larger">
-                                            <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
-                                            <span class="custom__remove" @click="props.remove(props.option)">❌</span>
-                                        </span>
-                                    </template>
-                                </vue-multiselect>
-                            </div>
-
-                            <div class="col-md-8" v-if="localStep.type == 'result'">
-
+                            <div class="col-md-8 mb-2">
+                                <details-editable :title="localStep.title" :description="localStep.description" @change="changeStepDetails" number-of-rows="2"></details-editable>
                             </div>
                         </div>
 
@@ -74,6 +60,19 @@
                                         <div class="tab-content" id="nav-tabContent-modal">
 
                                             <div class="tab-pane fade show active" id="nav-variables" role="tabpanel" aria-labelledby="nav-variables-tab">
+                                                <vue-multiselect v-model="multiSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables"
+                                                    group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false"
+                                                    label="title" track-by="id" :limit=3 :limit-text="multiselectVariablesText"
+                                                    :preserve-search="true" placeholder="Choose variables" @remove="multiRemoveVariables"
+                                                    @select="multiSelectVariables">
+                                                    <template slot="tag" slot-scope="props">
+                                                        <span class="badge badge-info badge-larger">
+                                                            <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                            <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                        </span>
+                                                    </template>
+                                                </vue-multiselect>
+                                                <label for="accVariablesEdit" class="variable-label mb-2">Selected variables</label>
                                                 <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables"></variable-edit-list>
                                             </div>
 
@@ -127,7 +126,7 @@
                                     </div>
                                 </div>
 
-                                <div id="outputOptionsMenu" class="card" v-if="localStep.type == 'result'">
+                                <div id="outputOptionsMenu" class="card" v-else>
                                     <div id="outputCategories" class="row vdivide">
                                         <div id="outputTypeLeft" class="col-sm-6">
 
@@ -230,9 +229,14 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply Changes</button>
+                <div class="modal-footer spaced">
+                    <div>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#confirmModal" :disabled="this.stepId==0" @click="remove">Remove</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply Changes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -244,12 +248,14 @@
 import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
+import DetailsEditable from "./DetailsEditable.vue";
 
 export default {
   components: {
     VariableEditList,
     RuleEditList,
-      ChartPreview,
+    ChartPreview,
+    DetailsEditable
   },
   props: {
     stepId: {
@@ -300,10 +306,22 @@ export default {
       this.setSelectedVariables();
     },
 
+    /**
+     * Apply the changes made to the step (send an Event that does it)
+     */
     apply() {
       this.$emit("change", {
         step: this.localStep,
         usedVars: this.localUsedVariables
+      });
+    },
+
+    remove() {
+      Event.fire("dialogRemoveStep", {
+        title: "Removal of Step",
+        message: "Are you sure you want to remove this step?",
+        type: "removeStep",
+        data: this.stepId
       });
     },
 
@@ -351,7 +369,7 @@ export default {
 
     /**
      * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
+     * @param {Object} [removedVariable] the variable-object to be removed
      */
     multiRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.localStep.variables.length; index++) {
@@ -385,6 +403,15 @@ export default {
       let varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
       this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+    },
+
+    /**
+     * Changes the details of the step
+     * @param {object} [newDetails] Object containin the keys 'title' and 'description'
+     */
+    changeStepDetails(newDetails) {
+      this.localStep.title = newDetails.title;
+      this.localStep.description = newDetails.description;
     }
 
     // /**
@@ -455,20 +482,30 @@ export default {
       localUsedVariables: {},
       multiSelectedVariables: []
       /*  
-      nodeID: -1, //ID in vue steps-array
-      DatabaseStepId: -1, //ID in database
-      modalStepType: "input",
-      modalSelectedColor: "#000000",
-      modalMultiselectSelectedVariables: [],
-      modalSelectedVariables: [],
-      modalVarCounter: -1,
-      modalUsedVariables: {},
-      modalRules: [],
-      modalApiCall: {
-        model: null,
-        variables: []
-      }*/
+                                              nodeID: -1, //ID in vue steps-array
+                                              DatabaseStepId: -1, //ID in database
+                                              modalStepType: "input",
+                                              modalSelectedColor: "#000000",
+                                              modalMultiselectSelectedVariables: [],
+                                              modalSelectedVariables: [],
+                                              modalVarCounter: -1,
+                                              modalUsedVariables: {},
+                                              modalRules: [],
+                                              modalApiCall: {
+                                                model: null,
+                                                variables: []
+                                              }*/
     };
   }
 };
 </script>
+
+<style lang="css" scoped>
+.variable-label {
+  font-weight: bold;
+}
+
+.spaced {
+  justify-content: space-between;
+}
+</style>

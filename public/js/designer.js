@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 234);
+/******/ 	return __webpack_require__(__webpack_require__.s = 236);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4745,8 +4745,7 @@ module.exports.Rectangle = __webpack_require__(159);
 
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -4855,6 +4854,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
+/* 6 */,
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -31716,14 +31716,7 @@ module.exports = {
 
 
 /***/ }),
-/* 193 */,
-/* 194 */,
-/* 195 */,
-/* 196 */,
-/* 197 */,
-/* 198 */,
-/* 199 */,
-/* 200 */
+/* 193 */
 /***/ (function(module, exports) {
 
 /*
@@ -31805,7 +31798,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 201 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -32033,7 +32026,64 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 202 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(238)
+}
+var normalizeComponent = __webpack_require__(5)
+/* script */
+var __vue_script__ = __webpack_require__(241)
+/* template */
+var __vue_template__ = __webpack_require__(242)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-2641ca42"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/DetailsEditable.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2641ca42", Component.options)
+  } else {
+    hotAPI.reload("data-v-2641ca42", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
 /* 203 */,
 /* 204 */,
 /* 205 */,
@@ -32065,21 +32115,23 @@ function applyToTag (styleElement, obj) {
 /* 231 */,
 /* 232 */,
 /* 233 */,
-/* 234 */
+/* 234 */,
+/* 235 */,
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(235);
+module.exports = __webpack_require__(237);
 
 
 /***/ }),
-/* 235 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(236);
 Vue.component("vueMultiselect", window.VueMultiselect.default);
-Vue.component("workflowInformation", __webpack_require__(237));
+Vue.component("detailsEditable", __webpack_require__(202));
 Vue.component("variableViewList", __webpack_require__(243));
 Vue.component("modalStep", __webpack_require__(260));
+Vue.component("modalConfirm", __webpack_require__(279));
 
 // ============================================================================================= //
 
@@ -32123,7 +32175,9 @@ window.vObj = new Vue({
     maxStepsPerLevel: 0,
     stepsChanged: false,
     levelsChanged: false,
+    connectionsChanged: false,
     nodeCounter: 0,
+    edgeCounter: 0,
 
     deltaX: 150,
     deltaY: 250,
@@ -32132,6 +32186,13 @@ window.vObj = new Vue({
 
     selectedStepId: 0,
     modalChanged: false,
+    confirmDialog: {
+      title: "",
+      message: "",
+      type: "",
+      data: 0,
+      approvalFunction: function approvalFunction() {}
+    },
 
     workflowId: null
   },
@@ -32156,9 +32217,18 @@ window.vObj = new Vue({
     Event.listen("modelLoad", function (modelId) {
       _this.loadModelEvidencio(modelId);
     });
-    // Event called when the user tries to save a workflow
-    Event.listen("save", function () {
-      _this.saveWorkflow();
+    // Event called when the user tries to remove a step
+    Event.listen("dialogRemoveStep", function (confirmInfo) {
+      _this.confirmDialog.title = confirmInfo.title;
+      _this.confirmDialog.message = confirmInfo.message;
+      _this.confirmDialog.data = confirmInfo.data;
+      switch (confirmInfo.type) {
+        case 'removeStep':
+          _this.confirmDialog.approvalFunction = function () {
+            _this.removeStep(_this.confirmDialog.data);
+          };
+          break;
+      }
     });
   },
 
@@ -32287,6 +32357,9 @@ window.vObj = new Vue({
           var numberOfSteps = self.steps.length;
           for (var index = 0; index < numberOfSteps; index++) {
             self.steps[index].id = result.stepIds[index];
+            cy.getElementById(self.steps[index].nodeId).style({
+              label: self.steps[index].id
+            });
           }
           var varIds = result.variableIds;
           for (var key in varIds) {
@@ -32538,6 +32611,7 @@ window.vObj = new Vue({
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
 
+      this.connectionsChanged = !this.connectionsChanged;
       // Set new backgroundcolor
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
         "background-color": changedStep.step.colour
@@ -32548,7 +32622,7 @@ window.vObj = new Vue({
 
     /**
      * Returns the level (height in graph) of a step
-     * @param {integer} stepIndex of step
+     * @param {Number} stepIndex of step
      * @return {Number} the level at which a step is.
      */
     getStepLevel: function getStepLevel(stepIndex) {
@@ -32563,15 +32637,48 @@ window.vObj = new Vue({
 
 
     /**
+     * Removes the step from the level, if it exists.
+     * @param {Number} stepIndex of step
+     */
+    removeStepLevel: function removeStepLevel(stepIndex) {
+      for (var levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        var level = this.levels[levelIndex].steps;
+        for (var index = level.length; index >= 0; index--) {
+          if (stepIndex == level[index]) {
+            this.levels[levelIndex].steps.splice(index, 1);
+          }
+        }
+        for (var _index = level.length; _index >= 0; _index--) {
+          if (level[_index] > stepIndex) this.levels[levelIndex].steps[_index]--;
+        }
+      }
+      this.calculateMaxStepsPerLevel();
+    },
+
+
+    /**
+     * Calculates the maximum number of steps per level.
+     */
+    calculateMaxStepsPerLevel: function calculateMaxStepsPerLevel() {
+      var _this4 = this;
+
+      this.maxStepsPerLevel = 0;
+      this.levels.forEach(function (element) {
+        if (element.steps.length > _this4.maxStepsPerLevel) _this4.maxStepsPerLevel = element.steps.length;
+      });
+    },
+
+
+    /**
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.timesUsedVariables = {};
       this.models.forEach(function (element) {
         element.variables.forEach(function (variable) {
-          _this4.timesUsedVariables[variable.id.toString()] = 0;
+          _this5.timesUsedVariables[variable.id.toString()] = 0;
         });
       });
 
@@ -32602,9 +32709,10 @@ window.vObj = new Vue({
      * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
      */
     stepsChanged: function stepsChanged() {
-      for (var index = 0; index < this.steps.length; index++) {
-        if (this.steps[index].create) {
-          this.steps[index].nodeId = cy.add({
+      for (var index = this.steps.length - 1; index >= 0; index--) {
+        var currentStep = this.steps[index];
+        if (currentStep.create) {
+          currentStep.nodeId = cy.add({
             classes: "node",
             data: {
               id: "node_" + this.nodeCounter
@@ -32613,23 +32721,24 @@ window.vObj = new Vue({
               _nodeId: index
             },
             style: {
-              "background-color": this.steps[index].colour
+              "background-color": currentStep.colour
             }
           }).id();
-          this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeId).style({
-            label: this.steps[index].id
+          currentStep.create = false;
+          cy.getElementById(currentStep.nodeId).style({
+            label: currentStep.id
           });
           this.nodeCounter++;
         }
-        if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeId);
+        if (currentStep.destroy) {
+          cy.remove(cy.getElementById(currentStep.nodeId));
+          this.removeStepLevel(index);
           this.steps.splice(index, 1);
         }
       }
+      this.positionSteps();
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
-      this.positionSteps();
     },
 
     /**
@@ -32659,94 +32768,44 @@ window.vObj = new Vue({
       this.positionSteps();
     },
 
+    connectionsChanged: function connectionsChanged() {
+      var _this6 = this;
+
+      this.steps.forEach(function (element, index) {
+        for (var _index2 = element.rules.length - 1; _index2 >= 0; _index2--) {
+          var currentRule = element.rules[_index2];
+          if (currentRule.create) {
+            var source = element.nodeId;
+            var target = _this6.steps[currentRule.target.stepId].nodeId;
+            currentRule.edgeId = cy.add({
+              classes: "edge",
+              data: {
+                id: "edge_" + _this6.edgeCounter,
+                source: source,
+                target: target
+              }
+            }).id();
+            currentRule.create = false;
+            _this6.edgeCounter++;
+          } else if (currentRule.change) {
+            var _target = _this6.steps[currentRule.id].nodeId;
+            cy.getElementById(currentRule.edgeId).move({
+              target: _target
+            });
+            currentRule.change = false;
+          } else if (currentRule.destroy) {
+            cy.remove(currentRule.edgeId);
+            element.rules.splice(_index2, 1);
+          }
+        }
+      });
+    },
+
     selectedVariables: function selectedVariables() {
       this.recountVariableUses();
     }
   }
 });
-
-/***/ }),
-/* 236 */
-/***/ (function(module, exports) {
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-window.Event = new (function () {
-  function _class() {
-    _classCallCheck(this, _class);
-
-    this.vue = new Vue();
-  }
-
-  _createClass(_class, [{
-    key: "fire",
-    value: function fire(event) {
-      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      this.vue.$emit(event, data);
-    }
-  }, {
-    key: "listen",
-    value: function listen(event, callback) {
-      this.vue.$on(event, callback);
-    }
-  }]);
-
-  return _class;
-}())();
-
-/***/ }),
-/* 237 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(238)
-}
-var normalizeComponent = __webpack_require__(6)
-/* script */
-var __vue_script__ = __webpack_require__(241)
-/* template */
-var __vue_template__ = __webpack_require__(242)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = "data-v-2f3d27f4"
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/WorkflowInformation.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2f3d27f4", Component.options)
-  } else {
-    hotAPI.reload("data-v-2f3d27f4", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
 
 /***/ }),
 /* 238 */
@@ -32759,13 +32818,13 @@ var content = __webpack_require__(239);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(201)("54111701", content, false, {});
+var update = __webpack_require__(194)("3eb6b234", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2f3d27f4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./WorkflowInformation.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2f3d27f4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./WorkflowInformation.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -32778,12 +32837,12 @@ if(false) {
 /* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(200)(true);
+exports = module.exports = __webpack_require__(193)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.right[data-v-2f3d27f4] {\n  float: right;\n}\ntextarea[data-v-2f3d27f4] {\n  resize: none;\n}\n.form-control-plaintext[disabled][data-v-2f3d27f4] {\n  background-color: white;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/WorkflowInformation.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,wBAAwB;CAAE","file":"WorkflowInformation.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\n.form-control-plaintext[disabled] {\n  background-color: white; }\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.right[data-v-2641ca42] {\n  float: right;\n}\ntextarea[data-v-2641ca42] {\n  resize: none;\n}\nlabel[data-v-2641ca42] {\n  font-weight: bold;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/DetailsEditable.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,kBAAkB;CAAE","file":"DetailsEditable.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\nlabel {\n  font-weight: bold; }\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -32841,17 +32900,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -32866,11 +32914,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
+      default: function _default() {
+        return "";
+      }
     },
     description: {
       type: String,
-      required: true
+      required: true,
+      default: function _default() {
+        return "";
+      }
+    },
+    numberOfRows: {
+      type: String,
+      required: false,
+      default: function _default() {
+        return "3";
+      }
     }
   },
 
@@ -32884,9 +32945,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     refresh: function refresh() {
       this.localTitle = this.title;
       this.localDescription = this.description;
-    },
-    saveWorkflow: function saveWorkflow() {
-      Event.fire("save");
     }
   },
 
@@ -32918,110 +32976,93 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card height-100" }, [
-    _c("div", { staticClass: "card-header d-flex align-items-center" }, [
-      _vm._v("\n        Workflow\n        "),
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-primary ml-2",
-          attrs: { type: "button" },
-          on: { click: _vm.saveWorkflow }
+  return _c("form", { attrs: { onsubmit: "return false" } }, [
+    _c("div", { staticClass: "form-group" }, [
+      _c("label", { staticClass: "mb-0", attrs: { for: "title" } }, [
+        _vm._v("Title")
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.localTitle,
+            expression: "localTitle"
+          }
+        ],
+        class: {
+          "form-control": _vm.editing,
+          "form-control-plaintext": !_vm.editing
         },
-        [_vm._v("Save Workflow")]
-      )
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "card-body scrollbarAtProject full-height" }, [
-      _c("form", { attrs: { onsubmit: "return false" } }, [
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", { attrs: { for: "title" } }, [_vm._v("Title: ")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.localTitle,
-                expression: "localTitle"
+        attrs: {
+          type: "text",
+          name: "title",
+          id: "title' + indexItem",
+          placeholder: "Title",
+          disabled: !_vm.editing
+        },
+        domProps: { value: _vm.localTitle },
+        on: {
+          input: [
+            function($event) {
+              if ($event.target.composing) {
+                return
               }
-            ],
-            class: {
-              "form-control": _vm.editing,
-              "form-control-plaintext": !_vm.editing
+              _vm.localTitle = $event.target.value
             },
-            attrs: {
-              type: "text",
-              name: "",
-              id: "title' + indexItem",
-              placeholder: "Title",
-              disabled: !_vm.editing
-            },
-            domProps: { value: _vm.localTitle },
-            on: {
-              input: [
-                function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.localTitle = $event.target.value
-                },
-                _vm.change
-              ]
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", { attrs: { for: "description" } }, [
-            _vm._v("Description: ")
-          ]),
-          _vm._v(" "),
-          _c("textarea", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.localDescription,
-                expression: "localDescription"
+            _vm.change
+          ]
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { staticClass: "mb-0 mt-2", attrs: { for: "description" } }, [
+        _vm._v("Description")
+      ]),
+      _vm._v(" "),
+      _c("textarea", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.localDescription,
+            expression: "localDescription"
+          }
+        ],
+        class: {
+          "form-control": _vm.editing,
+          "form-control-plaintext": !_vm.editing
+        },
+        attrs: {
+          id: "description",
+          cols: "30",
+          placeholder: "Description",
+          disabled: !_vm.editing,
+          rows: _vm.numberOfRows
+        },
+        domProps: { value: _vm.localDescription },
+        on: {
+          input: [
+            function($event) {
+              if ($event.target.composing) {
+                return
               }
-            ],
-            class: {
-              "form-control": _vm.editing,
-              "form-control-plaintext": !_vm.editing
+              _vm.localDescription = $event.target.value
             },
-            attrs: {
-              id: "description",
-              cols: "30",
-              rows: "3",
-              placeholder: "Description",
-              disabled: !_vm.editing
-            },
-            domProps: { value: _vm.localDescription },
-            on: {
-              input: [
-                function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.localDescription = $event.target.value
-                },
-                _vm.change
-              ]
-            }
-          }),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "buttonIcon right",
-            attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
-            on: {
-              click: function($event) {
-                _vm.editing = !_vm.editing
-              }
-            }
-          })
-        ])
-      ])
+            _vm.change
+          ]
+        }
+      }),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "buttonIcon right",
+        attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
+        on: {
+          click: function($event) {
+            _vm.editing = !_vm.editing
+          }
+        }
+      })
     ])
   ])
 }
@@ -33031,7 +33072,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-2f3d27f4", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-2641ca42", module.exports)
   }
 }
 
@@ -33040,7 +33081,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 var __vue_script__ = __webpack_require__(244)
 /* template */
@@ -33154,7 +33195,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(246)
 }
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 var __vue_script__ = __webpack_require__(248)
 /* template */
@@ -33207,7 +33248,7 @@ var content = __webpack_require__(247);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(201)("66c29602", content, false, {});
+var update = __webpack_require__(194)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -33226,7 +33267,7 @@ if(false) {
 /* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(200)(true);
+exports = module.exports = __webpack_require__(193)(true);
 // imports
 
 
@@ -33329,7 +33370,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 var __vue_script__ = __webpack_require__(251)
 /* template */
@@ -33438,7 +33479,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 var __vue_script__ = __webpack_require__(253)
 /* template */
@@ -33532,7 +33573,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 var __vue_script__ = __webpack_require__(256)
 /* template */
@@ -33788,17 +33829,21 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(261)
+}
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(261)
+var __vue_script__ = __webpack_require__(263)
 /* template */
-var __vue_template__ = __webpack_require__(276)
+var __vue_template__ = __webpack_require__(278)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = null
+var __vue_scopeId__ = "data-v-682a3b1c"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -33832,16 +33877,58 @@ module.exports = Component.exports
 
 /***/ }),
 /* 261 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(262);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(194)("3725f586", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 262 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(193)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAufA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\n - Color changing\n - Gray functions\n    -->\n\n<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <vue-multiselect v-model=\"multiSelectedVariables\" :options=\"possibleVariables\" :multiple=\"true\" group-values=\"variables\"\n                                                    group-label=\"title\" :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\"\n                                                    label=\"title\" track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\"\n                                                    :preserve-search=\"true\" placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\"\n                                                    @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </vue-multiselect>\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childNodes\"></rule-edit-list>\n                                                <!--<div class=\"container-fluid\">\n                                                    <button type=\"button\" class=\"btn btn-primary\" @click=\"addRule()\">Add rule</button>\n                                                    <table class=\"table-striped\">\n                                                        <thead>\n                                                            <tr>\n                                                                <th>Name</th>\n                                                                <th>Condition</th>\n                                                                <th>Target</th>\n                                                            </tr>\n                                                        </thead>\n                                                        <tbody>\n                                                            <tr v-for=\"(rule, index) in modalRules\">\n                                                                <td data-label=\"Name\">\n                                                                    <div class=\"form-group\">\n                                                                        <input type=\"text\" class=\"form-control\" name=\"Name\" :id=\"'ruleName_' + index\" :aria-describedby=\"'helpId_' + index\" placeholder=\"Rule name\"\n                                                                            v-model=\"rule.name\">\n                                                                        <small :id=\"'helpId_' + index\" class=\"form-text text-muted\">Name of the rule</small>\n                                                                    </div>\n                                                                </td>\n                                                                <td data-label=\"Condition\">Wayne</td>\n                                                                <td data-label=\"Target\">Batman</td>\n                                                            </tr>\n                                                        </tbody>\n                                                    </table>\n                                                </div>-->\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <!--<div class=\"container-fluid\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <vue-multiselect id=\"apiCallModelSelect\" v-model=\"modalApiCall.model\" deselect-label=\"Cannot be done without a model\" track-by=\"id\"\n                                                        label=\"title\" placeholder=\"Select one\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"true\" :allow-empty=\"false\" open-direction=\"bottom\" @select=\"apiCallModelChangeAction\">\n                                                    </vue-multiselect>\n                                                    <small class=\"form-text text-muted\">Model used for calculation</small>\n                                                    <h6>Set variables used in calculation:</h6>\n                                                    <div class=\"form-group\" v-for=\"apiVariable in modalApiCall.variables\">\n                                                        <label :for=\"'var_' + apiVariable.originalID\">@{{ apiVariable.originalTitle }}</label>\n                                                        <select class=\"custom-select\" :name=\"apiVariable.title\" :id=\"'var_' + apiVariable.originalID\" v-model=\"apiVariable.targetID\">\n                                                            <option v-for=\"usedVariable in modalUsedVariables\" :key=\"usedVariable.id\">@{{ usedVariable.title }}</option>\n                                                        </select>\n                                                    </div>\n                                                </div>-->\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n\n                                            <div id=\"outputCategoriesAccordion\">\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"card-link\" data-toggle=\"collapse\" href=\"#collapseOne\">\n                                                            Pie Chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseOne\" class=\"collapse show\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseTwo\">\n                                                            Bar Plot\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseTwo\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius\n                                                            referrentur. Ad ius semper iuvaret, albucius placerat mea ad.\n                                                            Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri\n                                                            viderer nominavi an, eu solet labores deserunt vim, te diceret\n                                                            adipiscing liberavisse qui. Eos in viris tacimates periculis,\n                                                            in pri consequat theophrastus, amet accusamus duo in. Aperiri\n                                                            verterem per et, augue congue cu vis. Ne inani erroribus cum.\n                                                            Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,\n                                                            vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno\n                                                            patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu\n                                                            vim, cu case laudem partem vix. Ei eos consul inimicus, ius id\n                                                            blandit deseruisse. Est purto idque ea, per cu eripuit saperet\n                                                            consetetur. Id vim error nihil noster, in illud oblique sententiae\n                                                            nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima\n                                                            aperiri legendos duo, ut rebum ullamcorper deterruisset his.\n                                                            Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.\n                                                            Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,\n                                                            alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae\n                                                            scribentur his cu. At eos vero noster. Ius vitae everti an, pro\n                                                            eu dicunt convenire splendide. Vim natum illum signiferumque\n                                                            et, numquam petentium per id. No duo adolescens vituperatoribus,\n                                                            luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant\n                                                            omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi\n                                                            conclusionemque in vel.\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseThree\">\n                                                            Doughnut chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseThree\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseFour\">\n                                                            Polar area Chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseFour\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseFive\">\n                                                            Smiley Faces\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseFive\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\" @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply Changes</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    step: {\n      type: Object,\n      default: () => {}\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    possibleVariables: {\n      type: Array,\n      required: true\n    },\n    childNodes: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.step));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    remove() {\n      Event.fire(\"dialogRemoveStep\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {\n          const element = this.possibleVariables[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    }\n\n    // /**\n    //  * Adds a rule to the list of rules\n    //  */\n    // addRule() {\n    //   this.modalRules.push({\n    //     name: \"Go to target\",\n    //     rule: [],\n    //     target: -1\n    //   });\n    //   this.modalEditRuleFlags.push(false);\n    // },\n\n    // /**\n    //  * Removes the rule with the given index from the list\n    //  * @param {integer} [ruleIndex] of rule to be removed\n    //  */\n    // removeRule(ruleIndex) {\n    //   this.modalRules.splice(ruleIndex, 1);\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\n    // },\n\n    // /**\n    //  * Allows for a rule to be edited.\n    //  * @param {integer} [index] of the rule to be edited\n    //  */\n    // editRule(index) {\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\n    // },\n\n    // /**\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\n    //  * @param {integer} [modelID] is the Evidencio model ID.\n    //  */\n    // getModelIndex(modelID) {\n    //   for (let index = 0; index < this.models.length; index++) {\n    //     if (this.models[index].id == modelID) return index;\n    //   }\n    //   return -1;\n    // },\n\n    // /**\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\n    //  * @param {object} [selectedModel] is the newly selected model\n    //  */\n    // apiCallModelChangeAction(selectedModel) {\n    //   let modID = this.getModelIndex(selectedModel.id);\n    //   if (modID == -1) {\n    //     this.modalApiCall.variables = [];\n    //     return;\n    //   }\n    //   let modVars = [];\n    //   this.models[modID].variables.forEach(element => {\n    //     modVars.push({\n    //       originalTitle: element.title,\n    //       originalID: element.id,\n    //       targetID: null\n    //     });\n    //   });\n    //   this.modalApiCall.variables = modVars;\n    // }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: []\n      /*  \n                                              nodeID: -1, //ID in vue steps-array\n                                              DatabaseStepId: -1, //ID in database\n                                              modalStepType: \"input\",\n                                              modalSelectedColor: \"#000000\",\n                                              modalMultiselectSelectedVariables: [],\n                                              modalSelectedVariables: [],\n                                              modalVarCounter: -1,\n                                              modalUsedVariables: {},\n                                              modalRules: [],\n                                              modalApiCall: {\n                                                model: null,\n                                                variables: []\n                                              }*/\n    };\n  }\n};\n</script>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 263 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(262);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(264);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(268);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(270);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__ = __webpack_require__(274);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__ = __webpack_require__(276);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__ = __webpack_require__(202);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__);
 //
 //
 //
@@ -34084,6 +34171,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+
 
 
 
@@ -34093,7 +34185,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   components: {
     VariableEditList: __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default.a,
     RuleEditList: __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default.a,
-    ChartPreview: __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default.a
+    ChartPreview: __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default.a,
+    DetailsEditable: __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default.a
   },
   props: {
     stepId: {
@@ -34141,10 +34234,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
       this.setSelectedVariables();
     },
+
+
+    /**
+     * Apply the changes made to the step (send an Event that does it)
+     */
     apply: function apply() {
       this.$emit("change", {
         step: this.localStep,
         usedVars: this.localUsedVariables
+      });
+    },
+    remove: function remove() {
+      Event.fire("dialogRemoveStep", {
+        title: "Removal of Step",
+        message: "Are you sure you want to remove this step?",
+        type: "removeStep",
+        data: this.stepId
       });
     },
 
@@ -34198,7 +34304,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     /**
      * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
+     * @param {Object} [removedVariable] the variable-object to be removed
      */
     multiRemoveSingleVariable: function multiRemoveSingleVariable(removedVariable) {
       for (var index = 0; index < this.localStep.variables.length; index++) {
@@ -34236,6 +34342,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
       this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+    },
+
+
+    /**
+     * Changes the details of the step
+     * @param {object} [newDetails] Object containin the keys 'title' and 'description'
+     */
+    changeStepDetails: function changeStepDetails(newDetails) {
+      this.localStep.title = newDetails.title;
+      this.localStep.description = newDetails.description;
     }
 
     // /**
@@ -34307,33 +34423,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       localUsedVariables: {},
       multiSelectedVariables: []
       /*  
-      nodeID: -1, //ID in vue steps-array
-      DatabaseStepId: -1, //ID in database
-      modalStepType: "input",
-      modalSelectedColor: "#000000",
-      modalMultiselectSelectedVariables: [],
-      modalSelectedVariables: [],
-      modalVarCounter: -1,
-      modalUsedVariables: {},
-      modalRules: [],
-      modalApiCall: {
-        model: null,
-        variables: []
-      }*/
+                                              nodeID: -1, //ID in vue steps-array
+                                              DatabaseStepId: -1, //ID in database
+                                              modalStepType: "input",
+                                              modalSelectedColor: "#000000",
+                                              modalMultiselectSelectedVariables: [],
+                                              modalSelectedVariables: [],
+                                              modalVarCounter: -1,
+                                              modalUsedVariables: {},
+                                              modalRules: [],
+                                              modalApiCall: {
+                                                model: null,
+                                                variables: []
+                                              }*/
     };
   }
 });
 
 /***/ }),
-/* 262 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(263)
+var __vue_script__ = __webpack_require__(265)
 /* template */
-var __vue_template__ = __webpack_require__(267)
+var __vue_template__ = __webpack_require__(269)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -34372,12 +34488,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 263 */
+/* 265 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(264);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__ = __webpack_require__(266);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditItem_vue__);
 //
 //
@@ -34415,15 +34531,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 264 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(265)
+var __vue_script__ = __webpack_require__(267)
 /* template */
-var __vue_template__ = __webpack_require__(266)
+var __vue_template__ = __webpack_require__(268)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -34462,24 +34578,11 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 265 */
+/* 267 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -34545,7 +34648,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 266 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -34585,160 +34688,108 @@ var render = function() {
       [
         _c("div", { staticClass: "card-body" }, [
           _c("form", { attrs: { onsubmit: "return false" } }, [
-            _vm.editing
-              ? _c("div", [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "label",
-                      { attrs: { for: "titleVar_" + _vm.indexItem } },
-                      [_vm._v("Title: ")]
-                    ),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.variable.title,
-                          expression: "variable.title"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: {
-                        type: "text",
-                        name: "",
-                        id: "titleVar_" + _vm.indexItem,
-                        placeholder: "Title"
-                      },
-                      domProps: { value: _vm.variable.title },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.variable, "title", $event.target.value)
-                        }
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "small",
-                      {
-                        staticClass: "form-text text-muted",
-                        attrs: { id: "titleVarHelp_" + _vm.indexItem }
-                      },
-                      [_vm._v("Title of the variable")]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "label",
-                      { attrs: { for: "descriptionVar_" + _vm.indexItem } },
-                      [_vm._v("Description: ")]
-                    ),
-                    _vm._v(" "),
-                    _c("textarea", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.variable.description,
-                          expression: "variable.description"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: {
-                        id: "descriptionVar_" + _vm.indexItem,
-                        cols: "30",
-                        rows: "3"
-                      },
-                      domProps: { value: _vm.variable.description },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.variable,
-                            "description",
-                            $event.target.value
-                          )
-                        }
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "small",
-                      {
-                        staticClass: "form-text text-muted",
-                        attrs: { id: "descriptionVarHelp_" + _vm.indexItem }
-                      },
-                      [_vm._v("Description of the variable")]
-                    ),
-                    _vm._v(" "),
-                    _c("input", {
-                      staticClass: "buttonIcon",
-                      attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
-                      on: {
-                        click: function($event) {
-                          _vm.editing = !_vm.editing
-                        }
-                      }
-                    })
-                  ])
-                ])
-              : _c("div", [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "label",
-                      { attrs: { for: "titleVar_" + _vm.indexItem } },
-                      [_vm._v("Title: ")]
-                    ),
-                    _vm._v(" "),
-                    _c("span", [_vm._v(_vm._s(_vm.variable.title))]),
-                    _vm._v(" "),
-                    _c(
-                      "small",
-                      {
-                        staticClass: "form-text text-muted",
-                        attrs: { id: "titleVarHelp_" + _vm.indexItem }
-                      },
-                      [_vm._v("Title of the variable")]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "label",
-                      { attrs: { for: "descriptionVar_" + _vm.indexItem } },
-                      [_vm._v("Description: ")]
-                    ),
-                    _vm._v(" "),
-                    _c("span", [
-                      _vm._v(_vm._s(_vm.variable.description) + " ")
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "small",
-                      {
-                        staticClass: "form-text text-muted",
-                        attrs: { id: "descriptionVarHelp_" + _vm.indexItem }
-                      },
-                      [_vm._v("Description of the variable")]
-                    ),
-                    _vm._v(" "),
-                    _c("input", {
-                      staticClass: "buttonIcon",
-                      attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
-                      on: {
-                        click: function($event) {
-                          _vm.editing = !_vm.editing
-                        }
-                      }
-                    })
-                  ])
-                ])
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "titleVar_" + _vm.indexItem } }, [
+                _vm._v("Title: ")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.variable.title,
+                    expression: "variable.title"
+                  }
+                ],
+                class: {
+                  "form-control": _vm.editing,
+                  "form-control-plaintext": !_vm.editing
+                },
+                attrs: {
+                  type: "text",
+                  name: "",
+                  id: "titleVar_" + _vm.indexItem,
+                  disabled: !_vm.editing,
+                  placeholder: "Title"
+                },
+                domProps: { value: _vm.variable.title },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.variable, "title", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "small",
+                {
+                  staticClass: "form-text text-muted",
+                  attrs: { id: "titleVarHelp_" + _vm.indexItem }
+                },
+                [_vm._v("Title of the variable")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                { attrs: { for: "descriptionVar_" + _vm.indexItem } },
+                [_vm._v("Description: ")]
+              ),
+              _vm._v(" "),
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.variable.description,
+                    expression: "variable.description"
+                  }
+                ],
+                class: {
+                  "form-control": _vm.editing,
+                  "form-control-plaintext": !_vm.editing
+                },
+                attrs: {
+                  disabled: !_vm.editing,
+                  id: "descriptionVar_" + _vm.indexItem,
+                  cols: "30",
+                  rows: "3"
+                },
+                domProps: { value: _vm.variable.description },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.variable, "description", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "small",
+                {
+                  staticClass: "form-text text-muted",
+                  attrs: { id: "descriptionVarHelp_" + _vm.indexItem }
+                },
+                [_vm._v("Description of the variable")]
+              ),
+              _vm._v(" "),
+              _c("input", {
+                staticClass: "buttonIcon",
+                attrs: { type: "image", src: _vm.getImage, alt: "Edit" },
+                on: {
+                  click: function($event) {
+                    _vm.editing = !_vm.editing
+                  }
+                }
+              })
+            ])
           ])
         ])
       ]
@@ -34756,7 +34807,7 @@ if (false) {
 }
 
 /***/ }),
-/* 267 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -34790,15 +34841,15 @@ if (false) {
 }
 
 /***/ }),
-/* 268 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(269)
+var __vue_script__ = __webpack_require__(271)
 /* template */
-var __vue_template__ = __webpack_require__(273)
+var __vue_template__ = __webpack_require__(275)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -34837,13 +34888,20 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 269 */
+/* 271 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(270);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(272);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -34875,20 +34933,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       for (var ind = 0; ind < this.rules.length; ind++) {
         if (ind == index) $("#ruleEditCollapse_" + ind).collapse("toggle");else $("#ruleEditCollapse_" + ind).collapse("hide");
       }
+    },
+    addRule: function addRule() {
+      this.rules.push({
+        title: "Empty rule",
+        condition: "",
+        target: null,
+        edgeId: -1,
+        create: true,
+        destroy: false,
+        change: false
+      });
     }
   }
 });
 
 /***/ }),
-/* 270 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(271)
+var __vue_script__ = __webpack_require__(273)
 /* template */
-var __vue_template__ = __webpack_require__(272)
+var __vue_template__ = __webpack_require__(274)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -34927,7 +34996,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 271 */
+/* 273 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -35042,14 +35111,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 272 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card" }, [
+  return _c("div", { staticClass: "card border-secondary" }, [
     _c(
       "a",
       {
@@ -35219,7 +35288,7 @@ var render = function() {
                                     _c("rect", {
                                       style:
                                         "fill:" +
-                                        props.option.color +
+                                        props.option.colour +
                                         ";stroke-width:1;stroke:rgb(0,0,0)",
                                       attrs: {
                                         x: "2",
@@ -35267,7 +35336,7 @@ var render = function() {
                                     _c("rect", {
                                       style:
                                         "fill:" +
-                                        props.option.color +
+                                        props.option.colour +
                                         ";stroke-width:1;stroke:rgb(0,0,0)",
                                       attrs: {
                                         x: "2",
@@ -35323,28 +35392,44 @@ if (false) {
 }
 
 /***/ }),
-/* 273 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { attrs: { id: "accRulesEdit" } },
-    _vm._l(_vm.rules, function(rule, index) {
-      return _c("rule-edit-item", {
-        key: index,
-        attrs: { "index-item": index, rule: rule, options: _vm.children },
-        on: {
-          toggle: function($event) {
-            _vm.selectCard($event)
-          }
-        }
-      })
-    })
-  )
+  return _c("div", [
+    _c("div", { staticClass: "row" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-primary ml-2",
+          attrs: { type: "button" },
+          on: { click: _vm.addRule }
+        },
+        [_vm._v("Add rule")]
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "row", attrs: { id: "accRulesEdit" } }, [
+      _c(
+        "div",
+        { staticClass: "col" },
+        _vm._l(_vm.rules, function(rule, index) {
+          return _c("rule-edit-item", {
+            key: index,
+            attrs: { "index-item": index, rule: rule, options: _vm.children },
+            on: {
+              toggle: function($event) {
+                _vm.selectCard($event)
+              }
+            }
+          })
+        })
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -35357,13 +35442,13 @@ if (false) {
 }
 
 /***/ }),
-/* 274 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(5)
 /* script */
-var __vue_script__ = __webpack_require__(275)
+var __vue_script__ = __webpack_require__(277)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -35404,7 +35489,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 275 */
+/* 277 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -35434,7 +35519,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 276 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -35541,85 +35626,21 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm.localStep.type == "input"
-                    ? _c(
-                        "div",
-                        { staticClass: "col-md-8" },
-                        [
-                          _c("vue-multiselect", {
-                            attrs: {
-                              options: _vm.possibleVariables,
-                              multiple: true,
-                              "group-values": "variables",
-                              "group-label": "title",
-                              "group-select": true,
-                              "close-on-select": false,
-                              "clear-on-select": false,
-                              label: "title",
-                              "track-by": "id",
-                              limit: 3,
-                              "limit-text": _vm.multiselectVariablesText,
-                              "preserve-search": true,
-                              placeholder: "Choose variables"
-                            },
-                            on: {
-                              remove: _vm.multiRemoveVariables,
-                              select: _vm.multiSelectVariables
-                            },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "tag",
-                                fn: function(props) {
-                                  return [
-                                    _c(
-                                      "span",
-                                      {
-                                        staticClass:
-                                          "badge badge-info badge-larger"
-                                      },
-                                      [
-                                        _c(
-                                          "span",
-                                          { staticClass: "badge-maxwidth" },
-                                          [_vm._v(_vm._s(props.option.title))]
-                                        ),
-                                        _vm._v(
-                                          " \n                                        "
-                                        ),
-                                        _c(
-                                          "span",
-                                          {
-                                            staticClass: "custom__remove",
-                                            on: {
-                                              click: function($event) {
-                                                props.remove(props.option)
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("❌")]
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                }
-                              }
-                            ]),
-                            model: {
-                              value: _vm.multiSelectedVariables,
-                              callback: function($$v) {
-                                _vm.multiSelectedVariables = $$v
-                              },
-                              expression: "multiSelectedVariables"
-                            }
-                          })
-                        ],
-                        1
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.localStep.type == "result"
-                    ? _c("div", { staticClass: "col-md-8" })
-                    : _vm._e()
+                  _c(
+                    "div",
+                    { staticClass: "col-md-8 mb-2" },
+                    [
+                      _c("details-editable", {
+                        attrs: {
+                          title: _vm.localStep.title,
+                          description: _vm.localStep.description,
+                          "number-of-rows": "2"
+                        },
+                        on: { change: _vm.changeStepDetails }
+                      })
+                    ],
+                    1
+                  )
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "row" }, [
@@ -35653,6 +35674,97 @@ var render = function() {
                                       }
                                     },
                                     [
+                                      _c("vue-multiselect", {
+                                        attrs: {
+                                          options: _vm.possibleVariables,
+                                          multiple: true,
+                                          "group-values": "variables",
+                                          "group-label": "title",
+                                          "group-select": true,
+                                          "close-on-select": false,
+                                          "clear-on-select": false,
+                                          label: "title",
+                                          "track-by": "id",
+                                          limit: 3,
+                                          "limit-text":
+                                            _vm.multiselectVariablesText,
+                                          "preserve-search": true,
+                                          placeholder: "Choose variables"
+                                        },
+                                        on: {
+                                          remove: _vm.multiRemoveVariables,
+                                          select: _vm.multiSelectVariables
+                                        },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "tag",
+                                            fn: function(props) {
+                                              return [
+                                                _c(
+                                                  "span",
+                                                  {
+                                                    staticClass:
+                                                      "badge badge-info badge-larger"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "badge-maxwidth"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          _vm._s(
+                                                            props.option.title
+                                                          )
+                                                        )
+                                                      ]
+                                                    ),
+                                                    _vm._v(
+                                                      " \n                                                        "
+                                                    ),
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "custom__remove",
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            props.remove(
+                                                              props.option
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [_vm._v("❌")]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            }
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.multiSelectedVariables,
+                                          callback: function($$v) {
+                                            _vm.multiSelectedVariables = $$v
+                                          },
+                                          expression: "multiSelectedVariables"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "label",
+                                        {
+                                          staticClass: "variable-label mb-2",
+                                          attrs: { for: "accVariablesEdit" }
+                                        },
+                                        [_vm._v("Selected variables")]
+                                      ),
+                                      _vm._v(" "),
                                       _c("variable-edit-list", {
                                         attrs: {
                                           "selected-variables":
@@ -35699,10 +35811,7 @@ var render = function() {
                             ]
                           )
                         ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.localStep.type == "result"
-                      ? _c(
+                      : _c(
                           "div",
                           {
                             staticClass: "card",
@@ -35731,31 +35840,50 @@ var render = function() {
                             )
                           ]
                         )
-                      : _vm._e()
                   ])
                 ])
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-secondary",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Cancel")]
-              ),
+            _c("div", { staticClass: "modal-footer spaced" }, [
+              _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "data-toggle": "modal",
+                      "data-target": "#confirmModal",
+                      disabled: this.stepId == 0
+                    },
+                    on: { click: _vm.remove }
+                  },
+                  [_vm._v("Remove")]
+                )
+              ]),
               _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary",
-                  attrs: { type: "button", "data-dismiss": "modal" },
-                  on: { click: _vm.apply }
-                },
-                [_vm._v("Apply Changes")]
-              )
+              _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button", "data-dismiss": "modal" }
+                  },
+                  [_vm._v("Cancel")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button", "data-dismiss": "modal" },
+                    on: { click: _vm.apply }
+                  },
+                  [_vm._v("Apply Changes")]
+                )
+              ])
             ])
           ])
         ]
@@ -36054,6 +36182,194 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-682a3b1c", module.exports)
+  }
+}
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(5)
+/* script */
+var __vue_script__ = __webpack_require__(280)
+/* template */
+var __vue_template__ = __webpack_require__(281)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/ModalConfirm.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-585bc78a", Component.options)
+  } else {
+    hotAPI.reload("data-v-585bc78a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 280 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    message: {
+      type: String,
+      required: true
+    }
+  }
+});
+
+/***/ }),
+/* 281 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "modal fade",
+      attrs: {
+        id: "confirmModal",
+        tabindex: "-1",
+        role: "dialog",
+        "aria-labelledby": "confirmModalLabel",
+        "aria-hidden": "true"
+      }
+    },
+    [
+      _c("div", { staticClass: "modal-dialog", attrs: { role: "document" } }, [
+        _c("div", { staticClass: "modal-content" }, [
+          _c("div", { staticClass: "modal-header" }, [
+            _c(
+              "h5",
+              {
+                staticClass: "modal-title",
+                attrs: { id: "confirmModalLabel" }
+              },
+              [_vm._v(_vm._s(_vm.title))]
+            ),
+            _vm._v(" "),
+            _vm._m(0)
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "modal-body" }, [
+            _vm._v(
+              "\n                " + _vm._s(_vm.message) + "\n            "
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "modal-footer" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary",
+                attrs: { type: "button", "data-dismiss": "modal" }
+              },
+              [_vm._v("No")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "button", "data-dismiss": "modal" },
+                on: {
+                  click: function($event) {
+                    _vm.$emit("approval")
+                  }
+                }
+              },
+              [_vm._v("Yes")]
+            )
+          ])
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-585bc78a", module.exports)
   }
 }
 

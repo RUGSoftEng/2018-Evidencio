@@ -127,6 +127,15 @@ class DesignerController extends Controller
             $stepIds[] = $stp->id;
         }
         $savedSteps->map(function ($value) {
+            $fields = $value->fields()->get();
+            foreach ($fields as $field) {
+                $value->fields()->detach($field);
+                $options = $field->options()->get();
+                foreach ($options as $option) {
+                    $option->delete();
+                }
+                $field->delete();
+            }
             $value->delete();
         });
         return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
