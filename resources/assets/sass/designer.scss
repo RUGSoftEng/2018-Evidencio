@@ -1,6 +1,17 @@
-html,
-body {
+.height-100 {
   height: 100%;
+}
+
+.height-40 {
+  height: 40%;
+}
+
+.height-50 {
+  height: 50%;
+}
+
+.height-60 {
+  height: 60%;
 }
 
 #graph {
@@ -11,34 +22,12 @@ body {
 }
 
 #graphContainerForBorder {
-  padding: 2px 2px 2px 2px;
+  padding: 2px;
   border: 1px solid #4e555b;
-  height: 100%;
-}
-
-#variablesDiv {
-  height: 85vh;
-  padding-left: 15px;
-  padding-right: 15px;
 }
 
 #graphDiv {
-  height: 85vh;
-  padding-left: 15px;
-  padding-right: 15px;
   display: block;
-}
-
-#graphDivCard {
-  height: 100%;
-}
-
-#variablesDivCard {
-  height: 100%;
-}
-
-#inputModelID {
-  width: 50px;
 }
 
 .badge-larger {
@@ -54,7 +43,6 @@ body {
 }
 
 .scrollbarAtProject {
-  max-height: 78vh;
   overflow-y: auto;
 }
 
@@ -82,7 +70,7 @@ body {
 }
 
 .btn-colorpick::after {
-  display: none !important
+  display: none !important;
 }
 
 .bootstrap-colorpalette {
@@ -197,4 +185,43 @@ tr {
     display: block;
     margin-left: 0;
   }
+}
+
+//The following part is for the modal when nodeType === output
+#outputTypeLeft {
+  padding: 0 10px 0 20px;
+  width: 48%; //max-height: 45vh;
+}
+
+#outputTypeRight {
+  padding: 0 20px 0 10px;
+  width: 48%;
+}
+
+#modalOutputVerticalLine {
+  height: 90%;
+  width: 3px;
+}
+
+.row.vdivide [class*='col-']:not(:last-child):after {
+  background: #e0e0e0;
+  width: 1px;
+  content: "";
+  display: block;
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  right: 0;
+  min-height: calc(100% - 10px);
+}
+
+//#outputCategories {
+//max-height: 45vh;
+//}
+// #outputOptionsMenu {
+//   //max-height: 45vh;
+// }
+#outputCategoriesAccordion {
+  max-height: 45vh;
+  overflow: auto;
 }

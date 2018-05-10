@@ -1,5 +1,6 @@
 <?php
-
+//This page is for the generating of the PDF. The crux of the file is the HTML document which will be displayed after generating
+//As TCPDF do not allow echo commands, POST data is used instead.
 if(isset($_POST["generatePDF"])){
   require_once('tcpdf/tcpdf.php');
 
@@ -118,18 +119,21 @@ if(isset($_POST["generatePDF"])){
     $content.= "/images/highRisk.jpg";
   }
   $content.='" width="200"/><br/>
-  </td><td></td><td style="cellpadding:50px;"><br/><br/><h6>Remarks:</h6>';
+  </td><td></td><td style="cellpadding:50px;"><br/><br/><h6>Score:</h6><span>' . $_POST['percentage'] . '% </span><br/>
+  </td></tr>
+  </table>
+  <h3>Additional Information (if applicable):</h3>
+  ';
   if(!empty($_POST["remarks"])){
     foreach($_POST["remarks"] as $txt){
-      $content .= '<p><b>'. $txt .'</b></p>';
+      $content .= '<p>'. $txt .'</p>';
     }
   }
   else{
     $content .= 'No additional information given. You may want to seek for professional advice.';
   }
   $content.= '
-  </td></tr>
-  </table>
+
   <br pagebreak="true"/>
   <h1>Chart</h1>
   <img src="';

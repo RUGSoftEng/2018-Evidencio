@@ -60,41 +60,51 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 92);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 47:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 13:
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(48);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+window.Event = new (function () {
+  function _class() {
+    _classCallCheck(this, _class);
+
+    this.vue = new Vue();
+  }
+
+  _createClass(_class, [{
+    key: "fire",
+    value: function fire(event) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      this.vue.$emit(event, data);
+    }
+  }, {
+    key: "listen",
+    value: function listen(event, callback) {
+      this.vue.$on(event, callback);
+    }
+  }]);
+
+  return _class;
+}())();
 
 /***/ }),
 
-/***/ 48:
-/***/ (function(module, exports) {
+/***/ 92:
+/***/ (function(module, exports, __webpack_require__) {
 
-$(document).ready(function () {
-    yaSimpleScrollbar.attach(document.getElementById('sidebar'));
+module.exports = __webpack_require__(13);
 
-    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fo-icon icon-user">&#xe800;</i></button>');
-
-    $('#dismiss, .overlay').on('click', function () {
-        $('#sidebar').removeClass('active');
-        $('.overlay').fadeOut();
-    });
-
-    $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').addClass('active');
-        $('.overlay').fadeIn();
-        $('.collapse.in').toggleClass('in');
-        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-    });
-});
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=sidebar.js.map
+//# sourceMappingURL=event-dispatcher.js.map
