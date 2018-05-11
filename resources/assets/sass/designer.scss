@@ -2,16 +2,17 @@
   height: 100%;
 }
 
-.height-35 {
-  height: 35%;
+.column-fitting {
+  display: flex;
+  flex-direction: column;
 }
 
-.height-50 {
-  height: 50%;
+.fitting {
+  flex: 0 0 auto;
 }
 
-.height-65 {
-  height: 65%;
+.remainder {
+  flex: 1 1 auto;
 }
 
 #graph {

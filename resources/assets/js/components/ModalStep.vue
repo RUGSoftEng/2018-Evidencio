@@ -235,7 +235,7 @@
                     </div>
                     <div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply Changes</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply</button>
                     </div>
                 </div>
             </div>

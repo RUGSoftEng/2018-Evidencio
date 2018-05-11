@@ -8,8 +8,8 @@
     <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
     <!-- Normal view -->
     <div class="row justify-content-center height-100">
-        <div class="col-sm-3">
-            <div class="row height-35 pb-2">
+        <div class="col-sm-3 column-fitting">
+            <div class="row fitting pb-2">
                 <div class="col px-2">
                     <div class="card height-100">
                         <div class="card-header d-flex align-items-center">
@@ -17,13 +17,13 @@
                             <button type="button" class="btn btn-primary ml-2" @click="saveWorkflow">Save Workflow</button>
                         </div>
 
-                        <div class="card-body scrollbarAtProject full-height">
+                        <div class="card-body full-height">
                             <details-editable :title="title" :description="description" @change="changeWorkflowDetails"></details-editable>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row height-65">
+            <div class="row remainder">
                 <div class="col px-2 pt-2">
                     <variable-view-list :all-variables="allVariables" :all-variables-used="timesUsedVariables"></variable-view-list>
                 </div>

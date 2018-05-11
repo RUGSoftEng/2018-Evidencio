@@ -1,11 +1,11 @@
 <template>
     <div class="card">
-        <a href="#" @click="toggleShow" class="card-header collapsed" :id="'varEditCollapseHeader_' + indexItem" data-parent="#accVariablesEdit"
+        <div @click="toggleShow" class="card-header collapsed" :id="'varEditCollapseHeader_' + indexItem" data-parent="#accVariablesEdit"
             aria-expanded="false" :aria-controls="'varEditCollapse_' + indexItem">
             <h6 class="mb-0">
                 {{ variable.title }}
             </h6>
-        </a>
+        </div>
 
         <div :id="'varEditCollapse_' + indexItem" class="collapse" :aria-labelledby="'#varEditCollapseHeader_' + indexItem">
             <div class="card-body">
