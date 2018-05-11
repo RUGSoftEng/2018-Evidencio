@@ -1,66 +1,39 @@
-@extends('layouts.app')
+@extends('layouts.app') @section('content') @include('partials.sidebar')
 
-@section('content')
+<div class="container-fluid height-100" id="designerDiv">
 
-@include('partials.sidebar')
-
-<div class="container-fluid" id="designerDiv">
-
-    @include('partials.designer_modal')
-
+    {{-- @include('partials.designer_modal') --}}
+    <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables"
+        :child-nodes="childrenNodes" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
     <!-- Normal view -->
-    <div class="row justify-content-center">
-        <div id="variablesDiv" class="col-sm-3">
-        <div id="variablesDivCard" class="card">
-            <div class="card-header">Variables<input type="number" id="inputModelID" v-model='modelID'><button type="button" class="btn btn-primary" @click='loadModelEvidencio()'>Load Model</button></template> </div>
-
-            <div class="card-body scrollbarAtProject">
-
-                <div id="accordion1">
-                    <div class="card" v-if='!modelLoaded'>
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                No variables added yet...
-                            </h5>
-                        </div>
-
-                    </div>
-
-                    <template v-if='modelLoaded'>
-                        <div class="card" v-for='(variable, index) in allVariables'>
-                            <div class="card-header collapsed" :id="'heading' + index" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="true" aria-controls="'collapse' + index"  data-parent="#accordion1">
-                                <h6 class="mb-0">
-                                    @{{ variable.title }}
-                                    <span class="badge badge-pill" :class="{'badge-danger': timesUsedVariables[index]==0, 'badge-success': timesUsedVariables[index]>0}">@{{ timesUsedVariables[index] }}</span>
-
-                                </h6>
-                            </div>
-
-                            <div :id="'collapse' + index" class="collapse" :aria-labelledby="'#heading' + index" data-parent="#accordion1">
-                                <pre class="language-json"><code>@{{ variable }}</code></pre>
-                            </div>
-                        </div>
-                    </template>
+    <div class="row justify-content-center height-100">
+        <div class="col-sm-3">
+            <div class="row height-40 pb-2">
+                <div class="col px-2">
+                    <workflow-information :title="title" :description="description" @change="changeWorkflowDetails"></workflow-information>
+                </div>
+            </div>
+            <div class="row height-60">
+                <div class="col px-2 pt-2">
+                    <variable-view-list :all-variables="allVariables" :all-variables-used="timesUsedVariables"></variable-view-list>
                 </div>
             </div>
         </div>
-
-        </div>
-        <div id="graphDiv" class="col-sm-9">
-            <div id="graphDivCard" class="card" >
+        <div id="graphDiv" class="col-sm-9 height-100 px-2">
+            <div id="graphDivCard" class="card height-100">
                 <div class="card-header">
                     Designer
-                    <button type="button" class="btn btn-primary" @click='fitView()'>Fit</button>
+                    <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
                 </div>
 
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
                     @endif
 
-                    <div id="graphContainerForBorder">
+                    <div id="graphContainerForBorder" class="height-100">
                         <div id="graph">
                         </div>
                     </div>
@@ -75,5 +48,6 @@
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>
+<script src="{{ asset('js/designerGraph.js') }}"></script>
 
 @endsection
