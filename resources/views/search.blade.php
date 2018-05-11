@@ -4,8 +4,13 @@
  * returns array of all the evidencio models that matched the query entered in the search form
  */
 use App\EvidencioAPI;
+use App\Workflow;
+$numResult = 0;
 if (!empty($_GET['search'])) {
-  $decodeRes = EvidencioAPI::search($_GET['search']);
+  //$decodeRes = EvidencioAPI::search($_GET['search']);
+  $result = (new Workflow)->search($_GET['search']);
+  $numResult = count($result);
+
 }
 
 ?>
@@ -17,9 +22,9 @@ if (!empty($_GET['search'])) {
 {{--the search bar--}}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <form action="{{ url('/search') }}">
-                <input type="text" name="search" class="form-control" style="width:100%; font-size:x-large; height:50px;" placeholder="Search for Models..."></input>
+        <div class="col-md-12">
+            <form method="GET" action="{{ url('/search') }}">
+                <input type="text" name="search" class="form-control" style="width:100%; font-size:x-large; height:50px;" value="<?php echo $_GET['search'] ?>" placeholder="Search for Models..."></input>
             </form>
             <br>
         </div>
@@ -27,31 +32,23 @@ if (!empty($_GET['search'])) {
 </div>
 {{--provides all the models that was produced by the API call to Evidencio's search API--}}
 <div class="container">
-  <?php if (!empty($decodeRes)): ?>
+  <?php
+  if ($numResult > 0): ?>
+    <div class="alert alert-info">Search returned: <?php echo $numResult ?> result(s)</div>
     <ul class="list-group">
-      <?php foreach ($decodeRes as $model): ?>
-        <!--Gives Title of model as link-->
-        <li class="list-group-item"><a href="/workflow?model=<?php echo $model['id'] ?>"><h2><?php echo $model['title']; ?></h2></a>
+      <?php foreach ($result as $wflow): ?>
+        <li class="list-group-item"><a href="/workflow?model=<?php echo $wflow['id'] ?>"><h2><?php echo $wflow['title']; ?></h2></a>
           <ul>
-            <!--provides all the requires variable inputs for each model-->
-            <?php foreach ($model['variableSet'] as $item): ?>
-              <li><?php echo $item['title']; ?></li>
-            <?php endforeach; ?>
+            <?php echo $wflow['description'] ?>
           </ul>
           <br />
-          Author: <b>Evidencio</b><br /> 4.5/5 Stars  |  <i><a href="/feedback">Provide Feedback</a></i>
+          Model Creator: <b><?php echo $wflow['name'] ?></b><br /> 4.5/5 Stars  |  <i><a href="/feedback">Provide Feedback</a></i>
         </li>
-      <?php endforeach; ?>
-    </ul>
-
+      <?php endforeach;
+    endif;
+    if($numResult == 0): ?>
+        <div class="alert alert-warning">No results found for : <?php echo $_GET['search']; ?> </div>
   <?php endif; ?>
-
-
-
-
-
-
-
 </div>
 
 @endsection
