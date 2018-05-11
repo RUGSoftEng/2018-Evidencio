@@ -18,7 +18,7 @@ Route::get('/', function () {
 
 Route::get('/myworkflows', function () {
     return view('myworkflows');
-});
+})->name('myworkflows');
 
 Auth::routes();
 

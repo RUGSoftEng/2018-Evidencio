@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo;
 
     /**
      * Create a new controller instance.
@@ -37,6 +37,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
+        $this->redirectTo = route('myworkflows');
         $this->middleware('guest');
     }
 
@@ -51,6 +52,10 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'photo' => 'file|image|max:300',
+            'academic_degree' => 'string|max:30',
+            'bio' => 'string|max:5000',
+            'organisation' => 'string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -67,7 +72,11 @@ class RegisterController extends Controller
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
+            // TODO photo
             'language_code' => 'en',
+            'academic_degree' => $data['academic_degree'],
+            'bio' => $data['bio'],
+            'organisation' => $data['organisation'],
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
         ]);
