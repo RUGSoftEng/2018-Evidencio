@@ -53,7 +53,7 @@
                             </div>
                         </div>
 
-                        {{-- TODO: photo --}}
+                        {{-- TODO: photo, language --}}
 
                         <div class="form-group row">
                             <label for="academic_degree" class="col-md-4 col-form-label text-md-right">{{ __('Academic Degree') }}</label>
