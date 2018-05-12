@@ -133,7 +133,7 @@
                                             <div id="outputCategoriesAccordion">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                                                        <a class="card-link" data-toggle="collapse" href="#collapseOne" v-on:click="chartTypeNumber = 1">
                                                             Pie Chart
                                                         </a>
                                                     </div>
@@ -146,7 +146,7 @@
 
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo" v-on:click="chartTypeNumber = 0">
                                                             Bar Plot
                                                         </a>
                                                     </div>
@@ -182,7 +182,7 @@
 
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree" v-on:click="chartTypeNumber = 3">
                                                             Doughnut chart
                                                         </a>
                                                     </div>
@@ -194,7 +194,7 @@
                                                 </div>
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
+                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour"v-on:click="chartTypeNumber = 2">
                                                             Polar area Chart
                                                         </a>
                                                     </div>
@@ -220,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview></chart-preview>
+                                            <chart-preview :chart-type="chartTypeNumber"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -281,6 +281,10 @@ export default {
     changed: {
       type: Boolean,
       required: true
+    },
+    chartTypeNumber: {
+      type: Number,
+      default: 1
     }
   },
 
@@ -412,7 +416,7 @@ export default {
     changeStepDetails(newDetails) {
       this.localStep.title = newDetails.title;
       this.localStep.description = newDetails.description;
-    }
+    },
 
     // /**
     //  * Adds a rule to the list of rules
