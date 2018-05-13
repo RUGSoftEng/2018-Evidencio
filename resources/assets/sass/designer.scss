@@ -4,7 +4,7 @@
 
 .column-fitting {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
 }
 
 .fitting {
@@ -12,7 +12,7 @@
 }
 
 .remainder {
-  flex: 1 1 auto;
+  flex: 1;
 }
 
 #graph {
@@ -41,10 +41,6 @@
   white-space: nowrap;
   max-width: calc(100% - 15px);
   display: inline-block;
-}
-
-.scrollbarAtProject {
-  overflow-y: auto;
 }
 
 [data-toggle~="collapse"] {

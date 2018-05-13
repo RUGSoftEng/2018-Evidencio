@@ -50,9 +50,10 @@
                                             <div class="nav nav-tabs card-header-tabs nav-scroll" id="nav-tab-modal" role="tablist">
                                                 <a class="nav-item nav-link active" id="nav-variables-tab" data-toggle="tab" href="#nav-variables" role="tab" aria-controls="nav-variables"
                                                     aria-selected="true">Variables</a>
+                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api"
+                                                 aria-selected="false">Model calculation</a>
                                                 <a class="nav-item nav-link" id="nav-logic-tab" data-toggle="tab" href="#nav-logic" role="tab" aria-controls="nav-logic"
                                                     aria-selected="false">Logic</a>
-                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api" aria-selected="false">Model calculation</a>
                                             </div>
                                         </nav>
                                     </div>
@@ -74,6 +75,24 @@
                                                 </vue-multiselect>
                                                 <label for="accVariablesEdit" class="variable-label mb-2">Selected variables</label>
                                                 <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables"></variable-edit-list>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
+                                                <!--<div class="container-fluid">
+                                                    <label for="apiCallModelSelect">Select model for calculation:</label>
+                                                    <vue-multiselect id="apiCallModelSelect" v-model="modalApiCall.model" deselect-label="Cannot be done without a model" track-by="id"
+                                                        label="title" placeholder="Select one" :options="modelChoiceRepresentation"
+                                                        :searchable="true" :allow-empty="false" open-direction="bottom" @select="apiCallModelChangeAction">
+                                                    </vue-multiselect>
+                                                    <small class="form-text text-muted">Model used for calculation</small>
+                                                    <h6>Set variables used in calculation:</h6>
+                                                    <div class="form-group" v-for="apiVariable in modalApiCall.variables">
+                                                        <label :for="'var_' + apiVariable.originalID">@{{ apiVariable.originalTitle }}</label>
+                                                        <select class="custom-select" :name="apiVariable.title" :id="'var_' + apiVariable.originalID" v-model="apiVariable.targetID">
+                                                            <option v-for="usedVariable in modalUsedVariables" :key="usedVariable.id">@{{ usedVariable.title }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>-->
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
@@ -102,24 +121,6 @@
                                                             </tr>
                                                         </tbody>
                                                     </table>
-                                                </div>-->
-                                            </div>
-
-                                            <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <!--<div class="container-fluid">
-                                                    <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <vue-multiselect id="apiCallModelSelect" v-model="modalApiCall.model" deselect-label="Cannot be done without a model" track-by="id"
-                                                        label="title" placeholder="Select one" :options="modelChoiceRepresentation"
-                                                        :searchable="true" :allow-empty="false" open-direction="bottom" @select="apiCallModelChangeAction">
-                                                    </vue-multiselect>
-                                                    <small class="form-text text-muted">Model used for calculation</small>
-                                                    <h6>Set variables used in calculation:</h6>
-                                                    <div class="form-group" v-for="apiVariable in modalApiCall.variables">
-                                                        <label :for="'var_' + apiVariable.originalID">@{{ apiVariable.originalTitle }}</label>
-                                                        <select class="custom-select" :name="apiVariable.title" :id="'var_' + apiVariable.originalID" v-model="apiVariable.targetID">
-                                                            <option v-for="usedVariable in modalUsedVariables" :key="usedVariable.id">@{{ usedVariable.title }}</option>
-                                                        </select>
-                                                    </div>
                                                 </div>-->
                                             </div>
                                         </div>
@@ -156,7 +157,8 @@
                 </div>
                 <div class="modal-footer spaced">
                     <div>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#confirmModal" :disabled="this.stepId==0" @click="remove">Remove</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#confirmModal" :disabled="this.stepId==0"
+                            @click="remove">Remove</button>
                     </div>
                     <div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -187,6 +189,10 @@ export default {
       type: Number,
       required: true
     },
+    models: {
+      type: Array,
+      required: true
+    },
     step: {
       type: Object,
       default: () => {}
@@ -196,6 +202,10 @@ export default {
       required: true
     },
     possibleVariables: {
+      type: Array,
+      required: true
+    },
+    ancestorVariables: {
       type: Array,
       required: true
     },
@@ -210,6 +220,26 @@ export default {
     chartTypeNumber: {
       type: Number,
       default: 0
+    }
+  },
+
+  computed: {
+    // Array containing all variables assigned up to and including the current step
+    variablesUpToStep: function() {
+      let vars = this.ancestorVariables;
+      vars = vars.concat(this.localStep.variables);
+      return vars;
+    },
+    // Array of model-representations for API-call
+    modelChoiceRepresentation: function() {
+      let representation = [];
+      this.models.forEach(element => {
+        representation.push({
+          title: element.title,
+          id: element.id
+        });
+      });
+      return representation;
     }
   },
 
@@ -246,7 +276,7 @@ export default {
     },
 
     remove() {
-      Event.fire("dialogRemoveStep", {
+      Event.fire("confirmDialog", {
         title: "Removal of Step",
         message: "Are you sure you want to remove this step?",
         type: "removeStep",
@@ -261,10 +291,19 @@ export default {
     setSelectedVariables() {
       this.multiSelectedVariables = [];
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        let origID = this.localUsedVariables[this.localStep.variables[index]].id;
-        findVariable: for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
+        let origID = this.localUsedVariables[this.localStep.variables[index]]
+          .id;
+        findVariable: for (
+          let indexOfMod = 0;
+          indexOfMod < this.possibleVariables.length;
+          indexOfMod++
+        ) {
           const element = this.possibleVariables[indexOfMod];
-          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
+          for (
+            let indexInMod = 0;
+            indexInMod < element.variables.length;
+            indexInMod++
+          ) {
             if (element.variables[indexInMod].id == origID) {
               this.multiSelectedVariables.push(element.variables[indexInMod]);
               break findVariable;
@@ -302,7 +341,10 @@ export default {
      */
     multiRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {
+        if (
+          this.localUsedVariables[this.localStep.variables[index]].id ==
+          removedVariable.id
+        ) {
           delete this.localUsedVariables[this.localStep.variables[index]];
           this.localStep.variables.splice(index, 1);
           return;
@@ -331,7 +373,9 @@ export default {
     multiSelectSingleVariable(selectedVariable) {
       let varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
-      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+      this.localUsedVariables[varName] = JSON.parse(
+        JSON.stringify(selectedVariable)
+      );
     },
 
     /**
@@ -409,22 +453,7 @@ export default {
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: [],
-      mutableChartTypeNumber: this.chartTypeNumber
-      /*  
-                                              nodeID: -1, //ID in vue steps-array
-                                              DatabaseStepId: -1, //ID in database
-                                              modalStepType: "input",
-                                              modalSelectedColor: "#000000",
-                                              modalMultiselectSelectedVariables: [],
-                                              modalSelectedVariables: [],
-                                              modalVarCounter: -1,
-                                              modalUsedVariables: {},
-                                              modalRules: [],
-                                              modalApiCall: {
-                                                model: null,
-                                                variables: []
-                                              }*/
+      multiSelectedVariables: []
     };
   }
 };
