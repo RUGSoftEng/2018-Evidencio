@@ -129,98 +129,23 @@
                                 <div id="outputOptionsMenu" class="card" v-else>
                                     <div id="outputCategories" class="row vdivide">
                                         <div id="outputTypeLeft" class="col-sm-6">
+                                            <div id="chartLayoutDesigner">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Pick a chart type
+                                                    </a>
 
-                                            <div id="outputCategoriesAccordion">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="card-link" data-toggle="collapse" href="#collapseOne" v-on:click="chartTypeNumber = 1">
-                                                            Pie Chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseOne" class="collapse show" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 0">Bar Chart</a>
+                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 1">Pie Chart</a>
+                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 2">Polar Area Chart</a>
+                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 3">Doughnut chart</a>
                                                     </div>
                                                 </div>
-
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo" v-on:click="chartTypeNumber = 0">
-                                                            Bar Plot
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseTwo" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius
-                                                            referrentur. Ad ius semper iuvaret, albucius placerat mea ad.
-                                                            Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri
-                                                            viderer nominavi an, eu solet labores deserunt vim, te diceret
-                                                            adipiscing liberavisse qui. Eos in viris tacimates periculis,
-                                                            in pri consequat theophrastus, amet accusamus duo in. Aperiri
-                                                            verterem per et, augue congue cu vis. Ne inani erroribus cum.
-                                                            Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,
-                                                            vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno
-                                                            patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu
-                                                            vim, cu case laudem partem vix. Ei eos consul inimicus, ius id
-                                                            blandit deseruisse. Est purto idque ea, per cu eripuit saperet
-                                                            consetetur. Id vim error nihil noster, in illud oblique sententiae
-                                                            nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima
-                                                            aperiri legendos duo, ut rebum ullamcorper deterruisset his.
-                                                            Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.
-                                                            Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,
-                                                            alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae
-                                                            scribentur his cu. At eos vero noster. Ius vitae everti an, pro
-                                                            eu dicunt convenire splendide. Vim natum illum signiferumque
-                                                            et, numquam petentium per id. No duo adolescens vituperatoribus,
-                                                            luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant
-                                                            omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi
-                                                            conclusionemque in vel.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree" v-on:click="chartTypeNumber = 3">
-                                                            Doughnut chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseThree" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour"v-on:click="chartTypeNumber = 2">
-                                                            Polar area Chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseFour" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-                                                            Smiley Faces
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseFive" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="chartTypeNumber"></chart-preview>
+                                            <chart-preview :chart-type="mutableChartTypeNumber"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -284,7 +209,7 @@ export default {
     },
     chartTypeNumber: {
       type: Number,
-      default: 1
+      default: 0
     }
   },
 
@@ -484,7 +409,8 @@ export default {
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
+      multiSelectedVariables: [],
+      mutableChartTypeNumber: this.chartTypeNumber
       /*  
                                               nodeID: -1, //ID in vue steps-array
                                               DatabaseStepId: -1, //ID in database

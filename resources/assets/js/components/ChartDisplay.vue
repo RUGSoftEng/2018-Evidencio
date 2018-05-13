@@ -31,9 +31,10 @@
           type: String,
           default: 'This is a label I want to create'
         },
-        chartType: {
+        chartType: //this.$parent.chartTypeNumber
+            {
           type: Number,
-          default: 0,
+          default: 0//this.$parent.chartTypeNumber,
         }
       },
     }
