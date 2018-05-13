@@ -4,7 +4,7 @@
 
     {{-- @include('partials.designer_modal') --}}
     <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables"
-        :child-nodes="childrenNodes" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+        :child-nodes="childrenNodes" :ancestor-variables="variablesUpToStep" :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
     <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
     <!-- Normal view -->
     <div class="row justify-content-center height-100">
@@ -12,7 +12,7 @@
             <div class="row fitting pb-2">
                 <div class="col px-2">
                     <div class="card height-100">
-                        <div class="card-header d-flex align-items-center">
+                        <div class="card-header align-items-center">
                             Workflow
                             <button type="button" class="btn btn-primary ml-2" @click="saveWorkflow">Save Workflow</button>
                         </div>
