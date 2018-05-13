@@ -21,6 +21,7 @@
             <li>
                 <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li><a href="{{ route('usersverification.index') }}">Users verification</a></li>
                     <li><a href="#">Submitted Workflows</a></li>
                     <li><a href="#">User Questions</a></li>
                     <li><a href="#">User Requests</a></li>

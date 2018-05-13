@@ -22,6 +22,10 @@ Route::get('/myworkflows', function () {
 
 Auth::routes();
 
+Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
+Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
+Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
+
 Route::get('/designer', 'DesignerController@index')->name('designer');
 
 Route::post('/graph', 'GraphController@index');
