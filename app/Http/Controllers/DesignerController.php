@@ -38,7 +38,12 @@ class DesignerController extends Controller
     {
         $modelId = $request->modelId;
         $data = EvidencioAPI::getModel($modelId);
-        return json_encode($data);
+        return $data;
+    }
+
+    public function runModel(Request $request) {
+        $data = EvidencioAPI::run($request->modelId, $request->values);
+        return $data;
     }
 
     /**
@@ -86,6 +91,7 @@ class DesignerController extends Controller
 
         $returnObj['workflowId'] = $workflow->id;
         $returnObj['stepIds'] = $IDs['stepIds'];
+        $returnObj['ruleIds'] = $IDs['ruleIds'];
         $returnObj['variableIds'] = $IDs['variableIds'];
         $returnObj['optionIds'] = $IDs['optionIds'];
         return $returnObj;
@@ -109,7 +115,7 @@ class DesignerController extends Controller
     }
 
     /**
-     * Saves the steps and variables in the database, deletes variables if they are removed.
+     * Saves the steps, variables, and rules in the database, deletes steps if they are removed.
      * 
      * @param Array $steps Steps of workflow
      * @param Array $variables Variables of workflow 
@@ -121,6 +127,7 @@ class DesignerController extends Controller
         $savedSteps = $workflow->steps()->get();
         $stepIds = [];
         $variableIds = [];
+        $ruleIds = [];
         $fieldIds = ['variableIds' => [], 'optionIds' => []];
         foreach ($steps as $step) {
             if ($savedSteps->isNotEmpty() && ($stp = $savedSteps->where('id', $step['id']))->isNotEmpty()) {
@@ -139,14 +146,30 @@ class DesignerController extends Controller
                 $fieldIds = array_merge($variableIds, $this->saveFields($stp, $step, $variables));
             $stepIds[] = $stp->id;
         }
+
+        // TODO: add rules between steps
+        // foreach ($steps as $step) {
+        //     $savedRules = $step->nextSteps()->get();
+
+        // }
+
         $savedSteps->map(function ($value) {
+            $fields = $value->fields()->get();
+            foreach ($fields as $field) {
+                $value->fields()->detach($field);
+                $options = $field->options()->get();
+                foreach ($options as $option) {
+                    $option->delete();
+                }
+                $field->delete();
+            }
             $value->delete();
         });
-        return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
+        return ['stepIds' => $stepIds, 'ruleIds' => $ruleIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
     }
 
     /**
-     * Saves the variables connected to a step
+     * Saves the variables connected to a step, deletes variables if they are removed.
      * 
      * @param App|Step $dbStep Database Model of step
      * @param Array $step Array containing data of step

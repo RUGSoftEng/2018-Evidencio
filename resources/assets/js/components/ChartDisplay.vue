@@ -1,26 +1,50 @@
-<script>
-    import { Bar, Pie, PolarArea, Doughnut } from 'vue-chartjs';
+<template>
+    <div v-if="chartType === 0">
+        <bar-chart :label="label10"></bar-chart>
+    </div>
+    <div v-else-if="chartType === 1">
+        <pie-chart :label="label10"></pie-chart>
+    </div>
+    <div v-else-if="chartType === 2">
+        <polar-chart :label="label10"></polar-chart>
+    </div>
+    <div v-else>
+        <doughnut-chart :label="label10"></doughnut-chart>
+    </div>
 
+</template>
+
+<script>
+    import BarChart from "./BarChart";
+    import PieChart from "./PieChart";
+    import PolarChart from "./PolarChart";
+    import DoughnutChart from "./DoughnutChart";
     export default {
-        props : {
-        //     chartType: '',
-            label: 'Label'
+      components: {
+        BarChart,
+        PieChart,
+        PolarChart,
+        DoughnutChart
+      },
+      props: {
+        label10: {
+          type: String,
+          default: 'This is a label I want to create'
         },
-        extends: Bar,
-        mounted () {
-            // Overwriting base render method with actual data.
-            this.renderChart({
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [
-                    {
-                        // label: 'A simple label',
-                        label: 'Label',
-                        backgroundColor: '#f87979',
-                        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-                    }
-                ]
-            })
+        chartType: //this.$parent.chartTypeNumber
+            {
+          type: Number,
+          default: 0//this.$parent.chartTypeNumber,
         }
+      },
+      // methods: {
+      //   refreshChartPreview() {
+      //     switch (type) {
+      //       case 0:
+      //         BarChart.
+      //     }
+      //   }
+      // }
     }
 
 </script>

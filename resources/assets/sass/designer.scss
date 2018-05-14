@@ -2,16 +2,17 @@
   height: 100%;
 }
 
-.height-40 {
-  height: 40%;
+.column-fitting {
+  display: flex;
+  flex-flow: column;
 }
 
-.height-50 {
-  height: 50%;
+.fitting {
+  flex: 0 0 auto;
 }
 
-.height-60 {
-  height: 60%;
+.remainder {
+  flex: 1;
 }
 
 #graph {
@@ -40,10 +41,6 @@
   white-space: nowrap;
   max-width: calc(100% - 15px);
   display: inline-block;
-}
-
-.scrollbarAtProject {
-  overflow-y: auto;
 }
 
 [data-toggle~="collapse"] {
@@ -221,7 +218,7 @@ tr {
 // #outputOptionsMenu {
 //   //max-height: 45vh;
 // }
-#outputCategoriesAccordion {
-  max-height: 45vh;
+#chartLayoutDesigner {
+  min-height: 45vh;
   overflow: auto;
 }

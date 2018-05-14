@@ -1,7 +1,7 @@
 <template>
     <div id="accVariablesEdit">
-        <variable-edit-item v-for="(variable, index) in selectedVariables" :key="index" :index-item="index" 
-        :variable="usedVariables[variable]" @toggle="selectCard($event)"></variable-edit-item>
+        <variable-edit-item v-for="(variable, index) in selectedVariables" :key="index" :index-item="index" :variable="usedVariables[variable]"
+            @toggle="selectCard($event)"></variable-edit-item>
     </div>
 </template>
 

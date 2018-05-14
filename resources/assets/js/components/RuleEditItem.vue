@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card border-secondary">
         <a href="#" @click="toggleShow" class="card-header collapsed" :id="'ruleEditCollapseHeader_' + indexItem" data-parent="#accRulesEdit"
             aria-expanded="false" :aria-controls="'ruleEditCollapse_' + indexItem">
             <h6 class="mb-0">
@@ -30,7 +30,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <svg class="option__image" viewBox="0 0 44 44" width="44" height="44">
-                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.color+';stroke-width:1;stroke:rgb(0,0,0)'" />
+                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'" />
                                                 <!--<text x="15" y="20" style="font-weight: bold; font-size: 24px; stroke: #000000; fill: #ffffff;">
                                                     {{ props.option.id }}
                                                 </text>-->
@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <svg class="option__image" viewBox="0 0 44 44" width="44" height="44">
-                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.color+';stroke-width:1;stroke:rgb(0,0,0)'" />
+                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'" />
                                                 <!--<text x="15" y="20" style="font-weight: bold; font-size: 24px; stroke: #000000; fill: #ffffff;">
                                                     {{ props.option.id }}
                                                 </text>-->

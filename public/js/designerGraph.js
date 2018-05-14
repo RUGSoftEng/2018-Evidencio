@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 277);
+/******/ 	return __webpack_require__(__webpack_require__.s = 284);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -256,7 +256,7 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ 141:
+/***/ 143:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -309,7 +309,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(142);
+__webpack_require__(144);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -324,7 +324,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ 142:
+/***/ 144:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -518,19 +518,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ 277:
+/***/ 284:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(278);
+module.exports = __webpack_require__(285);
 
 
 /***/ }),
 
-/***/ 278:
+/***/ 285:
 /***/ (function(module, exports, __webpack_require__) {
 
-window.cytoscape = __webpack_require__(279);
-window.cyCanvas = __webpack_require__(283);
+window.cytoscape = __webpack_require__(286);
+window.cyCanvas = __webpack_require__(290);
 
 window.cy = cytoscape({
     container: document.getElementById("graph"),
@@ -556,8 +556,8 @@ window.cy = cytoscape({
     }, {
         selector: ".edge",
         style: {
-            width: 3,
-            "line-color": "#ccc",
+            width: 4,
+            "line-color": "#000",
             "target-arrow-color": "#ccc",
             "target-arrow-shape": "triangle"
         }
@@ -610,12 +610,12 @@ cy.on("tap", "node", function (evt) {
     var ref = evt.target;
     if (ref.hasClass("buttonAddLevel")) {
         var nID = vObj.getAddLevelButtonIndex(ref.id());
-        if (nID != -1) vObj.addLevel(nID + 1);
+        if (nID != -1) vObj.addLevelConditional(nID + 1);
     } else if (ref.hasClass("buttonAddStep")) {
         var _nID = vObj.getAddStepButtonIndex(ref.id());
         if (_nID != -1) vObj.addStep("Default title", "Default description", _nID + 1);
     } else if (ref.hasClass("node")) {
-        vObj.prepareModal(ref);
+        vObj.prepareModal(ref.id());
         $("#modalStep").modal();
     }
 });
@@ -643,12 +643,12 @@ cy.on("render cyCanvas.resize", function (evt) {
 
 /***/ }),
 
-/***/ 279:
+/***/ 286:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate) {(function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(280), __webpack_require__(281));
+		module.exports = factory(__webpack_require__(287), __webpack_require__(288));
 	else if(typeof define === 'function' && define.amd)
 		define(["lodash.debounce", "heap"], factory);
 	else if(typeof exports === 'object')
@@ -13938,18 +13938,6 @@ function getEasedValue(type, start, end, percent, easingFn) {
   return val;
 }
 
-function getValue(prop, spec) {
-  if (prop.pfValue != null || prop.value != null) {
-    if (prop.pfValue != null && (spec == null || spec.type.units !== '%')) {
-      return prop.pfValue;
-    } else {
-      return prop.value;
-    }
-  } else {
-    return prop;
-  }
-}
-
 function ease(startProp, endProp, percent, easingFn, propSpec) {
   var type = propSpec != null ? propSpec.type : null;
 
@@ -13959,8 +13947,20 @@ function ease(startProp, endProp, percent, easingFn, propSpec) {
     percent = 1;
   }
 
-  var start = getValue(startProp, propSpec);
-  var end = getValue(endProp, propSpec);
+  var start = void 0,
+      end = void 0;
+
+  if (startProp.pfValue != null || startProp.value != null) {
+    start = startProp.pfValue != null ? startProp.pfValue : startProp.value;
+  } else {
+    start = startProp;
+  }
+
+  if (endProp.pfValue != null || endProp.value != null) {
+    end = endProp.pfValue != null ? endProp.pfValue : endProp.value;
+  } else {
+    end = endProp;
+  }
 
   if (is.number(start) && is.number(end)) {
     return getEasedValue(type, start, end, percent, easingFn);
@@ -25954,25 +25954,6 @@ function CanvasRenderer(options) {
         // then keep cached ele texture
       } else {
         r.data.eleTxrCache.invalidateElement(ele);
-
-        // NB this block of code should not be ported to 3.3 (unstable branch).
-        // - This check is unneccesary in 3.3 as caches will be stored without respect to opacity.
-        // - This fix may result in lowered performance for compound graphs.
-        // - Ref : Opacity of child node is not updated for certain zoom levels after parent opacity is overriden #2078
-        if (ele.isParent() && de['style']) {
-          var op1 = rs.prevParentOpacity;
-          var op2 = ele.pstyle('opacity').pfValue;
-
-          rs.prevParentOpacity = op2;
-
-          if (op1 !== op2) {
-            var descs = ele.descendants();
-
-            for (var j = 0; j < descs.length; j++) {
-              r.data.eleTxrCache.invalidateElement(descs[j]);
-            }
-          }
-        }
       }
     }
 
@@ -27505,13 +27486,13 @@ CRp.drawEdge = function (context, edge, shiftToOriginWithBb, drawLabel) {
   var rs = edge._private.rscratch;
   var usePaths = r.usePaths();
 
-  if (!edge.visible()) {
+  // if bezier ctrl pts can not be calculated, then die
+  if (rs.badLine || isNaN(rs.allpts[0])) {
+    // isNaN in case edge is impossible and browser bugs (e.g. safari)
     return;
   }
 
-  // if bezier ctrl pts can not be calculated, then die
-  if (rs.badLine || rs.allpts == null || isNaN(rs.allpts[0])) {
-    // isNaN in case edge is impossible and browser bugs (e.g. safari)
+  if (!edge.visible()) {
     return;
   }
 
@@ -29733,16 +29714,16 @@ module.exports = Stylesheet;
 "use strict";
 
 
-module.exports = "3.2.12";
+module.exports = "3.2.10";
 
 /***/ })
 /******/ ]);
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(141).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143).setImmediate))
 
 /***/ }),
 
-/***/ 280:
+/***/ 287:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -30127,15 +30108,15 @@ module.exports = debounce;
 
 /***/ }),
 
-/***/ 281:
+/***/ 288:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(282);
+module.exports = __webpack_require__(289);
 
 
 /***/ }),
 
-/***/ 282:
+/***/ 289:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.8.0
@@ -30520,7 +30501,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 283:
+/***/ 290:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

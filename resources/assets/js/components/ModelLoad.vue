@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <input type="text" id="inputModelID" name="inputModelSearch" v-model="modelSearch" >
     <!-- Trigger the modal with a button -->
@@ -27,6 +28,7 @@
     </div>
   </div>
   </div>
+
 </template>
 
 <script>
