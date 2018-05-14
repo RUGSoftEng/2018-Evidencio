@@ -37,7 +37,7 @@ if (!empty($_GET['search'])) {
     <div class="alert alert-info">Search returned: <?php echo $numResult ?> result(s)</div>
     <ul class="list-group">
       <?php foreach ($result as $wflow): ?>
-        <li class="list-group-item"><a href="/workflow?model=<?php echo $wflow['id'] ?>"><h2><?php echo $wflow['title']; ?></h2></a>
+        <li class="list-group-item"><a href="/workflow/{{$wflow->id}}"><h2><?php echo $wflow['title']; ?></h2></a>
           <ul>
             <?php echo $wflow['description'] ?>
           </ul>

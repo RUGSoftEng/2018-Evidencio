@@ -3,15 +3,9 @@ The page will create a list of the variables of the step, either a slider for co
 or radio buttons for categorical values.--}}
 
 <?php
-/**
- * post request to Evidencio model API
- * returns array of all the parameters of the evidence models that was clicked on in the search page.
- */
-use App\EvidencioAPI;
-if (!empty($_GET['model'])) {
-  $decodeRes = EvidencioAPI::getModel($_GET['model']);
 
-}
+ use App\EvidencioAPI;
+ use App\Workflow;
 ?>
 
 
@@ -19,16 +13,18 @@ if (!empty($_GET['model'])) {
 
 @section('content')
 {{--makes inputs for all the required variables--}}
-@if (!empty($decodeRes))
+
+@if (!empty($result))
 <div class="container">
-  <h3><?php echo $decodeRes['title'] ?></h3>
+  <h3><?php echo $result['title'] ?></h3>
 </div>
 <div class="container">
+  <h5><?php echo $result['steps'][0]['title'] ?></h5>
   <form method="POST" action="/graph">
     {{ csrf_field() }}
-    <input type="hidden" name="model" value="<?php echo $_GET['model'] ?>">
+    <input type="hidden" name="model" value="<?php echo $result['evidencioModels'][0] ?>">
     <ul class="list-group">
-    @foreach ($decodeRes['variables'] as $item)
+    @foreach ($result['steps'][0]['variables'] as $item)
       <li class="list-group-item">
         {{--creates input for continuous variable--}}
         @if ($item['type']=='continuous')
@@ -90,5 +86,6 @@ if (!empty($_GET['model'])) {
   <button type="submit" class="btn btn-primary btn-sm">submit</button>
   </form>
 </div>
+
 @endif
 @endsection

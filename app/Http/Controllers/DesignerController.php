@@ -42,7 +42,20 @@ class DesignerController extends Controller
     }
 
     /**
-     * Saves the workflow in the database. 
+     * Fetch models from Evidencio based on thier search result, used for designer to search for models.
+     *
+     * @param HTTP|Request $request Post request containing a Evidencio Model Search
+     * @return JSON Evidencio models
+     */
+    public function fetchSearch(Request $request)
+    {
+        $modelSearch = $request->modelSearch;
+        $data = EvidencioAPI::search($modelSearch);
+        return json_encode($data);
+    }
+
+    /**
+     * Saves the workflow in the database.
      * Should the workflowId be given, that workflow will be updated.
      * 
      * @param HTTP|Request $request Post request withWorkflow data (title/description, steps, etc.)
