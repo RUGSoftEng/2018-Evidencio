@@ -137,16 +137,16 @@
                                                     </a>
 
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 0">Bar Chart</a>
-                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 1">Pie Chart</a>
-                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 2">Polar Area Chart</a>
-                                                        <a class="dropdown-item" v-on:click="mutableChartTypeNumber = 3">Doughnut chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(0)">Bar Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(1)">Pie Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(2)">Polar Area Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="mutableChartTypeNumber"></chart-preview>
+                                            <chart-preview :chart-type="this.localStep.chartTypeNumber"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -217,10 +217,10 @@ export default {
       type: Boolean,
       required: true
     },
-    chartTypeNumber: {
-      type: Number,
-      default: 0
-    }
+    // chartTypeNumber: {
+    //   type: Number,
+    //   default: 0
+    // }
   },
 
   computed: {
@@ -386,6 +386,15 @@ export default {
       this.localStep.title = newDetails.title;
       this.localStep.description = newDetails.description;
     },
+
+    /**
+     * Changes the type of the chart used inside a step
+     * @param {Number} [type] Number representing the chart type.
+     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.
+     */
+    changeChartType(type) {
+      this.localStep.chartTypeNumber = type;
+    }
 
     // /**
     //  * Adds a rule to the list of rules

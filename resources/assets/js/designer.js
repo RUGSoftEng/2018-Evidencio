@@ -358,6 +358,7 @@ window.vObj = new Vue({
       }
       return false;
     },
+
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {Number} index of position level should be added
@@ -421,7 +422,8 @@ window.vObj = new Vue({
           variables: []
         },
         create: true,
-        destroy: false
+        destroy: false,
+        chartTypeNumber: 0
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
