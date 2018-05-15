@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\EvidencioAPI;
 use App\Workflow;
 
-class GraphController extends Controller
+class SearchController extends Controller
 {
 
 

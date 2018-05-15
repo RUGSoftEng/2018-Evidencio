@@ -55,7 +55,8 @@ class DesignerController extends Controller
         return json_encode($data);
     }
 
-    public function runModel(Request $request) {
+    public function runModel(Request $request)
+    {
         $data = EvidencioAPI::run($request->modelId, $request->values);
         return $data;
     }
@@ -231,7 +232,7 @@ class DesignerController extends Controller
         foreach ($savedFields as $savedField) {
             $dbStep->fields()->detach($savedField);
             $stepsUsing = $value->usedInRunsInSteps()->get();
-            $stepsUsing->map(function($value) use ($savedField) {
+            $stepsUsing->map(function ($value) use ($savedField) {
                 $value->modelRunFields()->detach($savedField);
             });
             $options = $savedField->options()->get();
@@ -243,7 +244,8 @@ class DesignerController extends Controller
         return ['variableIds' => $variableIds, 'optionIds' => $optionIds];
     }
 
-    private function saveRules($dbStep, $rules, $stepIds) {
+    private function saveRules($dbStep, $rules, $stepIds)
+    {
         $savedRules = $dbStep->nextSteps()->get();
         if (!empty($rules)) {
             foreach ($rules as $rule) {
@@ -278,7 +280,7 @@ class DesignerController extends Controller
                 }
             }
         }
-        $savedRules->map(function($value) use ($dbStep) {
+        $savedRules->map(function ($value) use ($dbStep) {
             $dbStep->nextSteps()->detach($value);
         });
     }
@@ -290,14 +292,15 @@ class DesignerController extends Controller
      * @param Array $apiCalls Array containing data of apiCalls of step
      * @param Array $variableIds Array that links the local VariableId with the one in the database
      */
-    private function saveStepModelApiMapping($dbStep, $apiCalls, $variableIds) {
+    private function saveStepModelApiMapping($dbStep, $apiCalls, $variableIds)
+    {
         $resultIds = [];
         $savedApiVars = $dbStep->modelRunFields()->get();
         $savedResults = $dbStep->modelRunResults()->get();
         if (!empty($apiCalls)) {
             foreach ($apiCalls as $key => $apiCall) { 
                 //$resultIds[] = [];
-                if (($savedApiVarsModel = $savedApiVars->where('pivot.evidencio_model_id' ,$apiCall["evidencioModelId"]))->isNotEmpty()) {
+                if (($savedApiVarsModel = $savedApiVars->where('pivot.evidencio_model_id', $apiCall["evidencioModelId"]))->isNotEmpty()) {
                     foreach ($apiCall["variables"] as $apiVar) {
                         $dbApiVar = $savedApiVarsModel->where("pivot.evidencio_field_id", $apiVar["evidencioVariableId"]);
                         if ($dbApiVar->isNotEmpty()) {
@@ -355,12 +358,13 @@ class DesignerController extends Controller
         return $resultIds;
     }
 
-    private function saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds) {
+    private function saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds)
+    {
         $apiField = Field::where('id', $variableIds[$apiVar["localVariable"]])->first();
         $dbStep->modelRunFields()->save($apiField, [
             "evidencio_model_id" => $apiCall["evidencioModelId"],
             "evidencio_field_id" => $apiVar["evidencioVariableId"]
-            ]);
+        ]);
     }
 
     /**
@@ -540,7 +544,8 @@ class DesignerController extends Controller
         return $retObj;
     }
 
-    private function loadStepRules($dbStep) {
+    private function loadStepRules($dbStep)
+    {
         $retObj = [];
         $dbRules = $dbStep->nextSteps()->get();
         foreach ($dbRules as $dbRule) {
@@ -558,10 +563,11 @@ class DesignerController extends Controller
         return $retObj;
     }
 
-    private function loadStepModelApiMapping($dbStep) {
+    private function loadStepModelApiMapping($dbStep)
+    {
         $retObj = [];
         $dbRuns = $dbStep->modelRuns();
-        foreach  ($dbRuns as $dbRun) {
+        foreach ($dbRuns as $dbRun) {
             $apiCall = [];
             $apiCall["evidencioModelId"] = $dbRun;
             $dbResults = $dbStep->modelRunResultsById($dbRun)->get();

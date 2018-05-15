@@ -1,17 +1,1 @@
-/** 
- * workflow.css
- * CSS for designer of workflows, make sure to include this before the .js file.
- */
-
-.graphcard {
-  height: 100%;
-  width: 100%;
-}
-
-html,
-body {
-  height: 100%;
-}
-
-
-/*# sourceMappingURL=workflow.css.map*/
+.graphcard{width:100%}.graphcard,body,html{height:100%}
