@@ -78,21 +78,30 @@
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <!--<div class="container-fluid">
+                                                <div class="container-fluid">
                                                     <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <vue-multiselect id="apiCallModelSelect" v-model="modalApiCall.model" deselect-label="Cannot be done without a model" track-by="id"
-                                                        label="title" placeholder="Select one" :options="modelChoiceRepresentation"
-                                                        :searchable="true" :allow-empty="false" open-direction="bottom" @select="apiCallModelChangeAction">
+                                                    <vue-multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Cannot be done without a model"
+                                                        track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
+                                                        :searchable="true" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                        @select="modelSelectAPI" @remove="modelRemoveApi">
+                                                        <template slot="tag" slot-scope="props">
+                                                            <span class="badge badge-info badge-larger">
+                                                                <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                                <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                            </span>
+                                                        </template>
                                                     </vue-multiselect>
-                                                    <small class="form-text text-muted">Model used for calculation</small>
+                                                    <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :model="apiCall" :used-variables="localUsedVariables"
+                                                        :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                    <!-- <small class="form-text text-muted">Model used for calculation</small>
                                                     <h6>Set variables used in calculation:</h6>
                                                     <div class="form-group" v-for="apiVariable in modalApiCall.variables">
                                                         <label :for="'var_' + apiVariable.originalID">@{{ apiVariable.originalTitle }}</label>
                                                         <select class="custom-select" :name="apiVariable.title" :id="'var_' + apiVariable.originalID" v-model="apiVariable.targetID">
                                                             <option v-for="usedVariable in modalUsedVariables" :key="usedVariable.id">@{{ usedVariable.title }}</option>
                                                         </select>
-                                                    </div>
-                                                </div>-->
+                                                    </div> -->
+                                                </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">

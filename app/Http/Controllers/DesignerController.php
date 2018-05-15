@@ -43,7 +43,7 @@ class DesignerController extends Controller
     }
 
     /**
-     * Fetch models from Evidencio based on thier search result, used for designer to search for models.
+     * Fetch models from Evidencio based on their search result, used for designer to search for models.
      *
      * @param HTTP|Request $request Post request containing a Evidencio Model Search
      * @return JSON Evidencio models
@@ -89,10 +89,9 @@ class DesignerController extends Controller
             $this->saveLoadedEvidencioModels($request->modelIds, $workflow);
         }
         $IDs = $this->saveSteps($request->steps, $request->variables, $workflow);
-
+ 
         $returnObj['workflowId'] = $workflow->id;
         $returnObj['stepIds'] = $IDs['stepIds'];
-        $returnObj['ruleIds'] = $IDs['ruleIds'];
         $returnObj['variableIds'] = $IDs['variableIds'];
         $returnObj['optionIds'] = $IDs['optionIds'];
         $returnObj['resultIds'] = $IDs['resultIds'];
@@ -153,12 +152,7 @@ class DesignerController extends Controller
             $stepIds[] = $stp->id;
         }
 
-        // TODO: add rules between steps
-        // foreach ($steps as $step) {
-        //     $savedRules = $step->nextSteps()->get();
-
-        // }
-
+        // Remove deleted steps
         $savedSteps->map(function ($value) {
             $previousSteps = $value->previousSteps()->get();
             foreach ($previousSteps as $previousStep) {
@@ -188,7 +182,18 @@ class DesignerController extends Controller
             }
             $value->delete();
         });
-        return ['stepIds' => $stepIds, 'ruleIds' => $ruleIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
+        foreach ($steps as $key => $step) {
+            $resultIds[] = [];
+            $dbStep = $workflow->steps()->where('id', $stepIds[$key])->first();
+            if (!isset($step["apiCalls"]))
+                $step["apiCalls"] = [];
+            $resultIds[$key] = $this->saveStepModelApiMapping($dbStep, $step["apiCalls"], $fieldIds["variableIds"]);
+            if (!isset($step["rules"]))
+                $step["rules"] = [];
+            $this->saveRules($dbStep, $step["rules"], $stepIds);
+        }
+ 
+        return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds'], 'resultIds' => $resultIds];
     }
 
     /**

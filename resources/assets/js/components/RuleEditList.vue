@@ -54,7 +54,7 @@ export default {
         databaseId: -1,
         title: "Empty rule",
         description: "",
-        condition: "",
+        condition: "true",
         target: null,
         edgeId: -1,
         create: true,
