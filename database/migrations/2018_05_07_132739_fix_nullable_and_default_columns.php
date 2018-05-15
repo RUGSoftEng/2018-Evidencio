@@ -13,6 +13,9 @@ class FixNullableAndDefaultColumns extends Migration
      */
     public function up()
     {
+        /*
+         * Boolean fields with default values should not be nullable
+         */
         Schema::table('workflows', function (Blueprint $table) {
             $table->boolean("isDraft")->nullable(false)->default(true)->change();
             $table->boolean("isPublished")->nullable(false)->default(false)->change();

@@ -17,12 +17,16 @@ Route::get('/', function () {
 
 
 Route::get('/myworkflows', function () {
-  return view('myworkflows');
-});
+    return view('myworkflows');
+})->name('myworkflows');
 
 Auth::routes();
 
-Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
+Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
+Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
+Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
+
+Route::get('/designer', 'DesignerController@index')->name('designer');
 
 Route::post('/graph', 'GraphController@index');
 
