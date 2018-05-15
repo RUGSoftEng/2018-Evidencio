@@ -59,3 +59,171 @@
 14.03 - General team meeting to work on use cases
 14.03 - General team meeting to work on use cases
 14.03 - General team meeting to work on use cases
+18.03 - Worked on getting Homestead to work (again)
+19.03 - Researching databases
+19.03 - Researching databases
+20.03 - Try to make something with Vue2 (ending up with errors)
+20.03 - Try to make something with Vue2 (ending up with errors)
+20.03 - Try to make something with Vue2 (ending up with errors)
+20.03 - Try to make something with Vue2 (ending up with errors)
+20.03 - Try to make something with Vue2 (ending up with errors)
+21.03 - Solve errors and make basic idea using Vue2
+21.03 - Solve errors and make basic idea using Vue2
+21.03 - Solve errors and make basic idea using Vue2
+21.03 - General team meeting with Frank
+21.03 - General team meeting with Frank
+21.03 - General team meeting with Frank
+21.03 - General team meeting with Frank
+21.03 - Working with designer team, switched to using Cytoscape JS
+21.03 - Working with designer team
+21.03 - Working with designer team
+21.03 - Working with designer team
+21.03 - Working with designer team
+21.03 - Working on my own, Cytoscape working
+22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
+22.03 - Making adding nodes in runtime possible
+23.03 - Figure out how to make buttons relative to the background using other nodes. Tried PopperJS, but that failed
+23.03 - Figure out how to make buttons relative to the background using other nodes. Steps can now be added.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+23.03 - Figure out how to make buttons relative to the background using other nodes.
+24.03 - Tried to create background that moved with the nodes, failed.
+24.03 - Tried to create background that moved with the nodes, failed.
+24.03 - Tried to create background that moved with the nodes, failed.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+25.03 - Got the background working, fixed adding steps & adding nodes. Buttons also move according to layout.
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+26.03 - Helping Alexander with sidebar, etc. Working on improving template of graph
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Adding option-modal to graph, made it possible to change description
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Meeting with TA, professor and team
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+28.03 - Started rewriting graph editor, this time using Vue as well
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+29.03 - Rewriting graph editor
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+30.03 - Added loading of model from Evidencio using API
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+01.04 - Added muliselect in option-modal for adding variables to Steps
+02.04 - Made number in badge after variable show the actual number of times a variable is assigned to a Step
+02.04 - Made badge change color depending on if used or not
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+02.04 - Changed the modal layout, the way the accordion works, added the possibility to change title/description of variable
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+05.04 - Fixed error due to call-by-reference instead of call-by-value, added colorpicker, other layout-changes for cross-browser/device support.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Replaced accordion in modal with nav-tabs, spent way too much time figuring out how to make it inactive if not in use.
+09.04 - Tiny layout fixes
+09.04 - Tiny layout fixes
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step)
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+12.04 - Split designer into partials, added (working) possibility to actually choose step-type (i.e. input step or result step), tiny layout fixes.
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+13.04 - Get nav-tabs to be scrollable, testing several techniques (ended up chosing a very simple one after failing with all others)
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+15.04 - Made it possible to load more than one model and to group-select variables (all variables of a model at once), started working on API-call variable mapping
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Rewritten the way variables are saved (array indexing with variables in steps to hashmap-like saving the variables outside a step)
+16.04 - Finished first version of API-call variable mapping
+16.04 - Working on Architecture document
+16.04 - Working on Architecture document
+16.04 - Working on Architecture document
+17.04 - Working on Architecture document
+17.04 - Meeting with customers (Rick and Rob)
+17.04 - Meeting with customers (Rick and Rob)
+17.04 - Working on Architecture document
