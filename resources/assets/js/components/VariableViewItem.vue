@@ -1,6 +1,6 @@
 <template v-if='modelLoaded'>
     <div class="card">
-        <div @click="toggleShow" class="card-header collapsed" :id="'varViewCollapseHeader_' + indexItem" 
+        <div @click="toggleShow" class="card-header collapsed d-flex justify-content-between" :id="'varViewCollapseHeader_' + indexItem" 
             aria-expanded="true" :aria-controls="'varViewCollapse_' + variable.ind" data-parent="#accVariablesView">
             <h6 class="mb-0">
                 {{ variable.title }}

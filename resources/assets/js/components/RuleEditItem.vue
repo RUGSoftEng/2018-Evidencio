@@ -17,7 +17,7 @@
                     </div>
                     <div class="form-group">
                         <label :for="'conditionRule_' + indexItem">Condition: </label>
-                        <textarea class="form-control" :id="'conditionRule_' + indexItem" cols="30" rows="3" v-model="rule.condition" :disabled="!editing"></textarea>
+                        <textarea class="form-control" :id="'conditionRule_' + indexItem" cols="30" rows="3" v-model="rule.condition" :disabled="!editing">true</textarea>
                         <small :id="'descriptionVarHelp_' + indexItem" class="form-text text-muted">Condition of the rule</small>
                         <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
                     </div>

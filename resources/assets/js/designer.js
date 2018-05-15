@@ -92,6 +92,29 @@ window.vObj = new Vue({
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
+    // Event called when all the evidencio models for a workflow are (hopefully) loaded
+    Event.listen("loadWorkflowAllModelsLoaded", () => {
+      this.steps.forEach(localStep => {
+        localStep.rules.forEach(rule => {
+          rule.target.stepId = this.getStepIdFromDatabaseId(rule.target.id);
+          rule.create = true;
+          rule.destroy = false;
+          rule.change = false;
+          if (rule.target.stepId == -1) {
+            rule.destroy = true;
+          }
+        });
+        localStep.apiCalls.forEach(apiCall => {
+          apiCall.title = this.models[this.getLocalIdFromModelId(apiCall.evidencioModelId)].title;
+          apiCall.variables.forEach(variable => {
+            let localVariable = this.getVariableKeyFromDatabaseId(variable.fieldId);
+            variable.localVariable = localVariable;
+            variable.evidencioTitle = this.usedVariables[localVariable].title;
+          });
+        });
+      });
+      this.connectionsChanged = !this.connectionsChanged;
+    })
     // Event called when the user tries to remove a step
     Event.listen("confirmDialog", confirmInfo => {
       this.prepareConfirmDialog(confirmInfo);
@@ -130,8 +153,7 @@ window.vObj = new Vue({
           stepId: element,
           title: this.steps[element].title,
           id: this.steps[element].id,
-          colour: this.steps[element].colour,
-          ind: options.length
+          colour: this.steps[element].colour
         });
       });
       return options;
@@ -149,12 +171,13 @@ window.vObj = new Vue({
   methods: {
     /**
      * Load model from Evidencio API, Model is prepared for later saving.
-     * @param {Number} -> modelId is the id of the Evidencio model that should be loaded.
+     * @param {Number} modelId is the id of the Evidencio model that should be loaded.
+     * @return {Promise} Returns the promise object. 
      */
     loadModelEvidencio(modelId) {
       var self = this;
       if (!this.isModelLoaded(modelId)) {
-        $.ajax({
+        return $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
           },
@@ -262,11 +285,17 @@ window.vObj = new Vue({
             var pathArray = location.href.split("/");
             window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
             let numberOfSteps = self.steps.length;
-            for (let index = 0; index < numberOfSteps; index++) {
-              self.steps[index].id = result.stepIds[index];
-              cy.getElementById(self.steps[index].nodeId).style({
-                label: self.steps[index].id
+            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+              self.steps[stepIndex].id = result.stepIds[stepIndex];
+              cy.getElementById(self.steps[stepIndex].nodeId).style({
+                label: self.steps[stepIndex].id
               });
+              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+                let apiCall = result.resultIds[stepIndex][apiIndex];
+                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];                   
+                }
+              }
             }
             let varIds = result.variableIds;
             for (var key in varIds) {
@@ -302,9 +331,6 @@ window.vObj = new Vue({
         success: function (result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
-            result.evidencioModels.forEach(element => {
-              self.loadModelEvidencio(element);
-            });
             let currentSteps = self.stepsChanged;
             let currentLevels = self.levelsChanged;
             self.title = result.title;
@@ -315,21 +341,36 @@ window.vObj = new Vue({
                 self.addLevel(self.levels.length);
               console.log("Index: " + index + ", #steps: " + self.steps.length);
               self.addStep(element.title, element.description, element.level);
-              self.steps[index].id = element.id;
-              self.steps[index].colour = element.colour;
-              self.steps[index].variables = element.variables;
+              let localStep = self.steps[index];
+              localStep.id = element.id;
+              localStep.colour = element.colour;
+              localStep.variables = element.variables;
+              localStep.varCounter = element.variables.length;
+              localStep.rules = element.rules;
+              localStep.apiCalls = element.apiCalls;
             });
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
             self.workflowId = null;
             Event.fire("normalStart");
           }
         }
+      });
+    },
+
+    LoadWorkflowLoadModels(models) {
+      $.when.apply($, models.map(element => {
+        return this.loadModelEvidencio(element);
+      })).then(function (x) {
+        Event.fire("loadWorkflowAllModelsLoaded");
+      }, function (e) {
+        Console.log("At least one of the requests failed.");
       });
     },
 
@@ -353,11 +394,21 @@ window.vObj = new Vue({
      * @return {Boolean} true if found, false if not
      */
     isModelLoaded(modelId) {
-      for (let index = 0; index < this.modelIds.length; index++) {
-        if (this.modelIds[index] == modelId) return true;
-      }
-      return false;
+      return this.getLocalIdFromModelId(modelId) != -1;
     },
+
+    /**
+     * Returns the local index of an Evidencio model, -1 if it has not been loaded.
+     * @param {Number} modelId 
+     */
+    getLocalIdFromModelId(modelId) {
+      for (let index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
+
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {Number} index of position level should be added
@@ -416,10 +467,7 @@ window.vObj = new Vue({
         variables: [],
         varCounter: 0,
         rules: [],
-        apiCall: {
-          model: null,
-          variables: []
-        },
+        apiCalls: [],
         create: true,
         destroy: false
       });
@@ -600,6 +648,30 @@ window.vObj = new Vue({
         if (this.steps[index].nodeId == nodeId) return index;
       }
       return -1;
+    },
+
+    /**
+     * Returns the stepId based on the databaseId
+     * @param {Number} databaseId 
+     */
+    getStepIdFromDatabaseId(databaseId) {
+      for (let index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].id == databaseId) return index;
+      }
+      return -1;
+    },
+
+    /**
+     * Returns the key of a variable from the usedVariable object by its databaseId
+     * @param {Number} databaseId 
+     */
+    getVariableKeyFromDatabaseId(databaseId) {
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          if (this.usedVariables[key].databaseId == databaseId) return key;
+        }
+      }
+      return null;
     },
 
     /**

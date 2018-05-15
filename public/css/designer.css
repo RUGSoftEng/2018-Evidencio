@@ -232,8 +232,8 @@ tr {
   min-height: calc(100% - 10px);
 }
 
-#outputCategoriesAccordion {
-  max-height: 45vh;
+#chartLayoutDesigner {
+  min-height: 45vh;
   overflow: auto;
 }
 

@@ -5,7 +5,7 @@
         </div>
         <div class="row" id="accRulesEdit">
             <div class="col">
-                <rule-edit-item v-for="(rule, index) in rules" :key="index" :index-item="index" :rule="rule" :options="children" @toggle="selectCard($event)">
+                <rule-edit-item v-for="(rule, index) in rules" :key="index" :index-item="index" :rule="rule" :options="childNodes" @toggle="selectCard($event)">
                 </rule-edit-item>
             </div>
         </div>
@@ -31,6 +31,16 @@ export default {
     }
   },
 
+  computed: {
+    childNodes: function() {
+      let options = JSON.parse(JSON.stringify(this.children));
+      options.map(function(child, index) {
+        child["ind"] = index;
+      });
+      return options;
+    }
+  },
+
   methods: {
     selectCard(index) {
       for (let ind = 0; ind < this.rules.length; ind++) {
@@ -41,10 +51,9 @@ export default {
 
     addRule() {
       this.rules.push({
-        databaseId: -1,
         title: "Empty rule",
         description: "",
-        condition: "",
+        condition: "true",
         target: null,
         edgeId: -1,
         create: true,

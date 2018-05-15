@@ -11,6 +11,7 @@ use App\LoadedEvidencioModel;
 use App\Step;
 use App\Field;
 use App\Option;
+use App\Result;
 
 /**
  * DesignerController class, handles database- and API-calls for Designerpage.
@@ -78,9 +79,9 @@ class DesignerController extends Controller
 
         $returnObj['workflowId'] = $workflow->id;
         $returnObj['stepIds'] = $IDs['stepIds'];
-        $returnObj['ruleIds'] = $IDs['ruleIds'];
         $returnObj['variableIds'] = $IDs['variableIds'];
         $returnObj['optionIds'] = $IDs['optionIds'];
+        $returnObj['resultIds'] = $IDs['resultIds'];
         return $returnObj;
     }
 
@@ -114,10 +115,10 @@ class DesignerController extends Controller
         $savedSteps = $workflow->steps()->get();
         $stepIds = [];
         $variableIds = [];
-        $ruleIds = [];
+        $resultIds = [];
         $fieldIds = ['variableIds' => [], 'optionIds' => []];
         foreach ($steps as $step) {
-            if ($savedSteps->isNotEmpty() && ($stp = $savedSteps->where('id', $step['id']))->isNotEmpty()) {
+            if (($stp = $savedSteps->where('id', $step['id']))->isNotEmpty()) {
                 $stp = $stp->first();
                 $this->saveSingleStep($stp, $step);
                 $stp->save();
@@ -129,18 +130,33 @@ class DesignerController extends Controller
                 $this->saveSingleStep($stp, $step, $variables);
                 $workflow->steps()->save($stp);
             }
-            if (isset($step['variables']))
-                $fieldIds = array_merge($variableIds, $this->saveFields($stp, $step, $variables));
+            if (!isset($step["variables"])) {
+                $step["variables"] = [];
+            }
+            $newFieldIds = $this->saveFields($stp, $step, $variables);
+            $fieldIds["variableIds"] = array_merge($fieldIds["variableIds"], $newFieldIds["variableIds"]);
+            $fieldIds["optionIds"] = array_merge($fieldIds["optionIds"], $newFieldIds["optionIds"]);
             $stepIds[] = $stp->id;
         }
-
-        // TODO: add rules between steps
-        // foreach ($steps as $step) {
-        //     $savedRules = $step->nextSteps()->get();
-
-        // }
-
+        // Remove deleted steps
         $savedSteps->map(function ($value) {
+            $previousSteps = $value->previousSteps()->get();
+            foreach ($previousSteps as $previousStep) {
+                $value->previousSteps()->detach($previousStep);
+            }
+            $nextSteps = $value->nextSteps()->get();
+            foreach ($nextSteps as $nextStep) {
+                $value->nextSteps()->detach($nextStep);
+            }
+            $mappings = $value->modelRunFields()->get();
+            foreach ($mappings as $mapping) {
+                $value->modelRunFields()->detach($mapping);
+            }
+            $results = $value->modelRunResults()->get();
+            foreach ($results as $result) {
+                $value->modelRunResults()->detach($result);
+                $result->delete();
+            }
             $fields = $value->fields()->get();
             foreach ($fields as $field) {
                 $value->fields()->detach($field);
@@ -152,7 +168,18 @@ class DesignerController extends Controller
             }
             $value->delete();
         });
-        return ['stepIds' => $stepIds, 'ruleIds' => $ruleIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
+        foreach ($steps as $key => $step) {
+            $resultIds[] = [];
+            $dbStep = $workflow->steps()->where('id', $stepIds[$key])->first();
+            if (!isset($step["apiCalls"]))
+                $step["apiCalls"] = [];
+            $resultIds[$key] = $this->saveStepModelApiMapping($dbStep, $step["apiCalls"], $fieldIds["variableIds"]);
+            if (!isset($step["rules"]))
+                $step["rules"] = [];
+            $this->saveRules($dbStep, $step["rules"], $stepIds);
+        }
+
+        return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds'], 'resultIds' => $resultIds];
     }
 
     /**
@@ -169,7 +196,7 @@ class DesignerController extends Controller
         $optionIds = [];
         $savedFields = $dbStep->fields()->get();
         foreach ($step['variables'] as $var) {
-            if ($savedFields->isNotEmpty() && ($fld = $savedFields->where('id', $variables[$var]['databaseId']))->isNotEmpty()) {
+            if (($fld = $savedFields->where('id', $variables[$var]['databaseId']))->isNotEmpty()) {
                 $fld = $fld->first();
                 $this->saveSingleField($fld, $variables[$var]);
                 $fld->save();
@@ -187,15 +214,139 @@ class DesignerController extends Controller
             }
             $variableIds[$var] = $fld->id;
         }
-        foreach ($savedFields as $value) {
-            $dbStep->fields()->detach($value);
-            $options = $value->options()->get();
+        foreach ($savedFields as $savedField) {
+            $dbStep->fields()->detach($savedField);
+            $stepsUsing = $value->usedInRunsInSteps()->get();
+            $stepsUsing->map(function($value) use ($savedField) {
+                $value->modelRunFields()->detach($savedField);
+            });
+            $options = $savedField->options()->get();
             foreach ($options as $option) {
                 $option->delete();
             }
-            $value->delete();
+            $savedField->delete();
         }
         return ['variableIds' => $variableIds, 'optionIds' => $optionIds];
+    }
+
+    private function saveRules($dbStep, $rules, $stepIds) {
+        $savedRules = $dbStep->nextSteps()->get();
+        if (!empty($rules)) {
+            foreach ($rules as $rule) {
+                $nextStepId = $stepIds[$rule["target"]["stepId"]];
+                $nextStep = Step::where('id', $nextStepId)->first();
+                if (($dbRuleNextStep = $savedRules->where('id', $nextStepId))->isNotEmpty()) {
+                    $dbRuleNextStep = $dbRuleNextStep->first();
+                    if ($dbRuleNextStep->id != $nextStepId) {
+                        $dbStep->nextSteps()->detach($dbRuleNextStep);
+                        $dbStep->nextSteps()->attach($nextStep, [
+                            "title" => $rule["title"],
+                            "description" => $rule["description"],
+                            "condition" => $rule["condition"]
+                        ]);
+                    } else {
+                        $dbStep->nextSteps()->updateExistingPivot($dbRuleNextStep, [
+                            "title" => $rule["title"],
+                            "description" => $rule["description"],
+                            "condition" => $rule["condition"]
+                        ]);
+                    }
+
+                    $savedRules = $savedRules->reject(function ($value) use ($nextStepId) {
+                        return $value->id == $nextStepId;
+                    });
+                } else {
+                    $dbStep->nextSteps()->attach($nextStep, [
+                        "title" => $rule["title"],
+                        "description" => $rule["description"],
+                        "condition" => $rule["condition"]
+                    ]);
+                }
+            }
+        }
+        $savedRules->map(function($value) use ($dbStep) {
+            $dbStep->nextSteps()->detach($value);
+        });
+    }
+
+    /**
+     * Saves the Evidencio Model variable mapping used for the result-calculation (terrible code, might need rewriting)
+     * 
+     * @param App|Step $dbStep Database Model of step
+     * @param Array $apiCalls Array containing data of apiCalls of step
+     * @param Array $variableIds Array that links the local VariableId with the one in the database
+     */
+    private function saveStepModelApiMapping($dbStep, $apiCalls, $variableIds) {
+        $resultIds = [];
+        $savedApiVars = $dbStep->modelRunFields()->get();
+        $savedResults = $dbStep->modelRunResults()->get();
+        if (!empty($apiCalls)) {
+            foreach ($apiCalls as $key => $apiCall) { 
+                //$resultIds[] = [];
+                if (($savedApiVarsModel = $savedApiVars->where('pivot.evidencio_model_id' ,$apiCall["evidencioModelId"]))->isNotEmpty()) {
+                    foreach ($apiCall["variables"] as $apiVar) {
+                        $dbApiVar = $savedApiVarsModel->where("pivot.evidencio_field_id", $apiVar["evidencioVariableId"]);
+                        if ($dbApiVar->isNotEmpty()) {
+                            $dbApiVar = $dbApiVar->first();
+                            if ($dbApiVar->id != $variableIds[$apiVar["localVariable"]]) {
+                                $dbStep->modelRunFields()->detach($dbApiVar);
+                                $this->saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds);
+                            }
+                            $savedApiVars = $savedApiVars->reject(function ($value) use ($apiVar, $apiCall) {
+                                return ($value->pivot->evidencio_field_id == $apiVar["evidencioVariableId"] && $value->pivot->evidencio_model_id == $apiCall["evidencioModelId"]);
+                            });
+                        } else {
+                            $this->saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds);
+                        }
+                    }
+                } else {
+                    foreach ($apiCall["variables"] as $apiVar) {
+                        $this->saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds);
+                    }
+                }
+                if (($savedResultsModel = $savedResults->where('evidencio_model_id', $apiCall["evidencioModelId"]))->isNotEmpty()) {
+                    foreach ($apiCall["results"] as $keyResult => $result) {
+                        if (($dbResult = $savedResultsModel->where('id', $result["databaseId"]))->isEmpty()) {
+                            $dbResult = new Result;
+                            $dbResult->evidencio_model_id = $apiCall["evidencioModelId"];
+                            $dbResult->result_name = $result["name"];
+                            $dbResult->result_number = $keyResult;
+                            $dbStep->modelRunResults()->save($dbResult);
+                        } else {
+                            $dbResult = $dbResult->first();
+                            $savedResults = $savedResults->reject(function ($value) use ($result) {
+                                return ($value->id == $result["databaseId"]);
+                            });
+                        }
+                        $resultIds[$key][] = $dbResult->id;
+                    }
+                } else {
+                    foreach ($apiCall["results"] as $keyResult => $result) {
+                        $dbResult = new Result;
+                        $dbResult->evidencio_model_id = $apiCall["evidencioModelId"];
+                        $dbResult->result_name = $result["name"];
+                        $dbResult->result_number = $keyResult;
+                        $dbStep->modelRunResults()->save($dbResult);
+                        $resultIds[$key][] = $dbResult->id;
+                    }
+                }
+            }
+        }
+        $savedApiVars->map(function ($value) use ($dbStep) {
+            $dbStep->modelRunFields()->detach($value);
+        });
+        $savedResults->map(function ($value) {
+            $value->delete();
+        });
+        return $resultIds;
+    }
+
+    private function saveSingleApiVariableMapping($dbStep, $apiVar, $apiCall, $variableIds) {
+        $apiField = Field::where('id', $variableIds[$apiVar["localVariable"]])->first();
+        $dbStep->modelRunFields()->save($apiField, [
+            "evidencio_model_id" => $apiCall["evidencioModelId"],
+            "evidencio_field_id" => $apiVar["evidencioVariableId"]
+            ]);
     }
 
     /**
@@ -273,26 +424,26 @@ class DesignerController extends Controller
         $usedVariables = [];
         $workflow = Auth::user()->createdWorkflows()->where('id', '=', $workflowId)->first();
         if ($workflow == null) {
-            $retObj['success'] = false;
+            $retObj["success"] = false;
             return $retObj;
         }
-        $retObj['success'] = true;
-        $retObj['title'] = $workflow->title;
-        $retObj['description'] = $workflow->description;
-        $retObj['languageCode'] = $workflow->language_code;
-        $retObj['evidencioModels'] = $this->getLoadedEvidencioModels($workflow);
+        $retObj["success"] = true;
+        $retObj["title"] = $workflow->title;
+        $retObj["description"] = $workflow->description;
+        $retObj["languageCode"] = $workflow->language_code;
+        $retObj["evidencioModels"] = $this->getLoadedEvidencioModels($workflow);
 
-        $retObj['steps'] = [];
+        $retObj["steps"] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
         foreach ($steps as $step) {
             $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
-            $retObj['steps'][$counter] = $stepLoaded['step'];
-            $usedVariables = array_merge($usedVariables, $stepLoaded['usedVariables']);
+            $retObj["steps"][$counter] = $stepLoaded["step"];
+            $usedVariables = array_merge($usedVariables, $stepLoaded["usedVariables"]);
             $counter++;
         }
 
-        $retObj['usedVariables'] = $usedVariables;
+        $retObj["usedVariables"] = $usedVariables;
         return $retObj;
     }
 
@@ -321,14 +472,16 @@ class DesignerController extends Controller
     private function loadStep($dbStep, $stepNum)
     {
         $retObj = [];
-        $retObj['id'] = $dbStep->id;
-        $retObj['title'] = $dbStep->title;
-        $retObj['description'] = $dbStep->description;
-        $retObj['colour'] = $dbStep->colour;
-        $retObj['level'] = $dbStep->workflow_step_level;
+        $retObj["id"] = $dbStep->id;
+        $retObj["title"] = $dbStep->title;
+        $retObj["description"] = $dbStep->description;
+        $retObj["colour"] = $dbStep->colour;
+        $retObj["level"] = $dbStep->workflow_step_level;
         $variables = $this->loadVariablesOfStep($dbStep, $stepNum);
-        $retObj['variables'] = $variables['varIds'];
-        return ['step' => $retObj, 'usedVariables' => $variables['usedVariables']];
+        $retObj["variables"] = $variables["varIds"];
+        $retObj["rules"] = $this->loadStepRules($dbStep);
+        $retObj["apiCalls"] = $this->loadStepModelApiMapping($dbStep);
+        return ["step" => $retObj, "usedVariables" => $variables["usedVariables"]];
     }
 
     private function loadVariablesOfStep($dbStep, $stepNum)
@@ -337,38 +490,86 @@ class DesignerController extends Controller
         $varIds = [];
         $variables = $dbStep->fields()->get();
         foreach ($variables as $key => $value) {
-            $name = 'var' . $stepNum . '_' . $key;
+            $name = "var" . $stepNum . '_' . $key;
             $varIds[] = $name;
             $usedVariables[$name] = $this->loadVariable($value);
         }
-        return ['varIds' => $varIds, 'usedVariables' => $usedVariables];
+        return ["varIds" => $varIds, "usedVariables" => $usedVariables];
     }
 
     private function loadVariable($dbVariable)
     {
         $retObj = [];
-        $retObj['databaseId'] = $dbVariable->id;
-        $retObj['title'] = $dbVariable->friendly_title;
-        $retObj['description'] = $dbVariable->friendly_description;
-        $retObj['id'] = $dbVariable->evidencio_variable_id;
+        $retObj["databaseId"] = $dbVariable->id;
+        $retObj["title"] = $dbVariable->friendly_title;
+        $retObj["description"] = $dbVariable->friendly_description;
+        $retObj["id"] = $dbVariable->evidencio_variable_id;
         $options = $dbVariable->options()->get();
         if ($options->isEmpty()) {
-            $retObj['type'] = 'continuous';
-            $retObj['options']['max'] = $dbVariable->continuous_field_max;
-            $retObj['options']['min'] = $dbVariable->continuous_field_min;
-            $retObj['options']['step'] = $dbVariable->continuous_field_step_by;
-            $retObj['options']['unit'] = $dbVariable->continuous_field_unit;
+            $retObj["type"] = "continuous";
+            $retObj["options"]["max"] = $dbVariable->continuous_field_max;
+            $retObj["options"]["min"] = $dbVariable->continuous_field_min;
+            $retObj["options"]["step"] = $dbVariable->continuous_field_step_by;
+            $retObj["options"]["unit"] = $dbVariable->continuous_field_unit;
         } else {
-            $retObj['type'] = 'categorical';
+            $retObj["type"] = 'categorical';
 
-            $retObj['options'] = [];
+            $retObj["options"] = [];
             foreach ($options as $key => $option) {
-                $retObj['options'][$key] = [
-                    'title' => $option->title,
-                    'friendlyTitle' => $option->friendly_title,
-                    'databaseId' => $option->id
+                $retObj["options"][$key] = [
+                    "title" => $option->title,
+                    "friendlyTitle" => $option->friendly_title,
+                    "databaseId" => $option->id
                 ];
             }
+        }
+        return $retObj;
+    }
+
+    private function loadStepRules($dbStep) {
+        $retObj = [];
+        $dbRules = $dbStep->nextSteps()->get();
+        foreach ($dbRules as $dbRule) {
+            $rule = [];
+            $rule["title"] = $dbRule->pivot->title;
+            $rule["description"] = $dbRule->pivot->desription;
+            $rule["condition"] = $dbRule->pivot->condition;
+            $rule["target"] = [
+                "id" => $dbRule->id,
+                "title" => $dbRule->title,
+                "colour" => $dbRule->colour
+            ];
+            $retObj[] = $rule;
+        }
+        return $retObj;
+    }
+
+    private function loadStepModelApiMapping($dbStep) {
+        $retObj = [];
+        $dbRuns = $dbStep->modelRuns();
+        foreach  ($dbRuns as $dbRun) {
+            $apiCall = [];
+            $apiCall["evidencioModelId"] = $dbRun;
+            $dbResults = $dbStep->modelRunResultsById($dbRun)->get();
+            $dbFields = $dbStep->modelRunFieldsById($dbRun)->get();
+            $apiCall["title"] = "";
+            $apiCall["results"] = [];
+            foreach ($dbResults as $dbResult) {
+                $result = [];
+                $result["name"] = $dbResult->result_name;
+                $result["databaseId"] = $dbResult->id;
+                $apiCall["results"][$dbResult->result_number] = $result;
+            }
+            $apiCall["variables"] = [];
+            foreach ($dbFields as $dbField) {
+                $field = [];
+                $field["evidencioVariableId"] = $dbField->pivot->evidencio_field_id;
+                $field["fieldId"] = $dbField->id;
+                $field["localVariable"] = -1;
+                $field["evidencioTitle"] = "";
+                $apiCall["variables"][] = $field;
+            }
+            $retObj[] = $apiCall;
         }
         return $retObj;
     }

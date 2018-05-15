@@ -4574,7 +4574,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(138)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(139)(module)))
 
 /***/ }),
 /* 1 */
@@ -4615,7 +4615,7 @@ module.exports = {
 "use strict";
 
 
-var color = __webpack_require__(11);
+var color = __webpack_require__(12);
 var helpers = __webpack_require__(1);
 
 function interpolate(start, view, model, ease) {
@@ -4732,20 +4732,6 @@ module.exports = Element;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {};
-module.exports.Arc = __webpack_require__(158);
-module.exports.Line = __webpack_require__(159);
-module.exports.Point = __webpack_require__(160);
-module.exports.Rectangle = __webpack_require__(161);
-
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -4851,6 +4837,20 @@ module.exports = function normalizeComponent (
     options: options
   }
 }
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {};
+module.exports.Arc = __webpack_require__(158);
+module.exports.Line = __webpack_require__(159);
+module.exports.Point = __webpack_require__(160);
+module.exports.Rectangle = __webpack_require__(161);
 
 
 /***/ }),
@@ -5706,6 +5706,44 @@ helpers.getValueAtIndexOrDefault = helpers.valueAtIndexOrDefault;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VueCharts", function() { return VueCharts; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__ = __webpack_require__(146);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__BaseCharts__ = __webpack_require__(147);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Bar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "HorizontalBar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["d"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Doughnut", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["c"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["e"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Pie", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["f"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "PolarArea", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["g"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Radar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["h"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Bubble", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["b"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Scatter", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["i"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "mixins", function() { return __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "generateChart", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["j"]; });
+
+
+var VueCharts = {
+  Bar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a" /* Bar */],
+  HorizontalBar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["d" /* HorizontalBar */],
+  Doughnut: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["c" /* Doughnut */],
+  Line: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["e" /* Line */],
+  Pie: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["f" /* Pie */],
+  PolarArea: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["g" /* PolarArea */],
+  Radar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["h" /* Radar */],
+  Bubble: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["b" /* Bubble */],
+  Scatter: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["i" /* Scatter */],
+  mixins: __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__["a" /* default */],
+  generateChart: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["j" /* generateChart */]
+};
+/* harmony default export */ __webpack_exports__["default"] = (VueCharts);
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
@@ -6196,7 +6234,7 @@ module.exports = Color;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6533,7 +6571,7 @@ module.exports = {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6614,7 +6652,7 @@ module.exports = helpers.extend({
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7003,7 +7041,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7080,7 +7118,7 @@ module.exports = {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7219,7 +7257,7 @@ module.exports = {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7282,7 +7320,7 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7345,7 +7383,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7471,7 +7509,7 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7534,7 +7572,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7642,7 +7680,7 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7705,7 +7743,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7814,7 +7852,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7950,7 +7988,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8044,7 +8082,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8106,7 +8144,7 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8229,7 +8267,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8352,7 +8390,7 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8464,7 +8502,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8619,7 +8657,7 @@ module.exports = {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8711,7 +8749,7 @@ module.exports = {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8894,7 +8932,7 @@ module.exports = {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8961,7 +8999,7 @@ module.exports = {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9045,7 +9083,7 @@ module.exports = {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9109,7 +9147,7 @@ module.exports = {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9189,7 +9227,7 @@ module.exports = {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9269,7 +9307,7 @@ module.exports = {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9349,7 +9387,7 @@ module.exports = {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9452,7 +9490,7 @@ module.exports = {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9556,7 +9594,7 @@ module.exports = {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9627,7 +9665,7 @@ module.exports = {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9694,7 +9732,7 @@ module.exports = {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9765,7 +9803,7 @@ module.exports = {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9836,7 +9874,7 @@ module.exports = {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9902,7 +9940,7 @@ module.exports = {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9973,7 +10011,7 @@ module.exports = {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10048,7 +10086,7 @@ module.exports = {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10144,7 +10182,7 @@ module.exports = {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10240,7 +10278,7 @@ module.exports = {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10327,7 +10365,7 @@ module.exports = {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10411,7 +10449,7 @@ module.exports = {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10481,7 +10519,7 @@ module.exports = {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10591,7 +10629,7 @@ module.exports = {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10704,7 +10742,7 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10768,7 +10806,7 @@ module.exports = {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10855,7 +10893,7 @@ module.exports = {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10933,7 +10971,7 @@ module.exports = {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11015,7 +11053,7 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11094,7 +11132,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11174,7 +11212,7 @@ module.exports = {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11255,7 +11293,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11382,7 +11420,7 @@ module.exports = {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11510,7 +11548,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11611,7 +11649,7 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11739,7 +11777,7 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11897,7 +11935,7 @@ module.exports = {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12011,7 +12049,7 @@ module.exports = {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12110,7 +12148,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12196,7 +12234,7 @@ module.exports = {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12332,7 +12370,7 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12405,7 +12443,7 @@ module.exports = {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12501,7 +12539,7 @@ module.exports = {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12587,7 +12625,7 @@ module.exports = {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12680,7 +12718,7 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12771,7 +12809,7 @@ module.exports = {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12885,7 +12923,7 @@ module.exports = {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13015,7 +13053,7 @@ module.exports = {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13100,7 +13138,7 @@ module.exports = {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13191,7 +13229,7 @@ module.exports = {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13331,7 +13369,7 @@ module.exports = {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13405,7 +13443,7 @@ module.exports = {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13527,7 +13565,7 @@ module.exports = {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13628,7 +13666,7 @@ module.exports = {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13744,7 +13782,7 @@ module.exports = {
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13812,7 +13850,7 @@ module.exports = {
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13906,7 +13944,7 @@ module.exports = {
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13991,7 +14029,7 @@ module.exports = {
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14099,7 +14137,7 @@ module.exports = {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14263,7 +14301,7 @@ module.exports = {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14349,7 +14387,7 @@ module.exports = {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14435,7 +14473,7 @@ module.exports = {
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14499,7 +14537,7 @@ module.exports = {
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14596,7 +14634,7 @@ module.exports = {
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14662,7 +14700,7 @@ module.exports = {
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14789,7 +14827,7 @@ module.exports = {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14880,7 +14918,7 @@ module.exports = {
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14971,7 +15009,7 @@ module.exports = {
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15035,7 +15073,7 @@ module.exports = {
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15163,7 +15201,7 @@ module.exports = {
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15293,7 +15331,7 @@ module.exports = {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15362,7 +15400,7 @@ module.exports = {
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15427,7 +15465,7 @@ module.exports = {
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15506,7 +15544,7 @@ module.exports = {
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15692,7 +15730,7 @@ module.exports = {
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15794,7 +15832,7 @@ module.exports = {
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15858,7 +15896,7 @@ module.exports = {
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15933,7 +15971,7 @@ module.exports = {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16093,7 +16131,7 @@ module.exports = {
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16270,7 +16308,7 @@ module.exports = {
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16342,7 +16380,7 @@ module.exports = {
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16457,7 +16495,7 @@ module.exports = {
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16572,7 +16610,7 @@ module.exports = {
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16664,7 +16702,7 @@ module.exports = {
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16737,7 +16775,7 @@ module.exports = {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16800,7 +16838,7 @@ module.exports = {
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16933,7 +16971,7 @@ module.exports = {
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17026,7 +17064,7 @@ module.exports = {
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17097,7 +17135,7 @@ module.exports = {
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17217,7 +17255,7 @@ module.exports = {
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17288,7 +17326,7 @@ module.exports = {
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17354,7 +17392,7 @@ module.exports = {
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17480,7 +17518,7 @@ module.exports = {
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -17578,7 +17616,7 @@ module.exports = {
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17673,7 +17711,7 @@ module.exports = {
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17735,7 +17773,7 @@ module.exports = {
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17797,7 +17835,7 @@ module.exports = {
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -17920,7 +17958,7 @@ module.exports = {
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18075,7 +18113,7 @@ module.exports = {
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18177,7 +18215,7 @@ module.exports = {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18239,7 +18277,7 @@ module.exports = {
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18301,7 +18339,7 @@ module.exports = {
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18384,7 +18422,7 @@ module.exports = {
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18456,7 +18494,7 @@ module.exports = {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18520,7 +18558,7 @@ module.exports = {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18634,7 +18672,7 @@ module.exports = {
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18741,7 +18779,7 @@ module.exports = {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18848,7 +18886,7 @@ module.exports = {
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -18876,8 +18914,8 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 139 */,
-/* 140 */
+/* 140 */,
+/* 141 */
 /***/ (function(module, exports) {
 
 /*
@@ -18959,7 +18997,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -19187,47 +19225,9 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 142 */,
 /* 143 */,
 /* 144 */,
-/* 145 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VueCharts", function() { return VueCharts; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__ = __webpack_require__(146);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__BaseCharts__ = __webpack_require__(147);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Bar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "HorizontalBar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["d"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Doughnut", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["c"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["e"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Pie", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["f"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "PolarArea", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["g"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Radar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["h"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Bubble", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["b"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Scatter", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["i"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "mixins", function() { return __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "generateChart", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["j"]; });
-
-
-var VueCharts = {
-  Bar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a" /* Bar */],
-  HorizontalBar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["d" /* HorizontalBar */],
-  Doughnut: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["c" /* Doughnut */],
-  Line: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["e" /* Line */],
-  Pie: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["f" /* Pie */],
-  PolarArea: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["g" /* PolarArea */],
-  Radar: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["h" /* Radar */],
-  Bubble: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["b" /* Bubble */],
-  Scatter: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["i" /* Scatter */],
-  mixins: __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__["a" /* default */],
-  generateChart: __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["j" /* generateChart */]
-};
-/* harmony default export */ __webpack_exports__["default"] = (VueCharts);
-
-
-/***/ }),
+/* 145 */,
 /* 146 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -19438,11 +19438,11 @@ __webpack_require__(153)(Chart);
 
 Chart.defaults = __webpack_require__(2);
 Chart.Element = __webpack_require__(3);
-Chart.elements = __webpack_require__(4);
-Chart.Interaction = __webpack_require__(12);
+Chart.elements = __webpack_require__(5);
+Chart.Interaction = __webpack_require__(13);
 Chart.layouts = __webpack_require__(7);
-Chart.platform = __webpack_require__(13);
-Chart.plugins = __webpack_require__(14);
+Chart.platform = __webpack_require__(14);
+Chart.plugins = __webpack_require__(15);
 Chart.Ticks = __webpack_require__(8);
 
 __webpack_require__(164)(Chart);
@@ -20196,7 +20196,7 @@ module.exports = {
 /* global document: false */
 
 
-var color = __webpack_require__(11);
+var color = __webpack_require__(12);
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 
@@ -23214,10 +23214,10 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Interaction = __webpack_require__(12);
+var Interaction = __webpack_require__(13);
 var layouts = __webpack_require__(7);
-var platform = __webpack_require__(13);
-var plugins = __webpack_require__(14);
+var platform = __webpack_require__(14);
+var plugins = __webpack_require__(15);
 
 module.exports = function(Chart) {
 
@@ -28663,252 +28663,252 @@ module.exports = function(Chart) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 15,
-	"./af.js": 15,
-	"./ar": 16,
-	"./ar-dz": 17,
-	"./ar-dz.js": 17,
-	"./ar-kw": 18,
-	"./ar-kw.js": 18,
-	"./ar-ly": 19,
-	"./ar-ly.js": 19,
-	"./ar-ma": 20,
-	"./ar-ma.js": 20,
-	"./ar-sa": 21,
-	"./ar-sa.js": 21,
-	"./ar-tn": 22,
-	"./ar-tn.js": 22,
-	"./ar.js": 16,
-	"./az": 23,
-	"./az.js": 23,
-	"./be": 24,
-	"./be.js": 24,
-	"./bg": 25,
-	"./bg.js": 25,
-	"./bm": 26,
-	"./bm.js": 26,
-	"./bn": 27,
-	"./bn.js": 27,
-	"./bo": 28,
-	"./bo.js": 28,
-	"./br": 29,
-	"./br.js": 29,
-	"./bs": 30,
-	"./bs.js": 30,
-	"./ca": 31,
-	"./ca.js": 31,
-	"./cs": 32,
-	"./cs.js": 32,
-	"./cv": 33,
-	"./cv.js": 33,
-	"./cy": 34,
-	"./cy.js": 34,
-	"./da": 35,
-	"./da.js": 35,
-	"./de": 36,
-	"./de-at": 37,
-	"./de-at.js": 37,
-	"./de-ch": 38,
-	"./de-ch.js": 38,
-	"./de.js": 36,
-	"./dv": 39,
-	"./dv.js": 39,
-	"./el": 40,
-	"./el.js": 40,
-	"./en-au": 41,
-	"./en-au.js": 41,
-	"./en-ca": 42,
-	"./en-ca.js": 42,
-	"./en-gb": 43,
-	"./en-gb.js": 43,
-	"./en-ie": 44,
-	"./en-ie.js": 44,
-	"./en-il": 45,
-	"./en-il.js": 45,
-	"./en-nz": 46,
-	"./en-nz.js": 46,
-	"./eo": 47,
-	"./eo.js": 47,
-	"./es": 48,
-	"./es-do": 49,
-	"./es-do.js": 49,
-	"./es-us": 50,
-	"./es-us.js": 50,
-	"./es.js": 48,
-	"./et": 51,
-	"./et.js": 51,
-	"./eu": 52,
-	"./eu.js": 52,
-	"./fa": 53,
-	"./fa.js": 53,
-	"./fi": 54,
-	"./fi.js": 54,
-	"./fo": 55,
-	"./fo.js": 55,
-	"./fr": 56,
-	"./fr-ca": 57,
-	"./fr-ca.js": 57,
-	"./fr-ch": 58,
-	"./fr-ch.js": 58,
-	"./fr.js": 56,
-	"./fy": 59,
-	"./fy.js": 59,
-	"./gd": 60,
-	"./gd.js": 60,
-	"./gl": 61,
-	"./gl.js": 61,
-	"./gom-latn": 62,
-	"./gom-latn.js": 62,
-	"./gu": 63,
-	"./gu.js": 63,
-	"./he": 64,
-	"./he.js": 64,
-	"./hi": 65,
-	"./hi.js": 65,
-	"./hr": 66,
-	"./hr.js": 66,
-	"./hu": 67,
-	"./hu.js": 67,
-	"./hy-am": 68,
-	"./hy-am.js": 68,
-	"./id": 69,
-	"./id.js": 69,
-	"./is": 70,
-	"./is.js": 70,
-	"./it": 71,
-	"./it.js": 71,
-	"./ja": 72,
-	"./ja.js": 72,
-	"./jv": 73,
-	"./jv.js": 73,
-	"./ka": 74,
-	"./ka.js": 74,
-	"./kk": 75,
-	"./kk.js": 75,
-	"./km": 76,
-	"./km.js": 76,
-	"./kn": 77,
-	"./kn.js": 77,
-	"./ko": 78,
-	"./ko.js": 78,
-	"./ky": 79,
-	"./ky.js": 79,
-	"./lb": 80,
-	"./lb.js": 80,
-	"./lo": 81,
-	"./lo.js": 81,
-	"./lt": 82,
-	"./lt.js": 82,
-	"./lv": 83,
-	"./lv.js": 83,
-	"./me": 84,
-	"./me.js": 84,
-	"./mi": 85,
-	"./mi.js": 85,
-	"./mk": 86,
-	"./mk.js": 86,
-	"./ml": 87,
-	"./ml.js": 87,
-	"./mn": 88,
-	"./mn.js": 88,
-	"./mr": 89,
-	"./mr.js": 89,
-	"./ms": 90,
-	"./ms-my": 91,
-	"./ms-my.js": 91,
-	"./ms.js": 90,
-	"./mt": 92,
-	"./mt.js": 92,
-	"./my": 93,
-	"./my.js": 93,
-	"./nb": 94,
-	"./nb.js": 94,
-	"./ne": 95,
-	"./ne.js": 95,
-	"./nl": 96,
-	"./nl-be": 97,
-	"./nl-be.js": 97,
-	"./nl.js": 96,
-	"./nn": 98,
-	"./nn.js": 98,
-	"./pa-in": 99,
-	"./pa-in.js": 99,
-	"./pl": 100,
-	"./pl.js": 100,
-	"./pt": 101,
-	"./pt-br": 102,
-	"./pt-br.js": 102,
-	"./pt.js": 101,
-	"./ro": 103,
-	"./ro.js": 103,
-	"./ru": 104,
-	"./ru.js": 104,
-	"./sd": 105,
-	"./sd.js": 105,
-	"./se": 106,
-	"./se.js": 106,
-	"./si": 107,
-	"./si.js": 107,
-	"./sk": 108,
-	"./sk.js": 108,
-	"./sl": 109,
-	"./sl.js": 109,
-	"./sq": 110,
-	"./sq.js": 110,
-	"./sr": 111,
-	"./sr-cyrl": 112,
-	"./sr-cyrl.js": 112,
-	"./sr.js": 111,
-	"./ss": 113,
-	"./ss.js": 113,
-	"./sv": 114,
-	"./sv.js": 114,
-	"./sw": 115,
-	"./sw.js": 115,
-	"./ta": 116,
-	"./ta.js": 116,
-	"./te": 117,
-	"./te.js": 117,
-	"./tet": 118,
-	"./tet.js": 118,
-	"./tg": 119,
-	"./tg.js": 119,
-	"./th": 120,
-	"./th.js": 120,
-	"./tl-ph": 121,
-	"./tl-ph.js": 121,
-	"./tlh": 122,
-	"./tlh.js": 122,
-	"./tr": 123,
-	"./tr.js": 123,
-	"./tzl": 124,
-	"./tzl.js": 124,
-	"./tzm": 125,
-	"./tzm-latn": 126,
-	"./tzm-latn.js": 126,
-	"./tzm.js": 125,
-	"./ug-cn": 127,
-	"./ug-cn.js": 127,
-	"./uk": 128,
-	"./uk.js": 128,
-	"./ur": 129,
-	"./ur.js": 129,
-	"./uz": 130,
-	"./uz-latn": 131,
-	"./uz-latn.js": 131,
-	"./uz.js": 130,
-	"./vi": 132,
-	"./vi.js": 132,
-	"./x-pseudo": 133,
-	"./x-pseudo.js": 133,
-	"./yo": 134,
-	"./yo.js": 134,
-	"./zh-cn": 135,
-	"./zh-cn.js": 135,
-	"./zh-hk": 136,
-	"./zh-hk.js": 136,
-	"./zh-tw": 137,
-	"./zh-tw.js": 137
+	"./af": 16,
+	"./af.js": 16,
+	"./ar": 17,
+	"./ar-dz": 18,
+	"./ar-dz.js": 18,
+	"./ar-kw": 19,
+	"./ar-kw.js": 19,
+	"./ar-ly": 20,
+	"./ar-ly.js": 20,
+	"./ar-ma": 21,
+	"./ar-ma.js": 21,
+	"./ar-sa": 22,
+	"./ar-sa.js": 22,
+	"./ar-tn": 23,
+	"./ar-tn.js": 23,
+	"./ar.js": 17,
+	"./az": 24,
+	"./az.js": 24,
+	"./be": 25,
+	"./be.js": 25,
+	"./bg": 26,
+	"./bg.js": 26,
+	"./bm": 27,
+	"./bm.js": 27,
+	"./bn": 28,
+	"./bn.js": 28,
+	"./bo": 29,
+	"./bo.js": 29,
+	"./br": 30,
+	"./br.js": 30,
+	"./bs": 31,
+	"./bs.js": 31,
+	"./ca": 32,
+	"./ca.js": 32,
+	"./cs": 33,
+	"./cs.js": 33,
+	"./cv": 34,
+	"./cv.js": 34,
+	"./cy": 35,
+	"./cy.js": 35,
+	"./da": 36,
+	"./da.js": 36,
+	"./de": 37,
+	"./de-at": 38,
+	"./de-at.js": 38,
+	"./de-ch": 39,
+	"./de-ch.js": 39,
+	"./de.js": 37,
+	"./dv": 40,
+	"./dv.js": 40,
+	"./el": 41,
+	"./el.js": 41,
+	"./en-au": 42,
+	"./en-au.js": 42,
+	"./en-ca": 43,
+	"./en-ca.js": 43,
+	"./en-gb": 44,
+	"./en-gb.js": 44,
+	"./en-ie": 45,
+	"./en-ie.js": 45,
+	"./en-il": 46,
+	"./en-il.js": 46,
+	"./en-nz": 47,
+	"./en-nz.js": 47,
+	"./eo": 48,
+	"./eo.js": 48,
+	"./es": 49,
+	"./es-do": 50,
+	"./es-do.js": 50,
+	"./es-us": 51,
+	"./es-us.js": 51,
+	"./es.js": 49,
+	"./et": 52,
+	"./et.js": 52,
+	"./eu": 53,
+	"./eu.js": 53,
+	"./fa": 54,
+	"./fa.js": 54,
+	"./fi": 55,
+	"./fi.js": 55,
+	"./fo": 56,
+	"./fo.js": 56,
+	"./fr": 57,
+	"./fr-ca": 58,
+	"./fr-ca.js": 58,
+	"./fr-ch": 59,
+	"./fr-ch.js": 59,
+	"./fr.js": 57,
+	"./fy": 60,
+	"./fy.js": 60,
+	"./gd": 61,
+	"./gd.js": 61,
+	"./gl": 62,
+	"./gl.js": 62,
+	"./gom-latn": 63,
+	"./gom-latn.js": 63,
+	"./gu": 64,
+	"./gu.js": 64,
+	"./he": 65,
+	"./he.js": 65,
+	"./hi": 66,
+	"./hi.js": 66,
+	"./hr": 67,
+	"./hr.js": 67,
+	"./hu": 68,
+	"./hu.js": 68,
+	"./hy-am": 69,
+	"./hy-am.js": 69,
+	"./id": 70,
+	"./id.js": 70,
+	"./is": 71,
+	"./is.js": 71,
+	"./it": 72,
+	"./it.js": 72,
+	"./ja": 73,
+	"./ja.js": 73,
+	"./jv": 74,
+	"./jv.js": 74,
+	"./ka": 75,
+	"./ka.js": 75,
+	"./kk": 76,
+	"./kk.js": 76,
+	"./km": 77,
+	"./km.js": 77,
+	"./kn": 78,
+	"./kn.js": 78,
+	"./ko": 79,
+	"./ko.js": 79,
+	"./ky": 80,
+	"./ky.js": 80,
+	"./lb": 81,
+	"./lb.js": 81,
+	"./lo": 82,
+	"./lo.js": 82,
+	"./lt": 83,
+	"./lt.js": 83,
+	"./lv": 84,
+	"./lv.js": 84,
+	"./me": 85,
+	"./me.js": 85,
+	"./mi": 86,
+	"./mi.js": 86,
+	"./mk": 87,
+	"./mk.js": 87,
+	"./ml": 88,
+	"./ml.js": 88,
+	"./mn": 89,
+	"./mn.js": 89,
+	"./mr": 90,
+	"./mr.js": 90,
+	"./ms": 91,
+	"./ms-my": 92,
+	"./ms-my.js": 92,
+	"./ms.js": 91,
+	"./mt": 93,
+	"./mt.js": 93,
+	"./my": 94,
+	"./my.js": 94,
+	"./nb": 95,
+	"./nb.js": 95,
+	"./ne": 96,
+	"./ne.js": 96,
+	"./nl": 97,
+	"./nl-be": 98,
+	"./nl-be.js": 98,
+	"./nl.js": 97,
+	"./nn": 99,
+	"./nn.js": 99,
+	"./pa-in": 100,
+	"./pa-in.js": 100,
+	"./pl": 101,
+	"./pl.js": 101,
+	"./pt": 102,
+	"./pt-br": 103,
+	"./pt-br.js": 103,
+	"./pt.js": 102,
+	"./ro": 104,
+	"./ro.js": 104,
+	"./ru": 105,
+	"./ru.js": 105,
+	"./sd": 106,
+	"./sd.js": 106,
+	"./se": 107,
+	"./se.js": 107,
+	"./si": 108,
+	"./si.js": 108,
+	"./sk": 109,
+	"./sk.js": 109,
+	"./sl": 110,
+	"./sl.js": 110,
+	"./sq": 111,
+	"./sq.js": 111,
+	"./sr": 112,
+	"./sr-cyrl": 113,
+	"./sr-cyrl.js": 113,
+	"./sr.js": 112,
+	"./ss": 114,
+	"./ss.js": 114,
+	"./sv": 115,
+	"./sv.js": 115,
+	"./sw": 116,
+	"./sw.js": 116,
+	"./ta": 117,
+	"./ta.js": 117,
+	"./te": 118,
+	"./te.js": 118,
+	"./tet": 119,
+	"./tet.js": 119,
+	"./tg": 120,
+	"./tg.js": 120,
+	"./th": 121,
+	"./th.js": 121,
+	"./tl-ph": 122,
+	"./tl-ph.js": 122,
+	"./tlh": 123,
+	"./tlh.js": 123,
+	"./tr": 124,
+	"./tr.js": 124,
+	"./tzl": 125,
+	"./tzl.js": 125,
+	"./tzm": 126,
+	"./tzm-latn": 127,
+	"./tzm-latn.js": 127,
+	"./tzm.js": 126,
+	"./ug-cn": 128,
+	"./ug-cn.js": 128,
+	"./uk": 129,
+	"./uk.js": 129,
+	"./ur": 130,
+	"./ur.js": 130,
+	"./uz": 131,
+	"./uz-latn": 132,
+	"./uz-latn.js": 132,
+	"./uz.js": 131,
+	"./vi": 133,
+	"./vi.js": 133,
+	"./x-pseudo": 134,
+	"./x-pseudo.js": 134,
+	"./yo": 135,
+	"./yo.js": 135,
+	"./zh-cn": 136,
+	"./zh-cn.js": 136,
+	"./zh-hk": 137,
+	"./zh-hk.js": 137,
+	"./zh-tw": 138,
+	"./zh-tw.js": 138
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -28934,7 +28934,7 @@ webpackContext.id = 176;
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('bar', {
@@ -29445,7 +29445,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('bubble', {
@@ -29632,7 +29632,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('doughnut', {
@@ -29938,7 +29938,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('line', {
@@ -30278,7 +30278,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('polarArea', {
@@ -30507,7 +30507,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('radar', {
@@ -30872,7 +30872,7 @@ module.exports.title = __webpack_require__(194);
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(4);
+var elements = __webpack_require__(5);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -32041,7 +32041,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(238)
 }
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(241)
 /* template */
@@ -32131,7 +32131,7 @@ Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("detailsEditable", __webpack_require__(202));
 Vue.component("variableViewList", __webpack_require__(243));
 Vue.component("modalStep", __webpack_require__(262));
-Vue.component("modalConfirm", __webpack_require__(281));
+Vue.component("modalConfirm", __webpack_require__(293));
 
 // ============================================================================================= //
 
@@ -32219,6 +32219,29 @@ window.vObj = new Vue({
     Event.listen("modelLoad", function (modelId) {
       _this.loadModelEvidencio(modelId);
     });
+    // Event called when all the evidencio models for a workflow are (hopefully) loaded
+    Event.listen("loadWorkflowAllModelsLoaded", function () {
+      _this.steps.forEach(function (localStep) {
+        localStep.rules.forEach(function (rule) {
+          rule.target.stepId = _this.getStepIdFromDatabaseId(rule.target.id);
+          rule.create = true;
+          rule.destroy = false;
+          rule.change = false;
+          if (rule.target.stepId == -1) {
+            rule.destroy = true;
+          }
+        });
+        localStep.apiCalls.forEach(function (apiCall) {
+          apiCall.title = _this.models[_this.getLocalIdFromModelId(apiCall.evidencioModelId)].title;
+          apiCall.variables.forEach(function (variable) {
+            var localVariable = _this.getVariableKeyFromDatabaseId(variable.fieldId);
+            variable.localVariable = localVariable;
+            variable.evidencioTitle = _this.usedVariables[localVariable].title;
+          });
+        });
+      });
+      _this.connectionsChanged = !_this.connectionsChanged;
+    });
     // Event called when the user tries to remove a step
     Event.listen("confirmDialog", function (confirmInfo) {
       _this.prepareConfirmDialog(confirmInfo);
@@ -32260,8 +32283,7 @@ window.vObj = new Vue({
           stepId: element,
           title: _this2.steps[element].title,
           id: _this2.steps[element].id,
-          colour: _this2.steps[element].colour,
-          ind: options.length
+          colour: _this2.steps[element].colour
         });
       });
       return options;
@@ -32282,12 +32304,13 @@ window.vObj = new Vue({
   methods: {
     /**
      * Load model from Evidencio API, Model is prepared for later saving.
-     * @param {Number} -> modelId is the id of the Evidencio model that should be loaded.
+     * @param {Number} modelId is the id of the Evidencio model that should be loaded.
+     * @return {Promise} Returns the promise object. 
      */
     loadModelEvidencio: function loadModelEvidencio(modelId) {
       var self = this;
       if (!this.isModelLoaded(modelId)) {
-        $.ajax({
+        return $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
           },
@@ -32395,11 +32418,17 @@ window.vObj = new Vue({
           var pathArray = location.href.split("/");
           window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
           var numberOfSteps = self.steps.length;
-          for (var index = 0; index < numberOfSteps; index++) {
-            self.steps[index].id = result.stepIds[index];
-            cy.getElementById(self.steps[index].nodeId).style({
-              label: self.steps[index].id
+          for (var stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+            self.steps[stepIndex].id = result.stepIds[stepIndex];
+            cy.getElementById(self.steps[stepIndex].nodeId).style({
+              label: self.steps[stepIndex].id
             });
+            for (var apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+              var apiCall = result.resultIds[stepIndex][apiIndex];
+              for (var resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+              }
+            }
           }
           var varIds = result.variableIds;
           for (var key in varIds) {
@@ -32436,9 +32465,6 @@ window.vObj = new Vue({
         success: function success(result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
-            result.evidencioModels.forEach(function (element) {
-              self.loadModelEvidencio(element);
-            });
             var currentSteps = self.stepsChanged;
             var currentLevels = self.levelsChanged;
             self.title = result.title;
@@ -32449,20 +32475,36 @@ window.vObj = new Vue({
                 self.addLevel(self.levels.length);
               }console.log("Index: " + index + ", #steps: " + self.steps.length);
               self.addStep(element.title, element.description, element.level);
-              self.steps[index].id = element.id;
-              self.steps[index].colour = element.colour;
-              self.steps[index].variables = element.variables;
+              var localStep = self.steps[index];
+              localStep.id = element.id;
+              localStep.colour = element.colour;
+              localStep.variables = element.variables;
+              localStep.varCounter = element.variables.length;
+              localStep.rules = element.rules;
+              localStep.apiCalls = element.apiCalls;
             });
             if (result.usedVariables.constructor !== Array) self.usedVariables = result.usedVariables;
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
             self.workflowId = null;
             Event.fire("normalStart");
           }
         }
+      });
+    },
+    LoadWorkflowLoadModels: function LoadWorkflowLoadModels(models) {
+      var _this5 = this;
+
+      $.when.apply($, models.map(function (element) {
+        return _this5.loadModelEvidencio(element);
+      })).then(function (x) {
+        Event.fire("loadWorkflowAllModelsLoaded");
+      }, function (e) {
+        Console.log("At least one of the requests failed.");
       });
     },
 
@@ -32488,11 +32530,21 @@ window.vObj = new Vue({
      * @return {Boolean} true if found, false if not
      */
     isModelLoaded: function isModelLoaded(modelId) {
-      for (var index = 0; index < this.modelIds.length; index++) {
-        if (this.modelIds[index] == modelId) return true;
-      }
-      return false;
+      return this.getLocalIdFromModelId(modelId) != -1;
     },
+
+
+    /**
+     * Returns the local index of an Evidencio model, -1 if it has not been loaded.
+     * @param {Number} modelId 
+     */
+    getLocalIdFromModelId: function getLocalIdFromModelId(modelId) {
+      for (var index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
 
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
@@ -32554,10 +32606,7 @@ window.vObj = new Vue({
         variables: [],
         varCounter: 0,
         rules: [],
-        apiCall: {
-          model: null,
-          variables: []
-        },
+        apiCalls: [],
         create: true,
         destroy: false
       });
@@ -32681,7 +32730,7 @@ window.vObj = new Vue({
      * @param {Object} confirmInfo contains the title, message, data and type of the dialog
      */
     prepareConfirmDialog: function prepareConfirmDialog(confirmInfo) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.confirmDialog.title = confirmInfo.title;
       this.confirmDialog.message = confirmInfo.message;
@@ -32689,19 +32738,19 @@ window.vObj = new Vue({
       switch (confirmInfo.type) {
         case "removeStep":
           this.confirmDialog.approvalFunction = function () {
-            _this5.removeStep(_this5.confirmDialog.data);
+            _this6.removeStep(_this6.confirmDialog.data);
           };
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = function () {
-            var stepIds = _this5.levels[_this5.confirmDialog.data - 1].steps;
+            var stepIds = _this6.levels[_this6.confirmDialog.data - 1].steps;
             for (var indexStep = 0; indexStep < stepIds.length; indexStep++) {
-              _this5.steps[stepIds[indexStep]].rules.map(function (x) {
+              _this6.steps[stepIds[indexStep]].rules.map(function (x) {
                 x.destroy = true;
               });
             }
-            _this5.connectionsChanged = !_this5.connectionsChanged;
-            _this5.addLevel(_this5.confirmDialog.data);
+            _this6.connectionsChanged = !_this6.connectionsChanged;
+            _this6.addLevel(_this6.confirmDialog.data);
           };
           break;
       }
@@ -32758,6 +32807,32 @@ window.vObj = new Vue({
 
 
     /**
+     * Returns the stepId based on the databaseId
+     * @param {Number} databaseId 
+     */
+    getStepIdFromDatabaseId: function getStepIdFromDatabaseId(databaseId) {
+      for (var index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].id == databaseId) return index;
+      }
+      return -1;
+    },
+
+
+    /**
+     * Returns the key of a variable from the usedVariable object by its databaseId
+     * @param {Number} databaseId 
+     */
+    getVariableKeyFromDatabaseId: function getVariableKeyFromDatabaseId(databaseId) {
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          if (this.usedVariables[key].databaseId == databaseId) return key;
+        }
+      }
+      return null;
+    },
+
+
+    /**
      * Returns the level (height in graph) of a step
      * @param {Number} stepIndex of step
      * @return {Number} the level at which a step is.
@@ -32798,12 +32873,12 @@ window.vObj = new Vue({
      * @param {Number} stepId of the target step of an edge/rule
      */
     removeRulesByTarget: function removeRulesByTarget(stepId) {
-      var _this6 = this;
+      var _this7 = this;
 
       var levelIndex = this.getStepLevel(stepId) - 1;
       if (levelIndex >= 0) {
         this.levels[levelIndex].steps.forEach(function (stepIndex) {
-          var currentRules = _this6.steps[levelIndex].rules;
+          var currentRules = _this7.steps[levelIndex].rules;
           for (var ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId) currentRules.splice(ruleIndex, 1);
           }
@@ -32817,27 +32892,27 @@ window.vObj = new Vue({
      * @param {Number} stepId of the child to find ancestors of
      */
     getAncestorStepList: function getAncestorStepList(stepId) {
-      var _this7 = this;
+      var _this8 = this;
 
       var list = [];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this7.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this7.getAncestorStepListHelper(stId));
+        _this8.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this8.getAncestorStepListHelper(stId));
         });
       });
       return this.arrayUnique(list);
     },
     getAncestorStepListHelper: function getAncestorStepListHelper(stepId) {
-      var _this8 = this;
+      var _this9 = this;
 
       var list = [stepId];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this8.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this8.getAncestorStepListHelper(stId));
+        _this9.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this9.getAncestorStepListHelper(stId));
         });
       });
       return list;
@@ -32863,11 +32938,11 @@ window.vObj = new Vue({
      * Calculates the maximum number of steps per level.
      */
     calculateMaxStepsPerLevel: function calculateMaxStepsPerLevel() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.maxStepsPerLevel = 0;
       this.levels.forEach(function (element) {
-        if (element.steps.length > _this9.maxStepsPerLevel) _this9.maxStepsPerLevel = element.steps.length;
+        if (element.steps.length > _this10.maxStepsPerLevel) _this10.maxStepsPerLevel = element.steps.length;
       });
     },
 
@@ -32876,12 +32951,12 @@ window.vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this10 = this;
+      var _this11 = this;
 
       this.timesUsedVariables = {};
       this.models.forEach(function (element) {
         element.variables.forEach(function (variable) {
-          _this10.timesUsedVariables[variable.id.toString()] = 0;
+          _this11.timesUsedVariables[variable.id.toString()] = 0;
         });
       });
 
@@ -32970,26 +33045,26 @@ window.vObj = new Vue({
     },
 
     connectionsChanged: function connectionsChanged() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.steps.forEach(function (element, index) {
         for (var _index2 = element.rules.length - 1; _index2 >= 0; _index2--) {
           var currentRule = element.rules[_index2];
           if (currentRule.create) {
             var source = element.nodeId;
-            var target = _this11.steps[currentRule.target.stepId].nodeId;
+            var target = _this12.steps[currentRule.target.stepId].nodeId;
             currentRule.edgeId = cy.add({
               classes: "edge",
               data: {
-                id: "edge_" + _this11.edgeCounter,
+                id: "edge_" + _this12.edgeCounter,
                 source: source,
                 target: target
               }
             }).id();
             currentRule.create = false;
-            _this11.edgeCounter++;
+            _this12.edgeCounter++;
           } else if (currentRule.change) {
-            var _target = _this11.steps[currentRule.target.stepId].nodeId;
+            var _target = _this12.steps[currentRule.target.stepId].nodeId;
             cy.getElementById(currentRule.edgeId).move({
               target: _target
             });
@@ -33019,7 +33094,7 @@ var content = __webpack_require__(239);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(141)("3eb6b234", content, false, {});
+var update = __webpack_require__(142)("3eb6b234", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -33038,7 +33113,7 @@ if(false) {
 /* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(140)(true);
+exports = module.exports = __webpack_require__(141)(true);
 // imports
 
 
@@ -33286,7 +33361,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(244)
 }
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(246)
 /* template */
@@ -33339,7 +33414,7 @@ var content = __webpack_require__(245);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(141)("9a50abe2", content, false, {});
+var update = __webpack_require__(142)("9a50abe2", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -33358,7 +33433,7 @@ if(false) {
 /* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(140)(true);
+exports = module.exports = __webpack_require__(141)(true);
 // imports
 
 
@@ -33443,7 +33518,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(248)
 }
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(250)
 /* template */
@@ -33496,7 +33571,7 @@ var content = __webpack_require__(249);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(141)("66c29602", content, false, {});
+var update = __webpack_require__(142)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -33515,7 +33590,7 @@ if(false) {
 /* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(140)(true);
+exports = module.exports = __webpack_require__(141)(true);
 // imports
 
 
@@ -33618,7 +33693,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(253)
 /* template */
@@ -33727,7 +33802,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(255)
 /* template */
@@ -33821,7 +33896,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(258)
 /* template */
@@ -33929,7 +34004,7 @@ var render = function() {
     _c(
       "div",
       {
-        staticClass: "card-header collapsed",
+        staticClass: "card-header collapsed d-flex justify-content-between",
         attrs: {
           id: "varViewCollapseHeader_" + _vm.indexItem,
           "aria-expanded": "true",
@@ -34082,11 +34157,11 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(263)
 }
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(265)
 /* template */
-var __vue_template__ = __webpack_require__(280)
+var __vue_template__ = __webpack_require__(292)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -34135,7 +34210,7 @@ var content = __webpack_require__(264);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(141)("3725f586", content, false, {});
+var update = __webpack_require__(142)("3725f586", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -34154,12 +34229,12 @@ if(false) {
 /* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(140)(true);
+exports = module.exports = __webpack_require__(141)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAqhBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\n - Color changing\n - Gray functions\n    -->\n\n<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\"\n                                                 aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <vue-multiselect v-model=\"multiSelectedVariables\" :options=\"possibleVariables\" :multiple=\"true\" group-values=\"variables\"\n                                                    group-label=\"title\" :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\"\n                                                    label=\"title\" track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\"\n                                                    :preserve-search=\"true\" placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\"\n                                                    @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </vue-multiselect>\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <!--<div class=\"container-fluid\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <vue-multiselect id=\"apiCallModelSelect\" v-model=\"modalApiCall.model\" deselect-label=\"Cannot be done without a model\" track-by=\"id\"\n                                                        label=\"title\" placeholder=\"Select one\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"true\" :allow-empty=\"false\" open-direction=\"bottom\" @select=\"apiCallModelChangeAction\">\n                                                    </vue-multiselect>\n                                                    <small class=\"form-text text-muted\">Model used for calculation</small>\n                                                    <h6>Set variables used in calculation:</h6>\n                                                    <div class=\"form-group\" v-for=\"apiVariable in modalApiCall.variables\">\n                                                        <label :for=\"'var_' + apiVariable.originalID\">@{{ apiVariable.originalTitle }}</label>\n                                                        <select class=\"custom-select\" :name=\"apiVariable.title\" :id=\"'var_' + apiVariable.originalID\" v-model=\"apiVariable.targetID\">\n                                                            <option v-for=\"usedVariable in modalUsedVariables\" :key=\"usedVariable.id\">@{{ usedVariable.title }}</option>\n                                                        </select>\n                                                    </div>\n                                                </div>-->\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childNodes\"></rule-edit-list>\n                                                <!--<div class=\"container-fluid\">\n                                                    <button type=\"button\" class=\"btn btn-primary\" @click=\"addRule()\">Add rule</button>\n                                                    <table class=\"table-striped\">\n                                                        <thead>\n                                                            <tr>\n                                                                <th>Name</th>\n                                                                <th>Condition</th>\n                                                                <th>Target</th>\n                                                            </tr>\n                                                        </thead>\n                                                        <tbody>\n                                                            <tr v-for=\"(rule, index) in modalRules\">\n                                                                <td data-label=\"Name\">\n                                                                    <div class=\"form-group\">\n                                                                        <input type=\"text\" class=\"form-control\" name=\"Name\" :id=\"'ruleName_' + index\" :aria-describedby=\"'helpId_' + index\" placeholder=\"Rule name\"\n                                                                            v-model=\"rule.name\">\n                                                                        <small :id=\"'helpId_' + index\" class=\"form-text text-muted\">Name of the rule</small>\n                                                                    </div>\n                                                                </td>\n                                                                <td data-label=\"Condition\">Wayne</td>\n                                                                <td data-label=\"Target\">Batman</td>\n                                                            </tr>\n                                                        </tbody>\n                                                    </table>\n                                                </div>-->\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n\n                                            <div id=\"outputCategoriesAccordion\">\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"card-link\" data-toggle=\"collapse\" href=\"#collapseOne\">\n                                                            Pie Chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseOne\" class=\"collapse show\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseTwo\">\n                                                            Bar Plot\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseTwo\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius\n                                                            referrentur. Ad ius semper iuvaret, albucius placerat mea ad.\n                                                            Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri\n                                                            viderer nominavi an, eu solet labores deserunt vim, te diceret\n                                                            adipiscing liberavisse qui. Eos in viris tacimates periculis,\n                                                            in pri consequat theophrastus, amet accusamus duo in. Aperiri\n                                                            verterem per et, augue congue cu vis. Ne inani erroribus cum.\n                                                            Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,\n                                                            vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno\n                                                            patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu\n                                                            vim, cu case laudem partem vix. Ei eos consul inimicus, ius id\n                                                            blandit deseruisse. Est purto idque ea, per cu eripuit saperet\n                                                            consetetur. Id vim error nihil noster, in illud oblique sententiae\n                                                            nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima\n                                                            aperiri legendos duo, ut rebum ullamcorper deterruisset his.\n                                                            Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.\n                                                            Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,\n                                                            alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae\n                                                            scribentur his cu. At eos vero noster. Ius vitae everti an, pro\n                                                            eu dicunt convenire splendide. Vim natum illum signiferumque\n                                                            et, numquam petentium per id. No duo adolescens vituperatoribus,\n                                                            luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant\n                                                            omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi\n                                                            conclusionemque in vel.\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseThree\">\n                                                            Doughnut chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseThree\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseFour\">\n                                                            Polar area Chart\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseFour\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                <div class=\"card\">\n                                                    <div class=\"card-header\">\n                                                        <a class=\"collapsed card-link\" data-toggle=\"collapse\" href=\"#collapseFive\">\n                                                            Smiley Faces\n                                                        </a>\n                                                    </div>\n                                                    <div id=\"collapseFive\" class=\"collapse\" data-parent=\"#outputCategoriesAccordion\">\n                                                        <div class=\"card-body\">\n                                                            Lorem ipsum..\n                                                        </div>\n                                                    </div>\n                                                </div>\n\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    step: {\n      type: Object,\n      default: () => {}\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    possibleVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    childNodes: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach(element => {\n        representation.push({\n          title: element.title,\n          id: element.id\n        });\n      });\n      return representation;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.step));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]]\n          .id;\n        findVariable: for (\n          let indexOfMod = 0;\n          indexOfMod < this.possibleVariables.length;\n          indexOfMod++\n        ) {\n          const element = this.possibleVariables[indexOfMod];\n          for (\n            let indexInMod = 0;\n            indexInMod < element.variables.length;\n            indexInMod++\n          ) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (\n          this.localUsedVariables[this.localStep.variables[index]].id ==\n          removedVariable.id\n        ) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(\n        JSON.stringify(selectedVariable)\n      );\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    }\n\n    // /**\n    //  * Adds a rule to the list of rules\n    //  */\n    // addRule() {\n    //   this.modalRules.push({\n    //     name: \"Go to target\",\n    //     rule: [],\n    //     target: -1\n    //   });\n    //   this.modalEditRuleFlags.push(false);\n    // },\n\n    // /**\n    //  * Removes the rule with the given index from the list\n    //  * @param {integer} [ruleIndex] of rule to be removed\n    //  */\n    // removeRule(ruleIndex) {\n    //   this.modalRules.splice(ruleIndex, 1);\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\n    // },\n\n    // /**\n    //  * Allows for a rule to be edited.\n    //  * @param {integer} [index] of the rule to be edited\n    //  */\n    // editRule(index) {\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\n    // },\n\n    // /**\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\n    //  * @param {integer} [modelID] is the Evidencio model ID.\n    //  */\n    // getModelIndex(modelID) {\n    //   for (let index = 0; index < this.models.length; index++) {\n    //     if (this.models[index].id == modelID) return index;\n    //   }\n    //   return -1;\n    // },\n\n    // /**\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\n    //  * @param {object} [selectedModel] is the newly selected model\n    //  */\n    // apiCallModelChangeAction(selectedModel) {\n    //   let modID = this.getModelIndex(selectedModel.id);\n    //   if (modID == -1) {\n    //     this.modalApiCall.variables = [];\n    //     return;\n    //   }\n    //   let modVars = [];\n    //   this.models[modID].variables.forEach(element => {\n    //     modVars.push({\n    //       originalTitle: element.title,\n    //       originalID: element.id,\n    //       targetID: null\n    //     });\n    //   });\n    //   this.modalApiCall.variables = modVars;\n    // }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: []\n    };\n  }\n};\n</script>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAmgBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\n - Color changing\n - Gray functions\n    -->\n\n<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <vue-multiselect v-model=\"multiSelectedVariables\" :options=\"possibleVariables\" :multiple=\"true\" group-values=\"variables\"\n                                                    group-label=\"title\" :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\"\n                                                    label=\"title\" track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\"\n                                                    :preserve-search=\"true\" placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\"\n                                                    @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </vue-multiselect>\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <vue-multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Cannot be done without a model\"\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"true\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                        <template slot=\"tag\" slot-scope=\"props\">\n                                                            <span class=\"badge badge-info badge-larger\">\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                            </span>\n                                                        </template>\n                                                    </vue-multiselect>\n                                                    <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\n                                                        :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\n                                                    <!-- <small class=\"form-text text-muted\">Model used for calculation</small>\n                                                    <h6>Set variables used in calculation:</h6>\n                                                    <div class=\"form-group\" v-for=\"apiVariable in modalApiCall.variables\">\n                                                        <label :for=\"'var_' + apiVariable.originalID\">@{{ apiVariable.originalTitle }}</label>\n                                                        <select class=\"custom-select\" :name=\"apiVariable.title\" :id=\"'var_' + apiVariable.originalID\" v-model=\"apiVariable.targetID\">\n                                                            <option v-for=\"usedVariable in modalUsedVariables\" :key=\"usedVariable.id\">@{{ usedVariable.title }}</option>\n                                                        </select>\n                                                    </div> -->\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childNodes\"></rule-edit-list>\n                                                <!--<div class=\"container-fluid\">\n                                                    <button type=\"button\" class=\"btn btn-primary\" @click=\"addRule()\">Add rule</button>\n                                                    <table class=\"table-striped\">\n                                                        <thead>\n                                                            <tr>\n                                                                <th>Name</th>\n                                                                <th>Condition</th>\n                                                                <th>Target</th>\n                                                            </tr>\n                                                        </thead>\n                                                        <tbody>\n                                                            <tr v-for=\"(rule, index) in modalRules\">\n                                                                <td data-label=\"Name\">\n                                                                    <div class=\"form-group\">\n                                                                        <input type=\"text\" class=\"form-control\" name=\"Name\" :id=\"'ruleName_' + index\" :aria-describedby=\"'helpId_' + index\" placeholder=\"Rule name\"\n                                                                            v-model=\"rule.name\">\n                                                                        <small :id=\"'helpId_' + index\" class=\"form-text text-muted\">Name of the rule</small>\n                                                                    </div>\n                                                                </td>\n                                                                <td data-label=\"Condition\">Wayne</td>\n                                                                <td data-label=\"Target\">Batman</td>\n                                                            </tr>\n                                                        </tbody>\n                                                    </table>\n                                                </div>-->\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"mutableChartTypeNumber = 0\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"mutableChartTypeNumber = 1\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"mutableChartTypeNumber = 2\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"mutableChartTypeNumber = 3\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"mutableChartTypeNumber\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApi\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    step: {\n      type: Object,\n      default: () => {}\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    possibleVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    childNodes: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    },\n    chartTypeNumber: {\n      type: Number,\n      default: 0\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.step));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n            return {\n                name: result,\n                databaseId: -1\n            }\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    modelRemoveApi(model) {\n        for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n            if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n                this.localStep.apiCalls.splice(index, 1);\n                return;\n            }\n        }\n    },\n\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n          return {\n              localId: this.findModel(apiCall.evidencioModelId),\n              title: apiCall.title,\n              id: apiCall.evidencioModelId\n          }\n      });\n    },\n\n    findModel(evidencioModelId) {\n        for (let index = 0; index < this.models.length; index++) {\n            if (this.models[index].id == evidencioModelId)\n                return index;\n        }\n        return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {\n          const element = this.possibleVariables[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (\n          this.localUsedVariables[this.localStep.variables[index]].id ==\n          removedVariable.id\n        ) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(\n        JSON.stringify(selectedVariable)\n      );\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    }\n\n    // /**\n    //  * Adds a rule to the list of rules\n    //  */\n    // addRule() {\n    //   this.modalRules.push({\n    //     name: \"Go to target\",\n    //     rule: [],\n    //     target: -1\n    //   });\n    //   this.modalEditRuleFlags.push(false);\n    // },\n\n    // /**\n    //  * Removes the rule with the given index from the list\n    //  * @param {integer} [ruleIndex] of rule to be removed\n    //  */\n    // removeRule(ruleIndex) {\n    //   this.modalRules.splice(ruleIndex, 1);\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\n    // },\n\n    // /**\n    //  * Allows for a rule to be edited.\n    //  * @param {integer} [index] of the rule to be edited\n    //  */\n    // editRule(index) {\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\n    // },\n\n    // /**\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\n    //  * @param {integer} [modelID] is the Evidencio model ID.\n    //  */\n    // getModelIndex(modelID) {\n    //   for (let index = 0; index < this.models.length; index++) {\n    //     if (this.models[index].id == modelID) return index;\n    //   }\n    //   return -1;\n    // },\n\n    // /**\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\n    //  * @param {object} [selectedModel] is the newly selected model\n    //  */\n    // apiCallModelChangeAction(selectedModel) {\n    //   let modID = this.getModelIndex(selectedModel.id);\n    //   if (modID == -1) {\n    //     this.modalApiCall.variables = [];\n    //     return;\n    //   }\n    //   let modVars = [];\n    //   this.models[modID].variables.forEach(element => {\n    //     modVars.push({\n    //       originalTitle: element.title,\n    //       originalID: element.id,\n    //       targetID: null\n    //     });\n    //   });\n    //   this.modalApiCall.variables = modVars;\n    // }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      multiSelectedModels: []\n    };\n  }\n};\n</script>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -34178,6 +34253,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__ = __webpack_require__(202);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue__ = __webpack_require__(289);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue__);
 //
 //
 //
@@ -34360,72 +34437,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
 
 
 
@@ -34437,7 +34449,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     VariableEditList: __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default.a,
     RuleEditList: __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default.a,
     ChartPreview: __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default.a,
-    DetailsEditable: __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default.a
+    DetailsEditable: __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default.a,
+    VariableMappingApi: __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue___default.a
   },
   props: {
     stepId: {
@@ -34471,6 +34484,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     changed: {
       type: Boolean,
       required: true
+    },
+    chartTypeNumber: {
+      type: Number,
+      default: 0
     }
   },
 
@@ -34484,10 +34501,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     // Array of model-representations for API-call
     modelChoiceRepresentation: function modelChoiceRepresentation() {
       var representation = [];
-      this.models.forEach(function (element) {
+      this.models.forEach(function (model, index) {
         representation.push({
-          title: element.title,
-          id: element.id
+          localId: index,
+          title: model.title,
+          id: model.id
         });
       });
       return representation;
@@ -34512,6 +34530,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.localStep = JSON.parse(JSON.stringify(this.step));
       this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
       this.setSelectedVariables();
+      this.setSelectedModels();
     },
 
 
@@ -34531,6 +34550,51 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         type: "removeStep",
         data: this.stepId
       });
+    },
+    modelSelectAPI: function modelSelectAPI(model) {
+      this.localStep.apiCalls.push({
+        evidencioModelId: model.id,
+        title: model.title,
+        results: this.models[model.localId].resultVars.map(function (result) {
+          return {
+            name: result,
+            databaseId: -1
+          };
+        }),
+        variables: this.models[model.localId].variables.map(function (variable) {
+          return {
+            evidencioVariableId: variable.id,
+            evidencioTitle: variable.title,
+            localVariable: ""
+          };
+        })
+      });
+    },
+    modelRemoveApi: function modelRemoveApi(model) {
+      for (var index = this.localStep.apiCalls.length - 1; index >= 0; index--) {
+        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {
+          this.localStep.apiCalls.splice(index, 1);
+          return;
+        }
+      }
+    },
+    setSelectedModels: function setSelectedModels() {
+      var _this = this;
+
+      this.multiSelectedModels = [];
+      this.multiSelectedModels = this.localStep.apiCalls.map(function (apiCall) {
+        return {
+          localId: _this.findModel(apiCall.evidencioModelId),
+          title: apiCall.title,
+          id: apiCall.evidencioModelId
+        };
+      });
+    },
+    findModel: function findModel(evidencioModelId) {
+      for (var index = 0; index < this.models.length; index++) {
+        if (this.models[index].id == evidencioModelId) return index;
+      }
+      return -1;
     },
 
 
@@ -34569,11 +34633,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
      * @param {array||object} [removedVariables] are the variables to be removed
      */
     multiRemoveVariables: function multiRemoveVariables(removedVariables) {
-      var _this = this;
+      var _this2 = this;
 
       if (removedVariables.constructor == Array) {
         removedVariables.forEach(function (element) {
-          _this.multiRemoveSingleVariable(element);
+          _this2.multiRemoveSingleVariable(element);
         });
       } else {
         this.multiRemoveSingleVariable(removedVariables);
@@ -34601,11 +34665,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
      * @param {array||object} [selectedVariables] are the variables to be selected
      */
     multiSelectVariables: function multiSelectVariables(selectedVariables) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (selectedVariables.constructor == Array) {
         selectedVariables.forEach(function (element) {
-          _this2.multiSelectSingleVariable(element);
+          _this3.multiSelectSingleVariable(element);
         });
       } else {
         this.multiSelectSingleVariable(selectedVariables);
@@ -34700,7 +34764,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
+      multiSelectedVariables: [],
+      multiSelectedModels: []
     };
   }
 });
@@ -34710,7 +34775,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(267)
 /* template */
@@ -34800,7 +34865,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(269)
 /* template */
@@ -35109,7 +35174,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(273)
 /* template */
@@ -35192,6 +35257,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
   },
 
+  computed: {
+    childNodes: function childNodes() {
+      var options = JSON.parse(JSON.stringify(this.children));
+      options.map(function (child, index) {
+        child["ind"] = index;
+      });
+      return options;
+    }
+  },
+
   methods: {
     selectCard: function selectCard(index) {
       for (var ind = 0; ind < this.rules.length; ind++) {
@@ -35200,10 +35275,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     addRule: function addRule() {
       this.rules.push({
-        databaseId: -1,
         title: "Empty rule",
         description: "",
-        condition: "",
+        condition: "true",
         target: null,
         edgeId: -1,
         create: true,
@@ -35219,7 +35293,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(275)
 /* template */
@@ -35467,32 +35541,36 @@ var render = function() {
                 [_vm._v("Condition: ")]
               ),
               _vm._v(" "),
-              _c("textarea", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.rule.condition,
-                    expression: "rule.condition"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  id: "conditionRule_" + _vm.indexItem,
-                  cols: "30",
-                  rows: "3",
-                  disabled: !_vm.editing
-                },
-                domProps: { value: _vm.rule.condition },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+              _c(
+                "textarea",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.rule.condition,
+                      expression: "rule.condition"
                     }
-                    _vm.$set(_vm.rule, "condition", $event.target.value)
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    id: "conditionRule_" + _vm.indexItem,
+                    cols: "30",
+                    rows: "3",
+                    disabled: !_vm.editing
+                  },
+                  domProps: { value: _vm.rule.condition },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.rule, "condition", $event.target.value)
+                    }
                   }
-                }
-              }),
+                },
+                [_vm._v("true")]
+              ),
               _vm._v(" "),
               _c(
                 "small",
@@ -35685,7 +35763,7 @@ var render = function() {
         _vm._l(_vm.rules, function(rule, index) {
           return _c("rule-edit-item", {
             key: index,
-            attrs: { "index-item": index, rule: rule, options: _vm.children },
+            attrs: { "index-item": index, rule: rule, options: _vm.childNodes },
             on: {
               toggle: function($event) {
                 _vm.selectCard($event)
@@ -35712,11 +35790,11 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(279)
 /* template */
-var __vue_template__ = null
+var __vue_template__ = __webpack_require__(288)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -35760,32 +35838,683 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(145);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BarChart__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BarChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__BarChart__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PieChart__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PieChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__PieChart__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolarChart__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolarChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__PolarChart__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DoughnutChart__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DoughnutChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DoughnutChart__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        //     chartType: '',
-        label: 'Label'
+  components: {
+    BarChart: __WEBPACK_IMPORTED_MODULE_0__BarChart___default.a,
+    PieChart: __WEBPACK_IMPORTED_MODULE_1__PieChart___default.a,
+    PolarChart: __WEBPACK_IMPORTED_MODULE_2__PolarChart___default.a,
+    DoughnutChart: __WEBPACK_IMPORTED_MODULE_3__DoughnutChart___default.a
+  },
+  props: {
+    label10: {
+      type: String,
+      default: 'This is a label I want to create'
     },
-    extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Bar"],
-    mounted: function mounted() {
-        // Overwriting base render method with actual data.
-        this.renderChart({
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            datasets: [{
-                // label: 'A simple label',
-                label: 'Label',
-                backgroundColor: '#f87979',
-                data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-            }]
-        });
+    chartType: //this.$parent.chartTypeNumber
+    {
+      type: Number,
+      default: 0 //this.$parent.chartTypeNumber,
     }
+  }
 });
 
 /***/ }),
 /* 280 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(281)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/BarChart.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-36d6897c", Component.options)
+  } else {
+    hotAPI.reload("data-v-36d6897c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 281 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(11);
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    label: {
+      type: String,
+      default: ''
+    }
+  },
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Bar"],
+  mounted: function mounted() {
+    var self = this;
+    // Overwriting base render method with actual data.
+    this.renderChart({
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        // label: 'A simple label',
+        label: self.label,
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+      }]
+    });
+  }
+});
+
+/***/ }),
+/* 282 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(283)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PieChart.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e092c42e", Component.options)
+  } else {
+    hotAPI.reload("data-v-e092c42e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 283 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(11);
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    label: {
+      type: String
+    }
+  },
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Pie"],
+  mounted: function mounted() {
+    var self = this;
+    // Overwriting base render method with actual data.
+    this.renderChart({
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        // label: 'A simple label',
+        label: self.label,
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+      }]
+    });
+  }
+});
+
+/***/ }),
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(285)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PolarChart.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5f060cb7", Component.options)
+  } else {
+    hotAPI.reload("data-v-5f060cb7", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 285 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(11);
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    label: {
+      type: String
+    }
+  },
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["PolarArea"],
+  mounted: function mounted() {
+    var self = this;
+    // Overwriting base render method with actual data.
+    this.renderChart({
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        // label: 'A simple label',
+        label: self.label,
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+      }]
+    });
+  }
+});
+
+/***/ }),
+/* 286 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(287)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/DoughnutChart.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-78f75b56", Component.options)
+  } else {
+    hotAPI.reload("data-v-78f75b56", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 287 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(11);
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    label: {
+      type: String
+    }
+  },
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Doughnut"],
+  mounted: function mounted() {
+    var self = this;
+    // Overwriting base render method with actual data.
+    this.renderChart({
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        // label: 'A simple label',
+        label: self.label,
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+      }]
+    });
+  }
+});
+
+/***/ }),
+/* 288 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.chartType === 0
+    ? _c("div", [_c("bar-chart", { attrs: { label: _vm.label10 } })], 1)
+    : _vm.chartType === 1
+      ? _c("div", [_c("pie-chart", { attrs: { label: _vm.label10 } })], 1)
+      : _vm.chartType === 2
+        ? _c("div", [_c("polar-chart", { attrs: { label: _vm.label10 } })], 1)
+        : _c(
+            "div",
+            [_c("doughnut-chart", { attrs: { label: _vm.label10 } })],
+            1
+          )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-58105a8a", module.exports)
+  }
+}
+
+/***/ }),
+/* 289 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(290)
+/* template */
+var __vue_template__ = __webpack_require__(291)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/VariableMappingApi.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-094a0c7f", Component.options)
+  } else {
+    hotAPI.reload("data-v-094a0c7f", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 290 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    model: {
+      type: Object,
+      required: true
+    },
+    reachableVariables: {
+      type: Array,
+      required: true
+    },
+    usedVariables: {
+      type: Object,
+      required: true
+    }
+  },
+
+  computed: {
+    numberOfRows: function numberOfRows() {
+      var n = Math.ceil(this.model.variables.length / 2);
+      return Array.apply(null, {
+        length: n
+      }).map(Number.call, Number);
+    }
+    // ,
+    // choosableVariables: function() {
+    //   let vars = [];
+    //   let numberOfVariables = this.reachableVariables.length;
+    //   for (let index = 0; index < numberOfVariables; index++)
+    //     vars.push(this.usedVariables[this.reachableVariables[index]]);
+    //   return vars;
+    // }
+  },
+  data: function data() {
+    return {};
+  }
+});
+
+/***/ }),
+/* 291 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "card" }, [
+    _c("div", { staticClass: "card-body" }, [
+      _c("h5", { staticClass: "card-title" }, [
+        _vm._v(_vm._s(_vm.model.title))
+      ]),
+      _vm._v(" "),
+      _c(
+        "form",
+        _vm._l(_vm.numberOfRows, function(row) {
+          return _c("div", { key: row, staticClass: "form-row" }, [
+            _c("div", { staticClass: "form-group col-md-6" }, [
+              _c("label", { attrs: { for: "select_" + row * 2 } }, [
+                _vm._v(_vm._s(_vm.model.variables[row * 2].evidencioTitle))
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.model.variables[row * 2].localVariable,
+                      expression: "model.variables[row*2].localVariable"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { id: "select_" + row * 2 },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        _vm.model.variables[row * 2],
+                        "localVariable",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
+                    }
+                  }
+                },
+                _vm._l(_vm.reachableVariables, function(variable, index) {
+                  return _c(
+                    "option",
+                    { key: index, domProps: { value: variable } },
+                    [_vm._v(_vm._s(_vm.usedVariables[variable].title))]
+                  )
+                })
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group col-md-6" }, [
+              row * 2 + 1 < _vm.model.variables.length
+                ? _c("div", [
+                    _c("label", { attrs: { for: "select_" + (row * 2 + 1) } }, [
+                      _vm._v(
+                        _vm._s(_vm.model.variables[row * 2 + 1].evidencioTitle)
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value:
+                              _vm.model.variables[row * 2 + 1].localVariable,
+                            expression: "model.variables[row*2+1].localVariable"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { id: "select_" + (row * 2 + 1) },
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.model.variables[row * 2 + 1],
+                              "localVariable",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          }
+                        }
+                      },
+                      _vm._l(_vm.reachableVariables, function(variable, index) {
+                        return _c(
+                          "option",
+                          { key: index, domProps: { value: variable } },
+                          [_vm._v(_vm._s(_vm.usedVariables[variable].title))]
+                        )
+                      })
+                    )
+                  ])
+                : _vm._e()
+            ])
+          ])
+        })
+      )
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "card-body" },
+      [
+        _c("h6", { staticClass: "card-title" }, [_vm._v("Result variables")]),
+        _vm._v(" "),
+        _vm._l(_vm.model.results, function(result, index) {
+          return _c(
+            "span",
+            { key: index, staticClass: "badge badge-secondary mx-1" },
+            [_vm._v(_vm._s(result.name))]
+          )
+        })
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-094a0c7f", module.exports)
+  }
+}
+
+/***/ }),
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -36043,14 +36772,140 @@ var render = function() {
                                     1
                                   ),
                                   _vm._v(" "),
-                                  _c("div", {
-                                    staticClass: "tab-pane fade",
-                                    attrs: {
-                                      id: "nav-api",
-                                      role: "tabpanel",
-                                      "aria-labelledby": "nav-api-tab"
-                                    }
-                                  }),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "tab-pane fade",
+                                      attrs: {
+                                        id: "nav-api",
+                                        role: "tabpanel",
+                                        "aria-labelledby": "nav-api-tab"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        { staticClass: "container-fluid" },
+                                        [
+                                          _c(
+                                            "label",
+                                            {
+                                              attrs: {
+                                                for: "apiCallModelSelect"
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "Select model for calculation:"
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c("vue-multiselect", {
+                                            attrs: {
+                                              id: "apiCallModelSelect",
+                                              multiple: true,
+                                              "deselect-label":
+                                                "Cannot be done without a model",
+                                              "track-by": "id",
+                                              label: "title",
+                                              placeholder: "Select a model",
+                                              options:
+                                                _vm.modelChoiceRepresentation,
+                                              searchable: true,
+                                              "allow-empty": true,
+                                              "open-direction": "bottom",
+                                              "close-on-select": false
+                                            },
+                                            on: {
+                                              select: _vm.modelSelectAPI,
+                                              remove: _vm.modelRemoveApi
+                                            },
+                                            scopedSlots: _vm._u([
+                                              {
+                                                key: "tag",
+                                                fn: function(props) {
+                                                  return [
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "badge badge-info badge-larger"
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "span",
+                                                          {
+                                                            staticClass:
+                                                              "badge-maxwidth"
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              _vm._s(
+                                                                props.option
+                                                                  .title
+                                                              )
+                                                            )
+                                                          ]
+                                                        ),
+                                                        _vm._v(
+                                                          " \n                                                            "
+                                                        ),
+                                                        _c(
+                                                          "span",
+                                                          {
+                                                            staticClass:
+                                                              "custom__remove",
+                                                            on: {
+                                                              click: function(
+                                                                $event
+                                                              ) {
+                                                                props.remove(
+                                                                  props.option
+                                                                )
+                                                              }
+                                                            }
+                                                          },
+                                                          [_vm._v("❌")]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                }
+                                              }
+                                            ]),
+                                            model: {
+                                              value: _vm.multiSelectedModels,
+                                              callback: function($$v) {
+                                                _vm.multiSelectedModels = $$v
+                                              },
+                                              expression: "multiSelectedModels"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _vm._l(
+                                            _vm.localStep.apiCalls,
+                                            function(apiCall, index) {
+                                              return _c(
+                                                "variable-mapping-api",
+                                                {
+                                                  key: index,
+                                                  attrs: {
+                                                    model: apiCall,
+                                                    "used-variables":
+                                                      _vm.localUsedVariables,
+                                                    "reachable-variables":
+                                                      _vm.variablesUpToStep
+                                                  }
+                                                }
+                                              )
+                                            }
+                                          )
+                                        ],
+                                        2
+                                      )
+                                    ]
+                                  ),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -36091,7 +36946,107 @@ var render = function() {
                                 attrs: { id: "outputCategories" }
                               },
                               [
-                                _vm._m(3),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "col-sm-6",
+                                    attrs: { id: "outputTypeLeft" }
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      { attrs: { id: "chartLayoutDesigner" } },
+                                      [
+                                        _c("div", { staticClass: "dropdown" }, [
+                                          _c(
+                                            "a",
+                                            {
+                                              staticClass:
+                                                "btn btn-secondary dropdown-toggle",
+                                              attrs: {
+                                                href: "#",
+                                                role: "button",
+                                                id: "dropdownMenuLink",
+                                                "data-toggle": "dropdown",
+                                                "aria-haspopup": "true",
+                                                "aria-expanded": "false"
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                                    Pick a chart type\n                                                "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass: "dropdown-menu",
+                                              attrs: {
+                                                "aria-labelledby":
+                                                  "dropdownMenuLink"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "a",
+                                                {
+                                                  staticClass: "dropdown-item",
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.mutableChartTypeNumber = 0
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("Bar Chart")]
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "a",
+                                                {
+                                                  staticClass: "dropdown-item",
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.mutableChartTypeNumber = 1
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("Pie Chart")]
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "a",
+                                                {
+                                                  staticClass: "dropdown-item",
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.mutableChartTypeNumber = 2
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("Polar Area Chart")]
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "a",
+                                                {
+                                                  staticClass: "dropdown-item",
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.mutableChartTypeNumber = 3
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("Doughnut chart")]
+                                              )
+                                            ]
+                                          )
+                                        ])
+                                      ]
+                                    )
+                                  ]
+                                ),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -36099,7 +37054,13 @@ var render = function() {
                                     staticClass: "col-sm-6",
                                     attrs: { id: "outputTypeRight" }
                                   },
-                                  [_c("chart-preview")],
+                                  [
+                                    _c("chart-preview", {
+                                      attrs: {
+                                        "chart-type": _vm.mutableChartTypeNumber
+                                      }
+                                    })
+                                  ],
                                   1
                                 )
                               ]
@@ -36253,193 +37214,6 @@ var staticRenderFns = [
         )
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "col-sm-6", attrs: { id: "outputTypeLeft" } },
-      [
-        _c("div", { attrs: { id: "outputCategoriesAccordion" } }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "card-link",
-                  attrs: { "data-toggle": "collapse", href: "#collapseOne" }
-                },
-                [
-                  _vm._v(
-                    "\n                                                        Pie Chart\n                                                    "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse show",
-                attrs: {
-                  id: "collapseOne",
-                  "data-parent": "#outputCategoriesAccordion"
-                }
-              },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._v(
-                    "\n                                                        Lorem ipsum..\n                                                    "
-                  )
-                ])
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "collapsed card-link",
-                  attrs: { "data-toggle": "collapse", href: "#collapseTwo" }
-                },
-                [
-                  _vm._v(
-                    "\n                                                        Bar Plot\n                                                    "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse",
-                attrs: {
-                  id: "collapseTwo",
-                  "data-parent": "#outputCategoriesAccordion"
-                }
-              },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._v(
-                    "\n                                                        Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius\n                                                        referrentur. Ad ius semper iuvaret, albucius placerat mea ad.\n                                                        Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri\n                                                        viderer nominavi an, eu solet labores deserunt vim, te diceret\n                                                        adipiscing liberavisse qui. Eos in viris tacimates periculis,\n                                                        in pri consequat theophrastus, amet accusamus duo in. Aperiri\n                                                        verterem per et, augue congue cu vis. Ne inani erroribus cum.\n                                                        Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,\n                                                        vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno\n                                                        patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu\n                                                        vim, cu case laudem partem vix. Ei eos consul inimicus, ius id\n                                                        blandit deseruisse. Est purto idque ea, per cu eripuit saperet\n                                                        consetetur. Id vim error nihil noster, in illud oblique sententiae\n                                                        nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima\n                                                        aperiri legendos duo, ut rebum ullamcorper deterruisset his.\n                                                        Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.\n                                                        Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,\n                                                        alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae\n                                                        scribentur his cu. At eos vero noster. Ius vitae everti an, pro\n                                                        eu dicunt convenire splendide. Vim natum illum signiferumque\n                                                        et, numquam petentium per id. No duo adolescens vituperatoribus,\n                                                        luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant\n                                                        omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi\n                                                        conclusionemque in vel.\n                                                    "
-                  )
-                ])
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "collapsed card-link",
-                  attrs: { "data-toggle": "collapse", href: "#collapseThree" }
-                },
-                [
-                  _vm._v(
-                    "\n                                                        Doughnut chart\n                                                    "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse",
-                attrs: {
-                  id: "collapseThree",
-                  "data-parent": "#outputCategoriesAccordion"
-                }
-              },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._v(
-                    "\n                                                        Lorem ipsum..\n                                                    "
-                  )
-                ])
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "collapsed card-link",
-                  attrs: { "data-toggle": "collapse", href: "#collapseFour" }
-                },
-                [
-                  _vm._v(
-                    "\n                                                        Polar area Chart\n                                                    "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse",
-                attrs: {
-                  id: "collapseFour",
-                  "data-parent": "#outputCategoriesAccordion"
-                }
-              },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._v(
-                    "\n                                                        Lorem ipsum..\n                                                    "
-                  )
-                ])
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "collapsed card-link",
-                  attrs: { "data-toggle": "collapse", href: "#collapseFive" }
-                },
-                [
-                  _vm._v(
-                    "\n                                                        Smiley Faces\n                                                    "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse",
-                attrs: {
-                  id: "collapseFive",
-                  "data-parent": "#outputCategoriesAccordion"
-                }
-              },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._v(
-                    "\n                                                        Lorem ipsum..\n                                                    "
-                  )
-                ])
-              ]
-            )
-          ])
-        ])
-      ]
-    )
   }
 ]
 render._withStripped = true
@@ -36452,15 +37226,15 @@ if (false) {
 }
 
 /***/ }),
-/* 281 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(5)
+var normalizeComponent = __webpack_require__(4)
 /* script */
-var __vue_script__ = __webpack_require__(282)
+var __vue_script__ = __webpack_require__(294)
 /* template */
-var __vue_template__ = __webpack_require__(283)
+var __vue_template__ = __webpack_require__(295)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -36499,7 +37273,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 282 */
+/* 294 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36541,7 +37315,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 283 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
