@@ -11,17 +11,19 @@
     },
     "devDependencies": {
         "axios": "^0.18.0",
-        "bootstrap": "^4.0.0",
+        "bootstrap": "^4.1.1",
         "cross-env": "^5.1",
         "jquery": "^3.3.1",
         "laravel-mix": "^2.0",
-        "lodash": "^4.17.4",
-        "popper.js": "^1.14.1",
+        "lodash": "^4.17.10",
+        "popper.js": "^1.14.3",
         "vue": "^2.5.7"
     },
     "dependencies": {
-        "ajv": "^6.3.0",
-        "cytoscape": "^3.2.10",
+        "ajv": "^6.5.0",
+        "chart.js": "^2.7.2",
+        "chartjs": "^0.3.24",
+        "cytoscape": "^3.2.12",
         "cytoscape-canvas": "^3.0.1",
         "cytoscape-popper": "^1.0.1",
         "jquery-mousewheel": "^3.1.13",
@@ -29,7 +31,9 @@
         "nouislider": "^11.1.0",
         "npm": "^5.8.0",
         "octicons": "^7.2.0",
+        "vue-chartjs": "^3.3.1",
         "vue-multiselect": "^2.1.0",
-        "vue-select": "^2.4.0"
+        "vue-select": "^2.4.0",
+        "ya-simple-scrollbar": "^1.0.0"
     }
 }

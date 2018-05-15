@@ -1,18 +1,18 @@
-window.cytoscape = require('cytoscape');
-window.Vue = require('vue');
-Vue.component('vue-multiselect', window.VueMultiselect.default)
-window.cyCanvas = require('cytoscape-canvas');
+Vue.component("vueMultiselect", window.VueMultiselect.default);
+Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
+Vue.component("variableViewList", require("./components/VariableViewList.vue"));
+Vue.component("modalStep", require("./components/ModalStep.vue"));
+Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
 
 // ============================================================================================= //
 
-
-    /* Step-template:
-    {
+/* Step-template:
+    {-l
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
-        color: '#0099ff',
+        nodeId: -1,
+        colour: '#0099ff',
         type: 'input' or 'result',
         create: true,
         destroy: false,
@@ -23,163 +23,395 @@ window.cyCanvas = require('cytoscape-canvas');
     }
     */
 
-    /* Level-template:
+/* Level-template:
       {
         steps: []
       }
     */
-vObj = new Vue({
-  el: '#designerDiv',
+window.vObj = new Vue({
+  el: "#designerDiv",
   data: {
     modelLoaded: false,
-    modelID: 0,
     models: [],
+    modelIds: [],
     numVariables: 0,
     usedVariables: {},
-    timesUsedVariables: [],
+    timesUsedVariables: {},
 
+    title: "Default title",
+    description: "Default description",
+    languageCode: "EN",
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
     stepsChanged: false,
     levelsChanged: false,
+    connectionsChanged: false,
     nodeCounter: 0,
+    edgeCounter: 0,
 
-    deltaX: 150, 
+    deltaX: 150,
     deltaY: 250,
     addLevelButtons: [],
     addStepButtons: [],
 
-    modalNodeID: -1,    //ID in vue steps-array
-    modalDatabaseStepID: -1,         //ID in database
-    modalStepType: 'input',
-    modalSelectedColor: '#000000',
-    modalMultiselectSelectedVariables: [],
-    modalSelectedVariables: [],
-    modalVarCounter: -1,
-    modalUsedVariables: {},
-    modalEditVariableFlags: [],
-    modalRules: [],
-    modalEditRuleFlags: [],
-    modalApiCall: {
-      model: null,
-      variables: []
-    }    
+    selectedStepId: 0,
+    modalChanged: false,
+    confirmDialog: {
+      title: "",
+      message: "",
+      type: "",
+      data: 0,
+      approvalFunction: () => {}
+    },
+
+    workflowId: null,
+
+    debug: {}
   },
 
-  /**
-   * This function adds the first basic level and the first step.
-   */
-  mounted: function() {
-    this.addLevel(0);
-    this.addStep('Starter step', 'First step in the model shown to the patient. Change this step to fit your needs.', 0);
+  created() {
+    // Event called when the Cytoscape graph is ready for interaction.
+    Event.listen("graphReady", () => {
+      this.workflowId = this.urlParam("workflow");
+      if (this.workflowId === null) {
+        Event.fire("normalStart");
+      } else this.loadWorkflow(this.workflowId);
+    });
+    // Event called when a normal (empty) start should occur.
+    Event.listen("normalStart", () => {
+      this.addLevel(0);
+      this.addStep(
+        "Starter step",
+        "First step in the model shown to the patient. Change this step to fit your needs.",
+        0
+      );
+      this.panView();
+    });
+    // Event called when the user tries to load an Evidencio model
+    Event.listen("modelLoad", modelId => {
+      this.loadModelEvidencio(modelId);
+    });
+    // Event called when all the evidencio models for a workflow are (hopefully) loaded
+    Event.listen("loadWorkflowAllModelsLoaded", () => {
+      this.steps.forEach(localStep => {
+        localStep.rules.forEach(rule => {
+          rule.target.stepId = this.getStepIdFromDatabaseId(rule.target.id);
+          rule.create = true;
+          rule.destroy = false;
+          rule.change = false;
+          if (rule.target.stepId == -1) {
+            rule.destroy = true;
+          }
+        });
+        localStep.apiCalls.forEach(apiCall => {
+          apiCall.title = this.models[this.getLocalIdFromModelId(apiCall.evidencioModelId)].title;
+          apiCall.variables.forEach(variable => {
+            let localVariable = this.getVariableKeyFromDatabaseId(variable.fieldId);
+            variable.localVariable = localVariable;
+            variable.evidencioTitle = this.usedVariables[localVariable].title;
+          });
+        });
+      });
+      this.connectionsChanged = !this.connectionsChanged;
+    })
+    // Event called when the user tries to remove a step
+    Event.listen("confirmDialog", confirmInfo => {
+      this.prepareConfirmDialog(confirmInfo);
+    });
   },
 
   computed: {
-    allVariables: function() {
+    // Array of all variables, pass by reference rather than by value.
+    allVariables: function () {
       if (this.modelLoaded) {
         var allvars = [];
         this.models.forEach(element => {
           allvars = allvars.concat(element.variables);
         });
         return allvars;
-      } else
-        return [];
+      } else return [];
     },
 
-    possibleVariables: function() {
+    // Deep-copy of the models and variables, used for MultiSelect
+    possibleVariables: function () {
       if (this.modelLoaded) {
         deepCopy = JSON.parse(JSON.stringify(this.models));
-        let counter = 0;
-        deepCopy.forEach(element => {
-          element.variables.map((x, index)=>x['ind'] = counter + index);
-          counter += element.variables.length;
-        });
         return deepCopy;
       }
       return [];
     },
 
-    childrenNodes: function() {
-      if (this.modalNodeID == -1)
-        return [];
-      let levelIndex = this.getStepLevel(this.modalNodeID);
-      if (levelIndex == -1 || levelIndex == this.levels.length-1)
-        return [];
-      let options = []
-      this.levels[levelIndex+1].steps.forEach(element => {
+    // Array containing children of currently selected step
+    childrenNodes: function () {
+      if (this.selectedStepId == -1) return [];
+      let levelIndex = this.getStepLevel(this.selectedStepId);
+      if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
+      let options = [];
+      this.levels[levelIndex + 1].steps.forEach(element => {
         options.push({
-          stepID: element,
+          stepId: element,
           title: this.steps[element].title,
           id: this.steps[element].id,
-          color: this.steps[element].color
+          colour: this.steps[element].colour
         });
       });
       return options;
     },
 
-    modelChoiceRepresentation: function() {
-      let representation = [];
-      this.models.forEach(element => {
-        representation.push({
-          title: element.title,
-          id: element.id
-        });
+    variablesUpToStep: function () {
+      let vars = [], stepIds = this.getAncestorStepList(this.selectedStepId);
+      stepIds.forEach(stepId => {
+        vars = vars.concat(this.steps[stepId].variables);
       });
-      return representation;
-    },
-
-    editedVariables: function() {
-      let editedVars = [];
-      for (var key in this.usedVariables) {
-        if (this.usedVariables.hasOwnProperty(key)) {
-          editedVars.push(this.usedVariables[key]);
-        }
-      }
-      return editedVars;
+      return vars;
     }
-
   },
 
   methods: {
-    
     /**
-     * Load model from Evidencio API, model is identified using variable modelID
+     * Load model from Evidencio API, Model is prepared for later saving.
+     * @param {Number} modelId is the id of the Evidencio model that should be loaded.
+     * @return {Promise} Returns the promise object. 
      */
-    loadModelEvidencio() {
+    loadModelEvidencio(modelId) {
       var self = this;
-      if (!this.isModelLoaded(this.modelID)) {
-        $.ajax({
-          url: '/designer/fetch',
-          data: {
-            modelID: self.modelID
+      if (!this.isModelLoaded(modelId)) {
+        return $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
           },
-          success: function(result) {
-            self.models.push(JSON.parse(result));
+          url: "/designer/fetch",
+          type: "POST",
+          data: {
+            modelId: modelId
+          },
+          success: function (result) {
+            self.debug = result;
+            self.models.push(result);
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
+            self.models[self.models.length -1]["resultVars"] = [];
+            self.models[self.models.length - 1].variables.map(x => {
+              x["databaseId"] = -1;
+              if (x["type"] == "categorical") {
+                x.options.map(y => {
+                  y["databaseId"] = -1;
+                  y["friendlyTitle"] = y.title;
+                });
+              }
+            });
             self.modelLoaded = true;
-            self.timesUsedVariables = self.timesUsedVariables.concat(Array.apply(null, Array(newVars)).map(Number.prototype.valueOf,0));
+            self.modelIds.push(modelId);
+            self.recountVariableUses();
+            self.runDummyModelEvidencio(self.models.length - 1);
           }
         });
       }
-      this.modelID = 0;
+    },
+
+    /**
+     * Performs a dummy api call of an ALREADY LOADED Evidencio model
+     * @param {Number} localModelId : index of model in this.models array
+     */
+    runDummyModelEvidencio(localModelId) {
+      var self = this;
+      let values = {};
+      this.models[localModelId].variables.forEach(variable => {
+        if (variable.type == "continuous")
+          values[variable.id.toString()] = variable.options.min;
+        else
+          values[variable.id.toString()] = variable.options[0].title;
+      });
+
+      //The code below is a start to working with sequential models, but I ignore them for now
+      let steps = [];
+      if (this.models[localModelId].hasOwnProperty("steps")) {
+        return;
+        // this.models[localModelId].steps.forEach(step => {
+        //   steps.push({
+        //     id: step.id
+        //   })
+        // });
+      }
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/designer/runmodel",
+        type: "POST",
+        data: {
+          modelId: self.models[localModelId].id,
+          values: values
+        },
+        success: function (result) {
+          if (result.hasOwnProperty("result")) {
+            self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_0");
+          } else {
+            for (let index = 0; index < result.resultSet.length; index++) {
+              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index); 
+            }
+          }
+        }
+      });
+    },
+
+    /**
+     * Save Workflow in database, IDs of saved data are set after saving.
+     */
+    saveWorkflow() {
+      var self = this;
+      let url = "/designer/save";
+      if (this.workflowId != null) url = url + "/" + this.workflowId;
+      this.steps.map((x, index) => {
+          x["level"] = this.getStepLevel(index);
+        }),
+        $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
+          url: url,
+          type: "POST",
+          data: {
+            title: self.title,
+            description: self.description,
+            languageCode: self.languageCode,
+            steps: self.steps,
+            variables: self.usedVariables,
+            modelIds: self.modelIds
+          },
+          success: function (result) {
+            self.workflowId = Number(result.workflowId);
+            var pathArray = location.href.split("/");
+            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
+            let numberOfSteps = self.steps.length;
+            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+              self.steps[stepIndex].id = result.stepIds[stepIndex];
+              cy.getElementById(self.steps[stepIndex].nodeId).style({
+                label: self.steps[stepIndex].id
+              });
+              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+                let apiCall = result.resultIds[stepIndex][apiIndex];
+                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];                   
+                }
+              }
+            }
+            let varIds = result.variableIds;
+            for (var key in varIds) {
+              if (varIds.hasOwnProperty(key)) {
+                self.usedVariables[key].databaseId = Number(varIds[key]);
+              }
+            }
+            let optIds = result.optionIds;
+            for (var key in optIds) {
+              if (optIds.hasOwnProperty(key)) {
+                optIds[key].forEach((element, index) => {
+                  self.usedVariables[key].options[index].databaseId = Number(element);
+                });
+              }
+            }
+          }
+        });
+    },
+
+    /**
+     * Load a Workflow from the database, as of now does nothing with the workflow
+     * @param {Number} workflowId 
+     */
+    loadWorkflow(workflowId) {
+      var self = this;
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/designer/load/" + workflowId,
+        type: "POST",
+        data: {},
+        success: function (result) {
+          console.log("Workflow loaded: " + result.success);
+          if (result.success) {
+            let currentSteps = self.stepsChanged;
+            let currentLevels = self.levelsChanged;
+            self.title = result.title;
+            self.description = result.description;
+            self.languageCode = result.languageCode;
+            result.steps.forEach((element, index) => {
+              while (self.levels.length <= element.level)
+                self.addLevel(self.levels.length);
+              console.log("Index: " + index + ", #steps: " + self.steps.length);
+              self.addStep(element.title, element.description, element.level);
+              let localStep = self.steps[index];
+              localStep.id = element.id;
+              localStep.colour = element.colour;
+              localStep.variables = element.variables;
+              localStep.varCounter = element.variables.length;
+              localStep.rules = element.rules;
+              localStep.apiCalls = element.apiCalls;
+            });
+            if (result.usedVariables.constructor !== Array)
+              self.usedVariables = result.usedVariables;
+            self.recountVariableUses();
+            self.stepsChanged = !currentSteps;
+            self.levelsChanged = !currentLevels;
+            self.LoadWorkflowLoadModels(result.evidencioModels);
+            self.panView();
+          } else {
+            self.workflowId = null;
+            Event.fire("normalStart");
+          }
+        }
+      });
+    },
+
+    LoadWorkflowLoadModels(models) {
+      $.when.apply($, models.map(element => {
+        return this.loadModelEvidencio(element);
+      })).then(function (x) {
+        Event.fire("loadWorkflowAllModelsLoaded");
+      }, function (e) {
+        Console.log("At least one of the requests failed.");
+      });
+    },
+
+    /**
+     * Get the value of a URL parameter.
+     * @param {String} name of the url parameter to get the value from
+     * @return {string} The value that was found, null if none.
+     */
+    urlParam(name) {
+      var results = new RegExp("[?&]" + name + "=([^]*)").exec(window.location.href);
+      if (results == null) {
+        return null;
+      } else {
+        return results[1] || 0;
+      }
     },
 
     /**
      * Checks if a model is already loaded, to ensure models aren't loaded twice.
-     * @param {integer} [modelID] of the model to be checked.
+     * @param {Number} modelID of the model to be checked.
+     * @return {Boolean} true if found, false if not
      */
-    isModelLoaded(modelID) {
-      this.models.forEach(element => {
-        if (element.id == modelID)
-          return true;
-      });
-      return false;
+    isModelLoaded(modelId) {
+      return this.getLocalIdFromModelId(modelId) != -1;
     },
+
+    /**
+     * Returns the local index of an Evidencio model, -1 if it has not been loaded.
+     * @param {Number} modelId 
+     */
+    getLocalIdFromModelId(modelId) {
+      for (let index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
+
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
-     * @param {integer} [index] of position level should be added
+     * @param {Number} index of position level should be added
      */
     addLevel(index) {
       this.levels.splice(index, 0, {
@@ -189,37 +421,66 @@ vObj = new Vue({
     },
 
     /**
+     * Adds a level normally if no rules are broken due to the addition, otherwise asks for confirmation.
+     * @param {Number} levelIndex is the location at which to add the level
+     */
+    addLevelConditional(levelIndex) {
+      if (this.levelHasRule(levelIndex-1)) {
+        this.prepareConfirmDialog({
+          title: "Add a level",
+          message: "Adding a level at this height will remove some exising rules. Are you sure you wish to continue?\r\n Only the direct children of steps can be targets for a rule.",
+          type: "addLevelRuleDeletion",
+          data: levelIndex
+        });
+        this.callConfirmDialog();
+      } else {
+        this.addLevel(levelIndex);
+      }
+    },
+
+    /**
+     * Returns true if any of the steps in a level has a rule, false otherwise.
+     * @param {Number} levelIndex of level to be checked
+     */
+    levelHasRule(levelIndex) {
+      for (let indexStep = 0; indexStep < this.levels[levelIndex].steps.length; indexStep++) {
+        if (this.steps[this.levels[levelIndex].steps[indexStep]].rules.length > 0)
+          return true;
+      }
+      return false;
+    },
+
+    /**
      * Add step to workflow
-     * @param {string} [title] of step
-     * @param {string} [description] of step
+     * @param {String} title of step
+     * @param {String} description of step
+     * @param {Number} level at which to add the step (it should exist!)
      */
     addStep(title, description, level) {
       this.steps.push({
         id: -1,
         title: title,
         description: description,
-        nodeID: -1,
-        color: '#0099ff',
-        type: 'input',
+        nodeId: -1,
+        colour: "#0099ff",
+        type: "input",
         variables: [],
         varCounter: 0,
         rules: [],
-        apiCall: {
-          model: null,
-          variables: []
-        },
+        apiCalls: [],
         create: true,
-        destroy: false
+        destroy: false,
+        chartTypeNumber: 0
       });
       this.stepsChanged = !this.stepsChanged;
-      this.levels[level].steps.push(this.steps.length-1);
+      this.levels[level].steps.push(this.steps.length - 1);
       if (this.levels[level].steps.length > this.maxStepsPerLevel)
         this.maxStepsPerLevel = this.levels[level].steps.length;
     },
 
     /**
      * Removes step (and node) given by step-id id.
-     * @param {integer} [id] of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
+     * @param {Number} id of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
      */
     removeStep(id) {
       this.steps[id].destroy = true;
@@ -234,15 +495,25 @@ vObj = new Vue({
     },
 
     /**
+     * Pans the view to (approximately) the location of the nodes.
+     */
+    panView() {
+      cy.pan({
+        x: cy.width()/2,
+        y: cy.height()/4
+      });
+    },
+
+    /**
      * Positions the AddLevelButtons.
      */
     positionAddLevelButtons() {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
-        const element = this.addLevelButtons[index].nodeID;
+        const element = this.addLevelButtons[index].nodeId;
         cy.getElementById(element).position({
-          x: (this.maxStepsPerLevel/2 + 1) * this.deltaX,
-          y: (index+0.5) * this.deltaY
-        })
+          x: (this.maxStepsPerLevel / 2 + 1) * this.deltaX,
+          y: (index + 0.5) * this.deltaY
+        });
       }
     },
 
@@ -252,11 +523,11 @@ vObj = new Vue({
     positionAddStepButtons() {
       if (this.levels.length > 0) {
         for (let index = 0; index < this.addStepButtons.length; index++) {
-          const element = this.addStepButtons[index].nodeID;
+          const element = this.addStepButtons[index].nodeId;
           cy.getElementById(element).position({
-            x: (this.levels[index+1].steps.length/2 + (this.levels[index+1].steps.length>0?0.5:0)) * this.deltaX,
-            y: (index+1) * this.deltaY
-          })
+            x: (this.levels[index + 1].steps.length / 2 + (this.levels[index + 1].steps.length > 0 ? 0.5 : 0)) * this.deltaX,
+            y: (index + 1) * this.deltaY
+          });
         }
       }
     },
@@ -267,26 +538,25 @@ vObj = new Vue({
     positionSteps() {
       for (let indexLevel = 0; indexLevel < this.levels.length; indexLevel++) {
         const elementLevel = this.levels[indexLevel].steps;
-        let left = (-(elementLevel.length-1) * this.deltaX)/2;
+        let left = -(elementLevel.length - 1) * this.deltaX / 2;
         for (let indexStep = 0; indexStep < elementLevel.length; indexStep++) {
-          const elementStep = this.steps[elementLevel[indexStep]].nodeID;
+          const elementStep = this.steps[elementLevel[indexStep]].nodeId;
           cy.getElementById(elementStep).position({
             x: left + indexStep * this.deltaX,
             y: indexLevel * this.deltaY
-          })
-          
+          });
         }
       }
-
     },
 
     /**
      * Returns the index of the AddLevelButton-node referred to by id.
-     * @param {string} [id] of the node for which the index has to be found 
+     * @param {String} id of the node for which the index has to be found
+     * @return {Number} index in button in array
      */
     getAddLevelButtonIndex(id) {
       for (let index = 0; index < this.addLevelButtons.length; index++) {
-        const element = this.addLevelButtons[index].nodeID;
+        const element = this.addLevelButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -296,11 +566,12 @@ vObj = new Vue({
 
     /**
      * Returns the index of the AddStepButton-node based on its id.
-     * @param {string} [id] of the AddStepButton-node that the index is wanted of.
+     * @param {String} id of the AddStepButton-node that the index is wanted of.
+     * @return {Number} index of button in array
      */
     getAddStepButtonIndex(id) {
       for (let index = 0; index < this.addStepButtons.length; index++) {
-        const element = this.addStepButtons[index].nodeID;
+        const element = this.addStepButtons[index].nodeId;
         if (element == id) {
           return index;
         }
@@ -309,446 +580,337 @@ vObj = new Vue({
     },
 
     /**
-     * Opens an option-modal for the node that is clicked on.
-     * @param {object} [nodeRef] is the reference to the node that is clicked on.
+     * Prepares the confirmation dialog for use.
+     * @param {Object} confirmInfo contains the title, message, data and type of the dialog
      */
-    prepareModal(nodeRef) {
-      this.modalNodeID = nodeRef.scratch('_nodeID');
-      let step = this.steps[this.modalNodeID];
-      this.modalDatabaseStepID = step.id;
-      this.modalStepType = step.type;
-      this.modalSelectedColor = step.color;
-      this.modalSelectedVariables = step.variables.slice();
-      this.modalVarCounter = step.varCounter;
-      this.modalUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
-      this.modalRules = JSON.parse(JSON.stringify(step.rules));
-      this.modalEditRuleFlags = new Array(this.modalRules.length).fill(false);
-      this.modalApiCall = JSON.parse(JSON.stringify(step.apiCall));
-      this.setSelectedVariables();
-    },
-
-    /**
-     * Adds the selected variables to the selectedVariable part of the multiselect.
-     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.
-     */
-    setSelectedVariables() {
-      this.modalMultiselectSelectedVariables = [];
-      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        let origID = this.modalUsedVariables[this.modalSelectedVariables[index]].id;
-        findVariable:
-        for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
-          const element = this.possibleVariables[indexOfMod];
-          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
-            if (element.variables[indexInMod].id == origID) {
-              this.modalMultiselectSelectedVariables.push(element.variables[indexInMod]);
-              break findVariable;
-            }
+    prepareConfirmDialog(confirmInfo) {
+      this.confirmDialog.title = confirmInfo.title;
+      this.confirmDialog.message = confirmInfo.message;
+      this.confirmDialog.data = confirmInfo.data;
+      switch (confirmInfo.type) {
+        case "removeStep":
+          this.confirmDialog.approvalFunction = () => {
+            this.removeStep(this.confirmDialog.data);
           }
-        }
+          break;
+        case "addLevelRuleDeletion":
+          this.confirmDialog.approvalFunction = () => {
+            let stepIds = this.levels[this.confirmDialog.data-1].steps;
+            for (let indexStep = 0; indexStep < stepIds.length; indexStep++) {
+              this.steps[stepIds[indexStep]].rules.map(x => {
+                x.destroy = true;
+              });              
+            }
+            this.connectionsChanged = !this.connectionsChanged;
+            this.addLevel(this.confirmDialog.data);
+          }
+          break;
       }
     },
 
     /**
-     * Returns the text shown when more than the limit of options are selected.
-     * @param {integer} [count] is the number of not-shown options.
+     * Calls the confirmation dialog.
      */
-    multiselectVariablesText(count) {
-      return ' and ' + count + ' other variable(s)';
+    callConfirmDialog() {
+      $("#confirmModal").modal();
+    },
+
+    /**
+     * Opens an option-modal for the node that is clicked on.
+     * @param {Object} nodeRef is the reference to the node that is clicked on.
+     */
+    prepareModal(nodeId) {
+      this.selectedStepId = this.getStepIdFromNode(nodeId);
+      this.modalChanged = !this.modalChanged;
     },
 
     /**
      * Saves the changes made to a step (variables added, etc.)
+     * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
-    saveChanges() {
-      let step = this.steps[this.modalNodeID];
+    applyChanges(changedStep) {
+      changedStep.step.rules.map(x => { if (x.create == false) x.change = true; });
+      this.steps[this.selectedStepId] = changedStep.step;
+      this.usedVariables = changedStep.usedVars;
+      this.connectionsChanged = !this.connectionsChanged;
       // Set new backgroundcolor
-      cy.getElementById(step.nodeID).style({
-        'background-color': this.modalSelectedColor
+      cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
+        "background-color": changedStep.step.colour
       });
-      step.color = this.modalSelectedColor; 
-      // Reset flags
-      for (let index = 0; index < this.modalEditVariableFlags.length; index++) 
-        this.modalEditVariableFlags[index] = false;
-      // Set (new) step-type
-      step.type = this.modalStepType;
-      // Set (new) variables
-      step.variables = this.modalSelectedVariables.slice();
-      step.varCounter = this.modalVarCounter;
-      this.usedVariables = JSON.parse(JSON.stringify(this.modalUsedVariables));
-      // Set (new) rules
-      step.rules = JSON.parse(JSON.stringify(this.modalRules));
-      // Set (new) API-call
-      step.apiCall = JSON.parse(JSON.stringify(this.modalApiCall));
-      // Recount variable uses
-      this.modalSelectedVariables = [];
-      this.recountVariableUses();      
+      this.recountVariableUses();
     },
 
     /**
-     * Returns a check-image if the image is set to be edited, pencil-image if not.
-     * @param {integer} [index] of the variable
+     * Returns the stepId based on the nodeId
+     * @param {String} nodeId Node-Id of the node
      */
-    getImage(indicator) {
-      if (indicator)
-        return '/images/check.svg';
-      else
-        return '/images/pencil.svg';
+    getStepIdFromNode(nodeId) {
+      for (let index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].nodeId == nodeId) return index;
+      }
+      return -1;
     },
 
     /**
-     * Allow for titel/description/etc. of variable to be changed. Mainly used to make it less likely to happen accidentally.
-     * @param {index} index 
+     * Returns the stepId based on the databaseId
+     * @param {Number} databaseId 
      */
-    editVariable(index) {
-      Vue.set(this.modalEditVariableFlags, index, !this.modalEditVariableFlags[index]);
+    getStepIdFromDatabaseId(databaseId) {
+      for (let index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].id == databaseId) return index;
+      }
+      return -1;
     },
 
     /**
-     * Adds a rule to the list of rules
+     * Returns the key of a variable from the usedVariable object by its databaseId
+     * @param {Number} databaseId 
      */
-    addRule() {
-      this.modalRules.push({
-        name: 'Go to target',
-        rule: [],
-        target: -1
-      });
-      this.modalEditRuleFlags.push(false);
-    },
-
-    /**
-     * Removes the rule with the given index from the list
-     * @param {integer} [ruleIndex] of rule to be removed
-     */
-    removeRule(ruleIndex) {
-      this.modalRules.splice(ruleIndex, 1);
-      this.modalEditRuleFlags.splice(ruleIndex, 1);
-    },
-
-    /**
-     * Allows for a rule to be edited.
-     * @param {integer} [index] of the rule to be edited
-     */
-    editRule(index) {
-      Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
+    getVariableKeyFromDatabaseId(databaseId) {
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          if (this.usedVariables[key].databaseId == databaseId) return key;
+        }
+      }
+      return null;
     },
 
     /**
      * Returns the level (height in graph) of a step
-     * @param {integer} [stepIndex] of step
+     * @param {Number} stepIndex of step
+     * @return {Number} the level at which a step is.
      */
     getStepLevel(stepIndex) {
       for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
         const level = this.levels[levelIndex].steps;
         for (let index = 0; index < level.length; index++) {
-          if (stepIndex == level[index])
-            return levelIndex;          
+          if (stepIndex == level[index]) return levelIndex;
         }
       }
       return -1;
     },
 
     /**
-     * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-     * @param {integer} [modelID] is the Evidencio model ID.
+     * Removes the step from the level, if it exists.
+     * @param {Number} stepIndex of step
      */
-    getModelIndex(modelID) {
-      for (let index = 0; index < this.models.length; index++) {
-        if(this.models[index].id == modelID)
-          return index;
+    removeStepFromLevel(stepIndex) {
+      for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        const level = this.levels[levelIndex].steps;
+        for (let index = level.length - 1; index >= 0; index--) {
+          if (stepIndex == level[index]) {
+            this.levels[levelIndex].steps.splice(index, 1);
+          }
+        }
+        for (let index = level.length; index >= 0; index--) {
+          if (level[index] > stepIndex) this.levels[levelIndex].steps[index]--;
+        }
       }
-      return -1;      
+      this.calculateMaxStepsPerLevel();
     },
 
     /**
-     * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-     * @param {object} [selectedModel] is the newly selected model
+     * Removes rules based on the target step
+     * @param {Number} stepId of the target step of an edge/rule
      */
-    apiCallModelChangeAction(selectedModel) {
-      let modID = this.getModelIndex(selectedModel.id);
-      if (modID == -1) {
-        this.modalApiCall.variables = [];
-        return;
+    removeRulesByTarget(stepId) {
+      let levelIndex = this.getStepLevel(stepId) - 1;
+      if (levelIndex >= 0) {
+        this.levels[levelIndex].steps.forEach(stepIndex => {
+          let currentRules = this.steps[levelIndex].rules;
+          for (let ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
+            if (currentRules[ruleIndex].target.stepId == stepId)
+              currentRules.splice(ruleIndex, 1);        
+          }
+        });
       }
-      let modVars = [];
-      this.models[modID].variables.forEach(element => {
-        modVars.push({
-          originalTitle: element.title,
-          originalID: element.id,
-          targetID: null
-        });  
+    },
+
+    /**
+     * Finds the ancestors of a step based on the rules (excludes itself)
+     * @param {Number} stepId of the child to find ancestors of
+     */
+    getAncestorStepList(stepId) {
+      let list = [];
+      let previousLevel = this.getStepLevel(stepId)-1;
+      if (previousLevel < 0)
+        return list;
+      this.levels[previousLevel].steps.forEach(stId => {
+        this.steps[stId].rules.forEach(rule => {
+          if (rule.target.stepId == stepId)
+            list = list.concat(this.getAncestorStepListHelper(stId));
+        });
       });
-      this.modalApiCall.variables = modVars;
+      return this.arrayUnique(list);
+    },
+
+    getAncestorStepListHelper(stepId) {
+      let list = [stepId];
+      let previousLevel = this.getStepLevel(stepId)-1;
+      if (previousLevel < 0)
+        return list;
+      this.levels[previousLevel].steps.forEach(stId => {
+        this.steps[stId].rules.forEach(rule => {
+          if (rule.target.stepId == stepId)
+            list = list.concat(this.getAncestorStepListHelper(stId));
+        });
+      });
+      return list;
+    },
+    
+    /**
+     * Removes duplicate items from an array.
+     * @param {Array} array 
+     */
+    arrayUnique(array) {
+      var a = array.concat();
+      for(var i=0; i<a.length; ++i) {
+          for(var j=i+1; j<a.length; ++j) {
+              if(a[i] === a[j])
+                  a.splice(j--, 1);
+          }
+      }
+      return a;
+    },
+
+    /**
+     * Calculates the maximum number of steps per level.
+     */
+    calculateMaxStepsPerLevel() {
+      this.maxStepsPerLevel = 0;
+      this.levels.forEach(element => {
+        if (element.steps.length > this.maxStepsPerLevel)
+          this.maxStepsPerLevel = element.steps.length;
+      });
     },
 
     /**
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses() {
-      this.timesUsedVariables = Array.apply(null, Array(this.numVariables)).map(Number.prototype.valueOf,0);
-      this.modalSelectedVariables.forEach(element => {
-        this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;
+      this.timesUsedVariables = {};
+      this.models.forEach(element => {
+        element.variables.forEach(variable => {
+          this.timesUsedVariables[variable.id.toString()] = 0;
+        });
       });
+
       for (let indexStep = 0; indexStep < this.steps.length; indexStep++) {
         const elementStep = this.steps[indexStep];
-        if (elementStep.type == 'input') {
+        if (elementStep.type == "input") {
           for (let indexVariable = 0; indexVariable < elementStep.variables.length; indexVariable++) {
             const element = elementStep.variables[indexVariable];
-            this.timesUsedVariables[this.modalUsedVariables[element].ind] += 1;             
+            this.timesUsedVariables[this.usedVariables[element].id.toString()] += 1;
           }
         }
       }
     },
 
     /**
-     * Removes the variables from the step.
-     * @param {array||object} [removedVariables] are the variables to be removed (can be either an array of objects or a single object)
+     * Changes the details of the currently loaded workflow.
+     * @param {Object} newDetails contains an object with the new details (fiels title, description)
      */
-    modalRemoveVariables(removedVariables) {
-      if (removedVariables.constructor == Array) {
-        removedVariables.forEach(element => {
-          this.modalRemoveSingleVariable(element);
-        });
-      } else {
-        this.modalRemoveSingleVariable(removedVariables);
-      }
-    },
-
-    /**
-     * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
-     */
-    modalRemoveSingleVariable(removedVariable) {
-      for (let index = 0; index < this.modalSelectedVariables.length; index++) {
-        if (this.modalUsedVariables[this.modalSelectedVariables[index]].id == removedVariable.id) {
-          delete this.modalUsedVariables[this.modalSelectedVariables[index]];
-          this.modalSelectedVariables.splice(index, 1);
-          this.modalEditVariableFlags.splice(index, 1);
-          return;
-        }
-      }
-    },
-
-    /**
-     * Selects the variables from the step.
-     * @param {array||object} [selectedVariables] are the variables to be selected (can be either an array of objects or a single object)
-     */
-    modalSelectVariables(selectedVariables) {
-      if (selectedVariables.constructor == Array) {
-        selectedVariables.forEach(element => {
-          this.modalSelectSingleVariable(element);
-        });
-      } else {
-        this.modalSelectSingleVariable(selectedVariables);
-      }
-    },
-    
-    /**
-     * Helper function for modalSelectVariables(selectedVariables), selects a single variable
-     * @param {object} [selectedVariable] the variable-object to be selected
-     */
-    modalSelectSingleVariable(selectedVariable) {
-      let varName = 'var' + this.modalNodeID + '_' + this.modalVarCounter++;
-      this.modalSelectedVariables.push(varName);
-      this.modalUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
-      this.modalEditVariableFlags.push(false);
+    changeWorkflowDetails(newDetails) {
+      this.title = newDetails.title;
+      this.description = newDetails.description;
     }
-
   },
 
   watch: {
     /**
      * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
      */
-    stepsChanged: function() {
-      for (let index = 0; index < this.steps.length; index++) {
-        if (this.steps[index].create) {
-          this.steps[index].nodeID = cy.add({
-            classes: 'node',
+    stepsChanged: function () {
+      for (let index = this.steps.length - 1; index >= 0; index--) {
+        let currentStep = this.steps[index];
+        if (currentStep.create) {
+          currentStep.nodeId = cy.add({
+            classes: "node",
             data: {
-              id: 'node_' + this.nodeCounter
-            },
-            scratch: {
-              '_nodeID': index
+              id: "node_" + this.nodeCounter
             },
             style: {
-              'background-color': this.steps[index].color
+              "background-color": currentStep.colour
             }
           }).id();
-          this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeID).style({
-            'label': this.steps[index].id
-          })
+          currentStep.create = false;
+          cy.getElementById(currentStep.nodeId).style({
+            label: currentStep.id
+          });
           this.nodeCounter++;
         }
-        if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeID);
+        if (currentStep.destroy) {
+          cy.remove(cy.getElementById(currentStep.nodeId));
+          this.removeRulesByTarget(index);
+          this.removeStepFromLevel(index);
           this.steps.splice(index, 1);
         }
       }
+      this.positionSteps();
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
-      this.positionSteps();
     },
 
     /**
      * levelsChanged is used to indicate if a level has been added or removed, this function does the actual work
      */
-    levelsChanged: function() {
+    levelsChanged: function () {
       while (this.levels.length > this.addLevelButtons.length) {
         if (this.addLevelButtons.length > 0) {
           this.addStepButtons.push({
-            nodeID: cy.add({
-              classes: 'buttonAddStep'
+            nodeId: cy.add({
+              classes: "buttonAddStep"
             }).id()
           });
         }
         this.addLevelButtons.push({
-          nodeID: cy.add({
-            classes: 'buttonAddLevel'
+          nodeId: cy.add({
+            classes: "buttonAddLevel"
           }).id()
         });
       }
       while (this.levels.length < this.addLevelButtons.length) {
-        cy.remove(this.addLevelButtons.pop().nodeID);
-        cy.remove(this.addStepButtons.pop().nodeID);
+        cy.remove(this.addLevelButtons.pop().nodeId);
+        cy.remove(this.addStepButtons.pop().nodeId);
       }
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
     },
-    
-    selectedVariables: function() {
+
+    connectionsChanged: function () {
+      this.steps.forEach((element, index) => {
+        for (let index = element.rules.length - 1; index >= 0; index--) {
+          let currentRule = element.rules[index];
+          if (currentRule.create) {
+            let source = element.nodeId;
+            let target = this.steps[currentRule.target.stepId].nodeId;
+            currentRule.edgeId = cy.add({
+              classes: "edge",
+              data: {
+                id: "edge_" + this.edgeCounter,
+                source: source,
+                target: target
+              }
+            }).id();
+            currentRule.create = false;
+            this.edgeCounter++;
+          } else if (currentRule.change) {
+            let target = this.steps[currentRule.target.stepId].nodeId;
+            cy.getElementById(currentRule.edgeId).move({
+              target: target
+            });
+            currentRule.change = false;
+          } else if (currentRule.destroy) {
+            cy.remove(cy.getElementById(currentRule.edgeId));
+            element.rules.splice(index, 1);
+          }
+        }
+      });
+    },
+
+    selectedVariables: function () {
       this.recountVariableUses();
     }
-
   }
-    
-});
-
-// ============================================================================================= //
-
-var cy = cytoscape({
-  container: $('#graph'),
-  style: [ // the stylesheet for the graph
-    {
-      selector: '.node',
-      style: {
-        'label': 'data(id)',
-        'shape': 'roundrectangle',
-        'width': '100px',
-        'height': '100px',
-        'background-color': '#0099ff',
-        'border-color': ' #000000',
-        'border-width': '4px',
-        'text-halign': 'center',
-        'text-valign': 'center',
-        'color': '#ffffff',
-        'font-size': '24px',
-        'text-outline-color': '#000000',
-        'text-outline-width': '1px'
-      }
-    },
-
-    {
-      selector: '.edge',
-      style: {
-        'width': 3,
-        'line-color': '#ccc',
-        'target-arrow-color': '#ccc',
-        'target-arrow-shape': 'triangle'
-      }
-    },
-
-    {
-      selector: '.buttonAddLevel',
-      style: {
-        'label': '',
-        'width': '75px',
-        'height': '75px',
-        'background-color': '#46c637',
-        'border-color': '#1f6b17',
-        'border-width': '4px',
-        'background-image': '/images/plus.svg',
-        'background-width': '50%',
-        'background-height': '50%'
-      }
-    },
-
-    {
-      selector: '.buttonAddStep',
-      style: {
-        'label': '',
-        'width': '75px',
-        'height': '75px',
-        'background-color': '#00a5ff',
-        'border-color': '#0037ff',
-        'border-width': '4px',
-        'background-image': '/images/plus.svg',
-        'background-width': '50%',
-        'background-height': '50%'
-      }
-    }
-
-  ],
-
-  autoungrabify: true,
-  autounselectify: true,
-
-  layout: {
-    name: 'preset'
-  }
-})
-
-cy.on('tap', 'node', function(evt) {
-  let ref = evt.target;
-  if (ref.hasClass('buttonAddLevel')) {
-    let nID = vObj.getAddLevelButtonIndex(ref.id());
-    if (nID != -1)
-      vObj.addLevel(nID+1);
-  } else if (ref.hasClass('buttonAddStep')) {
-    let nID = vObj.getAddStepButtonIndex(ref.id());
-    if (nID != -1)
-      vObj.addStep('Default title', 'Default description', nID + 1);
-  } else if (ref.hasClass('node')) {
-    vObj.prepareModal(ref);
-    $('#modalStep').modal();
-  }
-});
-
-
-
-// ============================================================================================= //
-
-//Canvas of background
-const bottomLayer = cy.cyCanvas({
-  zIndex: -1
-});
-const canvas = bottomLayer.getCanvas();
-const ctx = canvas.getContext("2d");
-cy.on("render cyCanvas.resize", function(evt) {
-  bottomLayer.resetTransform(ctx);
-  bottomLayer.clear(ctx);
-  bottomLayer.setTransform(ctx);
-  ctx.save();
-  for (var i = 0; i < vObj.levels.length; i++){
-    if (i%2 == 0)
-      ctx.fillStyle = "#e3e7ed";
-    else
-      ctx.fillStyle = "#c6cad1";
-    let w = (vObj.maxStepsPerLevel/2)*vObj.deltaX;
-    ctx.fillRect(-w-500, i*vObj.deltaY-(vObj.deltaY/2), 2*w+1000, vObj.deltaY);
-  }
-  ctx.restore();
-});
-
-// ============================================================================================= //
-
-window.onload = function() {
-  vObj.fitView();
-}
-
-// ============================================================================================= //
-
-$('#colorPalette').colorPalette().on('selectColor', function(evt) {
-  vObj.modalSelectedColor = evt.color;
 });

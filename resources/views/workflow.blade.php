@@ -3,15 +3,9 @@ The page will create a list of the variables of the step, either a slider for co
 or radio buttons for categorical values.--}}
 
 <?php
-/**
- * post request to Evidencio model API
- * returns array of all the parameters of the evidence models that was clicked on in the search page.
- */
-use App\EvidencioAPI;
-if (!empty($_GET['model'])) {
-  $decodeRes = EvidencioAPI::getModel($_GET['model']);
 
-}
+ use App\EvidencioAPI;
+ use App\Workflow;
 ?>
 
 
@@ -19,19 +13,21 @@ if (!empty($_GET['model'])) {
 
 @section('content')
 {{--makes inputs for all the required variables--}}
-<?php if (!empty($decodeRes)): ?>
+
+@if (!empty($result))
 <div class="container">
-  <h3><?php echo $decodeRes['title'] ?></h3>
+  <h3><?php echo $result['title'] ?></h3>
 </div>
 <div class="container">
+  <h5><?php echo $result['steps'][0]['title'] ?></h5>
   <form method="POST" action="/graph">
     {{ csrf_field() }}
-    <input type="hidden" name="model" value="<?php echo $_GET['model'] ?>">
+    <input type="hidden" name="model" value="<?php echo $result['evidencioModels'][0] ?>">
     <ul class="list-group">
-    <?php foreach ($decodeRes['variables'] as $item): ?>
+    @foreach ($result['steps'][0]['variables'] as $item)
       <li class="list-group-item">
         {{--creates input for continuous variable--}}
-        <?php if ($item['type']=='continuous'): ?>
+        @if ($item['type']=='continuous')
           <?php
             echo $item['title'].": ";
             $min = $item['options']['min'];
@@ -70,25 +66,26 @@ if (!empty($_GET['model'])) {
 	                slider<?php echo $item['id']; ?>.noUiSlider.set(this.value);
                 });
             </script>
-      <?php endif; ?>
+      @endif
       {{--creates input for categorical variable--}}
-      <?php if ($item['type']=='categorical'): ?>
+      @if ($item['type']=='categorical')
         <?php  echo $item['title'].": ";?>
         <br>
 
-        <?php foreach ($item['options'] as $value): ?>
+        @foreach ($item['options'] as $value)
           <input type="radio" name="answer[<?php echo $item['id']; ?>]" value="<?php echo $value['title']; ?>" >
           <?php echo $value['title']; ?>
           <br>
-        <?php endforeach; ?>
+        @endforeach
 
-      <?php endif; ?>
+      @endif
     </li>
-    <?php endforeach; ?>
+    @endforeach
   </ul>
   <br>
   <button type="submit" class="btn btn-primary btn-sm">submit</button>
   </form>
 </div>
-<?php endif; ?>
+
+@endif
 @endsection
