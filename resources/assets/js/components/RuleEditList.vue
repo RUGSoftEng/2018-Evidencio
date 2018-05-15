@@ -51,9 +51,10 @@ export default {
 
     addRule() {
       this.rules.push({
+        databaseId: -1,
         title: "Empty rule",
         description: "",
-        condition: "true",
+        condition: "",
         target: null,
         edgeId: -1,
         create: true,

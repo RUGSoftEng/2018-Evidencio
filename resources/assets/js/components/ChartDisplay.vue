@@ -37,6 +37,14 @@
           default: 0//this.$parent.chartTypeNumber,
         }
       },
+      // methods: {
+      //   refreshChartPreview() {
+      //     switch (type) {
+      //       case 0:
+      //         BarChart.
+      //     }
+      //   }
+      // }
     }
 
 </script>

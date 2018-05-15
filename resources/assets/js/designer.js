@@ -469,7 +469,8 @@ window.vObj = new Vue({
         rules: [],
         apiCalls: [],
         create: true,
-        destroy: false
+        destroy: false,
+        chartTypeNumber: 0
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);

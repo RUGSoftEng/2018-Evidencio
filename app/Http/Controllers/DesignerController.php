@@ -42,13 +42,26 @@ class DesignerController extends Controller
         return $data;
     }
 
+    /**
+     * Fetch models from Evidencio based on thier search result, used for designer to search for models.
+     *
+     * @param HTTP|Request $request Post request containing a Evidencio Model Search
+     * @return JSON Evidencio models
+     */
+    public function fetchSearch(Request $request)
+    {
+        $modelSearch = $request->modelSearch;
+        $data = EvidencioAPI::search($modelSearch);
+        return json_encode($data);
+    }
+
     public function runModel(Request $request) {
         $data = EvidencioAPI::run($request->modelId, $request->values);
         return $data;
     }
 
     /**
-     * Saves the workflow in the database. 
+     * Saves the workflow in the database.
      * Should the workflowId be given, that workflow will be updated.
      * 
      * @param HTTP|Request $request Post request withWorkflow data (title/description, steps, etc.)
@@ -79,6 +92,7 @@ class DesignerController extends Controller
 
         $returnObj['workflowId'] = $workflow->id;
         $returnObj['stepIds'] = $IDs['stepIds'];
+        $returnObj['ruleIds'] = $IDs['ruleIds'];
         $returnObj['variableIds'] = $IDs['variableIds'];
         $returnObj['optionIds'] = $IDs['optionIds'];
         $returnObj['resultIds'] = $IDs['resultIds'];
@@ -115,7 +129,7 @@ class DesignerController extends Controller
         $savedSteps = $workflow->steps()->get();
         $stepIds = [];
         $variableIds = [];
-        $resultIds = [];
+        $ruleIds = [];
         $fieldIds = ['variableIds' => [], 'optionIds' => []];
         foreach ($steps as $step) {
             if (($stp = $savedSteps->where('id', $step['id']))->isNotEmpty()) {
@@ -138,7 +152,13 @@ class DesignerController extends Controller
             $fieldIds["optionIds"] = array_merge($fieldIds["optionIds"], $newFieldIds["optionIds"]);
             $stepIds[] = $stp->id;
         }
-        // Remove deleted steps
+
+        // TODO: add rules between steps
+        // foreach ($steps as $step) {
+        //     $savedRules = $step->nextSteps()->get();
+
+        // }
+
         $savedSteps->map(function ($value) {
             $previousSteps = $value->previousSteps()->get();
             foreach ($previousSteps as $previousStep) {
@@ -168,18 +188,7 @@ class DesignerController extends Controller
             }
             $value->delete();
         });
-        foreach ($steps as $key => $step) {
-            $resultIds[] = [];
-            $dbStep = $workflow->steps()->where('id', $stepIds[$key])->first();
-            if (!isset($step["apiCalls"]))
-                $step["apiCalls"] = [];
-            $resultIds[$key] = $this->saveStepModelApiMapping($dbStep, $step["apiCalls"], $fieldIds["variableIds"]);
-            if (!isset($step["rules"]))
-                $step["rules"] = [];
-            $this->saveRules($dbStep, $step["rules"], $stepIds);
-        }
-
-        return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds'], 'resultIds' => $resultIds];
+        return ['stepIds' => $stepIds, 'ruleIds' => $ruleIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds']];
     }
 
     /**
