@@ -5,25 +5,14 @@
   export default {
     props : {
       label: {
-        type: String,
-        default: ''
-      }
+        type: String
+      },
+      data: {}
     },
     extends: Bar,
     mounted () {
-      let self = this;
       // Overwriting base render method with actual data.
-      this.renderChart({
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [
-          {
-            // label: 'A simple label',
-            label: self.label,
-            backgroundColor: '#f87979',
-            data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-          }
-        ]
-      })
+      this.renderChart(this.data);
     },
   }
 

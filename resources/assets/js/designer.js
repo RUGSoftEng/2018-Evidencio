@@ -471,7 +471,18 @@ window.vObj = new Vue({
         create: true,
         destroy: false,
         chartTypeNumber: 0,
-        chartData: []//[{label: "enter lbl", colour: "#00ff00"}]
+        chartData: [],
+        chartRenderingData: {
+          labels: ['January', 'February'],
+          datasets: [
+            {
+              // label: 'A simple label',
+              label: "Edit Label",
+              backgroundColor: ['#0000ff', '#ff0000'],
+              data: [40, 20]
+            }
+          ]
+        }
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);

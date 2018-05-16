@@ -157,7 +157,7 @@
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="this.localStep.chartTypeNumber"></chart-preview>
+                                            <chart-preview :chart-type="this.localStep.chartTypeNumber" :chart-data="this.localStep.chartRenderingData"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -231,30 +231,6 @@ export default {
     changed: {
       type: Boolean,
       required: true
-    },
-    // chartTypeNumber: {
-    //   type: Number,
-    //   default: 0
-    // }
-  },
-
-  computed: {
-    // Array containing all variables assigned up to and including the current step
-    variablesUpToStep: function() {
-      let vars = this.ancestorVariables;
-      vars = vars.concat(this.localStep.variables);
-      return vars;
-    },
-    // Array of model-representations for API-call
-    modelChoiceRepresentation: function() {
-      let representation = [];
-      this.models.forEach(element => {
-        representation.push({
-          title: element.title,
-          id: element.id
-        });
-      });
-      return representation;
     }
   },
 

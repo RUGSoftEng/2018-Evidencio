@@ -1,15 +1,15 @@
 <template>
     <div v-if="chartType === 0">
-        <bar-chart :label="label10"></bar-chart>
+        <bar-chart :label="label10" :data="this.chartData"></bar-chart>
     </div>
     <div v-else-if="chartType === 1">
-        <pie-chart :label="label10"></pie-chart>
+        <pie-chart :label="label10" :data="this.chartData"></pie-chart>
     </div>
     <div v-else-if="chartType === 2">
-        <polar-chart :label="label10"></polar-chart>
+        <polar-chart :label="label10" :data="this.chartData"></polar-chart>
     </div>
     <div v-else>
-        <doughnut-chart :label="label10"></doughnut-chart>
+        <doughnut-chart :label="label10" :data="this.chartData"></doughnut-chart>
     </div>
 
 </template>
@@ -35,7 +35,8 @@
             {
           type: Number,
           default: 0//this.$parent.chartTypeNumber,
-        }
+        },
+        chartData: {}
       },
       // methods: {
       //   refreshChartPreview() {

@@ -33,10 +33,10 @@
           }
         },
         addChartItem() {
-          // this.localChartItems = this.chartItems.slice();
           this.chartItems.push({
             label: "Enter Label",
-            color: "#ff0000"
+            color: "#ff0000",
+            value: 10
           });
         }
       },
