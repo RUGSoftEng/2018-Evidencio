@@ -11,7 +11,7 @@
             <div class="card-body">
                 <form onsubmit="return false">
                     <div class="form-group">
-                        <label :for="'chartItemTitle_' + indexItem">TLabel </label>
+                        <label :for="'chartItemTitle_' + indexItem">Label </label>
                         <input type="text" name="" :id="'chartItemTitle_' + indexItem" class="form-control" v-model="chartItem.label" placeholder="Label" :disabled="!editing">
                         <small :id="'chartItemTitleHelp_' + indexItem" class="form-text text-muted">Label of the variable</small>
                     </div>
@@ -25,6 +25,8 @@
                         <input type="number" name="" class="form-control" :id="'chartItemValue_' + indexItem" v-model="chartItem.value" :disabled="!editing">
                         <small :id="'chartItemValueHelp_' + indexItem" class="form-text text-muted">Placeholder value of the item</small>
                         <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
+                        <button type="button" class="btn btn-primary ml-2">Add to chart</button>
+                        <button type="button" class="btn btn-primary ml-2">Remove from chart</button>
                     </div>
                 </form>
             </div>

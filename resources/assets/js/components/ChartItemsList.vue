@@ -38,11 +38,11 @@
             color: "#ff0000",
             value: 10
           });
-        }
-      },
-      data() {
-        return {
-          localChartItems: [],
+        },
+        data() {
+          return {
+            localChartItems: [],
+          }
         }
       }
     }
