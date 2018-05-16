@@ -31,6 +31,7 @@
 
 
 <script>
+export default {
  props: {
     model: {
       type: Object,
