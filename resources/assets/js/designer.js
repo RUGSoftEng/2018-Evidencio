@@ -470,7 +470,8 @@ window.vObj = new Vue({
         apiCalls: [],
         create: true,
         destroy: false,
-        chartTypeNumber: 0
+        chartTypeNumber: 0,
+        chartData: []//[{label: "enter lbl", colour: "#00ff00"}]
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);

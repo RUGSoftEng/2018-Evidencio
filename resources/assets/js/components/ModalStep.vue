@@ -153,6 +153,7 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
+                                                <chart-items-list :chart-items="this.localStep.chartData"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
@@ -187,6 +188,7 @@ import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
 import DetailsEditable from "./DetailsEditable.vue";
 import VariableMappingApi from "./VariableMappingApi.vue";
+import ChartItemsList from "./ChartItemsList";
 
 export default {
   components: {
@@ -194,7 +196,8 @@ export default {
     RuleEditList,
     ChartPreview,
     DetailsEditable,
-    VariableMappingApi
+    VariableMappingApi,
+    ChartItemsList
   },
   props: {
     stepId: {
@@ -471,12 +474,25 @@ export default {
 
     /**
      * Changes the type of the chart used inside a step
-     * @param {Number} [type] Number representing the chart type.
+     * @param {Number} type Number representing the chart type.
      * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.
      */
     changeChartType(type) {
       this.localStep.chartTypeNumber = type;
+    },
+
+    /**
+     * Adds the object containing at least the label and the color
+     * corresponding to a graph field.
+     * @param {String} label
+     * @param {String} color
+     */
+    addNewField(label, color) {
+      let object = {label, color};
+      this.localStep.chartData.push(object);
     }
+
+
 
     // /**
     //  * Adds a rule to the list of rules
