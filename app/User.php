@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 /**
  * Medical professional, reviewer or administrator
  *
- * @property string name
  * @property string email
  * @property string password
  * @property string remember_token

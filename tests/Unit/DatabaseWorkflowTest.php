@@ -25,7 +25,6 @@ class DatabaseWorkflowTest extends TestCase
         parent::setUp();
 
         $this->user = \App\User::create([
-            'name' => 'testUser',
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'johnsmith@evidencio.com',
@@ -34,7 +33,6 @@ class DatabaseWorkflowTest extends TestCase
         ]);
 
         $this->reviewer = \App\User::create([
-            'name' => 'reviewerUser',
             'first_name' => 'Jan',
             'last_name' => 'Jansen',
             'email' => 'janjansen@evidencio.com',
