@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card border-secondary">
         <a href="#" @click="toggleShow" class="card-header collapsed" :id="'ruleEditCollapseHeader_' + indexItem" data-parent="#accRulesEdit"
             aria-expanded="false" :aria-controls="'ruleEditCollapse_' + indexItem">
             <h6 class="mb-0">
@@ -17,7 +17,7 @@
                     </div>
                     <div class="form-group">
                         <label :for="'conditionRule_' + indexItem">Condition: </label>
-                        <textarea class="form-control" :id="'conditionRule_' + indexItem" cols="30" rows="3" v-model="rule.condition" :disabled="!editing"></textarea>
+                        <textarea class="form-control" :id="'conditionRule_' + indexItem" cols="30" rows="3" v-model="rule.condition" :disabled="!editing">true</textarea>
                         <small :id="'descriptionVarHelp_' + indexItem" class="form-text text-muted">Condition of the rule</small>
                         <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
                     </div>
@@ -30,7 +30,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <svg class="option__image" viewBox="0 0 44 44" width="44" height="44">
-                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.color+';stroke-width:1;stroke:rgb(0,0,0)'" />
+                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'" />
                                                 <!--<text x="15" y="20" style="font-weight: bold; font-size: 24px; stroke: #000000; fill: #ffffff;">
                                                     {{ props.option.id }}
                                                 </text>-->
@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <svg class="option__image" viewBox="0 0 44 44" width="44" height="44">
-                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.color+';stroke-width:1;stroke:rgb(0,0,0)'" />
+                                                <rect x="2" y="2" width="40" height="40" rx="4" ry="4" :style="'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'" />
                                                 <!--<text x="15" y="20" style="font-weight: bold; font-size: 24px; stroke: #000000; fill: #ffffff;">
                                                     {{ props.option.id }}
                                                 </text>-->

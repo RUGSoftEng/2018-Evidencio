@@ -27,8 +27,8 @@ window.cy = cytoscape({
         {
             selector: ".edge",
             style: {
-                width: 3,
-                "line-color": "#ccc",
+                width: 4,
+                "line-color": "#000",
                 "target-arrow-color": "#ccc",
                 "target-arrow-shape": "triangle"
             }
@@ -86,12 +86,12 @@ cy.on("tap", "node", function (evt) {
     let ref = evt.target;
     if (ref.hasClass("buttonAddLevel")) {
         let nID = vObj.getAddLevelButtonIndex(ref.id());
-        if (nID != -1) vObj.addLevel(nID + 1);
+        if (nID != -1) vObj.addLevelConditional(nID + 1);
     } else if (ref.hasClass("buttonAddStep")) {
         let nID = vObj.getAddStepButtonIndex(ref.id());
         if (nID != -1) vObj.addStep("Default title", "Default description", nID + 1);
     } else if (ref.hasClass("node")) {
-        vObj.prepareModal(ref);
+        vObj.prepareModal(ref.id());
         $("#modalStep").modal();
     }
 });

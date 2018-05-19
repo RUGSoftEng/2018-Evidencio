@@ -8,3 +8,4 @@ require('./bootstrap');
 window.Vue = require("vue");
 window.simpleScrollbar = require('ya-simple-scrollbar');
 window.vueCharts = require('vue-chartjs');
+require("./event-dispatcher.js");

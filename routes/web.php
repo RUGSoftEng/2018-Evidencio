@@ -29,17 +29,16 @@ Route::post('/graph', 'GraphController@index');
 Route::get('/search', function () {
   return view('search');
 });
-
-Route::get('/workflow', function () {
-  return view('workflow');
-});
-
-Route::get('/designer/fetch', 'DesignerController@fetchVariables');
+Route::get('/workflow/{workflowId}', 'WorkflowController@index');
 
 Route::post('/PDF', function(){
   return view('PDF');
 });
+
 Route::post('/designer/fetch', 'DesignerController@fetchVariables')->middleware('auth');
+Route::post('/designer/runmodel', 'DesignerController@runModel')->middleware('auth');
+Route::post('/designer/search', 'DesignerController@fetchSearch')->middleware('auth');
+
 
 Route::post('/designer/save', 'DesignerController@saveWorkflow')->middleware('auth');
 Route::post('/designer/save/{workflowId}', 'DesignerController@saveWorkflow')->middleware('auth');
