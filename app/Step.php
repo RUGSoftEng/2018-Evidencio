@@ -81,11 +81,26 @@ class Step extends Model
         return $this->belongsToMany('App\Field','model_run_field_mappings','step_id','field_id')->withPivot('evidencio_model_id','evidencio_field_id');
     }
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     /**
      * Fields associated with a specific model run done after/during the step
      */
     public function modelRunFieldsById($modelId)
     {
         return $this->belongsToMany('App\Field','model_run_field_mappings','step_id','field_id')->withPivot('evidencio_field_id')->wherePivot('evidencio_model_id', $modelId);
+    }
+
+    public function getModel($id){
+      return Step::where('workflow_step_workflow_id', '=', $id)->orderBy('workflow_step_level')->get();
     }
 }

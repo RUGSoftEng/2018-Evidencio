@@ -50,5 +50,4 @@ if (!empty($_GET['search'])) {
         <div class="alert alert-warning">No results found for : <?php echo $_GET['search']; ?> </div>
   <?php endif; ?>
 </div>
-
 @endsection
