@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Field extends Model
 {
+    protected $touches = ['inputSteps'];
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Step extends Model
 {
-
     protected $fillable = ['title','description','workflow_step_level','colour','is_stored'];
+    protected $touches = ['workflow'];
 
     public function workflow()
     {
@@ -48,6 +48,7 @@ class Step extends Model
     {
         return $this->belongsToMany('App\Step','next_steps','next_step_id','previous_step_id')->withPivot("condition","title","description");
     }
+
 
     /**
      * @property int order defines index of a field in a step by which it should
