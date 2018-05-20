@@ -19,9 +19,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Result extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = ['evidencio_model_id','result_name','result_number','expected_type','representation_label','representation_type'];
+    protected $touches = ['step'];
+
+    public $timestamps = false;
 
     /**
      * Step, after which there is an Evidencio model run that returns the result
