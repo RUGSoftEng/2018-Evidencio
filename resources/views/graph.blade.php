@@ -10,6 +10,7 @@ This will return an array with the result and their parameters.--}}
 use App\EvidencioAPI;
 if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   $decodeRes = EvidencioAPI::run($_POST['model'],$_POST['answer']);
+  $modelDetails = EvidencioAPI::getModel($_POST['model']);
 }
 ?>
 @extends('layouts.app')
@@ -41,6 +42,50 @@ $dataPoints = array(
 {{--Canvas for where the chart will be displayed--}}
 <div class="container">
   <canvas id="graph"></canvas>
+   <br/><br/><br/>
+  <div class"row justify-content-center">
+    <table width="100%">
+      <tr>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+        <th width="5%"></th>
+      </tr>
+      <tr>
+        <?php
+        $numSad = $result/10;
+        for($j = 0; $j <1; $j++){
+          echo "<tr>";
+          for($i = 0; $i < 10; $i++ ){
+            if($numSad > 0){
+          ?>
+              <td><img src="{{ URL::to('/images/highRisk.png') }}" width="100%" /></td>
+          <?php
+              $numSad = $numSad -1;
+            }
+            else{
+          ?>
+            <td><img src="{{ URL::to('/images/lowRisk.png') }}" width="100%"/></td>
+          <?php
+            }
+          }
+          echo "</tr>";
+        }
+        ?>
+      </tr></table>
+      <br />
+      <br />
+      <h5>Model results show that <kbd><?php echo $result/10?></kbd> in 10 patients with similar conditions like yours tested positive for <?php echo $decodeRes['title'] ?> </h5>
+      @if($result > 0)
+      <p>You may want to consult your doctor to find out more on <?php echo $decodeRes['title'] ?></p>
+      @endif
+    </div>
 </div>
 
 {{--Javascript for the creating the chat using Chartjs--}}
@@ -102,6 +147,11 @@ $dataPoints = array(
     init();
 
   }
+  
+  function loadData(){
+    var canv = document.getElementById("graph");
+    document.getElementById("chartdata").value = canv.toDataURL("image/jpg");
+  }
 
 </script>
 
@@ -120,5 +170,32 @@ $dataPoints = array(
   @endif
 
 </div>
-
+<div class="container">
+  <h3>Actions</h3>
+  <form method="post" action="/PDF">
+    {{ csrf_field() }}
+    <input type="hidden" name="model" value="<?php echo $_POST['model']?>"/>
+    <input type="hidden" name="model_name" value="<?php echo $decodeRes['title'] ?>"/>
+    <input type="hidden" name="percentage" value="<?php echo $decodeRes['result'] ?>"/>
+    <input type="hidden" id="chartdata" name="chartIMG"/>
+    <?php
+    foreach($_POST['answer'] as $value)
+    {
+      echo '<input type="hidden" name="answer[]" value="'. $value. '"/>';
+    }
+    ?>
+    <?php
+    foreach ($modelDetails['variables'] as $item)
+    echo '<input type="hidden" name="qn[]" value="'. $item['title']. '"/>';
+    ?>
+    <?php
+    foreach($decodeRes['additionalResultSet'] as $text){
+      echo '<input type="hidden" name="remarks[]" value="'. $text['key'] . '"/>';
+    }?>
+    <?php
+    echo '<input type="hidden" name="remarks[]" value="'. $decodeRes['conditionalResultText'] . '"/>';
+    ?>
+    <input type="submit" onclick="loadData()" name="generatePDF" id="export" value="Export Result to PDF" class="btn btn-info"/>
+  </form>
+</div>
 @endsection
