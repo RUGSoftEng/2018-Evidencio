@@ -54,6 +54,7 @@ class RegisterController extends Controller
             'last_name' => 'required|string|max:255',
             'photo' => 'nullable|file|image|max:300',
             'academic_degree' => 'nullable|string|max:30',
+            'big_code' => 'nullable|integer|digits:11',
             'bio' => 'nullable|string|max:5000',
             'organisation' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -75,6 +76,7 @@ class RegisterController extends Controller
             // TODO photo, language
             'language_code' => 'en',
             'academic_degree' => $data['academic_degree'],
+            'big_code' => $data['big_code'],
             'bio' => $data['bio'],
             'organisation' => $data['organisation'],
             'email' => $data['email'],

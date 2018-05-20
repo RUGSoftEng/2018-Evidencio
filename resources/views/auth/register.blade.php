@@ -70,6 +70,20 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="big_code" class="col-md-4 col-form-label text-md-right">{{ __('BIG Code') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="big_code" maxlength="11" minlength="11" type="text" class="form-control{{ $errors->has('big_code') ? ' is-invalid' : '' }}" name="big_code" value="{{ old('big_code') }}">
+
+                                @if ($errors->has('big_code'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('big_code') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="bio" class="col-md-4 col-form-label text-md-right">{{ __('Bio') }}</label>
 
                             <div class="col-md-6">
