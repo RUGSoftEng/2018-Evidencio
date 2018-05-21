@@ -4,13 +4,6 @@
 
 @include('partials.sidebar')
 
-<style>
-    .table-usersverification tbody tr:nth-of-type(4n),
-    .table-usersverification tbody tr:nth-of-type(1)
-    {
-        background-color: rgba(0,0,0,0.05);
-    }
-</style>
 @php
     use Illuminate\Support\Facades\Storage;
 @endphp
@@ -104,7 +97,5 @@
     </div>
 
 </div>
-
-<script src="{{ asset('js/usersverification.js') }}"></script>
 
 @endsection
