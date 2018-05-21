@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+
+<link href="{{ asset('css/register.css') }}" rel="stylesheet">
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -8,7 +11,7 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group row">
@@ -112,6 +115,24 @@
                         </div>
 
                         <div class="form-group row">
+
+                            <span class="col-md-4 col-form-label text-md-right">{{ __('Documents') }}</span>
+
+                            <div class="col-md-6" id="files">
+                                <document-input v-for="(item,index) in fileList" v-bind:file="index" v-bind:key="item.id"></document-input>
+                                <div class="text-right">
+                                    <button class="btn btn-primary add-document" v-on:click="addButton" type="button">+</button>
+                                </div>
+                                @if ($errors->has('file.*'))
+                                    <span class="invalid-feedback d-block">
+                                        <strong>{{ $errors->first('file.*') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
@@ -146,4 +167,6 @@
         </div>
     </div>
 </div>
+
+<script src="{{ asset('js/registration.js') }}"></script>
 @endsection

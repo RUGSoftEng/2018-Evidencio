@@ -11,6 +11,9 @@
         background-color: rgba(0,0,0,0.05);
     }
 </style>
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 
 <div class="container-fluid justify-content-center">
 
@@ -71,6 +74,10 @@
                                         {{_("Not provided")}}
                                         @endif
                                     </dd>
+                                    @foreach($user->registrationDocuments as $document)
+                                    <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
+                                    <dd class="col-sm-9">{{ $document->name }} <a class="btn btn-primary btn-sm" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
+                                    @endforeach
                                 </dl>
                             </div>
                         </td>

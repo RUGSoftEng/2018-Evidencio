@@ -49,6 +49,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+
         return Validator::make($data, [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -58,6 +59,8 @@ class RegisterController extends Controller
             'bio' => 'nullable|string|max:5000',
             'organisation' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'file' => 'nullable|array|max:5',
+            'file.*' => 'nullable|mimes:pdf|max:1000',
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
@@ -70,7 +73,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             // TODO photo, language
@@ -82,5 +85,18 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
         ]);
+
+        if(array_key_exists('file',$data))
+        foreach($data['file'] as $file)
+        {
+            $path = $file->store('documents');
+
+            $user->registrationDocuments()->create([
+                'name' => $file->getClientOriginalName(),
+                'url' => $path
+            ]);
+        }
+
+        return $user;
     }
 }
