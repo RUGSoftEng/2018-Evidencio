@@ -66,6 +66,14 @@
                                 <dl class="row my-4">
                                     <dt class="col-sm-3">{{_("Email")}}</dt>
                                     <dd class="col-sm-9">{{ $user->email }}</dd>
+                                    <dt class="col-sm-3">{{_("BIG Code")}}</dt>
+                                    <dd class="col-sm-9">
+                                        @if($user->big_code)
+                                        {{$user->big_code}}
+                                        @else
+                                        {{_("Not provided")}}
+                                        @endif
+                                    </dd>
                                     <dt class="col-sm-3">{{_("Bio")}}</dt>
                                     <dd class="col-sm-9">
                                         @if($user->bio)

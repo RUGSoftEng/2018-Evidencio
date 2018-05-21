@@ -29,6 +29,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string organisation Name of the organisation/institution etc. where
  * the user currently works
  * @property timestamp verification_date
+ * @property big_code Dutch doctor's identification number
  */
 class User extends Authenticatable
 {
@@ -40,7 +41,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'first_name', 'last_name', 'photo_url', 'language_code', 'academic_degree', 'bio', 'organisation', 'email', 'password',
+        'name', 'first_name', 'last_name', 'photo_url', 'big_code', 'language_code', 'academic_degree', 'bio', 'organisation', 'email', 'password',
     ];
 
     /**
