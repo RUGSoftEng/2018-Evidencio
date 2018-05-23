@@ -42,7 +42,7 @@ if (!empty($_GET['search'])) {
             <?php echo $wflow['description'] ?>
           </ul>
           <br />
-          Model Creator: <b><?php echo $wflow['name'] ?></b><br /> 4.5/5 Stars  |  <i><a href="/feedback">Provide Feedback</a></i>
+          Model Creator: <b><?php echo ($wflow['fname'] . ' '. $wflow['lname']) ?></b><br />
         </li>
       <?php endforeach;
     endif;

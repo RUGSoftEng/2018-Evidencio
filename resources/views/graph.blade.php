@@ -4,7 +4,7 @@ The will be also a text result if any was included in the Evidencio API call.
 Users are also able to download a pdf of the results--}}
 
 
-{{--post request to Evidencio API with the answers of the workflow page. 
+{{--post request to Evidencio API with the answers of the workflow page.
 This will return an array with the result and their parameters.--}}
 <?php
 use App\EvidencioAPI;
@@ -44,7 +44,7 @@ $dataPoints = array(
   <canvas id="graph"></canvas>
    <br/><br/><br/>
   <div class"row justify-content-center">
-    <table width="100%">
+    <table width="50%" class="justify-content-center">
       <tr>
         <th width="5%"></th>
         <th width="5%"></th>
@@ -59,8 +59,8 @@ $dataPoints = array(
       </tr>
       <tr>
         <?php
-        $numSad = $result/10;
-        for($j = 0; $j <1; $j++){
+        $numSad = $result;
+        for($j = 0; $j <10; $j++){
           echo "<tr>";
           for($i = 0; $i < 10; $i++ ){
             if($numSad > 0){
@@ -81,7 +81,7 @@ $dataPoints = array(
       </tr></table>
       <br />
       <br />
-      <h5>Model results show that <kbd><?php echo $result/10?></kbd> in 10 patients with similar conditions like yours tested positive for <?php echo $decodeRes['title'] ?> </h5>
+      <h5>Model results show that among 100 patients with/require <?php echo $decodeRes["title"] ?>, <kbd><?php echo $result?></kbd> have similar response like yours. </h5>
       @if($result > 0)
       <p>You may want to consult your doctor to find out more on <?php echo $decodeRes['title'] ?></p>
       @endif
@@ -147,7 +147,7 @@ $dataPoints = array(
     init();
 
   }
-  
+
   function loadData(){
     var canv = document.getElementById("graph");
     document.getElementById("chartdata").value = canv.toDataURL("image/jpg");

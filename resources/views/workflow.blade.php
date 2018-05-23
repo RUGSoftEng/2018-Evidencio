@@ -3,21 +3,13 @@ The page will create a list of the variables of the step, either a slider for co
 or radio buttons for categorical values.--}}
 
 <?php
-/**
- * post request to Evidencio model API
- * returns array of all the parameters of the evidence models that was clicked on in the search page.
- */
-use App\EvidencioAPI;
-use App\Step;
-use App\Workflow;
-if (!empty($_GET['model'])) {
-  $decodeRes = (new Workflow)->getWorkflowByID($_GET['model']);
-  $result = (new Step)->getModel($_GET['model']);
-}
+ use App\EvidencioAPI;
+ use App\Workflow;
+ //dd($result);
 ?>
 
-
 @extends('layouts.app')
+
 @section('content')
 {{--makes inputs for all the required variables--}}
 
@@ -53,7 +45,6 @@ if (!empty($_GET['model'])) {
           {{--javascript for making the sliders--}}
             <script type="text/javascript">
               var slider<?php echo $item['id']; ?> = document.getElementById("<?php echo $item['id']; ?>");
-
               noUiSlider.create(slider<?php echo $item['id']; ?>, {
                 start: [<?php echo $min ?>],
                 connect: [true,false],
@@ -64,11 +55,9 @@ if (!empty($_GET['model'])) {
                 },
               });
               var input<?php echo $item['id']; ?> = document.getElementById("answer[<?php echo $item['id']; ?>]");
-
               slider<?php echo $item['id']; ?>.noUiSlider.on('update', function( values, handle ) {
 	               input<?php echo $item['id']; ?>.value = values[handle];
                });
-
                input<?php echo $item['id']; ?>.addEventListener('change', function(){
 	                slider<?php echo $item['id']; ?>.noUiSlider.set(this.value);
                 });
@@ -78,13 +67,11 @@ if (!empty($_GET['model'])) {
       @if ($item['type']=='categorical')
         <?php  echo $item['title'].": ";?>
         <br>
-
         @foreach ($item['options'] as $value)
           <input type="radio" name="answer[<?php echo $item['id']; ?>]" value="<?php echo $value['title']; ?>" >
           <?php echo $value['title']; ?>
           <br>
         @endforeach
-
       @endif
     </li>
     @endforeach
@@ -93,6 +80,5 @@ if (!empty($_GET['model'])) {
   <button type="submit" class="btn btn-primary btn-sm">submit</button>
   </form>
 </div>
-
 @endif
 @endsection

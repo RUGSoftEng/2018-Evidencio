@@ -1,6 +1,9 @@
 <?php
 //This page is for the generating of the PDF. The crux of the file is the HTML document which will be displayed after generating
 //As TCPDF do not allow echo commands, POST data is used instead.
+if(empty($_POST)){
+  echo "No model results available for transferring to PDF.";
+}
 if(isset($_POST["generatePDF"])){
   require_once('tcpdf/tcpdf.php');
 
@@ -141,6 +144,7 @@ if(isset($_POST["generatePDF"])){
   $content .='" width="2480" height="1200" /><br />
   </div>
   <br /> <br /> <br />
+  <p style="font-size:small;"><i>Calculations alone should never dictate patient care, and are no substitute for professional judgement. See our full disclaimer at <u>https://www.evidencio.com/disclaimer</u></i></p>
   <div align="center">-- End of Document -- </div>
   ';
 
