@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Field extends Model
 {
+    protected $touches = ['inputSteps'];
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -40,10 +42,12 @@ class Field extends Model
 
     /**
      * Input steps that have this field
+     * @property int order defines index of a field in a step by which it should
+     * be ordered
      */
     public function inputSteps()
     {
-        return $this->belongsToMany('App\Step','field_in_input_steps','field_id','input_step_id');
+        return $this->belongsToMany('App\Step','field_in_input_steps','field_id','input_step_id')->withPivot("order");
     }
 
     public function usedInRunsInSteps()
