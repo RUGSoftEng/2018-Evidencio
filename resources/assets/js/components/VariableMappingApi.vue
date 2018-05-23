@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+<div class="card">
         <div class="card-body">
             <h5 class="card-title">{{ model.title }}</h5>
             <form>
@@ -26,12 +26,13 @@
             <span class="badge badge-secondary mx-1" v-for="(result, index) in model.results" :key="index">{{ result.name }}</span>
         </div>
     </div>
-</template>
+  
+ </template>
 
 
 <script>
 export default {
-  props: {
+ props: {
     model: {
       type: Object,
       required: true
@@ -45,7 +46,6 @@ export default {
       required: true
     }
   },
-
   computed: {
     numberOfRows: function() {
       let n = Math.ceil(this.model.variables.length / 2);
@@ -55,7 +55,7 @@ export default {
     }
     // ,
     // choosableVariables: function() {
-    //   let vars = [];
+   //   let vars = [];
     //   let numberOfVariables = this.reachableVariables.length;
     //   for (let index = 0; index < numberOfVariables; index++)
     //     vars.push(this.usedVariables[this.reachableVariables[index]]);
@@ -64,6 +64,6 @@ export default {
   },
   data() {
     return {};
-  }
+   }
 };
 </script>

@@ -60,7 +60,7 @@ class Workflow extends Model
     }
 
     public function search($title){
-        return Workflow::join('users', 'users.id', '=', 'author_id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->select('users.id','users.name AS name', 'workflows.*')->get();
+        return Workflow::join('users', 'users.id', '=', 'author_id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->select('users.id','users.first_name', 'users.last_name', 'workflows.*')->get();
 //        return Workflow::join('users', 'author_id', '=', 'users.id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->get();
     }
 }
