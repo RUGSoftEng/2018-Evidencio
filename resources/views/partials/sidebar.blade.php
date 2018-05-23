@@ -6,7 +6,7 @@
 
         <div class="sidebar-header">
             <h3>
-                    {{ Auth::user()->name }}
+                    {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
             </h3>
         </div>
 
