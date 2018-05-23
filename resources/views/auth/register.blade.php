@@ -14,7 +14,7 @@
                     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="form-group row">
+                        <div class="form-group row required">
                             <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
 
                             <div class="col-md-6">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row required">
                             <label for="last_name" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
 
                             <div class="col-md-6">
@@ -42,7 +42,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row required">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
@@ -77,6 +77,10 @@
 
                             <div class="col-md-6">
                                 <input id="big_code" maxlength="11" minlength="11" type="text" class="form-control{{ $errors->has('big_code') ? ' is-invalid' : '' }}" name="big_code" value="{{ old('big_code') }}">
+
+                                <small class="form-text text-muted">
+                                    {{_("An 11-digit code issued to doctors in the Netherlands.")}}
+                                </small>
 
                                 @if ($errors->has('big_code'))
                                     <span class="invalid-feedback">
@@ -123,6 +127,11 @@
                                 <div class="text-right">
                                     <button class="btn btn-primary add-document" v-on:click="addButton" type="button">+</button>
                                 </div>
+
+                                <small class="form-text text-muted">
+                                    {{_("Provide documents that verify you as a medical professional. Only pdf format is accepted.")}}
+                                </small>
+
                                 @if ($errors->has('file.*'))
                                     <span class="invalid-feedback d-block">
                                         <strong>{{ $errors->first('file.*') }}</strong>
@@ -132,11 +141,15 @@
 
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row required">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+
+                                <small class="form-text text-muted">
+                                    {{_("The password must be at least 6 characters long.")}}
+                                </small>
 
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback">
@@ -146,11 +159,15 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row required">
                             <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+
+                                <small class="form-text text-muted required-tooltip">
+                                    {{_(" - required field.")}}
+                                </small>
                             </div>
                         </div>
 
