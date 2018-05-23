@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <button type="button" class="btn btn-primary ml-2" @click="addRule">Add rule</button>
+            <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf" :title="buttonTitle">Add rule</button>
         </div>
         <div class="row" id="accRulesEdit">
             <div class="col">
@@ -38,6 +38,13 @@ export default {
         child["ind"] = index;
       });
       return options;
+    },
+    isLeaf: function() {
+      return this.childNodes.length == 0;
+    },
+    buttonTitle: function() {
+      if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
+      return "Add a rule to connect this step to the next";
     }
   },
 

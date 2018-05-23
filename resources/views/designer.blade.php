@@ -1,4 +1,6 @@
-@extends('layouts.app') @section('content') @include('partials.sidebar')
+@extends('layouts.app') 
+@section('content') 
+@include('partials.sidebar')
 
 <div class="container-fluid height-100" id="designerDiv">
 

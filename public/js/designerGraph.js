@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 296);
+/******/ 	return __webpack_require__(__webpack_require__.s = 302);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -518,19 +518,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ 296:
+/***/ 302:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(297);
+module.exports = __webpack_require__(303);
 
 
 /***/ }),
 
-/***/ 297:
+/***/ 303:
 /***/ (function(module, exports, __webpack_require__) {
 
-window.cytoscape = __webpack_require__(298);
-window.cyCanvas = __webpack_require__(302);
+window.cytoscape = __webpack_require__(304);
+window.cyCanvas = __webpack_require__(308);
 
 window.cy = cytoscape({
     container: document.getElementById("graph"),
@@ -643,12 +643,12 @@ cy.on("render cyCanvas.resize", function (evt) {
 
 /***/ }),
 
-/***/ 298:
+/***/ 304:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate) {(function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(299), __webpack_require__(300));
+		module.exports = factory(__webpack_require__(305), __webpack_require__(306));
 	else if(typeof define === 'function' && define.amd)
 		define(["lodash.debounce", "heap"], factory);
 	else if(typeof exports === 'object')
@@ -13938,6 +13938,18 @@ function getEasedValue(type, start, end, percent, easingFn) {
   return val;
 }
 
+function getValue(prop, spec) {
+  if (prop.pfValue != null || prop.value != null) {
+    if (prop.pfValue != null && (spec == null || spec.type.units !== '%')) {
+      return prop.pfValue;
+    } else {
+      return prop.value;
+    }
+  } else {
+    return prop;
+  }
+}
+
 function ease(startProp, endProp, percent, easingFn, propSpec) {
   var type = propSpec != null ? propSpec.type : null;
 
@@ -13947,20 +13959,8 @@ function ease(startProp, endProp, percent, easingFn, propSpec) {
     percent = 1;
   }
 
-  var start = void 0,
-      end = void 0;
-
-  if (startProp.pfValue != null || startProp.value != null) {
-    start = startProp.pfValue != null ? startProp.pfValue : startProp.value;
-  } else {
-    start = startProp;
-  }
-
-  if (endProp.pfValue != null || endProp.value != null) {
-    end = endProp.pfValue != null ? endProp.pfValue : endProp.value;
-  } else {
-    end = endProp;
-  }
+  var start = getValue(startProp, propSpec);
+  var end = getValue(endProp, propSpec);
 
   if (is.number(start) && is.number(end)) {
     return getEasedValue(type, start, end, percent, easingFn);
@@ -25954,6 +25954,25 @@ function CanvasRenderer(options) {
         // then keep cached ele texture
       } else {
         r.data.eleTxrCache.invalidateElement(ele);
+
+        // NB this block of code should not be ported to 3.3 (unstable branch).
+        // - This check is unneccesary in 3.3 as caches will be stored without respect to opacity.
+        // - This fix may result in lowered performance for compound graphs.
+        // - Ref : Opacity of child node is not updated for certain zoom levels after parent opacity is overriden #2078
+        if (ele.isParent() && de['style']) {
+          var op1 = rs.prevParentOpacity;
+          var op2 = ele.pstyle('opacity').pfValue;
+
+          rs.prevParentOpacity = op2;
+
+          if (op1 !== op2) {
+            var descs = ele.descendants();
+
+            for (var j = 0; j < descs.length; j++) {
+              r.data.eleTxrCache.invalidateElement(descs[j]);
+            }
+          }
+        }
       }
     }
 
@@ -27486,13 +27505,13 @@ CRp.drawEdge = function (context, edge, shiftToOriginWithBb, drawLabel) {
   var rs = edge._private.rscratch;
   var usePaths = r.usePaths();
 
-  // if bezier ctrl pts can not be calculated, then die
-  if (rs.badLine || isNaN(rs.allpts[0])) {
-    // isNaN in case edge is impossible and browser bugs (e.g. safari)
+  if (!edge.visible()) {
     return;
   }
 
-  if (!edge.visible()) {
+  // if bezier ctrl pts can not be calculated, then die
+  if (rs.badLine || rs.allpts == null || isNaN(rs.allpts[0])) {
+    // isNaN in case edge is impossible and browser bugs (e.g. safari)
     return;
   }
 
@@ -29714,7 +29733,7 @@ module.exports = Stylesheet;
 "use strict";
 
 
-module.exports = "3.2.10";
+module.exports = "3.2.12";
 
 /***/ })
 /******/ ]);
@@ -29723,7 +29742,7 @@ module.exports = "3.2.10";
 
 /***/ }),
 
-/***/ 299:
+/***/ 305:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -30108,15 +30127,15 @@ module.exports = debounce;
 
 /***/ }),
 
-/***/ 300:
+/***/ 306:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(301);
+module.exports = __webpack_require__(307);
 
 
 /***/ }),
 
-/***/ 301:
+/***/ 307:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.8.0
@@ -30501,7 +30520,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 302:
+/***/ 308:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

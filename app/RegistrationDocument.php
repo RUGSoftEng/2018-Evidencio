@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class RegistrationDocument extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = ['name','url'];
+    protected $touches = ['registree'];
+    
+    public $timestamps = false;
 
     /**
      * User that provided the document during registration
