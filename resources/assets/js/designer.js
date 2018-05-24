@@ -133,34 +133,17 @@ window.vObj = new Vue({
       } else return [];
     },
 
-    // Deep-copy of the models and variables, used for MultiSelect
-    possibleVariables: function () {
-      if (this.modelLoaded) {
-        deepCopy = JSON.parse(JSON.stringify(this.models));
-        return deepCopy;
-      }
-      return [];
-    },
-
     // Array containing children of currently selected step
-    childrenNodes: function () {
+    childrenSteps: function () {
       if (this.selectedStepId == -1) return [];
       let levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
-      let options = [];
-      this.levels[levelIndex + 1].steps.forEach(element => {
-        options.push({
-          stepId: element,
-          title: this.steps[element].title,
-          id: this.steps[element].id,
-          colour: this.steps[element].colour
-        });
-      });
-      return options;
+      return this.levels[levelIndex + 1].steps;
     },
 
     variablesUpToStep: function () {
-      let vars = [], stepIds = this.getAncestorStepList(this.selectedStepId);
+      let vars = [],
+        stepIds = this.getAncestorStepList(this.selectedStepId);
       stepIds.forEach(stepId => {
         vars = vars.concat(this.steps[stepId].variables);
       });
@@ -191,7 +174,7 @@ window.vObj = new Vue({
             self.models.push(result);
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
-            self.models[self.models.length -1]["resultVars"] = [];
+            self.models[self.models.length - 1]["resultVars"] = [];
             self.models[self.models.length - 1].variables.map(x => {
               x["databaseId"] = -1;
               if (x["type"] == "categorical") {
@@ -249,7 +232,7 @@ window.vObj = new Vue({
             self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_0");
           } else {
             for (let index = 0; index < result.resultSet.length; index++) {
-              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index); 
+              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index);
             }
           }
         }
@@ -293,7 +276,7 @@ window.vObj = new Vue({
               for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
                 let apiCall = result.resultIds[stepIndex][apiIndex];
                 for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];                   
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
                 }
               }
             }
@@ -425,7 +408,7 @@ window.vObj = new Vue({
      * @param {Number} levelIndex is the location at which to add the level
      */
     addLevelConditional(levelIndex) {
-      if (this.levelHasRule(levelIndex-1)) {
+      if (this.levelHasRule(levelIndex - 1)) {
         this.prepareConfirmDialog({
           title: "Add a level",
           message: "Adding a level at this height will remove some exising rules. Are you sure you wish to continue?\r\n Only the direct children of steps can be targets for a rule.",
@@ -474,14 +457,12 @@ window.vObj = new Vue({
         chartData: [],
         chartRenderingData: {
           labels: ['January', 'February'],
-          datasets: [
-            {
-              // label: 'A simple label',
-              label: "Edit Label",
-              backgroundColor: ['#0000ff', '#ff0000'],
-              data: [40, 20]
-            }
-          ]
+          datasets: [{
+            // label: 'A simple label',
+            label: "Edit Label",
+            backgroundColor: ['#0000ff', '#ff0000'],
+            data: [40, 20]
+          }]
         }
       });
       this.stepsChanged = !this.stepsChanged;
@@ -511,8 +492,8 @@ window.vObj = new Vue({
      */
     panView() {
       cy.pan({
-        x: cy.width()/2,
-        y: cy.height()/4
+        x: cy.width() / 2,
+        y: cy.height() / 4
       });
     },
 
@@ -607,11 +588,11 @@ window.vObj = new Vue({
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = () => {
-            let stepIds = this.levels[this.confirmDialog.data-1].steps;
+            let stepIds = this.levels[this.confirmDialog.data - 1].steps;
             for (let indexStep = 0; indexStep < stepIds.length; indexStep++) {
               this.steps[stepIds[indexStep]].rules.map(x => {
                 x.destroy = true;
-              });              
+              });
             }
             this.connectionsChanged = !this.connectionsChanged;
             this.addLevel(this.confirmDialog.data);
@@ -641,7 +622,9 @@ window.vObj = new Vue({
      * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
     applyChanges(changedStep) {
-      changedStep.step.rules.map(x => { if (x.create == false) x.change = true; });
+      changedStep.step.rules.map(x => {
+        if (x.create == false) x.change = true;
+      });
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
       this.connectionsChanged = !this.connectionsChanged;
@@ -732,7 +715,7 @@ window.vObj = new Vue({
           let currentRules = this.steps[levelIndex].rules;
           for (let ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId)
-              currentRules.splice(ruleIndex, 1);        
+              currentRules.splice(ruleIndex, 1);
           }
         });
       }
@@ -744,7 +727,7 @@ window.vObj = new Vue({
      */
     getAncestorStepList(stepId) {
       let list = [];
-      let previousLevel = this.getStepLevel(stepId)-1;
+      let previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
@@ -758,7 +741,7 @@ window.vObj = new Vue({
 
     getAncestorStepListHelper(stepId) {
       let list = [stepId];
-      let previousLevel = this.getStepLevel(stepId)-1;
+      let previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
@@ -769,18 +752,18 @@ window.vObj = new Vue({
       });
       return list;
     },
-    
+
     /**
      * Removes duplicate items from an array.
      * @param {Array} array 
      */
     arrayUnique(array) {
       var a = array.concat();
-      for(var i=0; i<a.length; ++i) {
-          for(var j=i+1; j<a.length; ++j) {
-              if(a[i] === a[j])
-                  a.splice(j--, 1);
-          }
+      for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+          if (a[i] === a[j])
+            a.splice(j--, 1);
+        }
       }
       return a;
     },

@@ -26,7 +26,7 @@ Route::get('/usersverification', 'UsersVerificationController@index')->name('use
 Route::post('/usersverification/accept', 'UsersVerificationController@accept')->name('usersverification.accept');
 Route::post('/usersverification/reject', 'UsersVerificationController@reject')->name('usersverification.reject');
 
-Route::get('/designer', 'DesignerController@index')->name('designer');
+Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
 Route::post('/graph', 'GraphController@index');
 

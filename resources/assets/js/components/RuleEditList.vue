@@ -5,7 +5,7 @@
         </div>
         <div class="row" id="accRulesEdit">
             <div class="col">
-                <rule-edit-item v-for="(rule, index) in rules" :key="index" :index-item="index" :rule="rule" :options="childNodes" @toggle="selectCard($event)">
+                <rule-edit-item v-for="(rule, index) in rules" :key="index" :index-item="index" :rule="rule" :options="children" @toggle="selectCard($event)">
                 </rule-edit-item>
             </div>
         </div>
@@ -32,15 +32,8 @@ export default {
   },
 
   computed: {
-    childNodes: function() {
-      let options = JSON.parse(JSON.stringify(this.children));
-      options.map(function(child, index) {
-        child["ind"] = index;
-      });
-      return options;
-    },
     isLeaf: function() {
-      return this.childNodes.length == 0;
+      return this.children.length == 0;
     },
     buttonTitle: function() {
       if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
