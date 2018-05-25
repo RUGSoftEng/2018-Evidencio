@@ -94,11 +94,11 @@ class DesignerLoadController extends Controller
     private function loadVariablesOfStep($dbStep, $stepNum)
     {
         $usedVariables = [];
-        $varIds = [];
         $variables = $dbStep->fields()->get();
+        $varIds = array_fill(0, $variables->count(), "varId");
         foreach ($variables as $key => $value) {
             $name = "var" . $stepNum . '_' . $key;
-            $varIds[] = $name;
+            $varIds[$value->pivot->order] = $name;
             $usedVariables[$name] = $this->loadVariable($value);
         }
         return ["varIds" => $varIds, "usedVariables" => $usedVariables];

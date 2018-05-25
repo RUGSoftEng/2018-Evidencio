@@ -1,12 +1,10 @@
-@extends('layouts.app') 
-@section('content') 
-@include('partials.sidebar')
+@extends('layouts.app') @section('content') @include('partials.sidebar')
 
 <div class="container-fluid height-100" id="designerDiv">
 
     {{-- @include('partials.designer_modal') --}}
-    <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables"
-        :child-nodes="childrenNodes" :ancestor-variables="variablesUpToStep" :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+    <modal-step :step-id="selectedStepId" :steps="steps" :used-variables="usedVariables" :children-steps="childrenSteps" :ancestor-variables="variablesUpToStep"
+        :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
     <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
     <!-- Normal view -->
     <div class="row justify-content-center height-100">

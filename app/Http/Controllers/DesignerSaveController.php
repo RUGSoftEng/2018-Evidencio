@@ -30,19 +30,13 @@ class DesignerSaveController extends Controller
     {
         $returnObj = [];
         $user = Auth::user();
-        if ($workflowId != null) {
-            $workflow = $user->createdWorkflows()->where('id', '=', $workflowId)->first();
-            if ($workflow == null) {
-                $workflow = new Workflow;
-            }
-        } else {
-            $workflow = new Workflow;
-        }
+        $workflow = $this->getWorkflowFromId($user, $workflowId);
         $workflow->author_id = $user->id;
         $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
         $workflow->save();
+        $workflow->touch();
         if ($request->modelIds != null) {
             $this->saveLoadedEvidencioModels($request->modelIds, $workflow);
         }
@@ -54,6 +48,27 @@ class DesignerSaveController extends Controller
         $returnObj['optionIds'] = $IDs['optionIds'];
         $returnObj['resultIds'] = $IDs['resultIds'];
         return $returnObj;
+    }
+
+    /**
+     * Gets the workflow-object from a Id, if given and if it exists and is owned by the given user.
+     * If not, create a new workflow
+     *
+     * @param [App|User] $user
+     * @param [Number] $workflowId
+     * @return App|Workflow
+     */
+    private function getWorkflowFromId($user, $workflowId)
+    {
+        if ($workflowId != null) {
+            $workflow = $user->createdWorkflows()->where('id', '=', $workflowId)->first();
+            if ($workflow == null) {
+                $workflow = new Workflow;
+            }
+        } else {
+            $workflow = new Workflow;
+        }
+        return $workflow;
     }
 
     /**
@@ -104,6 +119,7 @@ class DesignerSaveController extends Controller
             if (!isset($step["variables"])) {
                 $step["variables"] = [];
             }
+            $stp->touch();
             $newFieldIds = $this->saveFields($stp, $step, $variables);
             $fieldIds["variableIds"] = array_merge($fieldIds["variableIds"], $newFieldIds["variableIds"]);
             $fieldIds["optionIds"] = array_merge($fieldIds["optionIds"], $newFieldIds["optionIds"]);
@@ -167,22 +183,23 @@ class DesignerSaveController extends Controller
         $variableIds = [];
         $optionIds = [];
         $savedFields = $dbStep->fields()->get();
-        foreach ($step['variables'] as $var) {
-            if (($fld = $savedFields->where('id', $variables[$var]['databaseId']))->isNotEmpty()) {
+        foreach ($step["variables"] as $key => $var) {
+            if (($fld = $savedFields->where("id", $variables[$var]["databaseId"]))->isNotEmpty()) {
                 $fld = $fld->first();
                 $this->saveSingleField($fld, $variables[$var]);
                 $fld->save();
-                if ($variables[$var]['type'] == 'categorical')
-                    $optionIds[$var] = $this->saveCategoricalOptions($fld, $variables[$var]['options']);
+                $dbStep->fields()->updateExistingPivot($fld, ["order" => $key]);
+                if ($variables[$var]["type"] == "categorical")
+                    $optionIds[$var] = $this->saveCategoricalOptions($fld, $variables[$var]["options"]);
                 $savedFields = $savedFields->filter(function ($value) use ($variables, $var) {
-                    return $value->id != $variables[$var]['databaseId'];
+                    return $value->id != $variables[$var]["databaseId"];
                 });
             } else {
                 $fld = new Field;
                 $this->saveSingleField($fld, $variables[$var]);
-                $dbStep->fields()->save($fld);
-                if ($variables[$var]['type'] == 'categorical')
-                    $optionIds[$var] = $this->saveCategoricalOptions($fld, $variables[$var]['options']);
+                $dbStep->fields()->save($fld, ["order" => $key]);
+                if ($variables[$var]["type"] == "categorical")
+                    $optionIds[$var] = $this->saveCategoricalOptions($fld, $variables[$var]["options"]);
             }
             $variableIds[$var] = $fld->id;
         }
@@ -198,7 +215,7 @@ class DesignerSaveController extends Controller
             }
             $savedField->delete();
         }
-        return ['variableIds' => $variableIds, 'optionIds' => $optionIds];
+        return ["variableIds" => $variableIds, "optionIds" => $optionIds];
     }
 
     private function saveRules($dbStep, $rules, $stepIds)
