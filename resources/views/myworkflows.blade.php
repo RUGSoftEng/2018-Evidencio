@@ -4,7 +4,7 @@
 
 @include('partials.sidebar')
 
-    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+    <!--<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>-->
 
 <div class="container-fluid justify-content-center">
 
@@ -12,7 +12,7 @@
 
     <div class="card-header">
         <h3 style="display: inline-block;">My Workflows</h3>
-        <button style= "float: right;" type="button" class="btn btn-primary"><i class="fas fa-plus"></i> Create New Workflow</button>
+    <a style= "float: right;" class="btn btn-primary" href="{{ route('designer') }}"><i class="fo-icon icon-plus">&#xe804;</i> Create New Workflow</a>
     </div>
 
     <div class="card-body">

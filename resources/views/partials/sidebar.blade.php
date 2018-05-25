@@ -6,7 +6,7 @@
 
         <div class="sidebar-header">
             <h3>
-                    {{ Auth::user()->name }}
+                    {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
             </h3>
         </div>
 
@@ -18,9 +18,10 @@
             <li>
                 <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
-                    <li><a class="doubleMenu" href="#">Submitted Workflows</a></li>
-                    <li><a class="doubleMenu" href="#">User Questions</a></li>
-                    <li><a class="doubleMenu" href="#">User Requests</a></li>
+                    <li><a href="{{ route('usersverification.index') }}">Users verification</a></li>
+                    <li><a href="#">Submitted Workflows</a></li>
+                    <li><a href="#">User Questions</a></li>
+                    <li><a href="#">User Requests</a></li>
                 </ul>
                 <a href="#">Edit Account Details</a>
             </li>

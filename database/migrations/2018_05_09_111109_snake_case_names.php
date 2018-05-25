@@ -13,6 +13,10 @@ class SnakeCaseNames extends Migration
      */
     public function up()
     {
+        /*
+         * Rename column names to snake case because there were some issues
+         * when using capital letters in names
+         */
         Schema::table('comment_replies', function(Blueprint $table){
             $table->renameColumn('authorId','author_id');
             $table->renameColumn('verificationCommentId','verification_comment_id');

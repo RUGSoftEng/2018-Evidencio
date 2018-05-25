@@ -25,7 +25,6 @@ class DatabaseWorkflowTest extends TestCase
         parent::setUp();
 
         $this->user = \App\User::create([
-            'name' => 'testUser',
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'johnsmith@evidencio.com',
@@ -34,7 +33,6 @@ class DatabaseWorkflowTest extends TestCase
         ]);
 
         $this->reviewer = \App\User::create([
-            'name' => 'reviewerUser',
             'first_name' => 'Jan',
             'last_name' => 'Jansen',
             'email' => 'janjansen@evidencio.com',
@@ -66,7 +64,7 @@ class DatabaseWorkflowTest extends TestCase
 
         $this->field = \App\Field::create(['friendly_title' => "Are you sick?", 'evidencio_variable_id' => '1234']);
 
-        $this->step1->fields()->attach($this->field);
+        $this->step1->fields()->attach($this->field,['order' => 1]);
 
         $this->option = $this->field->options()->create(['title' => 'Yes', 'friendly_title' => 'No']);
 
@@ -112,6 +110,9 @@ class DatabaseWorkflowTest extends TestCase
         $this->assertEquals('1234', $this->step1->modelRunFields->first()->pivot['evidencio_field_id']);
         $this->assertEquals($this->field['id'], $this->step1->modelRunFieldsById('576')->first()['id']);
         $this->assertEquals($this->step1['id'], $this->field->usedInRunsInSteps->first()['id']);
+
+        $this->assertEquals(1,$this->step1->fields->first()->pivot->order);
+        $this->assertEquals(1,$this->field->inputSteps->first()->pivot->order);
     }
 
     public function testFieldRelations()

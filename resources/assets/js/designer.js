@@ -1,8 +1,8 @@
-require("./event-dispatcher.js");
 Vue.component("vueMultiselect", window.VueMultiselect.default);
-Vue.component("workflowInformation", require("./components/WorkflowInformation.vue"));
+Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
+Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
 
 // ============================================================================================= //
 
@@ -46,7 +46,9 @@ window.vObj = new Vue({
     maxStepsPerLevel: 0,
     stepsChanged: false,
     levelsChanged: false,
+    connectionsChanged: false,
     nodeCounter: 0,
+    edgeCounter: 0,
 
     deltaX: 150,
     deltaY: 250,
@@ -55,8 +57,17 @@ window.vObj = new Vue({
 
     selectedStepId: 0,
     modalChanged: false,
+    confirmDialog: {
+      title: "",
+      message: "",
+      type: "",
+      data: 0,
+      approvalFunction: () => {}
+    },
 
-    workflowId: null
+    workflowId: null,
+
+    debug: {}
   },
 
   created() {
@@ -75,15 +86,38 @@ window.vObj = new Vue({
         "First step in the model shown to the patient. Change this step to fit your needs.",
         0
       );
-      this.fitView();
+      this.panView();
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
-    // Event called when the user tries to save a workflow
-    Event.listen("save", () => {
-      this.saveWorkflow();
+    // Event called when all the evidencio models for a workflow are (hopefully) loaded
+    Event.listen("loadWorkflowAllModelsLoaded", () => {
+      this.steps.forEach(localStep => {
+        localStep.rules.forEach(rule => {
+          rule.target.stepId = this.getStepIdFromDatabaseId(rule.target.id);
+          rule.create = true;
+          rule.destroy = false;
+          rule.change = false;
+          if (rule.target.stepId == -1) {
+            rule.destroy = true;
+          }
+        });
+        localStep.apiCalls.forEach(apiCall => {
+          apiCall.title = this.models[this.getLocalIdFromModelId(apiCall.evidencioModelId)].title;
+          apiCall.variables.forEach(variable => {
+            let localVariable = this.getVariableKeyFromDatabaseId(variable.fieldId);
+            variable.localVariable = localVariable;
+            variable.evidencioTitle = this.usedVariables[localVariable].title;
+          });
+        });
+      });
+      this.connectionsChanged = !this.connectionsChanged;
+    })
+    // Event called when the user tries to remove a step
+    Event.listen("confirmDialog", confirmInfo => {
+      this.prepareConfirmDialog(confirmInfo);
     });
   },
 
@@ -99,55 +133,34 @@ window.vObj = new Vue({
       } else return [];
     },
 
-    // Deep-copy of the models and variables, used for MultiSelect
-    possibleVariables: function () {
-      if (this.modelLoaded) {
-        deepCopy = JSON.parse(JSON.stringify(this.models));
-        return deepCopy;
-      }
-      return [];
-    },
-
     // Array containing children of currently selected step
-    childrenNodes: function () {
+    childrenSteps: function () {
       if (this.selectedStepId == -1) return [];
       let levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
-      let options = [];
-      this.levels[levelIndex + 1].steps.forEach(element => {
-        options.push({
-          stepId: element,
-          title: this.steps[element].title,
-          id: this.steps[element].id,
-          colour: this.steps[element].colour,
-          ind: options.length
-        });
-      });
-      return options;
+      return this.levels[levelIndex + 1].steps;
     },
 
-    // Array of model-representations for API-call
-    modelChoiceRepresentation: function () {
-      let representation = [];
-      this.models.forEach(element => {
-        representation.push({
-          title: element.title,
-          id: element.id
-        });
+    variablesUpToStep: function () {
+      let vars = [],
+        stepIds = this.getAncestorStepList(this.selectedStepId);
+      stepIds.forEach(stepId => {
+        vars = vars.concat(this.steps[stepId].variables);
       });
-      return representation;
+      return vars;
     }
   },
 
   methods: {
     /**
      * Load model from Evidencio API, Model is prepared for later saving.
-     * @param {Number} -> modelId is the id of the Evidencio model that should be loaded.
+     * @param {Number} modelId is the id of the Evidencio model that should be loaded.
+     * @return {Promise} Returns the promise object. 
      */
     loadModelEvidencio(modelId) {
       var self = this;
       if (!this.isModelLoaded(modelId)) {
-        $.ajax({
+        return $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
           },
@@ -158,9 +171,10 @@ window.vObj = new Vue({
           },
           success: function (result) {
             self.debug = result;
-            self.models.push(JSON.parse(result));
+            self.models.push(result);
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
+            self.models[self.models.length - 1]["resultVars"] = [];
             self.models[self.models.length - 1].variables.map(x => {
               x["databaseId"] = -1;
               if (x["type"] == "categorical") {
@@ -173,9 +187,56 @@ window.vObj = new Vue({
             self.modelLoaded = true;
             self.modelIds.push(modelId);
             self.recountVariableUses();
+            self.runDummyModelEvidencio(self.models.length - 1);
           }
         });
       }
+    },
+
+    /**
+     * Performs a dummy api call of an ALREADY LOADED Evidencio model
+     * @param {Number} localModelId : index of model in this.models array
+     */
+    runDummyModelEvidencio(localModelId) {
+      var self = this;
+      let values = {};
+      this.models[localModelId].variables.forEach(variable => {
+        if (variable.type == "continuous")
+          values[variable.id.toString()] = variable.options.min;
+        else
+          values[variable.id.toString()] = variable.options[0].title;
+      });
+
+      //The code below is a start to working with sequential models, but I ignore them for now
+      let steps = [];
+      if (this.models[localModelId].hasOwnProperty("steps")) {
+        return;
+        // this.models[localModelId].steps.forEach(step => {
+        //   steps.push({
+        //     id: step.id
+        //   })
+        // });
+      }
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/designer/runmodel",
+        type: "POST",
+        data: {
+          modelId: self.models[localModelId].id,
+          values: values
+        },
+        success: function (result) {
+          if (result.hasOwnProperty("result")) {
+            self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_0");
+          } else {
+            for (let index = 0; index < result.resultSet.length; index++) {
+              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index);
+            }
+          }
+        }
+      });
     },
 
     /**
@@ -204,9 +265,20 @@ window.vObj = new Vue({
           },
           success: function (result) {
             self.workflowId = Number(result.workflowId);
+            var pathArray = location.href.split("/");
+            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
             let numberOfSteps = self.steps.length;
-            for (let index = 0; index < numberOfSteps; index++) {
-              self.steps[index].id = result.stepIds[index];
+            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+              self.steps[stepIndex].id = result.stepIds[stepIndex];
+              cy.getElementById(self.steps[stepIndex].nodeId).style({
+                label: self.steps[stepIndex].id
+              });
+              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+                let apiCall = result.resultIds[stepIndex][apiIndex];
+                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+                }
+              }
             }
             let varIds = result.variableIds;
             for (var key in varIds) {
@@ -242,9 +314,6 @@ window.vObj = new Vue({
         success: function (result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
-            result.evidencioModels.forEach(element => {
-              self.loadModelEvidencio(element);
-            });
             let currentSteps = self.stepsChanged;
             let currentLevels = self.levelsChanged;
             self.title = result.title;
@@ -255,20 +324,36 @@ window.vObj = new Vue({
                 self.addLevel(self.levels.length);
               console.log("Index: " + index + ", #steps: " + self.steps.length);
               self.addStep(element.title, element.description, element.level);
-              self.steps[index].id = element.id;
-              self.steps[index].colour = element.colour;
-              self.steps[index].variables = element.variables;
+              let localStep = self.steps[index];
+              localStep.id = element.id;
+              localStep.colour = element.colour;
+              localStep.variables = element.variables;
+              localStep.varCounter = element.variables.length;
+              localStep.rules = element.rules;
+              localStep.apiCalls = element.apiCalls;
             });
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            self.LoadWorkflowLoadModels(result.evidencioModels);
+            self.panView();
           } else {
             self.workflowId = null;
             Event.fire("normalStart");
           }
         }
+      });
+    },
+
+    LoadWorkflowLoadModels(models) {
+      $.when.apply($, models.map(element => {
+        return this.loadModelEvidencio(element);
+      })).then(function (x) {
+        Event.fire("loadWorkflowAllModelsLoaded");
+      }, function (e) {
+        Console.log("At least one of the requests failed.");
       });
     },
 
@@ -292,11 +377,21 @@ window.vObj = new Vue({
      * @return {Boolean} true if found, false if not
      */
     isModelLoaded(modelId) {
-      for (let index = 0; index < this.modelIds.length; index++) {
-        if (this.modelIds[index] == modelId) return true;
-      }
-      return false;
+      return this.getLocalIdFromModelId(modelId) != -1;
     },
+
+    /**
+     * Returns the local index of an Evidencio model, -1 if it has not been loaded.
+     * @param {Number} modelId 
+     */
+    getLocalIdFromModelId(modelId) {
+      for (let index = 0; index < this.modelIds.length; index++) {
+        if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
+
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {Number} index of position level should be added
@@ -306,6 +401,36 @@ window.vObj = new Vue({
         steps: []
       });
       this.levelsChanged = !this.levelsChanged;
+    },
+
+    /**
+     * Adds a level normally if no rules are broken due to the addition, otherwise asks for confirmation.
+     * @param {Number} levelIndex is the location at which to add the level
+     */
+    addLevelConditional(levelIndex) {
+      if (this.levelHasRule(levelIndex - 1)) {
+        this.prepareConfirmDialog({
+          title: "Add a level",
+          message: "Adding a level at this height will remove some exising rules. Are you sure you wish to continue?\r\n Only the direct children of steps can be targets for a rule.",
+          type: "addLevelRuleDeletion",
+          data: levelIndex
+        });
+        this.callConfirmDialog();
+      } else {
+        this.addLevel(levelIndex);
+      }
+    },
+
+    /**
+     * Returns true if any of the steps in a level has a rule, false otherwise.
+     * @param {Number} levelIndex of level to be checked
+     */
+    levelHasRule(levelIndex) {
+      for (let indexStep = 0; indexStep < this.levels[levelIndex].steps.length; indexStep++) {
+        if (this.steps[this.levels[levelIndex].steps[indexStep]].rules.length > 0)
+          return true;
+      }
+      return false;
     },
 
     /**
@@ -325,12 +450,20 @@ window.vObj = new Vue({
         variables: [],
         varCounter: 0,
         rules: [],
-        apiCall: {
-          model: null,
-          variables: []
-        },
+        apiCalls: [],
         create: true,
-        destroy: false
+        destroy: false,
+        chartTypeNumber: 0,
+        chartData: [],
+        chartRenderingData: {
+          labels: ['January', 'February'],
+          datasets: [{
+            // label: 'A simple label',
+            label: "Edit Label",
+            backgroundColor: ['#0000ff', '#ff0000'],
+            data: [40, 20]
+          }]
+        }
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
@@ -352,6 +485,16 @@ window.vObj = new Vue({
      */
     fitView() {
       cy.fit();
+    },
+
+    /**
+     * Pans the view to (approximately) the location of the nodes.
+     */
+    panView() {
+      cy.pan({
+        x: cy.width() / 2,
+        y: cy.height() / 4
+      });
     },
 
     /**
@@ -430,11 +573,47 @@ window.vObj = new Vue({
     },
 
     /**
+     * Prepares the confirmation dialog for use.
+     * @param {Object} confirmInfo contains the title, message, data and type of the dialog
+     */
+    prepareConfirmDialog(confirmInfo) {
+      this.confirmDialog.title = confirmInfo.title;
+      this.confirmDialog.message = confirmInfo.message;
+      this.confirmDialog.data = confirmInfo.data;
+      switch (confirmInfo.type) {
+        case "removeStep":
+          this.confirmDialog.approvalFunction = () => {
+            this.removeStep(this.confirmDialog.data);
+          }
+          break;
+        case "addLevelRuleDeletion":
+          this.confirmDialog.approvalFunction = () => {
+            let stepIds = this.levels[this.confirmDialog.data - 1].steps;
+            for (let indexStep = 0; indexStep < stepIds.length; indexStep++) {
+              this.steps[stepIds[indexStep]].rules.map(x => {
+                x.destroy = true;
+              });
+            }
+            this.connectionsChanged = !this.connectionsChanged;
+            this.addLevel(this.confirmDialog.data);
+          }
+          break;
+      }
+    },
+
+    /**
+     * Calls the confirmation dialog.
+     */
+    callConfirmDialog() {
+      $("#confirmModal").modal();
+    },
+
+    /**
      * Opens an option-modal for the node that is clicked on.
      * @param {Object} nodeRef is the reference to the node that is clicked on.
      */
-    prepareModal(nodeRef) {
-      this.selectedStepId = nodeRef.scratch("_nodeId");
+    prepareModal(nodeId) {
+      this.selectedStepId = this.getStepIdFromNode(nodeId);
       this.modalChanged = !this.modalChanged;
     },
 
@@ -443,9 +622,12 @@ window.vObj = new Vue({
      * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
     applyChanges(changedStep) {
+      changedStep.step.rules.map(x => {
+        if (x.create == false) x.change = true;
+      });
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
-
+      this.connectionsChanged = !this.connectionsChanged;
       // Set new backgroundcolor
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
         "background-color": changedStep.step.colour
@@ -454,8 +636,43 @@ window.vObj = new Vue({
     },
 
     /**
+     * Returns the stepId based on the nodeId
+     * @param {String} nodeId Node-Id of the node
+     */
+    getStepIdFromNode(nodeId) {
+      for (let index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].nodeId == nodeId) return index;
+      }
+      return -1;
+    },
+
+    /**
+     * Returns the stepId based on the databaseId
+     * @param {Number} databaseId 
+     */
+    getStepIdFromDatabaseId(databaseId) {
+      for (let index = 0; index < this.steps.length; index++) {
+        if (this.steps[index].id == databaseId) return index;
+      }
+      return -1;
+    },
+
+    /**
+     * Returns the key of a variable from the usedVariable object by its databaseId
+     * @param {Number} databaseId 
+     */
+    getVariableKeyFromDatabaseId(databaseId) {
+      for (var key in this.usedVariables) {
+        if (this.usedVariables.hasOwnProperty(key)) {
+          if (this.usedVariables[key].databaseId == databaseId) return key;
+        }
+      }
+      return null;
+    },
+
+    /**
      * Returns the level (height in graph) of a step
-     * @param {integer} stepIndex of step
+     * @param {Number} stepIndex of step
      * @return {Number} the level at which a step is.
      */
     getStepLevel(stepIndex) {
@@ -466,6 +683,100 @@ window.vObj = new Vue({
         }
       }
       return -1;
+    },
+
+    /**
+     * Removes the step from the level, if it exists.
+     * @param {Number} stepIndex of step
+     */
+    removeStepFromLevel(stepIndex) {
+      for (let levelIndex = 0; levelIndex < this.levels.length; levelIndex++) {
+        const level = this.levels[levelIndex].steps;
+        for (let index = level.length - 1; index >= 0; index--) {
+          if (stepIndex == level[index]) {
+            this.levels[levelIndex].steps.splice(index, 1);
+          }
+        }
+        for (let index = level.length; index >= 0; index--) {
+          if (level[index] > stepIndex) this.levels[levelIndex].steps[index]--;
+        }
+      }
+      this.calculateMaxStepsPerLevel();
+    },
+
+    /**
+     * Removes rules based on the target step
+     * @param {Number} stepId of the target step of an edge/rule
+     */
+    removeRulesByTarget(stepId) {
+      let levelIndex = this.getStepLevel(stepId) - 1;
+      if (levelIndex >= 0) {
+        this.levels[levelIndex].steps.forEach(stepIndex => {
+          let currentRules = this.steps[levelIndex].rules;
+          for (let ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
+            if (currentRules[ruleIndex].target.stepId == stepId)
+              currentRules.splice(ruleIndex, 1);
+          }
+        });
+      }
+    },
+
+    /**
+     * Finds the ancestors of a step based on the rules (excludes itself)
+     * @param {Number} stepId of the child to find ancestors of
+     */
+    getAncestorStepList(stepId) {
+      let list = [];
+      let previousLevel = this.getStepLevel(stepId) - 1;
+      if (previousLevel < 0)
+        return list;
+      this.levels[previousLevel].steps.forEach(stId => {
+        this.steps[stId].rules.forEach(rule => {
+          if (rule.target.stepId == stepId)
+            list = list.concat(this.getAncestorStepListHelper(stId));
+        });
+      });
+      return this.arrayUnique(list);
+    },
+
+    getAncestorStepListHelper(stepId) {
+      let list = [stepId];
+      let previousLevel = this.getStepLevel(stepId) - 1;
+      if (previousLevel < 0)
+        return list;
+      this.levels[previousLevel].steps.forEach(stId => {
+        this.steps[stId].rules.forEach(rule => {
+          if (rule.target.stepId == stepId)
+            list = list.concat(this.getAncestorStepListHelper(stId));
+        });
+      });
+      return list;
+    },
+
+    /**
+     * Removes duplicate items from an array.
+     * @param {Array} array 
+     */
+    arrayUnique(array) {
+      var a = array.concat();
+      for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+          if (a[i] === a[j])
+            a.splice(j--, 1);
+        }
+      }
+      return a;
+    },
+
+    /**
+     * Calculates the maximum number of steps per level.
+     */
+    calculateMaxStepsPerLevel() {
+      this.maxStepsPerLevel = 0;
+      this.levels.forEach(element => {
+        if (element.steps.length > this.maxStepsPerLevel)
+          this.maxStepsPerLevel = element.steps.length;
+      });
     },
 
     /**
@@ -505,34 +816,34 @@ window.vObj = new Vue({
      * stepsChanged is used to indicate if a step has been set to be created or removed, this function does the actual work.
      */
     stepsChanged: function () {
-      for (let index = 0; index < this.steps.length; index++) {
-        if (this.steps[index].create) {
-          this.steps[index].nodeId = cy.add({
+      for (let index = this.steps.length - 1; index >= 0; index--) {
+        let currentStep = this.steps[index];
+        if (currentStep.create) {
+          currentStep.nodeId = cy.add({
             classes: "node",
             data: {
               id: "node_" + this.nodeCounter
             },
-            scratch: {
-              _nodeId: index
-            },
             style: {
-              "background-color": this.steps[index].colour
+              "background-color": currentStep.colour
             }
           }).id();
-          this.steps[index].create = false;
-          cy.getElementById(this.steps[index].nodeId).style({
-            label: this.steps[index].id
+          currentStep.create = false;
+          cy.getElementById(currentStep.nodeId).style({
+            label: currentStep.id
           });
           this.nodeCounter++;
         }
-        if (this.steps[index].destroy) {
-          cy.remove(this.steps[index].nodeId);
+        if (currentStep.destroy) {
+          cy.remove(cy.getElementById(currentStep.nodeId));
+          this.removeRulesByTarget(index);
+          this.removeStepFromLevel(index);
           this.steps.splice(index, 1);
         }
       }
+      this.positionSteps();
       this.positionAddStepButtons();
       this.positionAddLevelButtons();
-      this.positionSteps();
     },
 
     /**
@@ -560,6 +871,37 @@ window.vObj = new Vue({
       this.positionAddLevelButtons();
       this.positionAddStepButtons();
       this.positionSteps();
+    },
+
+    connectionsChanged: function () {
+      this.steps.forEach((element, index) => {
+        for (let index = element.rules.length - 1; index >= 0; index--) {
+          let currentRule = element.rules[index];
+          if (currentRule.create) {
+            let source = element.nodeId;
+            let target = this.steps[currentRule.target.stepId].nodeId;
+            currentRule.edgeId = cy.add({
+              classes: "edge",
+              data: {
+                id: "edge_" + this.edgeCounter,
+                source: source,
+                target: target
+              }
+            }).id();
+            currentRule.create = false;
+            this.edgeCounter++;
+          } else if (currentRule.change) {
+            let target = this.steps[currentRule.target.stepId].nodeId;
+            cy.getElementById(currentRule.edgeId).move({
+              target: target
+            });
+            currentRule.change = false;
+          } else if (currentRule.destroy) {
+            cy.remove(cy.getElementById(currentRule.edgeId));
+            element.rules.splice(index, 1);
+          }
+        }
+      });
     },
 
     selectedVariables: function () {

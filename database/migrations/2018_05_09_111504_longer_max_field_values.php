@@ -13,6 +13,10 @@ class LongerMaxFieldValues extends Migration
      */
     public function up()
     {
+        /*
+         * Some string columns actually need to have longer maximum possible
+         * lengths
+         */
         Schema::table('registration_documents', function (Blueprint $table) {
             $table->string('name',255)->change();
         });
