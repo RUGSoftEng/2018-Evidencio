@@ -5,7 +5,6 @@ or radio buttons for categorical values.--}}
 <?php
  use App\EvidencioAPI;
  use App\Workflow;
- //dd($result);
 ?>
 
 @extends('layouts.app')
@@ -21,6 +20,7 @@ or radio buttons for categorical values.--}}
   <h5><?php echo $result['steps'][0]['title'] ?></h5>
   <form method="POST" action="/graph">
     {{ csrf_field() }}
+    <input type="hidden" name="db_id" value="<?php echo $id ?>">
     <input type="hidden" name="model" value="<?php echo $result['evidencioModels'][0] ?>">
     <ul class="list-group">
     @foreach ($result['steps'][0]['variables'] as $item)

@@ -1,4 +1,6 @@
 {
+    "/js/designer.js": "/js/designer.js",
+    "/js/designer.js.map": "/js/designer.js.map",
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/css/workflow.css": "/css/workflow.css",
@@ -9,10 +11,10 @@
     "/css/workflow.css.map": "/css/workflow.css.map",
     "/css/sidebar.css.map": "/css/sidebar.css.map",
     "/css/designer.css.map": "/css/designer.css.map",
-    "/js/workflow.js": "/js/workflow.js",
-    "/js/workflow.js.map": "/js/workflow.js.map",
-    "/js/designer.js": "/js/designer.js",
-    "/js/designer.js.map": "/js/designer.js.map",
+    "/js/designerGraph.js": "/js/designerGraph.js",
+    "/js/designerGraph.js.map": "/js/designerGraph.js.map",
     "/js/sidebar.js": "/js/sidebar.js",
-    "/js/sidebar.js.map": "/js/sidebar.js.map"
+    "/js/sidebar.js.map": "/js/sidebar.js.map",
+    "/js/bootstrap-colorpalette.js": "/js/bootstrap-colorpalette.js",
+    "/js/bootstrap-colorpalette.js.map": "/js/bootstrap-colorpalette.js.map"
 }

@@ -8,9 +8,11 @@ Users are also able to download a pdf of the results--}}
 This will return an array with the result and their parameters.--}}
 <?php
 use App\EvidencioAPI;
+use App\Result;
 if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   $decodeRes = EvidencioAPI::run($_POST['model'],$_POST['answer']);
   $modelDetails = EvidencioAPI::getModel($_POST['model']);
+  $test = (new Result)->getStep($_POST['db_id']);
 }
 ?>
 @extends('layouts.app')
@@ -44,25 +46,41 @@ $dataPoints = array(
   <canvas id="graph"></canvas>
    <br/><br/><br/>
   <div class"row justify-content-center">
-    <table width="50%" class="justify-content-center">
+    <table width="100%" style="margin-left:auto; margin-right:auto;">
       <tr>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+        <th width="4%"></th>
+
       </tr>
       <tr>
         <?php
         $numSad = $result;
-        for($j = 0; $j <10; $j++){
+        for($j = 0; $j <4; $j++){
           echo "<tr>";
-          for($i = 0; $i < 10; $i++ ){
+          for($i = 0; $i < 25; $i++ ){
             if($numSad > 0){
           ?>
               <td><img src="{{ URL::to('/images/highRisk.png') }}" width="100%" /></td>
@@ -95,7 +113,7 @@ $dataPoints = array(
 
   var ctx = document.getElementById("graph").getContext('2d');
 
-  Chart.defaults.global.defaultFontSize = 16;
+  Chart.defaults.global.defaultFontSize = 20;
 
   init();
 
@@ -108,14 +126,9 @@ $dataPoints = array(
                 label: 'Result',
                 data: [<?php echo 100-$result ?>, <?php echo $result ?>],
                 backgroundColor: [
-                  'rgba(54, 162, 235, 0.5)',
-                  'rgba(255, 99, 132, 0.5)',
-                ],
-                borderWidth:1,
-                borderColor: [
-                    'rgba(54, 162, 435, 1)',
-                    'rgba(455,99,132,1)',
-                ],
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 99, 132, 1)',
+                ]
             }]
         },
         options: {
@@ -185,8 +198,14 @@ $dataPoints = array(
     }
     ?>
     <?php
-    foreach ($modelDetails['variables'] as $item)
+    foreach ($modelDetails['variables'] as $item){
     echo '<input type="hidden" name="qn[]" value="'. $item['title']. '"/>';
+    }
+    ?>
+    <?php
+    foreach ($modelDetails['variables'] as $item){
+    echo '<input type="hidden" name="desc[]" value="'. $item['description']. '"/>';
+    }
     ?>
     <?php
     foreach($decodeRes['additionalResultSet'] as $text){

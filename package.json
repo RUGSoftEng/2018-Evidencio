@@ -34,6 +34,7 @@
         "vue-chartjs": "^3.3.1",
         "vue-multiselect": "^2.1.0",
         "vue-select": "^2.4.0",
+        "vuedraggable": "^2.16.0",
         "ya-simple-scrollbar": "^1.0.0"
     }
 }

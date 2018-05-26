@@ -32051,7 +32051,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-2641ca42"
+var __vue_scopeId__ = "data-v-700bf4c2"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -32062,7 +32062,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/DetailsEditable.vue"
+Component.options.__file = "resources\\assets\\js\\components\\DetailsEditable.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -32071,9 +32071,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2641ca42", Component.options)
+    hotAPI.createRecord("data-v-700bf4c2", Component.options)
   } else {
-    hotAPI.reload("data-v-2641ca42", Component.options)
+    hotAPI.reload("data-v-700bf4c2", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33085,13 +33085,13 @@ var content = __webpack_require__(239);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(140)("3eb6b234", content, false, {});
+var update = __webpack_require__(140)("5522479e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-700bf4c2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-700bf4c2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33109,7 +33109,7 @@ exports = module.exports = __webpack_require__(139)(true);
 
 
 // module
-exports.push([module.i, "\n.right[data-v-2641ca42] {\n  float: right;\n}\ntextarea[data-v-2641ca42] {\n  resize: none;\n}\nlabel[data-v-2641ca42] {\n  font-weight: bold;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/DetailsEditable.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,kBAAkB;CAAE","file":"DetailsEditable.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\nlabel {\n  font-weight: bold; }\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.right[data-v-700bf4c2] {\n  float: right;\n}\ntextarea[data-v-700bf4c2] {\n  resize: none;\n}\nlabel[data-v-700bf4c2] {\n  font-weight: bold;\n}\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/DetailsEditable.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,kBAAkB;CAAE","file":"DetailsEditable.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\nlabel {\n  font-weight: bold; }\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33339,7 +33339,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-2641ca42", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-700bf4c2", module.exports)
   }
 }
 
@@ -33362,7 +33362,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-63841236"
+var __vue_scopeId__ = "data-v-28730114"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -33373,7 +33373,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableViewList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableViewList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33382,9 +33382,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-63841236", Component.options)
+    hotAPI.createRecord("data-v-28730114", Component.options)
   } else {
-    hotAPI.reload("data-v-63841236", Component.options)
+    hotAPI.reload("data-v-28730114", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33405,13 +33405,13 @@ var content = __webpack_require__(245);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(140)("9a50abe2", content, false, {});
+var update = __webpack_require__(140)("6a7fc7c6", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-63841236\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-63841236\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-28730114\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-28730114\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33429,7 +33429,7 @@ exports = module.exports = __webpack_require__(139)(true);
 
 
 // module
-exports.push([module.i, "\n.sizing[data-v-63841236] {\n    position: relative;\n    min-height: 300px;\n}\n.scrollbar[data-v-63841236] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,kBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\n    <div class=\"card height-100\">\n        <div class=\"card-header\">\n            Variables\n            <model-load></model-load>\n        </div>\n\n        <div class=\"card-body height-100 sizing\">\n            <div class=\"scrollbar\">\n                <div id=\"accVariablesView\">\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\n                        <div class=\"card-header\" id=\"headingOne\">\n                            <h5 class=\"mb-0\">\n                                No variables added yet...\n                            </h5>\n                        </div>\n                    </div>\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\n                        @toggle=\"selectCard($event)\"></variable-view-item>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport ModelLoad from \"./ModelLoad.vue\";\nimport VariableViewItem from \"./VariableViewItem.vue\";\n\nexport default {\n  components: {\n    ModelLoad,\n    VariableViewItem\n  },\n  props: {\n    allVariables: {\n      type: Array,\n      required: true\n    },\n    allVariablesUsed: {\n      type: Object,\n      required: true\n    }\n  },\n\n  methods: {\n    selectCard(index) {\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\n      }\n    }\n  }\n};\n</script>\n\n<style scoped>\n.sizing {\n    position: relative;\n    min-height: 300px;\n}\n\n.scrollbar {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.sizing[data-v-28730114] {\r\n    position: relative;\r\n    min-height: 300px;\n}\n.scrollbar[data-v-28730114] {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    margin: 1.25rem;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,kBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\r\n    <div class=\"card height-100\">\r\n        <div class=\"card-header\">\r\n            Variables\r\n            <model-load></model-load>\r\n        </div>\r\n\r\n        <div class=\"card-body height-100 sizing\">\r\n            <div class=\"scrollbar\">\r\n                <div id=\"accVariablesView\">\r\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\r\n                        <div class=\"card-header\" id=\"headingOne\">\r\n                            <h5 class=\"mb-0\">\r\n                                No variables added yet...\r\n                            </h5>\r\n                        </div>\r\n                    </div>\r\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\r\n                        @toggle=\"selectCard($event)\"></variable-view-item>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\nimport ModelLoad from \"./ModelLoad.vue\";\r\nimport VariableViewItem from \"./VariableViewItem.vue\";\r\n\r\nexport default {\r\n  components: {\r\n    ModelLoad,\r\n    VariableViewItem\r\n  },\r\n  props: {\r\n    allVariables: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    allVariablesUsed: {\r\n      type: Object,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  methods: {\r\n    selectCard(index) {\r\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\r\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\r\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\r\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\r\n      }\r\n    }\r\n  }\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.sizing {\r\n    position: relative;\r\n    min-height: 300px;\r\n}\r\n\r\n.scrollbar {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    margin: 1.25rem;\r\n}\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33519,7 +33519,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-94266ff0"
+var __vue_scopeId__ = "data-v-0f3ec2c8"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -33530,7 +33530,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ModelLoad.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ModelLoad.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33539,9 +33539,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-94266ff0", Component.options)
+    hotAPI.createRecord("data-v-0f3ec2c8", Component.options)
   } else {
-    hotAPI.reload("data-v-94266ff0", Component.options)
+    hotAPI.reload("data-v-0f3ec2c8", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33562,13 +33562,13 @@ var content = __webpack_require__(249);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(140)("66c29602", content, false, {});
+var update = __webpack_require__(140)("2e366f35", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-94266ff0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-94266ff0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-0f3ec2c8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-0f3ec2c8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33586,7 +33586,7 @@ exports = module.exports = __webpack_require__(139)(true);
 
 
 // module
-exports.push([module.i, "\n#inputModelID[data-v-94266ff0] {\n  width: 50px;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/ModelLoad.vue"],"names":[],"mappings":";AAAA;EACE,YAAY;CAAE","file":"ModelLoad.vue","sourcesContent":["#inputModelID {\n  width: 50px; }\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n#inputModelID[data-v-0f3ec2c8] {\n  width: 50px;\n}\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/ModelLoad.vue"],"names":[],"mappings":";AAAA;EACE,YAAY;CAAE","file":"ModelLoad.vue","sourcesContent":["#inputModelID {\n  width: 50px; }\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33785,7 +33785,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-94266ff0", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-0f3ec2c8", module.exports)
   }
 }
 
@@ -33815,7 +33815,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableViewItem.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableViewItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33824,9 +33824,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-597e9a2b", Component.options)
+    hotAPI.createRecord("data-v-3c7df12a", Component.options)
   } else {
-    hotAPI.reload("data-v-597e9a2b", Component.options)
+    hotAPI.reload("data-v-3c7df12a", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33924,7 +33924,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableViewCategorical.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableViewCategorical.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33933,9 +33933,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-435dae90", Component.options)
+    hotAPI.createRecord("data-v-7f955910", Component.options)
   } else {
-    hotAPI.reload("data-v-435dae90", Component.options)
+    hotAPI.reload("data-v-7f955910", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33988,7 +33988,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-435dae90", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-7f955910", module.exports)
   }
 }
 
@@ -34018,7 +34018,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableViewContinuous.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableViewContinuous.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -34027,9 +34027,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-12e71427", Component.options)
+    hotAPI.createRecord("data-v-22729167", Component.options)
   } else {
-    hotAPI.reload("data-v-12e71427", Component.options)
+    hotAPI.reload("data-v-22729167", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -34089,7 +34089,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-12e71427", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-22729167", module.exports)
   }
 }
 
@@ -34170,7 +34170,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-597e9a2b", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-3c7df12a", module.exports)
   }
 }
 
@@ -34245,7 +34245,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-63841236", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-28730114", module.exports)
   }
 }
 
@@ -34268,7 +34268,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-682a3b1c"
+var __vue_scopeId__ = "data-v-253cdd32"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -34279,7 +34279,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ModalStep.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ModalStep.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -34288,9 +34288,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-682a3b1c", Component.options)
+    hotAPI.createRecord("data-v-253cdd32", Component.options)
   } else {
-    hotAPI.reload("data-v-682a3b1c", Component.options)
+    hotAPI.reload("data-v-253cdd32", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -34311,13 +34311,13 @@ var content = __webpack_require__(264);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(140)("3725f586", content, false, {});
+var update = __webpack_require__(140)("56b1fdf4", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModalStep.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -34335,7 +34335,7 @@ exports = module.exports = __webpack_require__(139)(true);
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAqiBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\n - Color changing\n - Gray functions\n    -->\n\n<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <vue-multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </vue-multiselect>\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <vue-multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Cannot be done without a model\"\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"true\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                        <template slot=\"tag\" slot-scope=\"props\">\n                                                            <span class=\"badge badge-info badge-larger\">\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                            </span>\n                                                        </template>\n                                                    </vue-multiselect>\n                                                    <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\n                                                        :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\"></rule-edit-list>\n                                                <!--<div class=\"container-fluid\">\n                                                    <button type=\"button\" class=\"btn btn-primary\" @click=\"addRule()\">Add rule</button>\n                                                    <table class=\"table-striped\">\n                                                        <thead>\n                                                            <tr>\n                                                                <th>Name</th>\n                                                                <th>Condition</th>\n                                                                <th>Target</th>\n                                                            </tr>\n                                                        </thead>\n                                                        <tbody>\n                                                            <tr v-for=\"(rule, index) in modalRules\">\n                                                                <td data-label=\"Name\">\n                                                                    <div class=\"form-group\">\n                                                                        <input type=\"text\" class=\"form-control\" name=\"Name\" :id=\"'ruleName_' + index\" :aria-describedby=\"'helpId_' + index\" placeholder=\"Rule name\"\n                                                                            v-model=\"rule.name\">\n                                                                        <small :id=\"'helpId_' + index\" class=\"form-text text-muted\">Name of the rule</small>\n                                                                    </div>\n                                                                </td>\n                                                                <td data-label=\"Condition\">Wayne</td>\n                                                                <td data-label=\"Target\">Batman</td>\n                                                            </tr>\n                                                        </tbody>\n                                                    </table>\n                                                </div>-->\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :chart-items=\"this.localStep.chartData\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"this.localStep.chartTypeNumber\" :chart-data=\"this.localStep.chartRenderingData\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApi,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets shou;d be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    }\n\n    // /**\n    //  * Adds a rule to the list of rules\n    //  */\n    // addRule() {\n    //   this.modalRules.push({\n    //     name: \"Go to target\",\n    //     rule: [],\n    //     target: -1\n    //   });\n    //   this.modalEditRuleFlags.push(false);\n    // },\n\n    // /**\n    //  * Removes the rule with the given index from the list\n    //  * @param {integer} [ruleIndex] of rule to be removed\n    //  */\n    // removeRule(ruleIndex) {\n    //   this.modalRules.splice(ruleIndex, 1);\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\n    // },\n\n    // /**\n    //  * Allows for a rule to be edited.\n    //  * @param {integer} [index] of the rule to be edited\n    //  */\n    // editRule(index) {\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\n    // },\n\n    // /**\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\n    //  * @param {integer} [modelID] is the Evidencio model ID.\n    //  */\n    // getModelIndex(modelID) {\n    //   for (let index = 0; index < this.models.length; index++) {\n    //     if (this.models[index].id == modelID) return index;\n    //   }\n    //   return -1;\n    // },\n\n    // /**\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\n    //  * @param {object} [selectedModel] is the newly selected model\n    //  */\n    // apiCallModelChangeAction(selectedModel) {\n    //   let modID = this.getModelIndex(selectedModel.id);\n    //   if (modID == -1) {\n    //     this.modalApiCall.variables = [];\n    //     return;\n    //   }\n    //   let modVars = [];\n    //   this.models[modID].variables.forEach(element => {\n    //     modVars.push({\n    //       originalTitle: element.title,\n    //       originalID: element.id,\n    //       targetID: null\n    //     });\n    //   });\n    //   this.modalApiCall.variables = modVars;\n    // }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: []\n    };\n  }\n};\n</script>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-253cdd32] {\r\n  font-weight: bold;\n}\n.spaced[data-v-253cdd32] {\r\n  -webkit-box-pack: justify;\r\n      -ms-flex-pack: justify;\r\n          justify-content: space-between;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAqiBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\r\n - Color changing\r\n - Gray functions\r\n    -->\r\n\r\n<template>\r\n    <!-- Modal -->\r\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\r\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\r\n            <div class=\"modal-content\">\r\n                <div class=\"modal-header\">\r\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\r\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\r\n                        <span aria-hidden=\"true\">&times;</span>\r\n                    </button>\r\n                </div>\r\n                <div class=\"modal-body\">\r\n                    <div class=\"container-fluid\">\r\n                        <!-- TOP -->\r\n                        <div class=\"row\">\r\n                            <div class=\"col-md-4\">\r\n                                <label for=\"colorPick\">Pick a color:</label>\r\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\r\n                                <ul class=\"dropdown-menu\">\r\n                                    <li>\r\n                                        <div id=\"colorPalette\"></div>\r\n                                    </li>\r\n                                </ul>\r\n                                <div class=\"form-group\">\r\n                                    <label for=\"stepType\">Select step-type:</label>\r\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\r\n                                        <option value=\"input\">Input</option>\r\n                                        <option value=\"result\">Result</option>\r\n                                    </select>\r\n                                </div>\r\n                            </div>\r\n\r\n                            <div class=\"col-md-8 mb-2\">\r\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\r\n                            </div>\r\n                        </div>\r\n\r\n                        <!-- Middle -->\r\n                        <div class=\"row\">\r\n                            <div class=\"col\">\r\n\r\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\r\n                                    <div class=\"card-header\">\r\n                                        <nav>\r\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\r\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\r\n                                                    aria-selected=\"true\">Variables</a>\r\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\r\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\r\n                                                    aria-selected=\"false\">Logic</a>\r\n                                            </div>\r\n                                        </nav>\r\n                                    </div>\r\n                                    <div class=\"card-body\" id=\"modalCard\">\r\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\r\n\r\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\r\n                                                <vue-multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\r\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\r\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\r\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\r\n                                                    <template slot=\"tag\" slot-scope=\"props\">\r\n                                                        <span class=\"badge badge-info badge-larger\">\r\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\r\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\r\n                                                        </span>\r\n                                                    </template>\r\n                                                </vue-multiselect>\r\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\r\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\r\n                                            </div>\r\n\r\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\r\n                                                <div class=\"container-fluid\">\r\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\r\n                                                    <vue-multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Cannot be done without a model\"\r\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\r\n                                                        :searchable=\"true\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\r\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\r\n                                                        <template slot=\"tag\" slot-scope=\"props\">\r\n                                                            <span class=\"badge badge-info badge-larger\">\r\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\r\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\r\n                                                            </span>\r\n                                                        </template>\r\n                                                    </vue-multiselect>\r\n                                                    <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\r\n                                                        :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\r\n                                                </div>\r\n                                            </div>\r\n\r\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\r\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\"></rule-edit-list>\r\n                                                <!--<div class=\"container-fluid\">\r\n                                                    <button type=\"button\" class=\"btn btn-primary\" @click=\"addRule()\">Add rule</button>\r\n                                                    <table class=\"table-striped\">\r\n                                                        <thead>\r\n                                                            <tr>\r\n                                                                <th>Name</th>\r\n                                                                <th>Condition</th>\r\n                                                                <th>Target</th>\r\n                                                            </tr>\r\n                                                        </thead>\r\n                                                        <tbody>\r\n                                                            <tr v-for=\"(rule, index) in modalRules\">\r\n                                                                <td data-label=\"Name\">\r\n                                                                    <div class=\"form-group\">\r\n                                                                        <input type=\"text\" class=\"form-control\" name=\"Name\" :id=\"'ruleName_' + index\" :aria-describedby=\"'helpId_' + index\" placeholder=\"Rule name\"\r\n                                                                            v-model=\"rule.name\">\r\n                                                                        <small :id=\"'helpId_' + index\" class=\"form-text text-muted\">Name of the rule</small>\r\n                                                                    </div>\r\n                                                                </td>\r\n                                                                <td data-label=\"Condition\">Wayne</td>\r\n                                                                <td data-label=\"Target\">Batman</td>\r\n                                                            </tr>\r\n                                                        </tbody>\r\n                                                    </table>\r\n                                                </div>-->\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n\r\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\r\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\r\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\r\n                                            <div id=\"chartLayoutDesigner\">\r\n                                                <div class=\"dropdown\">\r\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\r\n                                                        aria-expanded=\"false\">\r\n                                                        Pick a chart type\r\n                                                    </a>\r\n\r\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\r\n                                                    </div>\r\n                                                </div>\r\n                                                <chart-items-list :chart-items=\"this.localStep.chartData\"></chart-items-list>\r\n                                            </div>\r\n                                        </div>\r\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\r\n                                            <chart-preview :chart-type=\"this.localStep.chartTypeNumber\" :chart-data=\"this.localStep.chartRenderingData\"></chart-preview>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n\r\n                </div>\r\n                <div class=\"modal-footer spaced\">\r\n                    <div>\r\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\r\n                            @click=\"remove\">Remove</button>\r\n                    </div>\r\n                    <div>\r\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\r\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\nimport VariableEditList from \"./VariableEditList.vue\";\r\nimport RuleEditList from \"./RuleEditList.vue\";\r\nimport ChartPreview from \"./ChartDisplay.vue\";\r\nimport DetailsEditable from \"./DetailsEditable.vue\";\r\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\r\nimport ChartItemsList from \"./ChartItemsList\";\r\n\r\nexport default {\r\n  components: {\r\n    VariableEditList,\r\n    RuleEditList,\r\n    ChartPreview,\r\n    DetailsEditable,\r\n    VariableMappingApi,\r\n    ChartItemsList\r\n  },\r\n  props: {\r\n    stepId: {\r\n      type: Number,\r\n      required: true\r\n    },\r\n    models: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    steps: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    usedVariables: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    ancestorVariables: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    childrenSteps: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    changed: {\r\n      type: Boolean,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  computed: {\r\n    // Array containing all variables assigned up to and including the current step\r\n    variablesUpToStep: function() {\r\n      let vars = this.ancestorVariables;\r\n      vars = vars.concat(this.localStep.variables);\r\n      return vars;\r\n    },\r\n    // Array of model-representations for API-call\r\n    modelChoiceRepresentation: function() {\r\n      let representation = [];\r\n      this.models.forEach((model, index) => {\r\n        representation.push({\r\n          localId: index,\r\n          title: model.title,\r\n          id: model.id\r\n        });\r\n      });\r\n      return representation;\r\n    },\r\n    // Array containing all children of the current step\r\n    childrenStepsExtended: function() {\r\n      let children = [];\r\n      this.childrenSteps.forEach((childId, index) => {\r\n        let step = this.steps[childId];\r\n        children.push({\r\n          stepId: childId,\r\n          colour: step.colour,\r\n          id: step.id,\r\n          ind: index,\r\n          title: step.title\r\n        });\r\n      });\r\n      return children;\r\n    }\r\n  },\r\n\r\n  mounted: function() {\r\n    let self = this;\r\n    $(\"#colorPalette\")\r\n      .colorPalette()\r\n      .on(\"selectColor\", function(evt) {\r\n        self.localStep.colour = evt.color;\r\n      });\r\n  },\r\n\r\n  watch: {\r\n    changed: function() {\r\n      this.reload();\r\n    }\r\n  },\r\n\r\n  methods: {\r\n    reload() {\r\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\r\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\r\n      this.setSelectedVariables();\r\n      this.setSelectedModels();\r\n      this.updateRuleTargetDetails();\r\n    },\r\n\r\n    /**\r\n     * Apply the changes made to the step (send an Event that does it)\r\n     */\r\n    apply() {\r\n      this.$emit(\"change\", {\r\n        step: this.localStep,\r\n        usedVars: this.localUsedVariables\r\n      });\r\n    },\r\n\r\n    remove() {\r\n      Event.fire(\"confirmDialog\", {\r\n        title: \"Removal of Step\",\r\n        message: \"Are you sure you want to remove this step?\",\r\n        type: \"removeStep\",\r\n        data: this.stepId\r\n      });\r\n    },\r\n\r\n    updateOrder(newOrderVariables) {\r\n      this.selectedVariables = newOrderVariables;\r\n      this.localStep.variables = newOrderVariables;\r\n    },\r\n\r\n    modelSelectAPI(model) {\r\n      this.localStep.apiCalls.push({\r\n        evidencioModelId: model.id,\r\n        title: model.title,\r\n        results: this.models[model.localId].resultVars.map(result => {\r\n          return {\r\n            name: result,\r\n            databaseId: -1\r\n          };\r\n        }),\r\n        variables: this.models[model.localId].variables.map(variable => {\r\n          return {\r\n            evidencioVariableId: variable.id,\r\n            evidencioTitle: variable.title,\r\n            localVariable: \"\"\r\n          };\r\n        })\r\n      });\r\n    },\r\n\r\n    modelRemoveApi(model) {\r\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\r\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\r\n          this.localStep.apiCalls.splice(index, 1);\r\n          return;\r\n        }\r\n      }\r\n    },\r\n\r\n    setSelectedModels() {\r\n      this.multiSelectedModels = [];\r\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\r\n        return {\r\n          localId: this.findModel(apiCall.evidencioModelId),\r\n          title: apiCall.title,\r\n          id: apiCall.evidencioModelId\r\n        };\r\n      });\r\n    },\r\n\r\n    findModel(evidencioModelId) {\r\n      for (let index = 0; index < this.models.length; index++) {\r\n        if (this.models[index].id == evidencioModelId) return index;\r\n      }\r\n      return -1;\r\n    },\r\n\r\n    /**\r\n     * Adds the selected variables to the selectedVariable part of the multiselect.\r\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\r\n     */\r\n    setSelectedVariables() {\r\n      this.multiSelectedVariables = [];\r\n      for (let index = 0; index < this.localStep.variables.length; index++) {\r\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\r\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\r\n          const element = this.models[indexOfMod];\r\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\r\n            if (element.variables[indexInMod].id == origID) {\r\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\r\n              break findVariable;\r\n            }\r\n          }\r\n        }\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Everytime the modal is opened, the details for the rule-targets shou;d be updated.\r\n     */\r\n    updateRuleTargetDetails() {\r\n      this.localStep.rules.forEach(rule => {\r\n        let next = rule.target,\r\n          nextStep = this.steps[next.stepId];\r\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\r\n      });\r\n    },\r\n\r\n    /**\r\n     * Returns the text shown when more than the limit of options are selected.\r\n     * @param {integer} [count] is the number of not-shown options.\r\n     */\r\n    multiselectVariablesText(count) {\r\n      return \" and \" + count + \" other variable(s)\";\r\n    },\r\n\r\n    /**\r\n     * Removes the variables from the step.\r\n     * @param {array||object} [removedVariables] are the variables to be removed\r\n     */\r\n    multiRemoveVariables(removedVariables) {\r\n      if (removedVariables.constructor == Array) {\r\n        removedVariables.forEach(element => {\r\n          this.multiRemoveSingleVariable(element);\r\n        });\r\n      } else {\r\n        this.multiRemoveSingleVariable(removedVariables);\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\r\n     * @param {Object} [removedVariable] the variable-object to be removed\r\n     */\r\n    multiRemoveSingleVariable(removedVariable) {\r\n      for (let index = 0; index < this.localStep.variables.length; index++) {\r\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\r\n          delete this.localUsedVariables[this.localStep.variables[index]];\r\n          this.localStep.variables.splice(index, 1);\r\n          return;\r\n        }\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Selects the variables from the step.\r\n     * @param {array||object} [selectedVariables] are the variables to be selected\r\n     */\r\n    multiSelectVariables(selectedVariables) {\r\n      if (selectedVariables.constructor == Array) {\r\n        selectedVariables.forEach(element => {\r\n          this.multiSelectSingleVariable(element);\r\n        });\r\n      } else {\r\n        this.multiSelectSingleVariable(selectedVariables);\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\r\n     * @param {object} [selectedVariable] the variable-object to be selected\r\n     */\r\n    multiSelectSingleVariable(selectedVariable) {\r\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\r\n      this.localStep.variables.push(varName);\r\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\r\n    },\r\n\r\n    /**\r\n     * Changes the details of the step\r\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\r\n     */\r\n    changeStepDetails(newDetails) {\r\n      this.localStep.title = newDetails.title;\r\n      this.localStep.description = newDetails.description;\r\n    },\r\n\r\n    /**\r\n     * Changes the type of the chart used inside a step\r\n     * @param {Number} type Number representing the chart type.\r\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\r\n     */\r\n    changeChartType(type) {\r\n      this.localStep.chartTypeNumber = type;\r\n    },\r\n\r\n    /**\r\n     * Adds the object containing at least the label and the color\r\n     * corresponding to a graph field.\r\n     * @param {String} label\r\n     * @param {String} color\r\n     */\r\n    addNewField(label, color) {\r\n      let object = {\r\n        label,\r\n        color\r\n      };\r\n      this.localStep.chartData.push(object);\r\n    }\r\n\r\n    // /**\r\n    //  * Adds a rule to the list of rules\r\n    //  */\r\n    // addRule() {\r\n    //   this.modalRules.push({\r\n    //     name: \"Go to target\",\r\n    //     rule: [],\r\n    //     target: -1\r\n    //   });\r\n    //   this.modalEditRuleFlags.push(false);\r\n    // },\r\n\r\n    // /**\r\n    //  * Removes the rule with the given index from the list\r\n    //  * @param {integer} [ruleIndex] of rule to be removed\r\n    //  */\r\n    // removeRule(ruleIndex) {\r\n    //   this.modalRules.splice(ruleIndex, 1);\r\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\r\n    // },\r\n\r\n    // /**\r\n    //  * Allows for a rule to be edited.\r\n    //  * @param {integer} [index] of the rule to be edited\r\n    //  */\r\n    // editRule(index) {\r\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\r\n    // },\r\n\r\n    // /**\r\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\r\n    //  * @param {integer} [modelID] is the Evidencio model ID.\r\n    //  */\r\n    // getModelIndex(modelID) {\r\n    //   for (let index = 0; index < this.models.length; index++) {\r\n    //     if (this.models[index].id == modelID) return index;\r\n    //   }\r\n    //   return -1;\r\n    // },\r\n\r\n    // /**\r\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\r\n    //  * @param {object} [selectedModel] is the newly selected model\r\n    //  */\r\n    // apiCallModelChangeAction(selectedModel) {\r\n    //   let modID = this.getModelIndex(selectedModel.id);\r\n    //   if (modID == -1) {\r\n    //     this.modalApiCall.variables = [];\r\n    //     return;\r\n    //   }\r\n    //   let modVars = [];\r\n    //   this.models[modID].variables.forEach(element => {\r\n    //     modVars.push({\r\n    //       originalTitle: element.title,\r\n    //       originalID: element.id,\r\n    //       targetID: null\r\n    //     });\r\n    //   });\r\n    //   this.modalApiCall.variables = modVars;\r\n    // }\r\n  },\r\n\r\n  data() {\r\n    return {\r\n      localStep: {},\r\n      localUsedVariables: {},\r\n      multiSelectedVariables: []\r\n    };\r\n  }\r\n};\r\n</script>\r\n\r\n<style lang=\"css\" scoped>\r\n.variable-label {\r\n  font-weight: bold;\r\n}\r\n\r\n.spaced {\r\n  justify-content: space-between;\r\n}\r\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -34945,7 +34945,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableEditList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableEditList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -34954,9 +34954,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-0c99109b", Component.options)
+    hotAPI.createRecord("data-v-d649044a", Component.options)
   } else {
-    hotAPI.reload("data-v-0c99109b", Component.options)
+    hotAPI.reload("data-v-d649044a", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37022,7 +37022,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableEditItem.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableEditItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37031,9 +37031,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-02939890", Component.options)
+    hotAPI.createRecord("data-v-ea53f460", Component.options)
   } else {
-    hotAPI.reload("data-v-02939890", Component.options)
+    hotAPI.reload("data-v-ea53f460", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37054,13 +37054,13 @@ var content = __webpack_require__(272);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(140)("12702faf", content, false, {});
+var update = __webpack_require__(140)("1da835ff", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-02939890\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-02939890\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ea53f460\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ea53f460\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -37078,7 +37078,7 @@ exports = module.exports = __webpack_require__(139)(true);
 
 
 // module
-exports.push([module.i, "\n.icon-menu {\n  font-size: 120%;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableEditItem.vue"],"names":[],"mappings":";AAwCA;EACA,gBAAA;CACA","file":"VariableEditItem.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editVar_' + index\"\n            aria-expanded=\"false\" :aria-controls=\"'editVar' + index\" @click=\"show=!show\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n            {{ variable.title }}\n            <i class=\"fo-icon icon-menu handle float-right\">&#xf0c9;</i>\n        </button>\n        <div class=\"form-group collapse\" :id=\"'editVar_' + index\">\n            <label for=\"title\" class=\"mb-0\">Title</label>\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"variable.title\" placeholder=\"Title\">\n            <label for=\"description\" class=\"mb-0 mt-2\">Description</label>\n            <textarea id=\"description\" cols=\"30\" class=\"form-control\" v-model=\"variable.description\" placeholder=\"Description\" rows=\"2\"></textarea>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    variable: {\n      type: Object,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    }\n  },\n\n  data() {\n    return {\n      show: false\n    };\n  }\n};\n</script>\n\n<style>\n.icon-menu {\n  font-size: 120%;\n}\n</style>\n\n\n<!--<template>\n    <div class=\"card\">\n        <div @click=\"toggleShow\" class=\"card-header collapsed\" :id=\"'varEditCollapseHeader_' + indexItem\" data-parent=\"#accVariablesEdit\"\n            aria-expanded=\"false\" :aria-controls=\"'varEditCollapse_' + indexItem\">\n            <h6 class=\"mb-0\">\n                {{ variable.title }}\n            </h6>\n        </div>\n\n        <div :id=\"'varEditCollapse_' + indexItem\" class=\"collapse\" :aria-labelledby=\"'#varEditCollapseHeader_' + indexItem\">\n            <div class=\"card-body\">\n                <form onsubmit=\"return false\">\n                    <div class=\"form-group\">\n                        <label :for=\"'titleVar_' + indexItem\">Title: </label>\n                        <input type=\"text\" name=\"\" :id=\"'titleVar_' + indexItem\" :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\"\n                            v-model=\"variable.title\" placeholder=\"Title\">\n                        <small :id=\"'titleVarHelp_' + indexItem\" class=\"form-text text-muted\">Title of the variable</small>\n                    </div>\n                    <div class=\"form-group\">\n                        <label :for=\"'descriptionVar_' + indexItem\">Description: </label>\n                        <textarea :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\" :id=\"'descriptionVar_' + indexItem\"\n                            cols=\"30\" rows=\"3\" v-model=\"variable.description\"></textarea>\n                        <small :id=\"'descriptionVarHelp_' + indexItem\" class=\"form-text text-muted\">Description of the variable</small>\n                        <input type=\"image\" class=\"buttonIcon\" :src=\"getImage\" @click=\"editing = !editing\" alt=\"Edit\">\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    variable: {\n      type: Object,\n      required: true\n    },\n    indexItem: {\n      type: Number,\n      required: true\n    }\n  },\n\n  data() {\n    return {\n      editing: false\n    };\n  },\n\n  methods: {\n    toggleShow() {\n      this.$emit(\"toggle\", this.indexItem);\n    }\n  },\n\n  computed: {\n    getImage: function() {\n      if (this.editing) return \"/images/check.svg\";\n      else return \"/images/pencil.svg\";\n    }\n  }\n};\n</script>-->"],"sourceRoot":""}]);
+exports.push([module.i, "\n.icon-menu {\r\n  font-size: 120%;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableEditItem.vue"],"names":[],"mappings":";AAwCA;EACA,gBAAA;CACA","file":"VariableEditItem.vue","sourcesContent":["<template>\r\n    <div>\r\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editVar_' + index\"\r\n            aria-expanded=\"false\" :aria-controls=\"'editVar' + index\" @click=\"show=!show\">\r\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\r\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\r\n            {{ variable.title }}\r\n            <i class=\"fo-icon icon-menu handle float-right\">&#xf0c9;</i>\r\n        </button>\r\n        <div class=\"form-group collapse\" :id=\"'editVar_' + index\">\r\n            <label for=\"title\" class=\"mb-0\">Title</label>\r\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"variable.title\" placeholder=\"Title\">\r\n            <label for=\"description\" class=\"mb-0 mt-2\">Description</label>\r\n            <textarea id=\"description\" cols=\"30\" class=\"form-control\" v-model=\"variable.description\" placeholder=\"Description\" rows=\"2\"></textarea>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n  props: {\r\n    variable: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    index: {\r\n      type: Number,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  data() {\r\n    return {\r\n      show: false\r\n    };\r\n  }\r\n};\r\n</script>\r\n\r\n<style>\r\n.icon-menu {\r\n  font-size: 120%;\r\n}\r\n</style>\r\n\r\n\r\n<!--<template>\r\n    <div class=\"card\">\r\n        <div @click=\"toggleShow\" class=\"card-header collapsed\" :id=\"'varEditCollapseHeader_' + indexItem\" data-parent=\"#accVariablesEdit\"\r\n            aria-expanded=\"false\" :aria-controls=\"'varEditCollapse_' + indexItem\">\r\n            <h6 class=\"mb-0\">\r\n                {{ variable.title }}\r\n            </h6>\r\n        </div>\r\n\r\n        <div :id=\"'varEditCollapse_' + indexItem\" class=\"collapse\" :aria-labelledby=\"'#varEditCollapseHeader_' + indexItem\">\r\n            <div class=\"card-body\">\r\n                <form onsubmit=\"return false\">\r\n                    <div class=\"form-group\">\r\n                        <label :for=\"'titleVar_' + indexItem\">Title: </label>\r\n                        <input type=\"text\" name=\"\" :id=\"'titleVar_' + indexItem\" :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\"\r\n                            v-model=\"variable.title\" placeholder=\"Title\">\r\n                        <small :id=\"'titleVarHelp_' + indexItem\" class=\"form-text text-muted\">Title of the variable</small>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <label :for=\"'descriptionVar_' + indexItem\">Description: </label>\r\n                        <textarea :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\" :id=\"'descriptionVar_' + indexItem\"\r\n                            cols=\"30\" rows=\"3\" v-model=\"variable.description\"></textarea>\r\n                        <small :id=\"'descriptionVarHelp_' + indexItem\" class=\"form-text text-muted\">Description of the variable</small>\r\n                        <input type=\"image\" class=\"buttonIcon\" :src=\"getImage\" @click=\"editing = !editing\" alt=\"Edit\">\r\n                    </div>\r\n                </form>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n  props: {\r\n    variable: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    indexItem: {\r\n      type: Number,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  data() {\r\n    return {\r\n      editing: false\r\n    };\r\n  },\r\n\r\n  methods: {\r\n    toggleShow() {\r\n      this.$emit(\"toggle\", this.indexItem);\r\n    }\r\n  },\r\n\r\n  computed: {\r\n    getImage: function() {\r\n      if (this.editing) return \"/images/check.svg\";\r\n      else return \"/images/pencil.svg\";\r\n    }\r\n  }\r\n};\r\n</script>-->"],"sourceRoot":""}]);
 
 // exports
 
@@ -37239,7 +37239,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-02939890", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-ea53f460", module.exports)
   }
 }
 
@@ -37293,7 +37293,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-0c99109b", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-d649044a", module.exports)
   }
 }
 
@@ -37323,7 +37323,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/RuleEditList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\RuleEditList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37332,9 +37332,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-424c86ca", Component.options)
+    hotAPI.createRecord("data-v-29e4c9db", Component.options)
   } else {
-    hotAPI.reload("data-v-424c86ca", Component.options)
+    hotAPI.reload("data-v-29e4c9db", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37443,7 +37443,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/RuleEditItem.vue"
+Component.options.__file = "resources\\assets\\js\\components\\RuleEditItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37452,9 +37452,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-565776e0", Component.options)
+    hotAPI.createRecord("data-v-1fdf51d0", Component.options)
   } else {
-    hotAPI.reload("data-v-565776e0", Component.options)
+    hotAPI.reload("data-v-1fdf51d0", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37860,7 +37860,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-565776e0", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-1fdf51d0", module.exports)
   }
 }
 
@@ -37914,7 +37914,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-424c86ca", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-29e4c9db", module.exports)
   }
 }
 
@@ -37944,7 +37944,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ChartDisplay.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ChartDisplay.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37953,9 +37953,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-58105a8a", Component.options)
+    hotAPI.createRecord("data-v-1f02dffb", Component.options)
   } else {
-    hotAPI.reload("data-v-58105a8a", Component.options)
+    hotAPI.reload("data-v-1f02dffb", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38055,7 +38055,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/BarChart.vue"
+Component.options.__file = "resources\\assets\\js\\components\\BarChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38064,9 +38064,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-36d6897c", Component.options)
+    hotAPI.createRecord("data-v-208f2efc", Component.options)
   } else {
-    hotAPI.reload("data-v-36d6897c", Component.options)
+    hotAPI.reload("data-v-208f2efc", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38127,7 +38127,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/PieChart.vue"
+Component.options.__file = "resources\\assets\\js\\components\\PieChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38136,9 +38136,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-e092c42e", Component.options)
+    hotAPI.createRecord("data-v-ca4b69ae", Component.options)
   } else {
-    hotAPI.reload("data-v-e092c42e", Component.options)
+    hotAPI.reload("data-v-ca4b69ae", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38199,7 +38199,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/PolarChart.vue"
+Component.options.__file = "resources\\assets\\js\\components\\PolarChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38208,9 +38208,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5f060cb7", Component.options)
+    hotAPI.createRecord("data-v-2ff369f7", Component.options)
   } else {
-    hotAPI.reload("data-v-5f060cb7", Component.options)
+    hotAPI.reload("data-v-2ff369f7", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38271,7 +38271,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/DoughnutChart.vue"
+Component.options.__file = "resources\\assets\\js\\components\\DoughnutChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38280,9 +38280,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-78f75b56", Component.options)
+    hotAPI.createRecord("data-v-4c4a25d6", Component.options)
   } else {
-    hotAPI.reload("data-v-78f75b56", Component.options)
+    hotAPI.reload("data-v-4c4a25d6", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38371,7 +38371,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-58105a8a", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-1f02dffb", module.exports)
   }
 }
 
@@ -38401,7 +38401,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/VariableMappingApi.vue"
+Component.options.__file = "resources\\assets\\js\\components\\VariableMappingApi.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38410,9 +38410,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-094a0c7f", Component.options)
+    hotAPI.createRecord("data-v-eab3ac82", Component.options)
   } else {
-    hotAPI.reload("data-v-094a0c7f", Component.options)
+    hotAPI.reload("data-v-eab3ac82", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38646,7 +38646,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-094a0c7f", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-eab3ac82", module.exports)
   }
 }
 
@@ -38676,7 +38676,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ChartItemsList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ChartItemsList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38685,9 +38685,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-60a61437", Component.options)
+    hotAPI.createRecord("data-v-1522d177", Component.options)
   } else {
-    hotAPI.reload("data-v-60a61437", Component.options)
+    hotAPI.reload("data-v-1522d177", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38779,7 +38779,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ChartItemEdit.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ChartItemEdit.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38788,9 +38788,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5b6408d8", Component.options)
+    hotAPI.createRecord("data-v-2eb6d358", Component.options)
   } else {
-    hotAPI.reload("data-v-5b6408d8", Component.options)
+    hotAPI.reload("data-v-2eb6d358", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -39092,7 +39092,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-5b6408d8", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-2eb6d358", module.exports)
   }
 }
 
@@ -39142,7 +39142,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-60a61437", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-1522d177", module.exports)
   }
 }
 
@@ -39870,7 +39870,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-682a3b1c", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-253cdd32", module.exports)
   }
 }
 
@@ -39900,7 +39900,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/ModalConfirm.vue"
+Component.options.__file = "resources\\assets\\js\\components\\ModalConfirm.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -39909,9 +39909,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-585bc78a", Component.options)
+    hotAPI.createRecord("data-v-b932566c", Component.options)
   } else {
-    hotAPI.reload("data-v-585bc78a", Component.options)
+    hotAPI.reload("data-v-b932566c", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -40058,7 +40058,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-585bc78a", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-b932566c", module.exports)
   }
 }
 

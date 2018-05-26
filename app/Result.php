@@ -31,4 +31,28 @@ class Result extends Model
     {
         return $this->belongsTo('App\Step','step_id');
     }
+
+    public function getStep($id)
+    {
+      //return Result::join('steps as S', 'S.id', '=', 'step_id')->join('workflows as W', 'W.id', '=', 'workflow_step_workflow_id')->where('W.id', '=', $id)->select('W.id','S.id', 'results.*')->get();
+      $res = Result::join('steps', 'steps.id', '=', 'results.step_id')
+        ->join('workflows', 'workflows.id', '=', 'steps.workflow_step_workflow_id')
+        ->where('workflows.id', '=', $id)
+        ->select('steps.id as sid', 'workflows.id as wid', 'results.*')
+        ->get();
+    }
 }
+
+/* Getting the friendly result from our DB. TODO convert to Eloquent
+SELECT results.*, w.id as wid, s.id as sid FROM results
+INNER JOIN steps as s ON s.id = results.step_id
+INNER JOIN workflows as w ON workflow_step_workflow_id = w.id
+WHERE w.id = 22
+ORDER BY results.result_number */
+
+/* Ordered steps. SQL equivalent. TODO convert to Eloquent
+SELECT * FROM fields as f
+INNER JOIN field_in_input_steps inp ON f.id = inp.field_id
+WHERE inp.input_step_id = 21                       //disorderly results.
+ORDER BY inp.order ASC
+*/

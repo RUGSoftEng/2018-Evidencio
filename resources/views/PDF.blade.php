@@ -74,11 +74,13 @@ if(isset($_POST["generatePDF"])){
   $questionCount = 1;
   $i = 0;
   $answerArr = $_POST['answer'];
+  $desc = $_POST['desc'];
+  $today = getdate();
 
   // set some text to print
   $content = '
-  <br/><br/>
   <h3>Evidencio Model Prediction Results</h3>
+  <p style="text-align:justify;">The following is a summary of the results that is based on what you have answered earlier on. Please note that the information is not stored on our server, and you should save the PDF and bring it to a medical professional to give you advice.</p>
   <table>
   <tr>
   <th width="15%"></th>
@@ -87,11 +89,15 @@ if(isset($_POST["generatePDF"])){
   <tr>
   <td>Model: </td>
   <td>';
-  $content .= $_POST["model_name"] . "  [ ID : " . $_POST["model"] . " ]";
+  $content .= $_POST["model_name"] . "  [ID : " . $_POST["model"] . "]";
   $content .='
   <br/>
   </td>
   </tr>
+  <tr>
+  <td>Date: </td>
+  <td>'. date("d M Y") .'
+  </td></tr>
   </table>
   <br/><br/>
   <table border="1" cellpadding="5">
@@ -101,7 +107,13 @@ if(isset($_POST["generatePDF"])){
   <th width="45%">Response</th>
   </tr>';
   foreach($_POST['qn'] as $q){
-    $content.= '<tr><td>' . $questionCount .'</td><td>' . $q . '</td><td> '. $answerArr[$i] . '</td></tr>';
+    $answerArr[$i] = str_replace('<', ' less than ', $answerArr[$i]);
+    $answerArr[$i] = str_replace('≥', ' more than or equal to ', $answerArr[$i]); //TODO known bugs: cannot parse text that contains <, ≥ and ≤
+    $answerArr[$i] = str_replace('≤', ' less than or equal to ', $answerArr[$i]);
+    $q = str_replace('<', ' less than ', $q);
+    $q = str_replace('≥', ' more than or equal to ', $q);
+    $q = str_replace('≤', ' less than or equal to ', $q);
+    $content.= '<tr><td>' . $questionCount .'</td><td>' . $q . '? <br/><small><i>'. $desc[$i] . '</i></small></td><td> '. $answerArr[$i] . '</td></tr>';
     $i = $i + 1;
     $questionCount = $questionCount + 1;
   };
@@ -138,7 +150,7 @@ if(isset($_POST["generatePDF"])){
   $content.= '
 
   <br pagebreak="true"/>
-  <h1>Chart</h1>
+  <h1>Chart (if applicable)</h1>
   <img src="';
   $content .= $_POST["chartIMG"];
   $content .='" width="2480" height="1200" /><br />

@@ -21,7 +21,7 @@ class DesignerSaveController extends Controller
     /**
      * Saves the workflow in the database.
      * Should the workflowId be given, that workflow will be updated.
-     * 
+     *
      * @param HTTP|Request $request Post request withWorkflow data (title/description, steps, etc.)
      * @param Number $workflowId
      * @return Array Array with workflowId, [stepIds], [variableIds], [optionIds]
@@ -73,7 +73,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Saves the loaded evimodels of a workflow, is required for the designer side.
-     * 
+     *
      * @param Array $modelIds IDs of loaded Evidencio models
      * @param App|Workflow $workflow Database Model of current workflow
      */
@@ -90,11 +90,11 @@ class DesignerSaveController extends Controller
 
     /**
      * Saves the steps, variables, and rules in the database, deletes steps if they are removed.
-     * 
+     *
      * @param Array $steps Steps of workflow
-     * @param Array $variables Variables of workflow 
+     * @param Array $variables Variables of workflow
      * @param App|Workflow $workflow Database Model of current workflow
-     * @return Array Array with [stepIds], [variableIds], [optionIds] 
+     * @return Array Array with [stepIds], [variableIds], [optionIds]
      */
     private function saveSteps($steps, $variables, $workflow)
     {
@@ -172,7 +172,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Saves the variables connected to a step, deletes variables if they are removed.
-     * 
+     *
      * @param App|Step $dbStep Database Model of step
      * @param Array $step Array containing data of step
      * @param Array $variables Array of variables of workflow
@@ -261,7 +261,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Saves the Evidencio Model variable mapping used for the result-calculation (terrible code, might need rewriting)
-     * 
+     *
      * @param App|Step $dbStep Database Model of step
      * @param Array $apiCalls Array containing data of apiCalls of step
      * @param Array $variableIds Array that links the local VariableId with the one in the database
@@ -272,7 +272,7 @@ class DesignerSaveController extends Controller
         $savedApiVars = $dbStep->modelRunFields()->get();
         $savedResults = $dbStep->modelRunResults()->get();
         if (!empty($apiCalls)) {
-            foreach ($apiCalls as $key => $apiCall) { 
+            foreach ($apiCalls as $key => $apiCall) {
                 //$resultIds[] = [];
                 if (($savedApiVarsModel = $savedApiVars->where('pivot.evidencio_model_id', $apiCall["evidencioModelId"]))->isNotEmpty()) {
                     foreach ($apiCall["variables"] as $apiVar) {
@@ -343,7 +343,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Updates the information of a single step
-     * 
+     *
      * @param App|Step $dbStep Database Model of step
      * @param Array $step Array containing data of step
      */
@@ -357,7 +357,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Updates the information of a single variable
-     * 
+     *
      * @param App|Field $dbField Database Model of field (variable)
      * @param Array $field Array containing data of field (variable)
      */
@@ -376,7 +376,7 @@ class DesignerSaveController extends Controller
 
     /**
      * Saves/updates the options belonging to a categorical variable.
-     * 
+     *
      * @param App|Field $dbField Database Model of Field (variable)
      * @param Array $options Array of options
      * @return Array Array filled with the database IDs of the saved options.
@@ -428,6 +428,7 @@ class DesignerSaveController extends Controller
         $retObj["steps"] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
+      //  $step->$workflow->steps()->fields()->orderBy('pivot.order', 'asc')->get()
         foreach ($steps as $step) {
             $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
             $retObj["steps"][$counter] = $stepLoaded["step"];
