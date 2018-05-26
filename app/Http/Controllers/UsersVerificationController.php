@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\User;
 use App\RegistrationDocument;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AccountApproved;
+use App\Mail\AccountRejected;
 
 class UsersVerificationController extends Controller
 {
@@ -42,7 +45,6 @@ class UsersVerificationController extends Controller
      */
     public function accept()
     {
-        //TODO check if current user is a reviewer
         $user = User::findOrFail($_POST['user_id']);
 
         abort_if($user->is_verified || $user->is_deactivated, 400);
@@ -52,6 +54,8 @@ class UsersVerificationController extends Controller
         $user->is_verified = true;
 
         $user->save();
+
+        Mail::to($user)->send(new AccountApproved($user));
 
         return redirect()->route("usersverification.index");
     }
@@ -63,14 +67,18 @@ class UsersVerificationController extends Controller
      */
     public function reject()
     {
-        //TODO check if current user is a reviewer
         $user = User::findOrFail($_POST['user_id']);
 
         abort_if($user->is_verified || $user->is_deactivated, 400);
 
         $this->deleteDocuments($user);
 
+        $userName = $user->first_name;
+        $email = $user->email;
+
         $user->delete();
+
+        Mail::to($email)->send(new AccountRejected($userName));
 
         return redirect()->route("usersverification.index");
     }
