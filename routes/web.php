@@ -17,8 +17,10 @@ Route::get('/', function () {
 
 
 Route::get('/myworkflows', function () {
-  return view('myworkflows');
-})->name('myworkflows');
+    return view('myworkflows');
+})->name('myworkflows')
+->middleware('auth')
+->middleware('can:view-designer');
 
 Auth::routes();
 
@@ -41,11 +43,11 @@ Route::post('/PDF', function () {
   return view('PDF');
 });
 
-Route::post('/designer/fetch', 'DesignerController@fetchVariables')->middleware('auth');
-Route::post('/designer/runmodel', 'DesignerController@runModel')->middleware('auth');
-Route::post('/designer/search', 'DesignerController@fetchSearch')->middleware('auth');
+Route::post('/designer/fetch', 'DesignerController@fetchVariables');
+Route::post('/designer/runmodel', 'DesignerController@runModel');
+Route::post('/designer/search', 'DesignerController@fetchSearch');
 
 
-Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')->middleware('auth');
-Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow')->middleware('auth');
-Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow')->middleware('auth');
+Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');

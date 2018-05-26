@@ -18,6 +18,11 @@ use App\Result;
  */
 class DesignerLoadController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:view-designer');
+    }
 
     /**
      * Loads a workflow from the database based on the workflowId

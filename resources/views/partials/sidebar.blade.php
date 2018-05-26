@@ -16,6 +16,7 @@
                 <a href="/myworkflows">My Workflows</a>
             </li>
             <li>
+                @can('is-administrator')
                 <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
                     <li><a href="{{ route('usersverification.index') }}">Users verification</a></li>
@@ -23,6 +24,7 @@
                     <li><a href="#">User Questions</a></li>
                     <li><a href="#">User Requests</a></li>
                 </ul>
+                @endcan
                 <a href="#">Edit Account Details</a>
             </li>
                 <p class="paragraphInSideMenu" >Help</p>

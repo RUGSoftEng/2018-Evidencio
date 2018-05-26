@@ -18,6 +18,12 @@ use App\Result;
  */
 class DesignerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:view-designer');
+    }
+
     /**
      * Show the application dashboard.
      *

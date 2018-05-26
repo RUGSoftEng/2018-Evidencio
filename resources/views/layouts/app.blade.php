@@ -62,9 +62,11 @@
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @can('view-designer')
                                     <a class="dropdown-item" href="{{ route('designer') }}">
                                         {{ __('designer.Designer') }}
                                     </a>
+                                    @endcan
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

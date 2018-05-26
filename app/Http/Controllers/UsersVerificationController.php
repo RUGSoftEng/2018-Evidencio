@@ -12,6 +12,7 @@ class UsersVerificationController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('can:is-administrator');
     }
 
     private function deleteDocuments(User $user)
