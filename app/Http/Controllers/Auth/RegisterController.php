@@ -37,7 +37,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->redirectTo = route('myworkflows');
+        $this->redirectTo = route('notverified');
         $this->middleware('guest');
     }
 

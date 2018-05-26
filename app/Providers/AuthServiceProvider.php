@@ -29,6 +29,10 @@ class AuthServiceProvider extends ServiceProvider
             return $user->is_verified;
         });
 
+        Gate::define('not-view-designer', function($user) {
+            return !$user->is_verified;
+        });
+
         Gate::define('is-administrator', function($user) {
             return $user->is_administrator;
         });

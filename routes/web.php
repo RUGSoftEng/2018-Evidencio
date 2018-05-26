@@ -30,6 +30,12 @@ Route::get('/usersverification/download/{id}', 'UsersVerificationController@down
 Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
 Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
 
+Route::get('/notverified', function() {
+  return view('notverified');
+})->name('notverified')
+->middleware('auth')
+->middleware('can:not-view-designer');
+
 Route::get('/designer', 'DesignerController@index')->name('designer');
 
 Route::post('/graph', 'GraphController@index');

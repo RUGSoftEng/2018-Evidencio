@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Gate;
 
 class LoginController extends Controller
 {
@@ -20,12 +21,7 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/designer';
+
 
     /**
      * Create a new controller instance.
@@ -35,5 +31,22 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * Specified where to redirect users after login.
+     *
+     * @return string redirection url
+     */
+    protected function redirectTo()
+    {
+        if(Gate::allows('view-designer'))
+        {
+            return route('myworkflows');
+        }
+        else
+        {
+            return route('notverified');
+        }
     }
 }
