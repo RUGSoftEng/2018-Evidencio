@@ -363,14 +363,14 @@ class DesignerSaveController extends Controller
      */
     private function saveSingleField($dbField, $field)
     {
-        $dbField->friendly_title = $field['title'];
-        $dbField->friendly_description = $field['description'];
-        $dbField->evidencio_variable_id = $field['id'];
-        if ($field['type'] == 'continuous') {
-            $dbField->continuous_field_max = $field['options']['max'];
-            $dbField->continuous_field_min = $field['options']['min'];
-            $dbField->continuous_field_unit = $field['options']['unit'];
-            $dbField->continuous_field_step_by = $field['options']['step'];
+        $dbField->friendly_title = $field["title"];
+        $dbField->friendly_description = $field["description"];
+        $dbField->evidencio_variable_id = $field["id"];
+        if ($field["type"] == "continuous") {
+            $dbField->continuous_field_max = $field["options"]["max"];
+            $dbField->continuous_field_min = $field["options"]["min"];
+            $dbField->continuous_field_unit = $field["options"]["unit"];
+            $dbField->continuous_field_step_by = $field["options"]["step"];
         }
     }
 
@@ -386,7 +386,7 @@ class DesignerSaveController extends Controller
         $optionIds = [];
         $savedOptions = $dbField->options()->get();
         foreach ($options as $option) {
-            if ($savedOptions->isNotEmpty() && ($opt = $savedOptions->where('id', $option['databaseId']))->isNotEmpty()) {
+            if ($savedOptions->isNotEmpty() && ($opt = $savedOptions->where("id", $option["databaseId"]))->isNotEmpty()) {
                 $opt = $opt->first();
                 $opt->friendly_title = $option["friendlyTitle"];
                 $opt->save();
@@ -402,55 +402,5 @@ class DesignerSaveController extends Controller
             $value->delete();
         });
         return $optionIds;
-    }
-
-    /**
-     * Loads a workflow from the database based on the workflowId
-     *
-     * @param Number $workflowId
-     * @return Array
-     */
-    public function loadWorkflow($workflowId)
-    {
-        $retObj = [];
-        $usedVariables = [];
-        $workflow = Auth::user()->createdWorkflows()->where('id', '=', $workflowId)->first();
-        if ($workflow == null) {
-            $retObj["success"] = false;
-            return $retObj;
-        }
-        $retObj["success"] = true;
-        $retObj["title"] = $workflow->title;
-        $retObj["description"] = $workflow->description;
-        $retObj["languageCode"] = $workflow->language_code;
-        $retObj["evidencioModels"] = $this->getLoadedEvidencioModels($workflow);
-
-        $retObj["steps"] = [];
-        $counter = 0;
-        $steps = $workflow->steps()->get();
-        foreach ($steps as $step) {
-            $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
-            $retObj["steps"][$counter] = $stepLoaded["step"];
-            $usedVariables = array_merge($usedVariables, $stepLoaded["usedVariables"]);
-            $counter++;
-        }
-
-        $retObj["usedVariables"] = $usedVariables;
-        return $retObj;
-    }
-
-    /**
-     * Returns the IDs of the loaded Evidencio Models of the Workflow
-     *
-     * @param App|Workflow $workflow Workflow to get loaded Evidencio Model IDs from.
-     * @return Array
-     */
-    private function getLoadedEvidencioModels($workflow)
-    {
-        $array = [];
-        $models = $workflow->loadedEvidencioModels()->get();
-        foreach ($models as $model)
-            $array[] = $model->model_id;
-        return $array;
     }
 }

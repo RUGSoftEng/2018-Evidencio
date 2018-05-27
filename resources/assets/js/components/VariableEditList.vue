@@ -1,7 +1,8 @@
 <template>
     <div class="list-group">
-        <draggable v-model="localSelectedVariables" :options="{handle: '.handle'}" @start="drag=true" @end="drag=false" @update="updateOrder">
-            <variable-edit-item v-for="(variableName, index) in localSelectedVariables" :key="index" :index="index" :variable="usedVariables[variableName]"></variable-edit-item>
+        <draggable v-model="localSelectedVariables" :options="{handle: '.handle'}" @start="drag=true" @end="drag=false" @choose="closeCollapsed" @update="updateOrder">
+            <variable-edit-item v-for="(variableName, index) in localSelectedVariables" :key="index" :index="index" :show="showFlags[index]"
+                :variable="usedVariables[variableName]" @toggle="toggleShow($event)"></variable-edit-item>
         </draggable>
     </div>
 </template>
@@ -30,22 +31,40 @@ export default {
   methods: {
     updateOrder() {
       this.$emit("sort", this.localSelectedVariables);
+    },
+    boolFalseArray(size) {
+      return Array(size).fill(false);
+    },
+    reload() {
+      this.localSelectedVariables = JSON.parse(JSON.stringify(this.selectedVariables));
+      this.showFlags = this.boolFalseArray(this.selectedVariables.length);
+    },
+    closeCollapsed() {
+      this.showFlags = this.boolFalseArray(this.selectedVariables.length);
+      for (let indexVar = this.selectedVariables.length - 1; indexVar >= 0; indexVar--) {
+        $("#editVar_" + indexVar).collapse("hide");
+      }
+    },
+    toggleShow(index) {
+      this.$set(this.showFlags, index, !this.showFlags[index]);
+      $("#editVar_" + index).collapse("toggle");
     }
   },
 
   mounted() {
-    this.localSelectedVariables = JSON.parse(JSON.stringify(this.selectedVariables));
+    this.reload();
   },
 
   watch: {
     selectedVariables: function() {
-      this.localSelectedVariables = JSON.parse(JSON.stringify(this.selectedVariables));
+      this.reload();
     }
   },
 
   data() {
     return {
-      localSelectedVariables: []
+      localSelectedVariables: [],
+      showFlags: []
     };
   }
 };

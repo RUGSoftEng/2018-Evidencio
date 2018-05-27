@@ -60,7 +60,7 @@
                                         <div class="tab-content" id="nav-tabContent-modal">
 
                                             <div class="tab-pane fade show active" id="nav-variables" role="tabpanel" aria-labelledby="nav-variables-tab">
-                                                <vue-multiselect v-model="multiSelectedVariables" :options="models" :multiple="true" group-values="variables" group-label="title"
+                                                <multiselect v-model="multiSelectedVariables" :options="models" :multiple="true" group-values="variables" group-label="title"
                                                     :group-select="true" :close-on-select="false" :clear-on-select="false" label="title"
                                                     track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
                                                     placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
@@ -70,17 +70,17 @@
                                                             <span class="custom__remove" @click="props.remove(props.option)">❌</span>
                                                         </span>
                                                     </template>
-                                                </vue-multiselect>
+                                                </multiselect>
                                                 <label for="accVariablesEdit" class="variable-label mb-2">Selected variables</label>
                                                 <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables" @sort="updateOrder($event)"></variable-edit-list>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <div class="container-fluid">
+                                                <div class="container-fluid" v-if="variablesUpToStep.length != 0">
                                                     <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <vue-multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Cannot be done without a model"
+                                                    <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
                                                         track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
-                                                        :searchable="true" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                        :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
                                                         @select="modelSelectAPI" @remove="modelRemoveApi">
                                                         <template slot="tag" slot-scope="props">
                                                             <span class="badge badge-info badge-larger">
@@ -88,39 +88,17 @@
                                                                 <span class="custom__remove" @click="props.remove(props.option)">❌</span>
                                                             </span>
                                                         </template>
-                                                    </vue-multiselect>
+                                                    </multiselect>
                                                     <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :model="apiCall" :used-variables="localUsedVariables"
                                                         :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                </div>
+                                                <div class="container-fluid" v-else>
+                                                    <h6>A model calculation cannot be done without variables. Either add fields to the current step or link it to a precious step to use the fields of that step.</h6>
                                                 </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
                                                 <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended"></rule-edit-list>
-                                                <!--<div class="container-fluid">
-                                                    <button type="button" class="btn btn-primary" @click="addRule()">Add rule</button>
-                                                    <table class="table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Condition</th>
-                                                                <th>Target</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(rule, index) in modalRules">
-                                                                <td data-label="Name">
-                                                                    <div class="form-group">
-                                                                        <input type="text" class="form-control" name="Name" :id="'ruleName_' + index" :aria-describedby="'helpId_' + index" placeholder="Rule name"
-                                                                            v-model="rule.name">
-                                                                        <small :id="'helpId_' + index" class="form-text text-muted">Name of the rule</small>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-label="Condition">Wayne</td>
-                                                                <td data-label="Target">Batman</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -173,6 +151,7 @@
 </template>
 
 <script>
+import Multiselect from "vue-multiselect";
 import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
@@ -182,6 +161,7 @@ import ChartItemsList from "./ChartItemsList";
 
 export default {
   components: {
+    Multiselect,
     VariableEditList,
     RuleEditList,
     ChartPreview,
@@ -545,6 +525,8 @@ export default {
   }
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style lang="css" scoped>
 .variable-label {

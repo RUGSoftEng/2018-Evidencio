@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 302);
+/******/ 	return __webpack_require__(__webpack_require__.s = 316);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 140:
+/***/ 142:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -514,87 +514,88 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(140)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(142)))
 
 /***/ }),
 
-/***/ 302:
+/***/ 316:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(303);
+module.exports = __webpack_require__(317);
 
 
 /***/ }),
 
-/***/ 303:
+/***/ 317:
 /***/ (function(module, exports, __webpack_require__) {
 
-window.cytoscape = __webpack_require__(304);
-window.cyCanvas = __webpack_require__(308);
+window.cytoscape = __webpack_require__(318);
+window.cyCanvas = __webpack_require__(322);
 
 window.cy = cytoscape({
-    container: document.getElementById("graph"),
-    style: [
-    // the stylesheet for the graph
-    {
-        selector: ".node",
-        style: {
-            label: "data(id)",
-            shape: "roundrectangle",
-            width: "100px",
-            height: "100px",
-            "background-color": "#0099ff",
-            "border-color": " #000000",
-            "border-width": "4px",
-            "text-halign": "center",
-            "text-valign": "center",
-            color: "#ffffff",
-            "font-size": "24px",
-            "text-outline-color": "#000000",
-            "text-outline-width": "1px"
-        }
-    }, {
-        selector: ".edge",
-        style: {
-            width: 4,
-            "line-color": "#000",
-            "target-arrow-color": "#ccc",
-            "target-arrow-shape": "triangle"
-        }
-    }, {
-        selector: ".buttonAddLevel",
-        style: {
-            label: "",
-            width: "75px",
-            height: "75px",
-            "background-color": "#46c637",
-            "border-color": "#1f6b17",
-            "border-width": "4px",
-            "background-image": "/images/plus.svg",
-            "background-width": "50%",
-            "background-height": "50%"
-        }
-    }, {
-        selector: ".buttonAddStep",
-        style: {
-            label: "",
-            width: "75px",
-            height: "75px",
-            "background-color": "#00a5ff",
-            "border-color": "#0037ff",
-            "border-width": "4px",
-            "background-image": "/images/plus.svg",
-            "background-width": "50%",
-            "background-height": "50%"
-        }
-    }],
-
-    autoungrabify: true,
-    autounselectify: true,
-
-    layout: {
-        name: "preset"
+  container: document.getElementById("graph"),
+  style: [
+  // the stylesheet for the graph
+  {
+    selector: ".node",
+    style: {
+      label: "data(id)",
+      shape: "roundrectangle",
+      width: "100px",
+      height: "100px",
+      "background-color": "#0099ff",
+      "border-color": " #000000",
+      "border-width": "4px",
+      "text-halign": "center",
+      "text-valign": "center",
+      color: "#ffffff",
+      "font-size": "24px",
+      "text-outline-color": "#000000",
+      "text-outline-width": "1px"
     }
+  }, {
+    selector: ".edge",
+    style: {
+      width: 4,
+      "line-color": "#000",
+      "target-arrow-color": "#ccc",
+      "target-arrow-shape": "triangle"
+    }
+  }, {
+    selector: ".buttonAddLevel",
+    style: {
+      label: "",
+      width: "75px",
+      height: "75px",
+      "background-color": "#46c637",
+      "border-color": "#1f6b17",
+      "border-width": "4px",
+      "background-image": "/images/plus.svg",
+      "background-width": "50%",
+      "background-height": "50%"
+    }
+  }, {
+    selector: ".buttonAddStep",
+    style: {
+      label: "",
+      width: "75px",
+      height: "75px",
+      "background-color": "#00a5ff",
+      "border-color": "#0037ff",
+      "border-width": "4px",
+      "background-image": "/images/plus.svg",
+      "background-width": "50%",
+      "background-height": "50%"
+    }
+  }],
+
+  autoungrabify: true,
+  autounselectify: true,
+  maxZoom: 2,
+  minZoom: 0.5,
+  layout: {
+    name: "preset"
+  }
 });
 
 /**
@@ -603,52 +604,52 @@ window.cy = cytoscape({
  * Vue handles Events after being 'mounted'.
  */
 cy.ready(function (evt) {
-    Event.fire("graphReady");
+  Event.fire("graphReady");
 });
 
 cy.on("tap", "node", function (evt) {
-    var ref = evt.target;
-    if (ref.hasClass("buttonAddLevel")) {
-        var nID = vObj.getAddLevelButtonIndex(ref.id());
-        if (nID != -1) vObj.addLevelConditional(nID + 1);
-    } else if (ref.hasClass("buttonAddStep")) {
-        var _nID = vObj.getAddStepButtonIndex(ref.id());
-        if (_nID != -1) vObj.addStep("Default title", "Default description", _nID + 1);
-    } else if (ref.hasClass("node")) {
-        vObj.prepareModal(ref.id());
-        $("#modalStep").modal();
-    }
+  var ref = evt.target;
+  if (ref.hasClass("buttonAddLevel")) {
+    var nID = vObj.getAddLevelButtonIndex(ref.id());
+    if (nID != -1) vObj.addLevelConditional(nID + 1);
+  } else if (ref.hasClass("buttonAddStep")) {
+    var _nID = vObj.getAddStepButtonIndex(ref.id());
+    if (_nID != -1) vObj.addStep("Default title", "Default description", _nID + 1);
+  } else if (ref.hasClass("node")) {
+    vObj.prepareModal(ref.id());
+    $("#modalStep").modal();
+  }
 });
 
 // ============================================================================================= //
 
 //Canvas of background
 var bottomLayer = cy.cyCanvas({
-    zIndex: -1
+  zIndex: -1
 });
 var canvas = bottomLayer.getCanvas();
 var ctx = canvas.getContext("2d");
 cy.on("render cyCanvas.resize", function (evt) {
-    bottomLayer.resetTransform(ctx);
-    bottomLayer.clear(ctx);
-    bottomLayer.setTransform(ctx);
-    ctx.save();
-    for (var i = 0; i < vObj.levels.length; i++) {
-        if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
-        var w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
-        ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
-    }
-    ctx.restore();
+  bottomLayer.resetTransform(ctx);
+  bottomLayer.clear(ctx);
+  bottomLayer.setTransform(ctx);
+  ctx.save();
+  for (var i = 0; i < vObj.levels.length; i++) {
+    if (i % 2 == 0) ctx.fillStyle = "#e3e7ed";else ctx.fillStyle = "#c6cad1";
+    var w = vObj.maxStepsPerLevel / 2 * vObj.deltaX;
+    ctx.fillRect(-w - 500, i * vObj.deltaY - vObj.deltaY / 2, 2 * w + 1000, vObj.deltaY);
+  }
+  ctx.restore();
 });
 
 /***/ }),
 
-/***/ 304:
+/***/ 318:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate) {(function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(305), __webpack_require__(306));
+		module.exports = factory(__webpack_require__(319), __webpack_require__(320));
 	else if(typeof define === 'function' && define.amd)
 		define(["lodash.debounce", "heap"], factory);
 	else if(typeof exports === 'object')
@@ -29742,7 +29743,7 @@ module.exports = "3.2.12";
 
 /***/ }),
 
-/***/ 305:
+/***/ 319:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -30127,15 +30128,15 @@ module.exports = debounce;
 
 /***/ }),
 
-/***/ 306:
+/***/ 320:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(307);
+module.exports = __webpack_require__(321);
 
 
 /***/ }),
 
-/***/ 307:
+/***/ 321:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.8.0
@@ -30520,7 +30521,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 308:
+/***/ 322:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

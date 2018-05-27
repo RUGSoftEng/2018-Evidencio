@@ -34,8 +34,8 @@
                 <div class="card-header">
                     Designer
                     <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
+                    <alert-message :type="alert.type" :message="alert.message" :show="alert.show" @hide="hideAlert"></alert-message>
                 </div>
-
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
                     <div class="alert alert-success">
@@ -53,9 +53,7 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
-<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>
 <script src="{{ asset('js/designerGraph.js') }}"></script>
