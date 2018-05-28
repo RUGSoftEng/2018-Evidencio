@@ -37,8 +37,8 @@ class DesignerSaveController extends Controller
         $returnObj = [];
         $user = Auth::user();
         if ($workflowId != null) {
-            $workflow = $user->createdWorkflows()->where('id', '=', $workflowId)->first();
-            if ($workflow == null) {
+            $workflow = Workflow::find($workflowId);
+            if ($workflow == null || $user->cant('save',$workflow)) {
                 $workflow = new Workflow;
             }
         } else {
@@ -48,6 +48,7 @@ class DesignerSaveController extends Controller
         $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
+        $workflow->is_verified = true; //TODO: remove that line after implementing reviewing of the workflows
         $workflow->save();
         if ($request->modelIds != null) {
             $this->saveLoadedEvidencioModels($request->modelIds, $workflow);
