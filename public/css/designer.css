@@ -238,5 +238,12 @@ tr {
   overflow: auto;
 }
 
+/* ------------------- Users verification ------------------- */
+
+.table-usersverification tbody tr:nth-of-type(4n),
+.table-usersverification tbody tr:nth-of-type(1) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 
 /*# sourceMappingURL=designer.css.map*/
