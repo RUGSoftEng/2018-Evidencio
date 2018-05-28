@@ -23,7 +23,6 @@ class Result extends Model
     protected $touches = ['step'];
 
     public $timestamps = false;
-
     /**
      * Step, after which there is an Evidencio model run that returns the result
      */
@@ -32,15 +31,15 @@ class Result extends Model
         return $this->belongsTo('App\Step','step_id');
     }
 
-    public function getStep($id)
+    public static function getResult($id)
     {
-      //return Result::join('steps as S', 'S.id', '=', 'step_id')->join('workflows as W', 'W.id', '=', 'workflow_step_workflow_id')->where('W.id', '=', $id)->select('W.id','S.id', 'results.*')->get();
-      $res = Result::join('steps', 'steps.id', '=', 'results.step_id')
+      return Result::join('steps', 'steps.id', '=', 'results.step_id')
         ->join('workflows', 'workflows.id', '=', 'steps.workflow_step_workflow_id')
         ->where('workflows.id', '=', $id)
         ->select('steps.id as sid', 'workflows.id as wid', 'results.*')
         ->get();
     }
+
 }
 
 /* Getting the friendly result from our DB. TODO convert to Eloquent
@@ -53,6 +52,6 @@ ORDER BY results.result_number */
 /* Ordered steps. SQL equivalent. TODO convert to Eloquent
 SELECT * FROM fields as f
 INNER JOIN field_in_input_steps inp ON f.id = inp.field_id
-WHERE inp.input_step_id = 21                       //disorderly results.
+WHERE inp.input_step_id = 21                       //id with disorderly results.
 ORDER BY inp.order ASC
 */

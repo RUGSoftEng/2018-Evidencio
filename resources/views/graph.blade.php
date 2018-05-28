@@ -12,7 +12,8 @@ use App\Result;
 if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   $decodeRes = EvidencioAPI::run($_POST['model'],$_POST['answer']);
   $modelDetails = EvidencioAPI::getModel($_POST['model']);
-  $test = (new Result)->getStep($_POST['db_id']);
+  //$modelDetails = EvidencioAPI::getModel(596);
+  $friendly = Result::getResult($_POST['db_id'])->toArray();
 }
 ?>
 @extends('layouts.app')
@@ -108,9 +109,9 @@ $dataPoints = array(
 
 {{--Javascript for the creating the chat using Chartjs--}}
 <script>
-  var chartType = 'pie';
-  var resultChart;
 
+  var chartType = '<?php if(!empty($friendly)) echo $friendly[0]['representation_type']; else  echo "pie";?>';
+  var resultChart;
   var ctx = document.getElementById("graph").getContext('2d');
 
   Chart.defaults.global.defaultFontSize = 20;
@@ -121,7 +122,7 @@ $dataPoints = array(
     resultChart = new Chart(ctx, {
         type: chartType,
         data: {
-            labels: ["Not "+"<?php echo $decodeRes['title'] ?>", "<?php echo $decodeRes['title'] ?>"],
+            labels: [ <?php if(!empty($friendly)){ echo $friendly[0]['representation_label']; } else { echo "'Positive', 'Negative'"; } ?>],
             datasets: [{
                 label: 'Result',
                 data: [<?php echo 100-$result ?>, <?php echo $result ?>],

@@ -19,5 +19,5 @@ class GraphController extends Controller
         return view('graph');
     }
 
-    
+
 }
