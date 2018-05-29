@@ -1,10 +1,9 @@
 <template>
     <div>
-        <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editVar_' + index"
-            aria-expanded="false" :aria-controls="'editVar' + index" @click="show=!show">
+        <button type="button" class="list-group-item list-group-item-action" aria-expanded="false" :aria-controls="'editVar_' + index" :id="'headerVar_' + index" @click="toggleShow">
             <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
             <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
-            {{ variable.title }}
+              {{ variable.title }}
             <i class="fo-icon icon-menu handle float-right">&#xf0c9;</i>
         </button>
         <div class="form-group collapse" :id="'editVar_' + index">
@@ -23,16 +22,19 @@ export default {
       type: Object,
       required: true
     },
+    show: {
+      type: Boolean,
+      required: true
+    },
     index: {
       type: Number,
       required: true
     }
   },
-
-  data() {
-    return {
-      show: false
-    };
+  methods: {
+    toggleShow() {
+      this.$emit("toggle", this.index);
+    }
   }
 };
 </script>

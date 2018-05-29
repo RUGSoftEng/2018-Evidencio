@@ -1,8 +1,8 @@
-Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
 Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
+Vue.component("alertMessage", require("./components/AlertMessage.vue"));
 
 // ============================================================================================= //
 
@@ -66,6 +66,11 @@ window.vObj = new Vue({
     },
 
     workflowId: null,
+    alert: {
+      type: "",
+      message: "",
+      show: false
+    },
 
     debug: {}
   },
@@ -264,35 +269,40 @@ window.vObj = new Vue({
             modelIds: self.modelIds
           },
           success: function (result) {
-            self.workflowId = Number(result.workflowId);
-            var pathArray = location.href.split("/");
-            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
-            let numberOfSteps = self.steps.length;
-            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
-              self.steps[stepIndex].id = result.stepIds[stepIndex];
-              cy.getElementById(self.steps[stepIndex].nodeId).style({
-                label: self.steps[stepIndex].id
-              });
-              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
-                let apiCall = result.resultIds[stepIndex][apiIndex];
-                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+            if (result.hasOwnProperty("workflowId")) {
+              self.showAlert("Your workflow has been successfully saved.", "success");
+              self.workflowId = Number(result.workflowId);
+              var pathArray = location.href.split("/");
+              window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
+              let numberOfSteps = self.steps.length;
+              for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+                self.steps[stepIndex].id = result.stepIds[stepIndex];
+                cy.getElementById(self.steps[stepIndex].nodeId).style({
+                  label: self.steps[stepIndex].id
+                });
+                for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+                  let apiCall = result.resultIds[stepIndex][apiIndex];
+                  for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                    self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+                  }
                 }
               }
-            }
-            let varIds = result.variableIds;
-            for (var key in varIds) {
-              if (varIds.hasOwnProperty(key)) {
-                self.usedVariables[key].databaseId = Number(varIds[key]);
+              let varIds = result.variableIds;
+              for (var key in varIds) {
+                if (varIds.hasOwnProperty(key)) {
+                  self.usedVariables[key].databaseId = Number(varIds[key]);
+                }
               }
-            }
-            let optIds = result.optionIds;
-            for (var key in optIds) {
-              if (optIds.hasOwnProperty(key)) {
-                optIds[key].forEach((element, index) => {
-                  self.usedVariables[key].options[index].databaseId = Number(element);
-                });
+              let optIds = result.optionIds;
+              for (var key in optIds) {
+                if (optIds.hasOwnProperty(key)) {
+                  optIds[key].forEach((element, index) => {
+                    self.usedVariables[key].options[index].databaseId = Number(element);
+                  });
+                }
               }
+            } else {
+              self.showAlert("Your workflow failed to save.", "danger");
             }
           }
         });
@@ -391,6 +401,15 @@ window.vObj = new Vue({
       return -1;
     },
 
+    showAlert(message, type) {
+      this.alert.type = type;
+      this.alert.message = message;
+      this.alert.show = true;
+    },
+
+    hideAlert() {
+      this.alert.show = false;
+    },
 
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.

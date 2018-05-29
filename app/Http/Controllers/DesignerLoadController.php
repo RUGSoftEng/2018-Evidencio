@@ -29,7 +29,7 @@ class DesignerLoadController extends Controller
     {
         $retObj = [];
         $usedVariables = [];
-        $workflow = Auth::user()->createdWorkflows()->where('id', '=', $workflowId)->first();
+        $workflow = Auth::user()->createdWorkflows()->where("id", "=", $workflowId)->first();
         if ($workflow == null) {
             $retObj["success"] = false;
             return $retObj;

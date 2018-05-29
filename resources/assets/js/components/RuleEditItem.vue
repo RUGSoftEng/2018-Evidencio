@@ -23,7 +23,7 @@
                     </div>
                     <div class="form-group">
                         <label class="typo__label">Custom option template</label>
-                        <vue-multiselect v-model="rule.target" label="title" track-by="ind" :options="options" :option-height="44" :show-labels="false"
+                        <multiselect v-model="rule.target" label="title" track-by="ind" :options="options" :option-height="44" :show-labels="false"
                             preselect-first :allow-empty="false">
                             <template slot="singleLabel" slot-scope="props">
                                 <div class="container-fluid">
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                             </template>
-                        </vue-multiselect>
+                        </multiselect>
                     </div>
 
                 </form>
@@ -71,7 +71,12 @@
 </template>
 
 <script>
+import Multiselect from "vue-multiselect";
+
 export default {
+  components: {
+    Multiselect
+  },
   props: {
     rule: {
       type: Object,

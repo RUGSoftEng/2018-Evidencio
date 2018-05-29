@@ -127,7 +127,7 @@ $dataPoints = array(
                 label: 'Result',
                 data: [<?php echo 100-$result ?>, <?php echo $result ?>],
                 backgroundColor: [
-                  'rgba(54, 162, 235, 1)',
+                  'rgba(54, 162, 235, 0.5)',
                   'rgba(255, 99, 132, 1)',
                 ]
             }]
