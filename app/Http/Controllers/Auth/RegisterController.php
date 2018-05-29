@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Mail\VerifyMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -39,6 +42,51 @@ class RegisterController extends Controller
     {
         $this->redirectTo = route('notverified');
         $this->middleware('guest');
+    }
+
+    /**
+     * Function called just after registration
+     *
+     * @param Illuminate\Http\Request $request
+     * @param App\User $user
+     * @return Illuminate\Http\RedirectResponse
+     */
+    protected function registered(Request $request, $user)
+    {
+        $this->guard()->logout();
+        return redirect()->route("login")->with('status', _("We sent you an activation code. Check your email and click on the link to verify."));
+    }
+
+
+    /**
+     * Verify users when they provide a link containing the token they received
+     * by email
+     *
+     * @param string $token
+     * @return Illuminate\Http\RedirectResponse
+     */
+    public function verifyUser($token)
+    {
+        $user = User::where('email_token', $token)->first();
+        if(isset($user))
+        {
+            if(!$user->email_verified)
+            {
+                $user->email_verified = true;
+                $user->save();
+                $status = _("Your e-mail is verified, you can now log in!");
+            }
+            else
+            {
+                $status = _("Your e-mail is already verified, you can now log in!");
+            }
+        }
+        else
+        {
+            return redirect()->route("login")->with('warning',_("Sorry your email cannot be identified!"));
+        }
+
+        return redirect()->route("login")->with('status',$status);
     }
 
     /**
@@ -83,7 +131,8 @@ class RegisterController extends Controller
             'bio' => $data['bio'],
             'organisation' => $data['organisation'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password'])
+            'password' => Hash::make($data['password']),
+            'email_token' => sha1(time()), //TODO smarter token
         ]);
 
         if(array_key_exists('file',$data))
@@ -96,6 +145,8 @@ class RegisterController extends Controller
                 'url' => $path
             ]);
         }
+
+        Mail::to($user)->send(new VerifyMail($user));
 
         return $user;
     }

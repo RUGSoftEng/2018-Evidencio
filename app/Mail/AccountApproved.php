@@ -16,6 +16,7 @@ class AccountApproved extends Mailable
     /**
      * Create a new message instance.
      *
+     * @param App\User $user
      * @return void
      */
     public function __construct($user)

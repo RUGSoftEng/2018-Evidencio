@@ -29,11 +29,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('view-designer', function($user) {
-            return $user->is_verified;
+            return $user->is_verified && $user->email_verified;
         });
 
         Gate::define('not-view-designer', function($user) {
-            return !$user->is_verified;
+            return !$user->is_verified || !$user->email_verified;
         });
 
         Gate::define('is-administrator', function($user) {

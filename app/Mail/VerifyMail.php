@@ -7,21 +7,21 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class AccountRejected extends Mailable
+class VerifyMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userName;
+    public $user;
 
     /**
      * Create a new message instance.
      *
-     * @param string $userName
+     * @param App\User $user
      * @return void
      */
-    public function __construct($userName)
+    public function __construct($user)
     {
-        $this->userName = $userName;
+        $this->user = $user;
     }
 
     /**
@@ -29,9 +29,9 @@ class AccountRejected extends Mailable
      *
      * @return $this
      */
-     public function build()
-     {
-         return $this->subject(_("Your Evidencio Patient Portal account has been rejected."))
-         ->view('emails.account_rejected');
-     }
+    public function build()
+    {
+        return $this->subject(_("Evidencio Patient Portal e-mail verification"))
+        ->view('emails.email_verification');
+    }
 }

@@ -24,6 +24,8 @@ Route::get('/myworkflows', function () {
 
 Auth::routes();
 
+Route::get('/emailverify/{token}','Auth\RegisterController@verifyUser')->name('emailverification');
+
 Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
 
 Route::get('/usersverification/download/{id}', 'UsersVerificationController@download')->name('usersverification.download');
