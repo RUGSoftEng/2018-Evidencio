@@ -48,10 +48,10 @@ class MyWorkflowsController extends Controller
         foreach ($steps as $step) 
         {
             //references to Jaap DesignerSaveController, saveSteps function
-            $nextSteps = $step -> nextSteps() -> get();
-            foreach ($nextSteps as $nextStep) {
-                $step->nextSteps()->detach($nextStep);
-            }
+            //$nextSteps = $step -> nextSteps() -> get();
+            //foreach ($nextSteps as $nextStep) {
+            //    $step->nextSteps()->detach($nextStep);
+            //}
             $previousSteps = $step -> previousSteps() -> get();
             foreach ($previousSteps as $previousStep) {
                 $step->previousSteps()->detach($previousStep);
@@ -78,7 +78,7 @@ class MyWorkflowsController extends Controller
         Workflow::destroy($id);
 
     	$user_id = Auth::user()->id;
-		$workflows = Workflow::where('author_id','=',$user_id)->get();
+	$workflows = Workflow::where('author_id','=',$user_id)->get();
     	
     	return redirect()->route('myworkflows');
     	//return view('/myworkflows',compact('workflows'));
