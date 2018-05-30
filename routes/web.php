@@ -16,10 +16,6 @@ Route::get('/', function () {
 });
 
 
-Route::get('/myworkflows', function () {
-  return view('myworkflows');
-})->name('myworkflows');
-
 Auth::routes();
 
 Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
@@ -47,3 +43,6 @@ Route::post('/designer/search', 'DesignerController@fetchSearch')->middleware('a
 Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')->middleware('auth');
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow')->middleware('auth');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow')->middleware('auth');
+
+Route::get('/myworkflows','MyWorkflowsController@index')->name('myworkflows')->middleware('auth');
+Route::get('/myworkflows/delete/{workflowId}','MyWorkflowsController@deleteWorkflow')->middleware('auth');
