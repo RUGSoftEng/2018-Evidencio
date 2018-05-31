@@ -947,6 +947,9 @@ window.vObj = new Vue({
       this.positionSteps();
     },
 
+    /**
+     * Adds/removes/changes rules in required
+     */
     connectionsChanged: function () {
       this.steps.forEach((element, index) => {
         for (let index = element.rules.length - 1; index >= 0; index--) {
@@ -978,6 +981,9 @@ window.vObj = new Vue({
       });
     },
 
+    /**
+     * Should extra variables be selected, recount the variableuses.
+     */
     selectedVariables: function () {
       this.recountVariableUses();
     }

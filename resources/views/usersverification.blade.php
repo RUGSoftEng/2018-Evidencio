@@ -90,6 +90,4 @@
 
 </div>
 
-<script src="{{ asset('js/usersverification.js') }}"></script>
-
 @endsection

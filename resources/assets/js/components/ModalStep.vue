@@ -1,8 +1,3 @@
-<!--
- - Color changing
- - Gray functions
-    -->
-
 <template>
     <!-- Modal -->
     <div class="modal fade" id="modalStep" tabindex="-1" role="dialog" aria-labelledby="modalStepOptions" aria-hidden="true">
@@ -213,6 +208,7 @@ export default {
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
+    // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
       let results = this.ancestorResults;
       this.localStep.apiCalls.forEach(apiCall => {
@@ -249,7 +245,6 @@ export default {
       });
       return children;
     }
-    // Array containing all
   },
 
   mounted: function() {
@@ -268,6 +263,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Called whenever the modal is opened again.
+     */
     reload() {
       this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));
       this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
@@ -286,6 +284,9 @@ export default {
       });
     },
 
+    /**
+     * Start the process of removing a step
+     */
     remove() {
       Event.fire("confirmDialog", {
         title: "Removal of Step",
@@ -295,11 +296,19 @@ export default {
       });
     },
 
+    /**
+     * Update the order of the fields/variables
+     * @param {Array} newOrderVariables has the new order of the variables
+     */
     updateOrder(newOrderVariables) {
       this.selectedVariables = newOrderVariables;
       this.localStep.variables = newOrderVariables;
     },
 
+    /**
+     * Add a model to the API field mapping list
+     * @param {Object} model to be added
+     */
     modelSelectAPI(model) {
       this.localStep.apiCalls.push({
         evidencioModelId: model.id,
@@ -320,6 +329,10 @@ export default {
       });
     },
 
+    /**
+     * Remove a model from the API field mapping list
+     * @param {Object} model to be removed
+     */
     modelRemoveApi(model) {
       for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {
         if (this.localStep.apiCalls[index].evidencioModelId == model.id) {
@@ -329,6 +342,9 @@ export default {
       }
     },
 
+    /**
+     * Set the selected models for the API field mapping, to be called on reload()
+     */
     setSelectedModels() {
       this.multiSelectedModels = [];
       this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {
@@ -340,6 +356,10 @@ export default {
       });
     },
 
+    /**
+     * Find a model locally based on the Evidencio Model Id
+     * @param {Number} evidencioModelId
+     */
     findModel(evidencioModelId) {
       for (let index = 0; index < this.models.length; index++) {
         if (this.models[index].id == evidencioModelId) return index;

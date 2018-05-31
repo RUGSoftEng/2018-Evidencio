@@ -66,6 +66,7 @@ export default {
     }
   },
   computed: {
+    // Preselect all fields, set a warning boolean to true if a field cannot be found
     warnings: function() {
       let ret = Array(this.model.variables.length).fill(false);
       if (this.model.variables[0].localVariable == "") {
@@ -87,6 +88,7 @@ export default {
     }
   },
   watch: {
+    // Change API mapping if a field is removed/added (only used in case of removal, actually)
     reachableVariables: function() {
       let ifNotFound = this.reachableVariables[0];
       this.model.variables.forEach(variable => {
@@ -95,6 +97,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * Tries to find a field in the reachables that has the given evidencioVariableId
+     * @param {Number} evidencioVariableId
+     */
     findReachableVariable(evidencioVariableId) {
       for (let index = this.reachableVariables.length - 1; index >= 0; index--) {
         if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)
@@ -102,12 +108,22 @@ export default {
       }
       return "";
     },
+
+    /**
+     * Performs the OR operation on the given array of booleans
+     * @param {Array}
+     */
     arrayOr(array) {
       for (let index = array.length - 1; index >= 0; index--) {
         if (array[index]) return true;
       }
       return false;
     },
+
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     */
     getReachableIndex(varName) {
       for (let index = this.reachableVariables.length - 1; index >= 0; index--) {
         if (this.reachableVariables[index] == varName) return index;

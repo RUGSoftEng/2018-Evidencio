@@ -30,22 +30,43 @@ export default {
   },
 
   methods: {
+    /**
+     * Emit an event to update the order of the fields/variables
+     */
     updateOrder() {
       this.$emit("sort", this.localSelectedVariables);
     },
+
+    /**
+     * Return an array of booleans with a given size.
+     * @param {Number} size
+     */
     boolFalseArray(size) {
       return Array(size).fill(false);
     },
+
+    /**
+     * Reload the data
+     */
     reload() {
       this.localSelectedVariables = JSON.parse(JSON.stringify(this.selectedVariables));
       this.showFlags = this.boolFalseArray(this.selectedVariables.length);
     },
+
+    /**
+     * Close all collapsable divs
+     */
     closeCollapsed() {
       this.showFlags = this.boolFalseArray(this.selectedVariables.length);
       for (let indexVar = this.selectedVariables.length - 1; indexVar >= 0; indexVar--) {
         $("#editVar_" + indexVar).collapse("hide");
       }
     },
+
+    /**
+     * Show/hide the collapse with given index
+     * @param {Number} index
+     */
     toggleShow(index) {
       if (!$("#editVar_" + index).hasClass("collapsing")) {
         this.$set(this.showFlags, index, !this.showFlags[index]);
@@ -72,40 +93,3 @@ export default {
   }
 };
 </script>
-
-<!--<template>
-    <div id="accVariablesEdit">
-        <variable-edit-item v-for="(variable, index) in selectedVariables" :key="index" :index-item="index" :variable="usedVariables[variable]"
-            @toggle="selectCard($event)"></variable-edit-item>
-    </div>
-</template>
-
-<script>
-import VariableEditItem from "./VariableEditItem.vue";
-
-export default {
-  components: {
-    VariableEditItem
-  },
-
-  props: {
-    selectedVariables: {
-      type: Array,
-      required: true
-    },
-    usedVariables: {
-      type: Object,
-      required: true
-    }
-  },
-
-  methods: {
-    selectCard(index) {
-      for (let ind = 0; ind < this.selectedVariables.length; ind++) {
-        if (ind == index) $("#varEditCollapse_" + ind).collapse("toggle");
-        else $("#varEditCollapse_" + ind).collapse("hide");
-      }
-    }
-  }
-};
-</script> -->

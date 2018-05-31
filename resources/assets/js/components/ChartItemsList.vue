@@ -13,37 +13,36 @@
 </template>
 
 <script>
-    import ChartItemEdit from "./ChartItemEdit.vue"
+import ChartItemEdit from "./ChartItemEdit.vue";
 
-    export default {
-      components: {
-        ChartItemEdit
-      },
-      props: {
-        chartItems: {
-          type: Array,
-          // required: true
-        }
-      },
-      methods: {
-        selectCard(index) {
-          for (let ind = 0; ind < this.chartItems.length; ind++) {
-            if (ind == index) $("#chartItemEditCollapse_" + ind).collapse("toggle");
-            else $("#chartItemEditCollapse_" + ind).collapse("hide");
-          }
-        },
-        addChartItem() {
-          this.chartItems.push({
-            label: "Enter Label",
-            color: "#ff0000",
-            value: 10
-          });
-        },
-        data() {
-          return {
-            localChartItems: [],
-          }
-        }
-      }
+export default {
+  components: {
+    ChartItemEdit
+  },
+  props: {
+    chartItems: {
+      type: Array
     }
+  },
+  methods: {
+    selectCard(index) {
+      for (let ind = 0; ind < this.chartItems.length; ind++) {
+        if (ind == index) $("#chartItemEditCollapse_" + ind).collapse("toggle");
+        else $("#chartItemEditCollapse_" + ind).collapse("hide");
+      }
+    },
+    addChartItem() {
+      this.chartItems.push({
+        label: "Enter Label",
+        color: "#ff0000",
+        value: 10
+      });
+    },
+    data() {
+      return {
+        localChartItems: []
+      };
+    }
+  }
+};
 </script>

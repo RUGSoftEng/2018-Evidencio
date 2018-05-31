@@ -44,10 +44,10 @@ Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')->middleware
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow')->middleware('auth');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow')->middleware('auth');
 
-Route::get('/myworkflows','MyWorkflowsController@index')->name('myworkflows')->middleware('auth');
-Route::get('/myworkflows/delete/{workflowId}','MyWorkflowsController@deleteWorkflow')->middleware('auth');
+Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows')->middleware('auth');
+Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow')->middleware('auth');
 
-//Testing stuff
+//Testing of rules engine
 Route::get('/test-rules-engine', function () {
   return view('json-rules-engine-test');
 });
