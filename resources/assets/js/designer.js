@@ -93,6 +93,7 @@ window.vObj = new Vue({
         0
       );
       this.panView();
+      this.isLoading = false;
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
