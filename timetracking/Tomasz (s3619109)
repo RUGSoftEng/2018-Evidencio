@@ -121,3 +121,98 @@
 - 17.04 - adding databases to the architecture document
 - 17.04 - adding databases to the architecture document
 - 17.04 - adding databases to the architecture document
+- 17.04 - merging branches
+- 17.04 - merging branches
+- 19.04 - making multiple runs possible in DB design
+- 19.04 - experimenting with API calls of composite and sequential models
+- 20.04 - filling in the questionnaire
+- 22.04 - adding tables related to running API models as a migration
+- 22.04 - adding tables related to running API models as a migration
+- 23.04 - meeting to discuss the progress and set up future goals
+- 23.04 - meeting to discuss the progress and set up future goals
+- 23.04 - creating tables related to running models
+- 23.04 - creating tables related to running models
+- 23.04 - creating tables related to running models
+- 25.04 - meeting with Frank
+- 29.04 - understanding why we need to store loaded model ids and evidencio variable ids for the designer page
+- 29.04 - adding migrations for those
+- 29.04 - adding migrations for user-based tables
+- 29.04 - adding new mandatory fields of user to the registration form
+- 29.04 - adding models for newly created tables
+- 29.04 - testing models
+- 30.04 - amending the ORM diagram
+- 1.05 - commenting and cleaning Evidencio API class
+- 1.05 - reading about testing in Laravel
+- 1.05 - making unit tests for Evidencio API class
+- 1.05 - making unit tests for Evidencio API class
+- 1.05 - adding comments to migrations
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - adding database tests
+- 1.05 - reviewing Dammes' pull request
+- 2.05 - new sprint team meeting
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 7.05 - addressing remarks to the pull request and fixing the code
+- 9.05 - team meeting
+- 9.05 - team meeting
+- 9.05 - making migrations fixing latest issues in the DB
+- 9.05 - making migrations fixing latest issues in the DB
+- 9.05 - making migrations fixing latest issues in the DB
+- 9.05 - setting up the server
+- 9.05 - setting up the server
+- 9.05 - setting up the server
+- 11.05 - extending registration page
+- 11.05 - extending registration page
+- 11.05 - creating usersverification page
+- 13.05 - creating usersverification page
+- 13.05 - creating usersverification page
+- 13.05 - creating usersverification page
+- 13.05 - creating usersverification page
+- 13.05 - creating usersverification page
+- 14.05 - making uploading documents
+- 14.05 - making uploading documents
+- 14.05 - making uploading documents
+- 15.05 - making uploading documents
+- 15.05 - making uploading documents
+- 15.05 - making uploading documents
+- 15.05 - making uploading documents
+- 15.05 - making uploading documents
+- 16.05 - making uploading documents
+- 16.05 - making uploading documents
+- 16.05 - updating the server, fixing errors
+- 16.05 - updating the server, fixing errors
+- 18.05 - meeting with the customer
+- 18.05 - meeting with the customer
+- 18.05 - group meeting to set up the goals
+- 19.05 - adding option ordering to the DB
+- 19.05 - solving the timestamp touching problem in the DB
+- 19.05 - solving the timestamp touching problem in the DB
+- 19.05 - solving the timestamp touching problem in the DB
+- 20.05 - solving the timestamp touching problem in the DB
+- 20.05 - solving the timestamp touching problem in the DB
+- 23.05 - working on the authorisation
+- 23.05 - working on the authorisation
+- 23.05 - meeting with Frank
+- 24.05 - meeting with the customer
+- 26.05 - working on the 'notverified' page
+- 26.05 - adding email sending on approving/rejecting account
+- 28.05 - creating and applying policies
+- 28.05 - creating and applying policies
+- 28.05 - creating and applying policies
+- 28.05 - updating database diagram
+- 29.05 - making email verification
+- 29.05 - making email verification
+- 29.05 - making email verification
+- 29.05 - meeting to discuss progress, future tasks and the presentation
+- 29.05 - meeting to discuss progress, future tasks and the presentation
+- 30.05 - checking and updating documents
+- 30.05 - checking and updating documents
+- 30.05 - checking and updating documents
+- 30.05 - checking and updating documents
+- 30.05 - checking and updating documents
+- 30.05 - checking and updating documents
