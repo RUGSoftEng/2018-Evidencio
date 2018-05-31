@@ -17,30 +17,45 @@ Route::get('/', function () {
 
 
 Route::get('/myworkflows', function () {
-  return view('myworkflows');
-});
+    return view('myworkflows');
+})->name('myworkflows')
+->middleware('auth')
+->middleware('can:view-designer');
 
 Auth::routes();
 
-Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
+Route::get('/emailverify/{token}','Auth\RegisterController@verifyUser')->name('emailverification');
+
+Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
+
+Route::get('/usersverification/download/{id}', 'UsersVerificationController@download')->name('usersverification.download');
+Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
+Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
+
+Route::get('/notverified', function() {
+  return view('notverified');
+})->name('notverified')
+->middleware('auth')
+->middleware('can:not-view-designer');
+
+Route::get('/designer', 'DesignerController@index')->name('designer');
 
 Route::post('/graph', 'GraphController@index');
 
 Route::get('/search', function () {
   return view('search');
 });
+Route::get('/workflow/{workflowId}', 'WorkflowController@index');
 
-Route::get('/workflow', function () {
-  return view('workflow');
-});
-
-Route::get('/designer/fetch', 'DesignerController@fetchVariables');
-
-Route::post('/PDF', function(){
+Route::post('/PDF', function () {
   return view('PDF');
 });
-Route::post('/designer/fetch', 'DesignerController@fetchVariables')->middleware('auth');
 
-Route::post('/designer/save', 'DesignerController@saveWorkflow')->middleware('auth');
-Route::post('/designer/save/{workflowId}', 'DesignerController@saveWorkflow')->middleware('auth');
-Route::post('/designer/load/{workflowId}', 'DesignerController@loadWorkflow')->middleware('auth');
+Route::post('/designer/fetch', 'DesignerController@fetchVariables');
+Route::post('/designer/runmodel', 'DesignerController@runModel');
+Route::post('/designer/search', 'DesignerController@fetchSearch');
+
+
+Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');

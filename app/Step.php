@@ -25,14 +25,20 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Step extends Model
 {
-
     protected $fillable = ['title','description','workflow_step_level','colour','is_stored'];
+    protected $touches = ['workflow'];
 
     public function workflow()
     {
         return $this->belongsTo('App\Workflow','workflow_step_workflow_id');
     }
 
+    /**
+     * @property string condition set of rules which define on what conditions
+     * one can go to the step in a format defined by the used rule engine
+     * @property string title
+     * @property string description
+     */
     public function nextSteps()
     {
         return $this->belongsToMany('App\Step','next_steps','previous_step_id','next_step_id')->withPivot("condition","title","description");
@@ -43,9 +49,14 @@ class Step extends Model
         return $this->belongsToMany('App\Step','next_steps','next_step_id','previous_step_id')->withPivot("condition","title","description");
     }
 
+
+    /**
+     * @property int order defines index of a field in a step by which it should
+     * be ordered
+     */
     public function fields()
     {
-        return $this->belongsToMany('App\Field','field_in_input_steps','input_step_id','field_id');
+        return $this->belongsToMany('App\Field','field_in_input_steps','input_step_id','field_id')->withPivot("order");
     }
 
     /**

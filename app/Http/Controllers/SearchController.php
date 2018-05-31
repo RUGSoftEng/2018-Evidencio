@@ -3,9 +3,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\EvidencioAPI;
-use App\Workflow
+use App\Workflow;
 
-class GraphController extends Controller
+class SearchController extends Controller
 {
 
 
