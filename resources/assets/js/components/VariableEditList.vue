@@ -1,6 +1,7 @@
 <template>
-    <div class="list-group">
-        <draggable v-model="localSelectedVariables" :options="{handle: '.handle'}" @start="drag=true" @end="drag=false" @choose="closeCollapsed" @update="updateOrder">
+    <div class="list-group" id="variableEditList">
+        <draggable v-model="localSelectedVariables" :options="{handle: '.handle'}" @start="drag=true" @end="drag=false" @choose="closeCollapsed"
+            @update="updateOrder">
             <variable-edit-item v-for="(variableName, index) in localSelectedVariables" :key="index" :index="index" :show="showFlags[index]"
                 :variable="usedVariables[variableName]" @toggle="toggleShow($event)"></variable-edit-item>
         </draggable>
@@ -46,8 +47,10 @@ export default {
       }
     },
     toggleShow(index) {
-      this.$set(this.showFlags, index, !this.showFlags[index]);
-      $("#editVar_" + index).collapse("toggle");
+      if (!$("#editVar_" + index).hasClass("collapsing")) {
+        this.$set(this.showFlags, index, !this.showFlags[index]);
+        $("#editVar_" + index).collapse("toggle");
+      }
     }
   },
 

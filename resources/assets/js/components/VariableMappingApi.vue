@@ -1,17 +1,23 @@
 <template>
-    <div class="card mt-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ model.title }}</h5>
-            <div class="alert alert-warning" role="alert" v-if="warningExists">
-                The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,
-                please do this mapping manually.
-            </div>
+    <div class="mt-3">
+        <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editApi_' + index"
+            aria-expanded="false" :aria-controls="'editApi_' + index" :id="'headerApi_' + index" @click="show = !show" :class="{warning: warningExists}">
+            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            {{ model.title }}
+            <span class="badge badge-secondary float-right">Id: {{ model.evidencioModelId }}</span>
+        </button>
+        <div class="alert alert-warning" role="alert" v-if="warningExists">
+            The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,
+            please do this mapping manually.
+        </div>
+        <div class="collapse" :id="'editApi_' + index">
             <form>
                 <div class="form-row">
                     <div class="form-group col-md-6" v-for="(variableMap, indexMap) in model.variables" :key="indexMap">
                         <label :for="'select_' + indexMap">{{ variableMap.evidencioTitle }}</label>
-                        <multiselect :class="{warning: warnings[indexMap]}" :options="reachableVariables" :allow-empty="false"
-                            deselect-label="Cannot be empty" v-model="variableMap.localVariable">
+                        <multiselect :class="{warning: warnings[indexMap]}" :options="reachableVariables" :allow-empty="false" deselect-label="Cannot be empty"
+                            v-model="variableMap.localVariable">
                             <template slot="singleLabel" slot-scope="props">
                                 <span class="option__desc">
                                     <span class="option__title">{{ usedVariables[props.option].title }}</span>
@@ -21,27 +27,26 @@
                                 <div class="option__desc">
                                     <span class="option__title">{{ usedVariables[props.option].title }}</span>
                                 </div>
-                             </template>
+                            </template>
                         </multiselect>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="card-body">
+                        <h5 class="card-title">Result variables</h5>
+                        <h5>
+                            <span class="badge badge-secondary mx-1" v-for="(result, index) in model.results" :key="index">{{ result.name }}</span>
+                        </h5>
+                    </div>
+                </div>
             </form>
-        </div>
-        <div class="card-body">
-            <h6 class="card-title">Result variables</h6>
-            <span class="badge badge-secondary mx-1" v-for="(result, index) in model.results" :key="index">{{ result.name }}</span>
         </div>
     </div>
 </template>
 
 
 <script>
-import Multiselect from "vue-multiselect";
-
 export default {
-  components: {
-    Multiselect
-  },
   props: {
     model: {
       type: Object,
@@ -53,6 +58,10 @@ export default {
     },
     usedVariables: {
       type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
       required: true
     }
   },
@@ -105,6 +114,11 @@ export default {
       }
       return -1;
     }
+  },
+  data() {
+    return {
+      show: false
+    };
   }
 };
 </script>

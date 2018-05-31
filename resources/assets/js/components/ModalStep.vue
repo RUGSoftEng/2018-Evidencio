@@ -71,7 +71,7 @@
                                                         </span>
                                                     </template>
                                                 </multiselect>
-                                                <label for="accVariablesEdit" class="variable-label mb-2">Selected variables</label>
+                                                <label for="variableEditList" class="variable-label mb-2">Selected variables</label>
                                                 <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables" @sort="updateOrder($event)"></variable-edit-list>
                                             </div>
 
@@ -89,16 +89,20 @@
                                                             </span>
                                                         </template>
                                                     </multiselect>
-                                                    <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :model="apiCall" :used-variables="localUsedVariables"
-                                                        :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                    <div class="list-group">
+                                                        <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :index="index" :model="apiCall" :used-variables="localUsedVariables"
+                                                            :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                    </div>
                                                 </div>
                                                 <div class="container-fluid" v-else>
-                                                    <h6>A model calculation cannot be done without variables. Either add fields to the current step or link it to a precious step to use the fields of that step.</h6>
+                                                    <h6>A model calculation cannot be done without variables. Either add fields
+                                                        to the current step or link it to a precious step to use the fields
+                                                        of that step.</h6>
                                                 </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended"></rule-edit-list>
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -151,7 +155,6 @@
 </template>
 
 <script>
-import Multiselect from "vue-multiselect";
 import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
@@ -161,7 +164,6 @@ import ChartItemsList from "./ChartItemsList";
 
 export default {
   components: {
-    Multiselect,
     VariableEditList,
     RuleEditList,
     ChartPreview,
@@ -190,6 +192,10 @@ export default {
       type: Array,
       required: true
     },
+    ancestorResults: {
+      type: Array,
+      required: true
+    },
     childrenSteps: {
       type: Array,
       required: true
@@ -206,6 +212,15 @@ export default {
       let vars = this.ancestorVariables;
       vars = vars.concat(this.localStep.variables);
       return vars;
+    },
+    resultsUpToStep: function() {
+      let results = this.ancestorResults;
+      this.localStep.apiCalls.forEach(apiCall => {
+        apiCall.results.map(result => {
+          results.push(result.name);
+        });
+      });
+      return results;
     },
     // Array of model-representations for API-call
     modelChoiceRepresentation: function() {
@@ -234,6 +249,7 @@ export default {
       });
       return children;
     }
+    // Array containing all
   },
 
   mounted: function() {
@@ -352,7 +368,7 @@ export default {
     },
 
     /**
-     * Everytime the modal is opened, the details for the rule-targets shou;d be updated.
+     * Everytime the modal is opened, the details for the rule-targets should be updated.
      */
     updateRuleTargetDetails() {
       this.localStep.rules.forEach(rule => {
@@ -453,67 +469,6 @@ export default {
       };
       this.localStep.chartData.push(object);
     }
-
-    // /**
-    //  * Adds a rule to the list of rules
-    //  */
-    // addRule() {
-    //   this.modalRules.push({
-    //     name: "Go to target",
-    //     rule: [],
-    //     target: -1
-    //   });
-    //   this.modalEditRuleFlags.push(false);
-    // },
-
-    // /**
-    //  * Removes the rule with the given index from the list
-    //  * @param {integer} [ruleIndex] of rule to be removed
-    //  */
-    // removeRule(ruleIndex) {
-    //   this.modalRules.splice(ruleIndex, 1);
-    //   this.modalEditRuleFlags.splice(ruleIndex, 1);
-    // },
-
-    // /**
-    //  * Allows for a rule to be edited.
-    //  * @param {integer} [index] of the rule to be edited
-    //  */
-    // editRule(index) {
-    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
-    // },
-
-    // /**
-    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-    //  * @param {integer} [modelID] is the Evidencio model ID.
-    //  */
-    // getModelIndex(modelID) {
-    //   for (let index = 0; index < this.models.length; index++) {
-    //     if (this.models[index].id == modelID) return index;
-    //   }
-    //   return -1;
-    // },
-
-    // /**
-    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-    //  * @param {object} [selectedModel] is the newly selected model
-    //  */
-    // apiCallModelChangeAction(selectedModel) {
-    //   let modID = this.getModelIndex(selectedModel.id);
-    //   if (modID == -1) {
-    //     this.modalApiCall.variables = [];
-    //     return;
-    //   }
-    //   let modVars = [];
-    //   this.models[modID].variables.forEach(element => {
-    //     modVars.push({
-    //       originalTitle: element.title,
-    //       originalID: element.id,
-    //       targetID: null
-    //     });
-    //   });
-    //   this.modalApiCall.variables = modVars;
-    // }
   },
 
   data() {

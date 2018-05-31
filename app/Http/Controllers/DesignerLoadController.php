@@ -141,7 +141,7 @@ class DesignerLoadController extends Controller
             $rule = [];
             $rule["title"] = $dbRule->pivot->title;
             $rule["description"] = $dbRule->pivot->desription;
-            $rule["condition"] = $dbRule->pivot->condition;
+            $rule["jsonRule"] = $dbRule->pivot->condition;
             $rule["target"] = [
                 "id" => $dbRule->id,
                 "title" => $dbRule->title,
