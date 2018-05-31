@@ -282,4 +282,70 @@
 06.05 - Trying to minify FontAwesome again, again failing to get the webpack plugin to work
 06.05 - Alternative found for minimizing fontawesome, fontello allows for selection of icons to be included only
 06.05 - Alternative found for minimizing fontawesome, testing it
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+09.05 - Added possibility to edit title/description of workflow, other tiny (layout) changes
+09.05 - Added possibility to edit title/description of workflow, other tiny (layout) changes
+09.05 - Database fields changed to snake-case by Tomek, made appropiate changes in own code
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+11.05 - Layout fix that ended up not being a fix
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Made a mistake while merging... errors everywhere
+15.05 - Made a mistake while merging... errors everywhere, also fixed some bugs
+23.05 - Split DesignerController in three separate files. MVC is horribly violated, but I have no time to fix this.
+23.05 - Fixed problem of adding a rule at a leaf node.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+27.05 - Added automatic mapping of fields at API-variable mapping
+27.05 - Added automatic mapping of fields at API-variable mapping
+27.05 - Added automatic mapping of fields at API-variable mapping with warnings if mapping failed
+27.05 - Made mapping select inputs searchable, non-empty (not possible to deselect something, only possible to select something else)
+27.05 - Added 'save successful' alert
+27.05 - Added 'save successful' alert
+27.05 - Added 'save successful' alert, added min/max zoom level to graph
+28.05 - JSON-rules-engine test page created
+29.05 - Made a start for the rules-designer page, looks terrible
+29.05 - Made a start for the rules-designer page, looks terrible, recursive Vue components are annoying
+30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
+30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
+30.05 - Added a loading screen to the designer, because it could cause errors if you tried to open something that wasn't loaded yet.
+30.05 - Fixed bug in field-editing.
+30.05 - Placed the variable API mappings in a collapse similar to the field-editing and rule-editing
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on loading them
+31.05 - Made a first working version of rules, worked on loading them
+
+
+
 
