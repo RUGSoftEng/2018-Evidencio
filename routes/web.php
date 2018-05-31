@@ -50,7 +50,7 @@ Route::post('/designer/runmodel', 'DesignerController@runModel');
 Route::post('/designer/search', 'DesignerController@fetchSearch');
 
 
-Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')
+Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');
 
