@@ -1,13 +1,10 @@
 <template>
     <div>
-        <div class="row">
-            <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf" :title="buttonTitle">Add rule</button>
-        </div>
-        <div class="row" id="accRulesEdit">
-            <div class="col">
-                <rule-edit-item v-for="(rule, index) in rules" :key="index" :index-item="index" :rule="rule" :options="childNodes" @toggle="selectCard($event)">
-                </rule-edit-item>
-            </div>
+        <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf" :title="buttonTitle">Add rule</button>
+        <label for="ruleEditList" class="rule-label mb-2">Created Rules</label>
+        <div class="list-group" id="ruleEditList">
+            <rule-edit-item v-for="(rule, index) in rules" :key="index" :index="index" :rule="rule" :reachable-results="reachableResults"
+                :children="children"></rule-edit-item>
         </div>
     </div>
 </template>
@@ -19,7 +16,6 @@ export default {
   components: {
     RuleEditItem
   },
-
   props: {
     rules: {
       type: Array,
@@ -28,19 +24,15 @@ export default {
     children: {
       type: Array,
       required: true
+    },
+    reachableResults: {
+      type: Array,
+      required: true
     }
   },
-
   computed: {
-    childNodes: function() {
-      let options = JSON.parse(JSON.stringify(this.children));
-      options.map(function(child, index) {
-        child["ind"] = index;
-      });
-      return options;
-    },
     isLeaf: function() {
-      return this.childNodes.length == 0;
+      return this.children.length == 0;
     },
     buttonTitle: function() {
       if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
@@ -49,19 +41,14 @@ export default {
   },
 
   methods: {
-    selectCard(index) {
-      for (let ind = 0; ind < this.rules.length; ind++) {
-        if (ind == index) $("#ruleEditCollapse_" + ind).collapse("toggle");
-        else $("#ruleEditCollapse_" + ind).collapse("hide");
-      }
-    },
-
     addRule() {
       this.rules.push({
         databaseId: -1,
         title: "Empty rule",
         description: "",
-        condition: "true",
+        condition: {
+          label: "rule"
+        },
         target: null,
         edgeId: -1,
         create: true,
@@ -72,3 +59,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.rule-label {
+  font-weight: bold;
+  display: block;
+}
+</style>

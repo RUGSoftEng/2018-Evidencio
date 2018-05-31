@@ -26,6 +26,7 @@ mix
   .js("resources/assets/js/designerGraph.js", "public/js")
   .js("resources/assets/js/bootstrap-colorpalette.js", "public/js")
   .js('resources/assets/js/registration.js', 'public/js')
+  .js("resources/assets/js/rules-engine-test.js", "public/js")
   .sass("resources/assets/sass/app.scss", "public/css")
   .sass("resources/assets/sass/workflow.scss", "public/css")
   .sass("resources/assets/sass/sidebar.scss", "public/css")

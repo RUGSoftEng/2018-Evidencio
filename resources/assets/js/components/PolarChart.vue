@@ -1,19 +1,17 @@
 <script>
+import { PolarArea } from "vue-chartjs";
 
-  import { PolarArea } from 'vue-chartjs';
-
-  export default {
-    props : {
-      label: {
-        type: String
-      },
-      data: {}
+export default {
+  props: {
+    label: {
+      type: String
     },
-    extends: PolarArea,
-    mounted () {
-      // Overwriting base render method with actual data.
-      this.renderChart(this.data);
-    }
+    data: {}
+  },
+  extends: PolarArea,
+  mounted() {
+    // Overwriting base render method with actual data.
+    this.renderChart(this.data);
   }
-
+};
 </script>
