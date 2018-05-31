@@ -315,8 +315,13 @@
 15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
 15.05 - Made a mistake while merging... errors everywhere
 15.05 - Made a mistake while merging... errors everywhere, also fixed some bugs
+18.05 - Meeting with the customer (Rick)
+18.05 - Meeting with the customer (Rick)
+18.05 - Group meeting to set up goals
 23.05 - Split DesignerController in three separate files. MVC is horribly violated, but I have no time to fix this.
-23.05 - Fixed problem of adding a rule at a leaf node.
+23.05 - Fixed problem of adding a rule at a leaf node. Added changing time-stamp.
+23.05 - Meeting with TA (Frank)
+24.05 - Meeting with the customers (Team in Haaksbergen)
 24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
 24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
 24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
@@ -333,6 +338,8 @@
 28.05 - JSON-rules-engine test page created
 29.05 - Made a start for the rules-designer page, looks terrible
 29.05 - Made a start for the rules-designer page, looks terrible, recursive Vue components are annoying
+29.05 - Meeting to discuss progress, what still to do and the presentation
+29.05 - Meeting to discuss progress, what still to do and the presentation
 30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
 30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
 30.05 - Added a loading screen to the designer, because it could cause errors if you tried to open something that wasn't loaded yet.
@@ -345,7 +352,7 @@
 31.05 - Made a first working version of rules, worked on saving them
 31.05 - Made a first working version of rules, worked on loading them
 31.05 - Made a first working version of rules, worked on loading them
-
+31.05 - Tiny layout changes, refactorings, bug-fixes
 
 
 
