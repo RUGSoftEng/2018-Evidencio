@@ -18,7 +18,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
 ?>
 @extends('layouts.app')
 
-@section('content')
+@section('content')@include('partials.sidebar')
 @if(!empty($decodeRes['result']))
 <?php
 

@@ -9,7 +9,7 @@ or radio buttons for categorical values.--}}
 
 @extends('layouts.app')
 
-@section('content')
+@section('content')@include('partials.sidebar')
 {{--makes inputs for all the required variables--}}
 
 @if (!empty($result))

@@ -7,16 +7,12 @@ use App\EvidencioAPI;
 use App\Workflow;
 $numResult = 0;
 if (!empty($_GET['search'])) {
-  //$decodeRes = EvidencioAPI::search($_GET['search']);
   $result = (new Workflow)->search($_GET['search']);
   $numResult = count($result);
 }
-
 ?>
-
 @extends('layouts.app')
-
-@section('content')
+@section('content')@include('partials.sidebar')
 <br>
 {{--the search bar--}}
 <div class="container">
@@ -49,4 +45,5 @@ if (!empty($_GET['search'])) {
         <div class="alert alert-warning">No results found for : <?php echo $_GET['search']; ?> </div>
   <?php endif; ?>
 </div>
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 @endsection
