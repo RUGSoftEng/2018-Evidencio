@@ -121,7 +121,7 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-                                                <chart-items-list :current-step-data="this.localStep.chartRenderingData"></chart-items-list>
+                                                <chart-items-list :current-step-data="this.localStep.chartRenderingData" @refresh-chart-data="updateChartData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
@@ -452,6 +452,10 @@ export default {
         color
       };
       this.localStep.chartData.push(object);
+    },
+
+    updateChartData(chartData) {
+      this.steps[this.stepId] = chartData;
     }
 
     // /**

@@ -27,7 +27,6 @@
                         <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
 
                     </div>
-                    <button type="button" class="btn btn-primary ml-2">Update in chart</button>
                     <button type="button" class="btn btn-primary ml-2">Remove from chart</button>
                 </form>
             </div>

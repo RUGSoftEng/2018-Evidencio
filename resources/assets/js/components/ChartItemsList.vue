@@ -42,6 +42,7 @@
           this.currentStepData.labels[data[3]] = data[0];
           this.currentStepData.datasets[0].backgroundColor[data[3]] = data[1];
           this.currentStepData.datasets[0].data[data[3]] = Number(data[2]);
+          this.$emit("refresh-chart-data", this.currentStepData);
         }
       }
     }
