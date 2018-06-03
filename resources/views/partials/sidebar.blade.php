@@ -27,7 +27,7 @@
             </li>
                 <p class="paragraphInSideMenu" >Help</p>
             <li>
-                <a href="#">Instructions</a>
+                <a href="/instructions">Instructions</a>
             </li>
             <li>
                 <a href="#">Contact Us</a>

@@ -77,6 +77,10 @@
                                 </div>
                             </li>
                         @endguest
+                        <li><a class="nav-link" href="{{ route('about') }}">{{ __('About') }}</a></li>
+                        <li><a class="nav-link" href="{{ route('termsandconditions') }}">{{ __('Terms & Conditions') }}</a></li>
+                        <li><a class="nav-link" href="{{ route('privacypolicy') }}">{{ __('Privacy Policy') }}</a></li>
+                        <li><a class="nav-link" href="{{ route('disclaimer') }}">{{ __('Disclaimer') }}</a></li>
                     </ul>
                 </div>
             </div>
@@ -85,6 +89,10 @@
         <main class="py-4 content">
             @yield('content')
         </main>
+
     </div>
+
+
 </body>
 </html>
+
