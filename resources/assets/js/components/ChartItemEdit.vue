@@ -12,17 +12,17 @@
                 <form onsubmit="return false">
                     <div class="form-group">
                         <label :for="'chartItemTitle_' + indexItem">Label </label>
-                        <input type="text" name="" :id="'chartItemTitle_' + indexItem" class="form-control" v-model="chartItem" placeholder="Label" :disabled="!editing">
+                        <input type="text" name="" :id="'chartItemTitle_' + indexItem" class="form-control" v-model="localItemLabel" placeholder="Label" :disabled="!editing" @change="toggleUpdate()">
                         <small :id="'chartItemTitleHelp_' + indexItem" class="form-text text-muted">Label of the variable</small>
                     </div>
                     <div class="form-group">
                         <label :for="'chartItemColor_' + indexItem">Color </label>
-                        <input type="text" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="currStepData.datasets[0].backgroundColor[indexItem]" :disabled="!editing">
+                        <input type="text" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="localItemColor" :disabled="!editing" @change="toggleUpdate()">
                         <small :id="'chartItemColorHelp_' + indexItem" class="form-text text-muted">Color of the item</small>
                     </div>
                     <div class="form-group">
                         <label :for="'chartItemValue_' + indexItem">Value </label>
-                        <input type="number" name="" class="form-control" :id="'chartItemValue_' + indexItem" v-model="currStepData.datasets[0].data[indexItem]" :disabled="!editing">
+                        <input type="number" name="" class="form-control" :id="'chartItemValue_' + indexItem" v-model="localItemValue" :disabled="!editing" @change="toggleUpdate()">
                         <small :id="'chartItemValueHelp_' + indexItem" class="form-text text-muted">Placeholder value of the item</small>
                         <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
 
@@ -38,8 +38,16 @@
 <script>
   export default {
     props: {
-      chartItem: {
+      chartItemLabel: {
         type: String,
+        required: true
+      },
+      chartItemColor: {
+        type: String,
+        required: true
+      },
+      chartItemValue: {
+        type: Number,
         required: true
       },
       indexItem: {
@@ -51,13 +59,19 @@
 
     data() {
       return {
-        editing: false
+        editing: false,
+        localItemLabel: this.chartItemLabel,
+        localItemColor: this.chartItemColor,
+        localItemValue: Number(this.chartItemValue)
       };
     },
 
     methods: {
       toggleShow() {
         this.$emit("toggle1", this.indexItem);
+      },
+      toggleUpdate() {
+        this.$emit("refresh-chart-data", [this.localItemLabel, this.localItemColor,Number(this.localItemValue), this.indexItem]);
       }
     },
 
