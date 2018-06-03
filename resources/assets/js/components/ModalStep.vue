@@ -121,11 +121,11 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-                                                <chart-items-list :chart-items="this.localStep.chartData"></chart-items-list>
+                                                <chart-items-list :current-step-data="this.localStep.chartRenderingData"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="this.localStep.chartTypeNumber" :chart-data="this.localStep.chartRenderingData"></chart-preview>
+                                            <chart-preview :chart-type="this.localStep.chartTypeNumber" :chart-data="this.localStep.chartRenderingData" :current-step="this.localStep"></chart-preview>
                                         </div>
                                     </div>
                                 </div>

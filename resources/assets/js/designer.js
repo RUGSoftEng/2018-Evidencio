@@ -473,7 +473,7 @@ window.vObj = new Vue({
         create: true,
         destroy: false,
         chartTypeNumber: 0,
-        chartData: [],
+        // chartData: [],
         chartRenderingData: {
           labels: ['January', 'February'],
           datasets: [{
