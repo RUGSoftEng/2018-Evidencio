@@ -17,6 +17,14 @@ a:focus {
   transition: all 0.3s;
 }
 
+#sidebar a,
+#sidebar a:hover,
+#sidebar a:focus {
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: all 0.3s !important;
+}
+
 .line {
   width: 100%;
   height: 1px;
@@ -92,7 +100,7 @@ a:focus {
 }
 
 #sidebar ul li a:hover {
-  color: #7386d5;
+  color: #7386d5 !important;
   background: #fff;
 }
 
