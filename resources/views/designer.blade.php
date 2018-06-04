@@ -2,10 +2,17 @@
 
 <div class="container-fluid height-100" id="designerDiv">
 
-    {{-- @include('partials.designer_modal') --}}
+    <!-- Modal step -->
     <modal-step :step-id="selectedStepId" :steps="steps" :used-variables="usedVariables" :children-steps="childrenSteps" :ancestor-variables="variablesUpToStep"
-        :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+        :ancestor-results="resultsUpToStep" :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
     <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
+
+    <!-- Notifications -->
+    <notifications position="top center"></notifications>
+
+    <!-- Loading screen -->
+    <vue-loading :active.sync="isLoading"></vue-loading>
+
     <!-- Normal view -->
     <div class="row justify-content-center height-100">
         <div class="col-sm-3 column-fitting">
@@ -34,7 +41,6 @@
                 <div class="card-header">
                     Designer
                     <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
-                    <alert-message :type="alert.type" :message="alert.message" :show="alert.show" @hide="hideAlert"></alert-message>
                 </div>
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))

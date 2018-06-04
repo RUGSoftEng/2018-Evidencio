@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import ChartItemEdit from "./ChartItemEdit.vue"
+import ChartItemEdit from "./ChartItemEdit.vue";
 
     export default {
       components: {
@@ -49,5 +49,19 @@
           this.$emit("refresh-chart-data", this.currentStepData);
         }
       }
+    },
+    addChartItem() {
+      this.chartItems.push({
+        label: "Enter Label",
+        color: "#ff0000",
+        value: 10
+      });
+    },
+    data() {
+      return {
+        localChartItems: []
+      };
     }
+  }
+};
 </script>

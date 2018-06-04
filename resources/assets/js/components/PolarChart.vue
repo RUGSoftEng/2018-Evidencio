@@ -1,4 +1,5 @@
 <script>
+import { PolarArea } from "vue-chartjs";
 
   import { PolarArea, mixins } from 'vue-chartjs';
   const { reactiveProp } = mixins;
@@ -17,5 +18,5 @@
       this.renderChart(this.chartData, this.options);
     }
   }
-
+};
 </script>

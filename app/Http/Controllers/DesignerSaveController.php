@@ -223,7 +223,8 @@ class DesignerSaveController extends Controller
         $savedRules = $dbStep->nextSteps()->get();
         if (!empty($rules)) {
             foreach ($rules as $rule) {
-                $nextStepId = $stepIds[$rule["target"]["stepId"]];
+                $nextStepId = $stepIds[$rule["jsonRule"]["event"]["params"]["stepId"]];
+                $rule["jsonRule"]["event"]["params"]["stepId"] = $nextStepId;
                 $nextStep = Step::where('id', $nextStepId)->first();
                 if (($dbRuleNextStep = $savedRules->where('id', $nextStepId))->isNotEmpty()) {
                     $dbRuleNextStep = $dbRuleNextStep->first();
@@ -232,13 +233,13 @@ class DesignerSaveController extends Controller
                         $dbStep->nextSteps()->attach($nextStep, [
                             "title" => $rule["title"],
                             "description" => $rule["description"],
-                            "condition" => $rule["condition"]
+                            "condition" => json_encode($rule["jsonRule"])
                         ]);
                     } else {
                         $dbStep->nextSteps()->updateExistingPivot($dbRuleNextStep, [
                             "title" => $rule["title"],
                             "description" => $rule["description"],
-                            "condition" => $rule["condition"]
+                            "condition" => json_encode($rule["jsonRule"])
                         ]);
                     }
 
@@ -249,7 +250,7 @@ class DesignerSaveController extends Controller
                     $dbStep->nextSteps()->attach($nextStep, [
                         "title" => $rule["title"],
                         "description" => $rule["description"],
-                        "condition" => $rule["condition"]
+                        "condition" => json_encode($rule["jsonRule"])
                     ]);
                 }
             }

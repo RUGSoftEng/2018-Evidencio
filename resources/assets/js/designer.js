@@ -2,7 +2,12 @@ Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
 Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
-Vue.component("alertMessage", require("./components/AlertMessage.vue"));
+Vue.component("vueLoading", require("vue-loading-overlay"));
+import 'vue-loading-overlay/dist/vue-loading.min.css';
+import Multiselect from "vue-multiselect";
+Vue.component("multiselect", Multiselect);
+import Notifications from 'vue-notification';
+Vue.use(Notifications);
 
 // ============================================================================================= //
 
@@ -66,11 +71,7 @@ window.vObj = new Vue({
     },
 
     workflowId: null,
-    alert: {
-      type: "",
-      message: "",
-      show: false
-    },
+    isLoading: true,
 
     debug: {}
   },
@@ -92,6 +93,7 @@ window.vObj = new Vue({
         0
       );
       this.panView();
+      this.isLoading = false;
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
@@ -119,6 +121,7 @@ window.vObj = new Vue({
         });
       });
       this.connectionsChanged = !this.connectionsChanged;
+      this.isLoading = false;
     })
     // Event called when the user tries to remove a step
     Event.listen("confirmDialog", confirmInfo => {
@@ -146,13 +149,28 @@ window.vObj = new Vue({
       return this.levels[levelIndex + 1].steps;
     },
 
+    ancestors: function () {
+      return this.getAncestorStepList(this.selectedStepId);
+    },
+
     variablesUpToStep: function () {
-      let vars = [],
-        stepIds = this.getAncestorStepList(this.selectedStepId);
-      stepIds.forEach(stepId => {
+      let vars = [];
+      this.ancestors.forEach(stepId => {
         vars = vars.concat(this.steps[stepId].variables);
       });
       return vars;
+    },
+
+    resultsUpToStep: function () {
+      let results = [];
+      this.ancestors.forEach(stepId => {
+        this.steps[stepId].apiCalls.map(apiCall => {
+          apiCall.results.map(result => {
+            results.push(result.name);
+          });
+        });
+      });
+      return results;
     }
   },
 
@@ -234,10 +252,10 @@ window.vObj = new Vue({
         },
         success: function (result) {
           if (result.hasOwnProperty("result")) {
-            self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_0");
+            self.models[localModelId].resultVars.push("result_" + self.models[localModelId].id.toString() + "_0");
           } else {
             for (let index = 0; index < result.resultSet.length; index++) {
-              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index);
+              self.models[localModelId].resultVars.push("result_" + self.models[localModelId].id.toString() + "_" + index);
             }
           }
         }
@@ -251,61 +269,87 @@ window.vObj = new Vue({
       var self = this;
       let url = "/designer/save";
       if (this.workflowId != null) url = url + "/" + this.workflowId;
-      this.steps.map((x, index) => {
-          x["level"] = this.getStepLevel(index);
-        }),
-        $.ajax({
-          headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-          },
-          url: url,
-          type: "POST",
-          data: {
-            title: self.title,
-            description: self.description,
-            languageCode: self.languageCode,
-            steps: self.steps,
-            variables: self.usedVariables,
-            modelIds: self.modelIds
-          },
-          success: function (result) {
-            if (result.hasOwnProperty("workflowId")) {
-              self.showAlert("Your workflow has been successfully saved.", "success");
-              self.workflowId = Number(result.workflowId);
-              var pathArray = location.href.split("/");
-              window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
-              let numberOfSteps = self.steps.length;
-              for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
-                self.steps[stepIndex].id = result.stepIds[stepIndex];
-                cy.getElementById(self.steps[stepIndex].nodeId).style({
-                  label: self.steps[stepIndex].id
-                });
-                for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
-                  let apiCall = result.resultIds[stepIndex][apiIndex];
-                  for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                    self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
-                  }
-                }
+      let localSteps = JSON.parse(JSON.stringify(this.steps));
+      localSteps.map(step => {
+        step.rules.forEach((rule, index) => {
+          let newRule = {};
+          newRule.jsonRule = {
+            conditions: rule.condition,
+            event: {
+              type: "goToNextStep",
+              params: {
+                stepId: rule.target.stepId
               }
-              let varIds = result.variableIds;
-              for (var key in varIds) {
-                if (varIds.hasOwnProperty(key)) {
-                  self.usedVariables[key].databaseId = Number(varIds[key]);
-                }
-              }
-              let optIds = result.optionIds;
-              for (var key in optIds) {
-                if (optIds.hasOwnProperty(key)) {
-                  optIds[key].forEach((element, index) => {
-                    self.usedVariables[key].options[index].databaseId = Number(element);
-                  });
-                }
-              }
-            } else {
-              self.showAlert("Your workflow failed to save.", "danger");
             }
           }
+          newRule.title = rule.title;
+          newRule.description = rule.description;
+          step.rules[index] = newRule;
         });
+      });
+      localSteps.map((x, index) => {
+        x["level"] = this.getStepLevel(index);
+      });
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: url,
+        type: "POST",
+        data: {
+          title: self.title,
+          description: self.description,
+          languageCode: self.languageCode,
+          steps: localSteps,
+          variables: self.usedVariables,
+          modelIds: self.modelIds
+        },
+        success: function (result) {
+          if (result.hasOwnProperty("workflowId")) {
+            self.$notify({
+              title: "Save successful",
+              text: "Your workflow has been successfully saved.",
+              type: "success"
+            })
+            self.workflowId = Number(result.workflowId);
+            var pathArray = location.href.split("/");
+            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
+            let numberOfSteps = self.steps.length;
+            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+              self.steps[stepIndex].id = result.stepIds[stepIndex];
+              cy.getElementById(self.steps[stepIndex].nodeId).style({
+                label: self.steps[stepIndex].id
+              });
+              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+                let apiCall = result.resultIds[stepIndex][apiIndex];
+                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+                }
+              }
+            }
+            let varIds = result.variableIds;
+            for (var key in varIds) {
+              if (varIds.hasOwnProperty(key)) {
+                self.usedVariables[key].databaseId = Number(varIds[key]);
+              }
+            }
+            let optIds = result.optionIds;
+            for (var key in optIds) {
+              if (optIds.hasOwnProperty(key)) {
+                optIds[key].forEach((element, index) => {
+                  self.usedVariables[key].options[index].databaseId = Number(element);
+                });
+              }
+            }
+          } else {
+            self.$notify({
+              title: "Saving failed",
+              text: "Your workflow failed to save.",
+              type: "error"
+            })
+          }
+        }
+      });
     },
 
     /**
@@ -314,6 +358,7 @@ window.vObj = new Vue({
      */
     loadWorkflow(workflowId) {
       var self = this;
+      this.isLoading = true;
       $.ajax({
         headers: {
           "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -339,7 +384,10 @@ window.vObj = new Vue({
               localStep.colour = element.colour;
               localStep.variables = element.variables;
               localStep.varCounter = element.variables.length;
-              localStep.rules = element.rules;
+              localStep.rules = [];
+              element.rules.map(rule => {
+                localStep.rules.push(self.prepareSingleRule(rule));
+              });
               localStep.apiCalls = element.apiCalls;
             });
             if (result.usedVariables.constructor !== Array)
@@ -357,6 +405,23 @@ window.vObj = new Vue({
       });
     },
 
+    /**
+     * Prepares a rule loaded from the database for use in the designer
+     * @param {Object} databaseRule 
+     */
+    prepareSingleRule(databaseRule) {
+      return {
+        title: databaseRule.title,
+        description: databaseRule.description,
+        target: databaseRule.target,
+        condition: JSON.parse(databaseRule.jsonRule).conditions
+      };
+    },
+
+    /**
+     * Can be used to load an array of models to the workflow, will fire an event as soon as all the models are loaded.
+     * @param {Array} models to load to the workflow
+     */
     LoadWorkflowLoadModels(models) {
       $.when.apply($, models.map(element => {
         return this.loadModelEvidencio(element);
@@ -399,16 +464,6 @@ window.vObj = new Vue({
         if (this.modelIds[index] == modelId) return index;
       }
       return -1;
-    },
-
-    showAlert(message, type) {
-      this.alert.type = type;
-      this.alert.message = message;
-      this.alert.show = true;
-    },
-
-    hideAlert() {
-      this.alert.show = false;
     },
 
     /**
@@ -892,6 +947,9 @@ window.vObj = new Vue({
       this.positionSteps();
     },
 
+    /**
+     * Adds/removes/changes rules in required
+     */
     connectionsChanged: function () {
       this.steps.forEach((element, index) => {
         for (let index = element.rules.length - 1; index >= 0; index--) {
@@ -923,6 +981,9 @@ window.vObj = new Vue({
       });
     },
 
+    /**
+     * Should extra variables be selected, recount the variableuses.
+     */
     selectedVariables: function () {
       this.recountVariableUses();
     }

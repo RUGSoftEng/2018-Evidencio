@@ -1,7 +1,7 @@
 <template>
     <div class="card border-secondary">
         <a href="#" @click="toggleShow" class="card-header collapsed" :id="'chartItemEditCollapseHeader_' + indexItem" data-parent="#accRulesEdit"
-           aria-expanded="false" :aria-controls="'chartItemEditCollapse_' + indexItem">
+            aria-expanded="false" :aria-controls="'chartItemEditCollapse_' + indexItem">
             <h6 class="mb-0">
                 {{ currStepData.labels[indexItem] }}
             </h6>
@@ -55,6 +55,11 @@
       },
       currStepData: {}
     },
+    indexItem: {
+      type: Number,
+      required: true
+    }
+  },
 
     data() {
       return {
@@ -74,11 +79,11 @@
       }
     },
 
-    computed: {
-      getImage: function() {
-        if (this.editing) return "/images/check.svg";
-        else return "/images/pencil.svg";
-      }
+  computed: {
+    getImage: function() {
+      if (this.editing) return "/images/check.svg";
+      else return "/images/pencil.svg";
     }
-  };
+  }
+};
 </script>
