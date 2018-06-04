@@ -1,6 +1,4 @@
 <script>
-import { Doughnut } from "vue-chartjs";
-
   import { Doughnut, mixins } from 'vue-chartjs';
   const { reactiveProp } = mixins;
 
@@ -17,6 +15,5 @@ import { Doughnut } from "vue-chartjs";
       // Overwriting base render method with actual data.
       this.renderChart(this.chartData, this.options);
     }
-  }
-};
+  };
 </script>

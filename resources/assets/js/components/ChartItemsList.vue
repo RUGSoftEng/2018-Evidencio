@@ -48,20 +48,11 @@ import ChartItemEdit from "./ChartItemEdit.vue";
           this.currentStepData.datasets[0].data[data[3]] = Number(data[2]);
           this.$emit("refresh-chart-data", this.currentStepData);
         }
+      },
+      data() {
+        return {
+          localChartItems: []
+        }
       }
-    },
-    addChartItem() {
-      this.chartItems.push({
-        label: "Enter Label",
-        color: "#ff0000",
-        value: 10
-      });
-    },
-    data() {
-      return {
-        localChartItems: []
-      };
-    }
-  }
-};
+    };
 </script>

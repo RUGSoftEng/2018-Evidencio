@@ -1,6 +1,4 @@
 <script>
-import { Bar } from "vue-chartjs";
-
   import { Bar, mixins } from 'vue-chartjs';
   const { reactiveProp } = mixins;
 
@@ -25,6 +23,5 @@ import { Bar } from "vue-chartjs";
     //     options: {responsive: true, maintainAspectRatio: false}
     //   };
     // }
-  }
-};
+  };
 </script>

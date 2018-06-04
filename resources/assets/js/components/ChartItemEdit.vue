@@ -58,9 +58,7 @@
     indexItem: {
       type: Number,
       required: true
-    }
-  },
-
+    },
     data() {
       return {
         editing: false,
@@ -69,7 +67,6 @@
         localItemValue: Number(this.chartItemValue)
       };
     },
-
     methods: {
       toggleShow() {
         this.$emit("toggle1", this.indexItem);
@@ -78,12 +75,11 @@
         this.$emit("refresh-chart-data", [this.localItemLabel, this.localItemColor,Number(this.localItemValue), this.indexItem]);
       }
     },
-
-  computed: {
-    getImage: function() {
-      if (this.editing) return "/images/check.svg";
-      else return "/images/pencil.svg";
+    computed: {
+      getImage: function() {
+        if (this.editing) return "/images/check.svg";
+        else return "/images/pencil.svg";
+      }
     }
-  }
-};
+  };
 </script>

@@ -1,6 +1,4 @@
 <script>
-import { Pie } from "vue-chartjs";
-
   import { Pie, mixins } from 'vue-chartjs';
   const { reactiveProp } = mixins;
 
@@ -17,6 +15,5 @@ import { Pie } from "vue-chartjs";
       // Overwriting base render method with actual data.
       this.renderChart(this.chartData, this.options);
     }
-  }
-};
+  };
 </script>
