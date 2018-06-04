@@ -1541,9 +1541,9 @@
 
             mom = createUTC([2000, 1]).day(i);
             if (strict && !this._fullWeekdaysParse[i]) {
-                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\.?') + '$', 'i');
-                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\.?') + '$', 'i');
-                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\.?') + '$', 'i');
+                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\\.?') + '$', 'i');
+                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\\.?') + '$', 'i');
+                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\\.?') + '$', 'i');
             }
             if (!this._weekdaysParse[i]) {
                 regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
@@ -2346,7 +2346,7 @@
 
     function preprocessRFC2822(s) {
         // Remove comments and folding whitespace and replace multiple-spaces with a single space
-        return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').trim();
+        return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     }
 
     function checkWeekday(weekdayStr, parsedInput, config) {
@@ -4525,7 +4525,7 @@
     // Side effect imports
 
 
-    hooks.version = '2.22.1';
+    hooks.version = '2.22.2';
 
     setHookCallback(createLocal);
 
@@ -8112,7 +8112,7 @@ module.exports = {
         relativeTime : {
             future : '%s sonra',
             past : '%s əvvəl',
-            s : 'birneçə saniyyə',
+            s : 'birneçə saniyə',
             ss : '%d saniyə',
             m : 'bir dəqiqə',
             mm : '%d dəqiqə',
@@ -8207,7 +8207,7 @@ module.exports = {
         weekdays : {
             format: 'нядзелю_панядзелак_аўторак_сераду_чацвер_пятніцу_суботу'.split('_'),
             standalone: 'нядзеля_панядзелак_аўторак_серада_чацвер_пятніца_субота'.split('_'),
-            isFormat: /\[ ?[Вв] ?(?:мінулую|наступную)? ?\] ?dddd/
+            isFormat: /\[ ?[Ууў] ?(?:мінулую|наступную)? ?\] ?dddd/
         },
         weekdaysShort : 'нд_пн_ат_ср_чц_пт_сб'.split('_'),
         weekdaysMin : 'нд_пн_ат_ср_чц_пт_сб'.split('_'),
@@ -15438,7 +15438,7 @@ module.exports = {
         calendar : {
             sameDay : '[ਅਜ] LT',
             nextDay : '[ਕਲ] LT',
-            nextWeek : 'dddd, LT',
+            nextWeek : '[ਅਗਲਾ] dddd, LT',
             lastDay : '[ਕਲ] LT',
             lastWeek : '[ਪਿਛਲੇ] dddd, LT',
             sameElse : 'L'
@@ -32057,7 +32057,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-700bf4c2"
+var __vue_scopeId__ = "data-v-2641ca42"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -32068,7 +32068,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\DetailsEditable.vue"
+Component.options.__file = "resources/assets/js/components/DetailsEditable.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -32077,9 +32077,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-700bf4c2", Component.options)
+    hotAPI.createRecord("data-v-2641ca42", Component.options)
   } else {
-    hotAPI.reload("data-v-700bf4c2", Component.options)
+    hotAPI.reload("data-v-2641ca42", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33109,13 +33109,13 @@ var content = __webpack_require__(240);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("5522479e", content, false, {});
+var update = __webpack_require__(12)("3eb6b234", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-700bf4c2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-700bf4c2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2641ca42\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./DetailsEditable.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33133,7 +33133,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.right[data-v-700bf4c2] {\n  float: right;\n}\ntextarea[data-v-700bf4c2] {\n  resize: none;\n}\nlabel[data-v-700bf4c2] {\n  font-weight: bold;\n}\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/DetailsEditable.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,kBAAkB;CAAE","file":"DetailsEditable.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\nlabel {\n  font-weight: bold; }\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.right[data-v-2641ca42] {\n  float: right;\n}\ntextarea[data-v-2641ca42] {\n  resize: none;\n}\nlabel[data-v-2641ca42] {\n  font-weight: bold;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/DetailsEditable.vue"],"names":[],"mappings":";AAAA;EACE,aAAa;CAAE;AAEjB;EACE,aAAa;CAAE;AAEjB;EACE,kBAAkB;CAAE","file":"DetailsEditable.vue","sourcesContent":[".right {\n  float: right; }\n\ntextarea {\n  resize: none; }\n\nlabel {\n  font-weight: bold; }\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33363,7 +33363,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-700bf4c2", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-2641ca42", module.exports)
   }
 }
 
@@ -33386,7 +33386,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-28730114"
+var __vue_scopeId__ = "data-v-63841236"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -33397,7 +33397,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableViewList.vue"
+Component.options.__file = "resources/assets/js/components/VariableViewList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33406,9 +33406,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-28730114", Component.options)
+    hotAPI.createRecord("data-v-63841236", Component.options)
   } else {
-    hotAPI.reload("data-v-28730114", Component.options)
+    hotAPI.reload("data-v-63841236", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33429,13 +33429,13 @@ var content = __webpack_require__(246);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("6a7fc7c6", content, false, {});
+var update = __webpack_require__(12)("9a50abe2", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-28730114\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-28730114\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-63841236\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-63841236\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableViewList.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33453,7 +33453,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.sizing[data-v-28730114] {\r\n    position: relative;\r\n    min-height: 300px;\n}\n.scrollbar[data-v-28730114] {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    margin: 1.25rem;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,kBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\r\n    <div class=\"card height-100\">\r\n        <div class=\"card-header\">\r\n            Variables\r\n            <model-load></model-load>\r\n        </div>\r\n\r\n        <div class=\"card-body height-100 sizing\">\r\n            <div class=\"scrollbar\">\r\n                <div id=\"accVariablesView\">\r\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\r\n                        <div class=\"card-header\" id=\"headingOne\">\r\n                            <h5 class=\"mb-0\">\r\n                                No variables added yet...\r\n                            </h5>\r\n                        </div>\r\n                    </div>\r\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\r\n                        @toggle=\"selectCard($event)\"></variable-view-item>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\nimport ModelLoad from \"./ModelLoad.vue\";\r\nimport VariableViewItem from \"./VariableViewItem.vue\";\r\n\r\nexport default {\r\n  components: {\r\n    ModelLoad,\r\n    VariableViewItem\r\n  },\r\n  props: {\r\n    allVariables: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    allVariablesUsed: {\r\n      type: Object,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  methods: {\r\n    selectCard(index) {\r\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\r\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\r\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\r\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\r\n      }\r\n    }\r\n  }\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.sizing {\r\n    position: relative;\r\n    min-height: 300px;\r\n}\r\n\r\n.scrollbar {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    margin: 1.25rem;\r\n}\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.sizing[data-v-63841236] {\n    position: relative;\n    min-height: 300px;\n}\n.scrollbar[data-v-63841236] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,kBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\n    <div class=\"card height-100\">\n        <div class=\"card-header\">\n            Variables\n            <model-load></model-load>\n        </div>\n\n        <div class=\"card-body height-100 sizing\">\n            <div class=\"scrollbar\">\n                <div id=\"accVariablesView\">\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\n                        <div class=\"card-header\" id=\"headingOne\">\n                            <h5 class=\"mb-0\">\n                                No variables added yet...\n                            </h5>\n                        </div>\n                    </div>\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\n                        @toggle=\"selectCard($event)\"></variable-view-item>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport ModelLoad from \"./ModelLoad.vue\";\nimport VariableViewItem from \"./VariableViewItem.vue\";\n\nexport default {\n  components: {\n    ModelLoad,\n    VariableViewItem\n  },\n  props: {\n    allVariables: {\n      type: Array,\n      required: true\n    },\n    allVariablesUsed: {\n      type: Object,\n      required: true\n    }\n  },\n\n  methods: {\n    selectCard(index) {\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\n      }\n    }\n  }\n};\n</script>\n\n<style scoped>\n.sizing {\n    position: relative;\n    min-height: 300px;\n}\n\n.scrollbar {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33543,7 +33543,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-0f3ec2c8"
+var __vue_scopeId__ = "data-v-94266ff0"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -33554,7 +33554,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ModelLoad.vue"
+Component.options.__file = "resources/assets/js/components/ModelLoad.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33563,9 +33563,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-0f3ec2c8", Component.options)
+    hotAPI.createRecord("data-v-94266ff0", Component.options)
   } else {
-    hotAPI.reload("data-v-0f3ec2c8", Component.options)
+    hotAPI.reload("data-v-94266ff0", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33586,13 +33586,13 @@ var content = __webpack_require__(250);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("2e366f35", content, false, {});
+var update = __webpack_require__(12)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-0f3ec2c8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-0f3ec2c8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-94266ff0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-94266ff0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ModelLoad.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -33610,7 +33610,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n#inputModelID[data-v-0f3ec2c8] {\n  width: 50px;\n}\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/ModelLoad.vue"],"names":[],"mappings":";AAAA;EACE,YAAY;CAAE","file":"ModelLoad.vue","sourcesContent":["#inputModelID {\n  width: 50px; }\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n#inputModelID[data-v-94266ff0] {\n  width: 50px;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/ModelLoad.vue"],"names":[],"mappings":";AAAA;EACE,YAAY;CAAE","file":"ModelLoad.vue","sourcesContent":["#inputModelID {\n  width: 50px; }\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -33809,7 +33809,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-0f3ec2c8", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-94266ff0", module.exports)
   }
 }
 
@@ -33839,7 +33839,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableViewItem.vue"
+Component.options.__file = "resources/assets/js/components/VariableViewItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33848,9 +33848,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3c7df12a", Component.options)
+    hotAPI.createRecord("data-v-597e9a2b", Component.options)
   } else {
-    hotAPI.reload("data-v-3c7df12a", Component.options)
+    hotAPI.reload("data-v-597e9a2b", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -33948,7 +33948,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableViewCategorical.vue"
+Component.options.__file = "resources/assets/js/components/VariableViewCategorical.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -33957,9 +33957,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7f955910", Component.options)
+    hotAPI.createRecord("data-v-435dae90", Component.options)
   } else {
-    hotAPI.reload("data-v-7f955910", Component.options)
+    hotAPI.reload("data-v-435dae90", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -34012,7 +34012,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-7f955910", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-435dae90", module.exports)
   }
 }
 
@@ -34042,7 +34042,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableViewContinuous.vue"
+Component.options.__file = "resources/assets/js/components/VariableViewContinuous.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -34051,9 +34051,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-22729167", Component.options)
+    hotAPI.createRecord("data-v-12e71427", Component.options)
   } else {
-    hotAPI.reload("data-v-22729167", Component.options)
+    hotAPI.reload("data-v-12e71427", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -34113,7 +34113,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-22729167", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-12e71427", module.exports)
   }
 }
 
@@ -34194,7 +34194,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-3c7df12a", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-597e9a2b", module.exports)
   }
 }
 
@@ -34269,7 +34269,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-28730114", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-63841236", module.exports)
   }
 }
 
@@ -34293,7 +34293,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-253cdd32"
+var __vue_scopeId__ = "data-v-682a3b1c"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -34304,7 +34304,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ModalStep.vue"
+Component.options.__file = "resources/assets/js/components/ModalStep.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -34313,9 +34313,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-253cdd32", Component.options)
+    hotAPI.createRecord("data-v-682a3b1c", Component.options)
   } else {
-    hotAPI.reload("data-v-253cdd32", Component.options)
+    hotAPI.reload("data-v-682a3b1c", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -34336,13 +34336,13 @@ var content = __webpack_require__(265);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("b4ee6218", content, false, {});
+var update = __webpack_require__(12)("bd502af2", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../css-loader/index.js?sourceMap!../../vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":false,\"hasInlineConfig\":true}!./vue-multiselect.min.css", function() {
-     var newContent = require("!!../../css-loader/index.js?sourceMap!../../vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":false,\"hasInlineConfig\":true}!./vue-multiselect.min.css");
+   module.hot.accept("!!../../css-loader/index.js?sourceMap!../../vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":false,\"hasInlineConfig\":true}!./vue-multiselect.min.css", function() {
+     var newContent = require("!!../../css-loader/index.js?sourceMap!../../vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":false,\"hasInlineConfig\":true}!./vue-multiselect.min.css");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -34360,7 +34360,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\nfieldset[disabled] .multiselect{pointer-events:none\n}\n.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block\n}\n.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:\"\";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;-webkit-box-shadow:0 0 0 1px transparent;box-shadow:0 0 0 1px transparent\n}\n.multiselect__spinner:before{-webkit-animation:a 2.4s cubic-bezier(.41,.26,.2,.62);animation:a 2.4s cubic-bezier(.41,.26,.2,.62);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite\n}\n.multiselect__spinner:after{-webkit-animation:a 2.4s cubic-bezier(.51,.09,.21,.8);animation:a 2.4s cubic-bezier(.51,.09,.21,.8);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite\n}\n.multiselect__loading-enter-active,.multiselect__loading-leave-active{-webkit-transition:opacity .4s ease-in-out;transition:opacity .4s ease-in-out;opacity:1\n}\n.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0\n}\n.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:16px;-ms-touch-action:manipulation;touch-action:manipulation\n}\n.multiselect{-webkit-box-sizing:content-box;box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e\n}\n.multiselect *{-webkit-box-sizing:border-box;box-sizing:border-box\n}\n.multiselect:focus{outline:none\n}\n.multiselect--disabled{opacity:.6\n}\n.multiselect--active{z-index:1\n}\n.multiselect--active:not(.multiselect--above) .multiselect__current,.multiselect--active:not(.multiselect--above) .multiselect__input,.multiselect--active:not(.multiselect--above) .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0\n}\n.multiselect--active .multiselect__select{-webkit-transform:rotate(180deg);transform:rotate(180deg)\n}\n.multiselect--above.multiselect--active .multiselect__current,.multiselect--above.multiselect--active .multiselect__input,.multiselect--above.multiselect--active .multiselect__tags{border-top-left-radius:0;border-top-right-radius:0\n}\n.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:0 0 0 5px;width:100%;-webkit-transition:border .1s ease;transition:border .1s ease;-webkit-box-sizing:border-box;box-sizing:border-box;margin-bottom:8px;vertical-align:top\n}\n.multiselect__input::-webkit-input-placeholder{color:#35495e\n}\n.multiselect__input:-ms-input-placeholder{color:#35495e\n}\n.multiselect__input::-ms-input-placeholder{color:#35495e\n}\n.multiselect__input::placeholder{color:#35495e\n}\n.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto\n}\n.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf\n}\n.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none\n}\n.multiselect__single{padding-left:5px;margin-bottom:8px\n}\n.multiselect__tags-wrap{display:inline\n}\n.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff;font-size:14px\n}\n.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:5px;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis\n}\n.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;-webkit-transition:all .2s ease;transition:all .2s ease;border-radius:5px\n}\n.multiselect__tag-icon:after{content:\"\\D7\";color:#266d4d;font-size:14px\n}\n.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e\n}\n.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff\n}\n.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8\n}\n.multiselect__current,.multiselect__select{line-height:16px;-webkit-box-sizing:border-box;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer\n}\n.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;-webkit-transition:-webkit-transform .2s ease;transition:-webkit-transform .2s ease;transition:transform .2s ease;transition:transform .2s ease, -webkit-transform .2s ease\n}\n.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:\"\"\n}\n.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px\n}\n.multiselect--active .multiselect__placeholder{display:none\n}\n.multiselect__content-wrapper{position:absolute;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:1;-webkit-overflow-scrolling:touch\n}\n.multiselect__content{list-style:none;display:inline-block;padding:0;margin:0;min-width:100%;vertical-align:top\n}\n.multiselect--above .multiselect__content-wrapper{bottom:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom:none;border-top:1px solid #e8e8e8\n}\n.multiselect__content::webkit-scrollbar{display:none\n}\n.multiselect__element{display:block\n}\n.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap\n}\n.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px;font-size:13px\n}\n.multiselect__option--highlight{background:#41b883;outline:none;color:#fff\n}\n.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff\n}\n.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700\n}\n.multiselect__option--selected:after{content:attr(data-selected);color:silver\n}\n.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff\n}\n.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff\n}\n.multiselect--disabled{background:#ededed;pointer-events:none\n}\n.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6\n}\n.multiselect__option--disabled{cursor:text;pointer-events:none\n}\n.multiselect__option--group{background:#ededed;color:#35495e\n}\n.multiselect__option--group.multiselect__option--highlight{background:#35495e;color:#fff\n}\n.multiselect__option--group.multiselect__option--highlight:after{background:#35495e\n}\n.multiselect__option--disabled.multiselect__option--highlight{background:#dedede\n}\n.multiselect__option--group-selected.multiselect__option--highlight{background:#ff6a6a;color:#fff\n}\n.multiselect__option--group-selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff\n}\n.multiselect-enter-active,.multiselect-leave-active{-webkit-transition:all .15s ease;transition:all .15s ease\n}\n.multiselect-enter,.multiselect-leave-active{opacity:0\n}\n.multiselect__strong{margin-bottom:8px;line-height:20px;display:inline-block;vertical-align:top\n}\n[dir=rtl] .multiselect{text-align:right\n}\n[dir=rtl] .multiselect__select{right:auto;left:1px\n}\n[dir=rtl] .multiselect__tags{padding:8px 8px 0 40px\n}\n[dir=rtl] .multiselect__content{text-align:right\n}\n[dir=rtl] .multiselect__option:after{right:auto;left:0\n}\n[dir=rtl] .multiselect__clear{right:auto;left:12px\n}\n[dir=rtl] .multiselect__spinner{right:auto;left:1px\n}\n@-webkit-keyframes a{\n0%{-webkit-transform:rotate(0);transform:rotate(0)\n}\nto{-webkit-transform:rotate(2turn);transform:rotate(2turn)\n}\n}\n@keyframes a{\n0%{-webkit-transform:rotate(0);transform:rotate(0)\n}\nto{-webkit-transform:rotate(2turn);transform:rotate(2turn)\n}\n}", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/node_modules/vue-multiselect/dist/vue-multiselect.min.css"],"names":[],"mappings":";AAAA,gCAAgC,mBAAmB;CAAC;AAAA,sBAAsB,kBAAkB,UAAU,QAAQ,WAAW,YAAY,gBAAgB,aAAa;CAAC;AAAA,yDAAyD,kBAAkB,WAAW,QAAQ,SAAS,qBAAqB,WAAW,YAAY,mBAAmB,6CAA6C,mBAAmB,iBAAiB,yCAAA,gCAAgC;CAAC;AAAA,6BAA6B,sDAAA,8CAA8C,2CAAA,kCAAkC;CAAC;AAAA,4BAA4B,sDAAA,8CAA8C,2CAAA,kCAAkC;CAAC;AAAA,sEAAsE,2CAAA,mCAAmC,SAAS;CAAC;AAAA,+DAA+D,SAAS;CAAC;AAAA,sDAAsD,oBAAoB,eAAe,8BAA8B,yBAAyB;CAAC;AAAA,aAAa,+BAAA,uBAAuB,cAAc,kBAAkB,WAAW,gBAAgB,gBAAgB,aAAa;CAAC;AAAA,eAAe,8BAAA,qBAAqB;CAAC;AAAA,mBAAmB,YAAY;CAAC;AAAA,uBAAuB,UAAU;CAAC;AAAA,qBAAqB,SAAS;CAAC;AAAA,uMAAuM,4BAA4B,4BAA4B;CAAC;AAAA,0CAA0C,iCAAA,wBAAwB;CAAC;AAAA,qLAAqL,yBAAyB,yBAAyB;CAAC;AAAA,yCAAyC,kBAAkB,qBAAqB,gBAAgB,iBAAiB,YAAY,kBAAkB,gBAAgB,kBAAkB,WAAW,mCAAA,2BAA2B,8BAAA,sBAAsB,kBAAkB,kBAAkB;CAAC;AAAA,+CAA+C,aAAa;CAAC;AAAA,0CAA0C,aAAa;CAAC;AAAA,2CAAiC,aAAa;CAAC;AAA/C,iCAAiC,aAAa;CAAC;AAAA,6EAA6E,UAAU;CAAC;AAAA,qDAAqD,oBAAoB;CAAC;AAAA,qDAAqD,qBAAqB,YAAY;CAAC;AAAA,qBAAqB,iBAAiB,iBAAiB;CAAC;AAAA,wBAAwB,cAAc;CAAC;AAAA,mBAAmB,gBAAgB,cAAc,uBAAuB,kBAAkB,yBAAyB,gBAAgB,cAAc;CAAC;AAAA,kBAAkB,kBAAkB,qBAAqB,0BAA0B,kBAAkB,kBAAkB,WAAW,cAAc,mBAAmB,kBAAkB,mBAAmB,gBAAgB,eAAe,sBAAsB;CAAC;AAAA,uBAAuB,eAAe,gBAAgB,kBAAkB,QAAQ,MAAM,SAAS,gBAAgB,kBAAkB,WAAW,kBAAkB,iBAAiB,gCAAA,wBAAwB,iBAAiB;CAAC;AAAA,6BAA6B,cAAc,cAAc,cAAc;CAAC;AAAA,0DAA0D,kBAAkB;CAAC;AAAA,sEAAsE,UAAU;CAAC;AAAA,sBAAsB,gBAAgB,gBAAgB,mBAAmB,mBAAmB,mBAAmB,kBAAkB,wBAAwB;CAAC;AAAA,2CAA2C,iBAAiB,8BAAA,sBAAsB,cAAc,SAAS,qBAAqB,cAAc;CAAC;AAAA,qBAAqB,kBAAkB,WAAW,YAAY,UAAU,QAAQ,gBAAgB,kBAAkB,8CAAA,sCAAA,8BAAA,yDAA6B;CAAC;AAAA,4BAA4B,kBAAkB,QAAQ,QAAQ,WAAW,eAAe,mBAAmB,uBAAuB,0CAA0C,UAAU;CAAC;AAAA,0BAA0B,cAAc,qBAAqB,mBAAmB,eAAe;CAAC;AAAA,+CAA+C,YAAY;CAAC;AAAA,8BAA8B,kBAAkB,cAAc,gBAAgB,WAAW,iBAAiB,cAAc,yBAAyB,gBAAgB,8BAA8B,+BAA+B,UAAU,gCAAgC;CAAC;AAAA,sBAAsB,gBAAgB,qBAAqB,UAAU,SAAS,eAAe,kBAAkB;CAAC;AAAA,kDAAkD,YAAY,4BAA4B,6BAA6B,2BAA2B,4BAA4B,mBAAmB,4BAA4B;CAAC;AAAA,wCAAwC,YAAY;CAAC;AAAA,sBAAsB,aAAa;CAAC;AAAA,qBAAqB,cAAc,aAAa,gBAAgB,iBAAiB,qBAAqB,oBAAoB,sBAAsB,kBAAkB,eAAe,kBAAkB;CAAC;AAAA,2BAA2B,MAAM,QAAQ,kBAAkB,iBAAiB,mBAAmB,kBAAkB,cAAc;CAAC;AAAA,gCAAgC,mBAAmB,aAAa,UAAU;CAAC;AAAA,sCAAsC,0BAA0B,mBAAmB,UAAU;CAAC;AAAA,+BAA+B,mBAAmB,cAAc,eAAe;CAAC;AAAA,qCAAqC,4BAA4B,YAAY;CAAC;AAAA,8DAA8D,mBAAmB,UAAU;CAAC;AAAA,oEAAoE,mBAAmB,4BAA4B,UAAU;CAAC;AAAA,uBAAuB,mBAAmB,mBAAmB;CAAC;AAAA,wHAAwH,mBAAmB,aAAa;CAAC;AAAA,+BAA+B,YAAY,mBAAmB;CAAC;AAAA,4BAA4B,mBAAmB,aAAa;CAAC;AAAA,2DAA2D,mBAAmB,UAAU;CAAC;AAAA,iEAAiE,kBAAkB;CAAC;AAAA,8DAA8D,kBAAkB;CAAC;AAAA,oEAAoE,mBAAmB,UAAU;CAAC;AAAA,0EAA0E,mBAAmB,4BAA4B,UAAU;CAAC;AAAA,oDAAoD,iCAAA,wBAAwB;CAAC;AAAA,6CAA6C,SAAS;CAAC;AAAA,qBAAqB,kBAAkB,iBAAiB,qBAAqB,kBAAkB;CAAC;AAAA,uBAAuB,gBAAgB;CAAC;AAAA,+BAA+B,WAAW,QAAQ;CAAC;AAAA,6BAA6B,sBAAsB;CAAC;AAAA,gCAAgC,gBAAgB;CAAC;AAAA,qCAAqC,WAAW,MAAM;CAAC;AAAA,8BAA8B,WAAW,SAAS;CAAC;AAAA,gCAAgC,WAAW,QAAQ;CAAC;AAAA;AAAa,GAAG,4BAAA,mBAAmB;CAAC;AAAA,GAAG,gCAAA,uBAAuB;CAAC;CAAC;AAAhE;AAAa,GAAG,4BAAA,mBAAmB;CAAC;AAAA,GAAG,gCAAA,uBAAuB;CAAC;CAAC","file":"vue-multiselect.min.css","sourcesContent":["fieldset[disabled] .multiselect{pointer-events:none}.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block}.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:\"\";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;box-shadow:0 0 0 1px transparent}.multiselect__spinner:before{animation:a 2.4s cubic-bezier(.41,.26,.2,.62);animation-iteration-count:infinite}.multiselect__spinner:after{animation:a 2.4s cubic-bezier(.51,.09,.21,.8);animation-iteration-count:infinite}.multiselect__loading-enter-active,.multiselect__loading-leave-active{transition:opacity .4s ease-in-out;opacity:1}.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0}.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:16px;-ms-touch-action:manipulation;touch-action:manipulation}.multiselect{box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e}.multiselect *{box-sizing:border-box}.multiselect:focus{outline:none}.multiselect--disabled{opacity:.6}.multiselect--active{z-index:1}.multiselect--active:not(.multiselect--above) .multiselect__current,.multiselect--active:not(.multiselect--above) .multiselect__input,.multiselect--active:not(.multiselect--above) .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0}.multiselect--active .multiselect__select{transform:rotate(180deg)}.multiselect--above.multiselect--active .multiselect__current,.multiselect--above.multiselect--active .multiselect__input,.multiselect--above.multiselect--active .multiselect__tags{border-top-left-radius:0;border-top-right-radius:0}.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:0 0 0 5px;width:100%;transition:border .1s ease;box-sizing:border-box;margin-bottom:8px;vertical-align:top}.multiselect__input::-webkit-input-placeholder{color:#35495e}.multiselect__input:-ms-input-placeholder{color:#35495e}.multiselect__input::placeholder{color:#35495e}.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto}.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf}.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none}.multiselect__single{padding-left:5px;margin-bottom:8px}.multiselect__tags-wrap{display:inline}.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff;font-size:14px}.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:5px;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;transition:all .2s ease;border-radius:5px}.multiselect__tag-icon:after{content:\"\\D7\";color:#266d4d;font-size:14px}.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e}.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff}.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8}.multiselect__current,.multiselect__select{line-height:16px;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer}.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;transition:transform .2s ease}.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:\"\"}.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px}.multiselect--active .multiselect__placeholder{display:none}.multiselect__content-wrapper{position:absolute;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:1;-webkit-overflow-scrolling:touch}.multiselect__content{list-style:none;display:inline-block;padding:0;margin:0;min-width:100%;vertical-align:top}.multiselect--above .multiselect__content-wrapper{bottom:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom:none;border-top:1px solid #e8e8e8}.multiselect__content::webkit-scrollbar{display:none}.multiselect__element{display:block}.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap}.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px;font-size:13px}.multiselect__option--highlight{background:#41b883;outline:none;color:#fff}.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff}.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700}.multiselect__option--selected:after{content:attr(data-selected);color:silver}.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect--disabled{background:#ededed;pointer-events:none}.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6}.multiselect__option--disabled{cursor:text;pointer-events:none}.multiselect__option--group{background:#ededed;color:#35495e}.multiselect__option--group.multiselect__option--highlight{background:#35495e;color:#fff}.multiselect__option--group.multiselect__option--highlight:after{background:#35495e}.multiselect__option--disabled.multiselect__option--highlight{background:#dedede}.multiselect__option--group-selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--group-selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect-enter-active,.multiselect-leave-active{transition:all .15s ease}.multiselect-enter,.multiselect-leave-active{opacity:0}.multiselect__strong{margin-bottom:8px;line-height:20px;display:inline-block;vertical-align:top}[dir=rtl] .multiselect{text-align:right}[dir=rtl] .multiselect__select{right:auto;left:1px}[dir=rtl] .multiselect__tags{padding:8px 8px 0 40px}[dir=rtl] .multiselect__content{text-align:right}[dir=rtl] .multiselect__option:after{right:auto;left:0}[dir=rtl] .multiselect__clear{right:auto;left:12px}[dir=rtl] .multiselect__spinner{right:auto;left:1px}@keyframes a{0%{transform:rotate(0)}to{transform:rotate(2turn)}}"],"sourceRoot":""}]);
+exports.push([module.i, "\nfieldset[disabled] .multiselect{pointer-events:none\n}\n.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block\n}\n.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:\"\";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;-webkit-box-shadow:0 0 0 1px transparent;box-shadow:0 0 0 1px transparent\n}\n.multiselect__spinner:before{-webkit-animation:a 2.4s cubic-bezier(.41,.26,.2,.62);animation:a 2.4s cubic-bezier(.41,.26,.2,.62);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite\n}\n.multiselect__spinner:after{-webkit-animation:a 2.4s cubic-bezier(.51,.09,.21,.8);animation:a 2.4s cubic-bezier(.51,.09,.21,.8);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite\n}\n.multiselect__loading-enter-active,.multiselect__loading-leave-active{-webkit-transition:opacity .4s ease-in-out;transition:opacity .4s ease-in-out;opacity:1\n}\n.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0\n}\n.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:16px;-ms-touch-action:manipulation;touch-action:manipulation\n}\n.multiselect{-webkit-box-sizing:content-box;box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e\n}\n.multiselect *{-webkit-box-sizing:border-box;box-sizing:border-box\n}\n.multiselect:focus{outline:none\n}\n.multiselect--disabled{opacity:.6\n}\n.multiselect--active{z-index:1\n}\n.multiselect--active:not(.multiselect--above) .multiselect__current,.multiselect--active:not(.multiselect--above) .multiselect__input,.multiselect--active:not(.multiselect--above) .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0\n}\n.multiselect--active .multiselect__select{-webkit-transform:rotate(180deg);transform:rotate(180deg)\n}\n.multiselect--above.multiselect--active .multiselect__current,.multiselect--above.multiselect--active .multiselect__input,.multiselect--above.multiselect--active .multiselect__tags{border-top-left-radius:0;border-top-right-radius:0\n}\n.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:0 0 0 5px;width:100%;-webkit-transition:border .1s ease;transition:border .1s ease;-webkit-box-sizing:border-box;box-sizing:border-box;margin-bottom:8px;vertical-align:top\n}\n.multiselect__input::-webkit-input-placeholder{color:#35495e\n}\n.multiselect__input:-ms-input-placeholder{color:#35495e\n}\n.multiselect__input::-ms-input-placeholder{color:#35495e\n}\n.multiselect__input::placeholder{color:#35495e\n}\n.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto\n}\n.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf\n}\n.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none\n}\n.multiselect__single{padding-left:5px;margin-bottom:8px\n}\n.multiselect__tags-wrap{display:inline\n}\n.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff;font-size:14px\n}\n.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:5px;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis\n}\n.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;-webkit-transition:all .2s ease;transition:all .2s ease;border-radius:5px\n}\n.multiselect__tag-icon:after{content:\"\\D7\";color:#266d4d;font-size:14px\n}\n.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e\n}\n.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff\n}\n.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8\n}\n.multiselect__current,.multiselect__select{line-height:16px;-webkit-box-sizing:border-box;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer\n}\n.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;-webkit-transition:-webkit-transform .2s ease;transition:-webkit-transform .2s ease;transition:transform .2s ease;transition:transform .2s ease, -webkit-transform .2s ease\n}\n.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:\"\"\n}\n.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px\n}\n.multiselect--active .multiselect__placeholder{display:none\n}\n.multiselect__content-wrapper{position:absolute;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:1;-webkit-overflow-scrolling:touch\n}\n.multiselect__content{list-style:none;display:inline-block;padding:0;margin:0;min-width:100%;vertical-align:top\n}\n.multiselect--above .multiselect__content-wrapper{bottom:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom:none;border-top:1px solid #e8e8e8\n}\n.multiselect__content::webkit-scrollbar{display:none\n}\n.multiselect__element{display:block\n}\n.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap\n}\n.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px;font-size:13px\n}\n.multiselect__option--highlight{background:#41b883;outline:none;color:#fff\n}\n.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff\n}\n.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700\n}\n.multiselect__option--selected:after{content:attr(data-selected);color:silver\n}\n.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff\n}\n.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff\n}\n.multiselect--disabled{background:#ededed;pointer-events:none\n}\n.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6\n}\n.multiselect__option--disabled{cursor:text;pointer-events:none\n}\n.multiselect__option--group{background:#ededed;color:#35495e\n}\n.multiselect__option--group.multiselect__option--highlight{background:#35495e;color:#fff\n}\n.multiselect__option--group.multiselect__option--highlight:after{background:#35495e\n}\n.multiselect__option--disabled.multiselect__option--highlight{background:#dedede\n}\n.multiselect__option--group-selected.multiselect__option--highlight{background:#ff6a6a;color:#fff\n}\n.multiselect__option--group-selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff\n}\n.multiselect-enter-active,.multiselect-leave-active{-webkit-transition:all .15s ease;transition:all .15s ease\n}\n.multiselect-enter,.multiselect-leave-active{opacity:0\n}\n.multiselect__strong{margin-bottom:8px;line-height:20px;display:inline-block;vertical-align:top\n}\n[dir=rtl] .multiselect{text-align:right\n}\n[dir=rtl] .multiselect__select{right:auto;left:1px\n}\n[dir=rtl] .multiselect__tags{padding:8px 8px 0 40px\n}\n[dir=rtl] .multiselect__content{text-align:right\n}\n[dir=rtl] .multiselect__option:after{right:auto;left:0\n}\n[dir=rtl] .multiselect__clear{right:auto;left:12px\n}\n[dir=rtl] .multiselect__spinner{right:auto;left:1px\n}\n@-webkit-keyframes a{\n0%{-webkit-transform:rotate(0);transform:rotate(0)\n}\nto{-webkit-transform:rotate(2turn);transform:rotate(2turn)\n}\n}\n@keyframes a{\n0%{-webkit-transform:rotate(0);transform:rotate(0)\n}\nto{-webkit-transform:rotate(2turn);transform:rotate(2turn)\n}\n}", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/node_modules/vue-multiselect/dist/vue-multiselect.min.css"],"names":[],"mappings":";AAAA,gCAAgC,mBAAmB;CAAC;AAAA,sBAAsB,kBAAkB,UAAU,QAAQ,WAAW,YAAY,gBAAgB,aAAa;CAAC;AAAA,yDAAyD,kBAAkB,WAAW,QAAQ,SAAS,qBAAqB,WAAW,YAAY,mBAAmB,6CAA6C,mBAAmB,iBAAiB,yCAAA,gCAAgC;CAAC;AAAA,6BAA6B,sDAAA,8CAA8C,2CAAA,kCAAkC;CAAC;AAAA,4BAA4B,sDAAA,8CAA8C,2CAAA,kCAAkC;CAAC;AAAA,sEAAsE,2CAAA,mCAAmC,SAAS;CAAC;AAAA,+DAA+D,SAAS;CAAC;AAAA,sDAAsD,oBAAoB,eAAe,8BAA8B,yBAAyB;CAAC;AAAA,aAAa,+BAAA,uBAAuB,cAAc,kBAAkB,WAAW,gBAAgB,gBAAgB,aAAa;CAAC;AAAA,eAAe,8BAAA,qBAAqB;CAAC;AAAA,mBAAmB,YAAY;CAAC;AAAA,uBAAuB,UAAU;CAAC;AAAA,qBAAqB,SAAS;CAAC;AAAA,uMAAuM,4BAA4B,4BAA4B;CAAC;AAAA,0CAA0C,iCAAA,wBAAwB;CAAC;AAAA,qLAAqL,yBAAyB,yBAAyB;CAAC;AAAA,yCAAyC,kBAAkB,qBAAqB,gBAAgB,iBAAiB,YAAY,kBAAkB,gBAAgB,kBAAkB,WAAW,mCAAA,2BAA2B,8BAAA,sBAAsB,kBAAkB,kBAAkB;CAAC;AAAA,+CAA+C,aAAa;CAAC;AAAA,0CAA0C,aAAa;CAAC;AAAA,2CAAiC,aAAa;CAAC;AAA/C,iCAAiC,aAAa;CAAC;AAAA,6EAA6E,UAAU;CAAC;AAAA,qDAAqD,oBAAoB;CAAC;AAAA,qDAAqD,qBAAqB,YAAY;CAAC;AAAA,qBAAqB,iBAAiB,iBAAiB;CAAC;AAAA,wBAAwB,cAAc;CAAC;AAAA,mBAAmB,gBAAgB,cAAc,uBAAuB,kBAAkB,yBAAyB,gBAAgB,cAAc;CAAC;AAAA,kBAAkB,kBAAkB,qBAAqB,0BAA0B,kBAAkB,kBAAkB,WAAW,cAAc,mBAAmB,kBAAkB,mBAAmB,gBAAgB,eAAe,sBAAsB;CAAC;AAAA,uBAAuB,eAAe,gBAAgB,kBAAkB,QAAQ,MAAM,SAAS,gBAAgB,kBAAkB,WAAW,kBAAkB,iBAAiB,gCAAA,wBAAwB,iBAAiB;CAAC;AAAA,6BAA6B,cAAc,cAAc,cAAc;CAAC;AAAA,0DAA0D,kBAAkB;CAAC;AAAA,sEAAsE,UAAU;CAAC;AAAA,sBAAsB,gBAAgB,gBAAgB,mBAAmB,mBAAmB,mBAAmB,kBAAkB,wBAAwB;CAAC;AAAA,2CAA2C,iBAAiB,8BAAA,sBAAsB,cAAc,SAAS,qBAAqB,cAAc;CAAC;AAAA,qBAAqB,kBAAkB,WAAW,YAAY,UAAU,QAAQ,gBAAgB,kBAAkB,8CAAA,sCAAA,8BAAA,yDAA6B;CAAC;AAAA,4BAA4B,kBAAkB,QAAQ,QAAQ,WAAW,eAAe,mBAAmB,uBAAuB,0CAA0C,UAAU;CAAC;AAAA,0BAA0B,cAAc,qBAAqB,mBAAmB,eAAe;CAAC;AAAA,+CAA+C,YAAY;CAAC;AAAA,8BAA8B,kBAAkB,cAAc,gBAAgB,WAAW,iBAAiB,cAAc,yBAAyB,gBAAgB,8BAA8B,+BAA+B,UAAU,gCAAgC;CAAC;AAAA,sBAAsB,gBAAgB,qBAAqB,UAAU,SAAS,eAAe,kBAAkB;CAAC;AAAA,kDAAkD,YAAY,4BAA4B,6BAA6B,2BAA2B,4BAA4B,mBAAmB,4BAA4B;CAAC;AAAA,wCAAwC,YAAY;CAAC;AAAA,sBAAsB,aAAa;CAAC;AAAA,qBAAqB,cAAc,aAAa,gBAAgB,iBAAiB,qBAAqB,oBAAoB,sBAAsB,kBAAkB,eAAe,kBAAkB;CAAC;AAAA,2BAA2B,MAAM,QAAQ,kBAAkB,iBAAiB,mBAAmB,kBAAkB,cAAc;CAAC;AAAA,gCAAgC,mBAAmB,aAAa,UAAU;CAAC;AAAA,sCAAsC,0BAA0B,mBAAmB,UAAU;CAAC;AAAA,+BAA+B,mBAAmB,cAAc,eAAe;CAAC;AAAA,qCAAqC,4BAA4B,YAAY;CAAC;AAAA,8DAA8D,mBAAmB,UAAU;CAAC;AAAA,oEAAoE,mBAAmB,4BAA4B,UAAU;CAAC;AAAA,uBAAuB,mBAAmB,mBAAmB;CAAC;AAAA,wHAAwH,mBAAmB,aAAa;CAAC;AAAA,+BAA+B,YAAY,mBAAmB;CAAC;AAAA,4BAA4B,mBAAmB,aAAa;CAAC;AAAA,2DAA2D,mBAAmB,UAAU;CAAC;AAAA,iEAAiE,kBAAkB;CAAC;AAAA,8DAA8D,kBAAkB;CAAC;AAAA,oEAAoE,mBAAmB,UAAU;CAAC;AAAA,0EAA0E,mBAAmB,4BAA4B,UAAU;CAAC;AAAA,oDAAoD,iCAAA,wBAAwB;CAAC;AAAA,6CAA6C,SAAS;CAAC;AAAA,qBAAqB,kBAAkB,iBAAiB,qBAAqB,kBAAkB;CAAC;AAAA,uBAAuB,gBAAgB;CAAC;AAAA,+BAA+B,WAAW,QAAQ;CAAC;AAAA,6BAA6B,sBAAsB;CAAC;AAAA,gCAAgC,gBAAgB;CAAC;AAAA,qCAAqC,WAAW,MAAM;CAAC;AAAA,8BAA8B,WAAW,SAAS;CAAC;AAAA,gCAAgC,WAAW,QAAQ;CAAC;AAAA;AAAa,GAAG,4BAAA,mBAAmB;CAAC;AAAA,GAAG,gCAAA,uBAAuB;CAAC;CAAC;AAAhE;AAAa,GAAG,4BAAA,mBAAmB;CAAC;AAAA,GAAG,gCAAA,uBAAuB;CAAC;CAAC","file":"vue-multiselect.min.css","sourcesContent":["fieldset[disabled] .multiselect{pointer-events:none}.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block}.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:\"\";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;box-shadow:0 0 0 1px transparent}.multiselect__spinner:before{animation:a 2.4s cubic-bezier(.41,.26,.2,.62);animation-iteration-count:infinite}.multiselect__spinner:after{animation:a 2.4s cubic-bezier(.51,.09,.21,.8);animation-iteration-count:infinite}.multiselect__loading-enter-active,.multiselect__loading-leave-active{transition:opacity .4s ease-in-out;opacity:1}.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0}.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:16px;-ms-touch-action:manipulation;touch-action:manipulation}.multiselect{box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e}.multiselect *{box-sizing:border-box}.multiselect:focus{outline:none}.multiselect--disabled{opacity:.6}.multiselect--active{z-index:1}.multiselect--active:not(.multiselect--above) .multiselect__current,.multiselect--active:not(.multiselect--above) .multiselect__input,.multiselect--active:not(.multiselect--above) .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0}.multiselect--active .multiselect__select{transform:rotate(180deg)}.multiselect--above.multiselect--active .multiselect__current,.multiselect--above.multiselect--active .multiselect__input,.multiselect--above.multiselect--active .multiselect__tags{border-top-left-radius:0;border-top-right-radius:0}.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:0 0 0 5px;width:100%;transition:border .1s ease;box-sizing:border-box;margin-bottom:8px;vertical-align:top}.multiselect__input::-webkit-input-placeholder{color:#35495e}.multiselect__input:-ms-input-placeholder{color:#35495e}.multiselect__input::placeholder{color:#35495e}.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto}.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf}.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none}.multiselect__single{padding-left:5px;margin-bottom:8px}.multiselect__tags-wrap{display:inline}.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff;font-size:14px}.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:5px;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;transition:all .2s ease;border-radius:5px}.multiselect__tag-icon:after{content:\"\\D7\";color:#266d4d;font-size:14px}.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e}.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff}.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8}.multiselect__current,.multiselect__select{line-height:16px;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer}.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;transition:transform .2s ease}.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:\"\"}.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px}.multiselect--active .multiselect__placeholder{display:none}.multiselect__content-wrapper{position:absolute;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:1;-webkit-overflow-scrolling:touch}.multiselect__content{list-style:none;display:inline-block;padding:0;margin:0;min-width:100%;vertical-align:top}.multiselect--above .multiselect__content-wrapper{bottom:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom:none;border-top:1px solid #e8e8e8}.multiselect__content::webkit-scrollbar{display:none}.multiselect__element{display:block}.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap}.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px;font-size:13px}.multiselect__option--highlight{background:#41b883;outline:none;color:#fff}.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff}.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700}.multiselect__option--selected:after{content:attr(data-selected);color:silver}.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect--disabled{background:#ededed;pointer-events:none}.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6}.multiselect__option--disabled{cursor:text;pointer-events:none}.multiselect__option--group{background:#ededed;color:#35495e}.multiselect__option--group.multiselect__option--highlight{background:#35495e;color:#fff}.multiselect__option--group.multiselect__option--highlight:after{background:#35495e}.multiselect__option--disabled.multiselect__option--highlight{background:#dedede}.multiselect__option--group-selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--group-selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect-enter-active,.multiselect-leave-active{transition:all .15s ease}.multiselect-enter,.multiselect-leave-active{opacity:0}.multiselect__strong{margin-bottom:8px;line-height:20px;display:inline-block;vertical-align:top}[dir=rtl] .multiselect{text-align:right}[dir=rtl] .multiselect__select{right:auto;left:1px}[dir=rtl] .multiselect__tags{padding:8px 8px 0 40px}[dir=rtl] .multiselect__content{text-align:right}[dir=rtl] .multiselect__option:after{right:auto;left:0}[dir=rtl] .multiselect__clear{right:auto;left:12px}[dir=rtl] .multiselect__spinner{right:auto;left:1px}@keyframes a{0%{transform:rotate(0)}to{transform:rotate(2turn)}}"],"sourceRoot":""}]);
 
 // exports
 
@@ -34376,13 +34376,13 @@ var content = __webpack_require__(267);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("7114fd65", content, false, {});
+var update = __webpack_require__(12)("58d81c36", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=1!./ModalStep.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-253cdd32\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=1!./ModalStep.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=1!./ModalStep.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-682a3b1c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=1!./ModalStep.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -34400,7 +34400,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-253cdd32] {\r\n  font-weight: bold;\n}\n.spaced[data-v-253cdd32] {\r\n  -webkit-box-pack: justify;\r\n      -ms-flex-pack: justify;\r\n          justify-content: space-between;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAmhBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\r\n - Color changing\r\n - Gray functions\r\n    -->\r\n\r\n<template>\r\n    <!-- Modal -->\r\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\r\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\r\n            <div class=\"modal-content\">\r\n                <div class=\"modal-header\">\r\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\r\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\r\n                        <span aria-hidden=\"true\">&times;</span>\r\n                    </button>\r\n                </div>\r\n                <div class=\"modal-body\">\r\n                    <div class=\"container-fluid\">\r\n                        <!-- TOP -->\r\n                        <div class=\"row\">\r\n                            <div class=\"col-md-4\">\r\n                                <label for=\"colorPick\">Pick a color:</label>\r\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\r\n                                <ul class=\"dropdown-menu\">\r\n                                    <li>\r\n                                        <div id=\"colorPalette\"></div>\r\n                                    </li>\r\n                                </ul>\r\n                                <div class=\"form-group\">\r\n                                    <label for=\"stepType\">Select step-type:</label>\r\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\r\n                                        <option value=\"input\">Input</option>\r\n                                        <option value=\"result\">Result</option>\r\n                                    </select>\r\n                                </div>\r\n                            </div>\r\n\r\n                            <div class=\"col-md-8 mb-2\">\r\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\r\n                            </div>\r\n                        </div>\r\n\r\n                        <!-- Middle -->\r\n                        <div class=\"row\">\r\n                            <div class=\"col\">\r\n\r\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\r\n                                    <div class=\"card-header\">\r\n                                        <nav>\r\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\r\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\r\n                                                    aria-selected=\"true\">Variables</a>\r\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\r\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\r\n                                                    aria-selected=\"false\">Logic</a>\r\n                                            </div>\r\n                                        </nav>\r\n                                    </div>\r\n                                    <div class=\"card-body\" id=\"modalCard\">\r\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\r\n\r\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\r\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\r\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\r\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\r\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\r\n                                                    <template slot=\"tag\" slot-scope=\"props\">\r\n                                                        <span class=\"badge badge-info badge-larger\">\r\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\r\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\r\n                                                        </span>\r\n                                                    </template>\r\n                                                </multiselect>\r\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\r\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\r\n                                            </div>\r\n\r\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\r\n                                                <div class=\"container-fluid\" v-if=\"variablesUpToStep.length != 0\">\r\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\r\n                                                    <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\r\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\r\n                                                        :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\r\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\r\n                                                        <template slot=\"tag\" slot-scope=\"props\">\r\n                                                            <span class=\"badge badge-info badge-larger\">\r\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\r\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\r\n                                                            </span>\r\n                                                        </template>\r\n                                                    </multiselect>\r\n                                                    <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\r\n                                                        :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\r\n                                                </div>\r\n                                                <div class=\"container-fluid\" v-else>\r\n                                                    <h6>A model calculation cannot be done without variables. Either add fields to the current step or link it to a precious step to use the fields of that step.</h6>\r\n                                                </div>\r\n                                            </div>\r\n\r\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\r\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\"></rule-edit-list>\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n\r\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\r\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\r\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\r\n                                            <div id=\"chartLayoutDesigner\">\r\n                                                <div class=\"dropdown\">\r\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\r\n                                                        aria-expanded=\"false\">\r\n                                                        Pick a chart type\r\n                                                    </a>\r\n\r\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\r\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\r\n                                                    </div>\r\n                                                </div>\r\n                                                <chart-items-list :chart-items=\"this.localStep.chartData\"></chart-items-list>\r\n                                            </div>\r\n                                        </div>\r\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\r\n                                            <chart-preview :chart-type=\"this.localStep.chartTypeNumber\" :chart-data=\"this.localStep.chartRenderingData\"></chart-preview>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n\r\n                </div>\r\n                <div class=\"modal-footer spaced\">\r\n                    <div>\r\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\r\n                            @click=\"remove\">Remove</button>\r\n                    </div>\r\n                    <div>\r\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\r\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\nimport Multiselect from \"vue-multiselect\";\r\nimport VariableEditList from \"./VariableEditList.vue\";\r\nimport RuleEditList from \"./RuleEditList.vue\";\r\nimport ChartPreview from \"./ChartDisplay.vue\";\r\nimport DetailsEditable from \"./DetailsEditable.vue\";\r\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\r\nimport ChartItemsList from \"./ChartItemsList\";\r\n\r\nexport default {\r\n  components: {\r\n    Multiselect,\r\n    VariableEditList,\r\n    RuleEditList,\r\n    ChartPreview,\r\n    DetailsEditable,\r\n    VariableMappingApi,\r\n    ChartItemsList\r\n  },\r\n  props: {\r\n    stepId: {\r\n      type: Number,\r\n      required: true\r\n    },\r\n    models: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    steps: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    usedVariables: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    ancestorVariables: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    childrenSteps: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    changed: {\r\n      type: Boolean,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  computed: {\r\n    // Array containing all variables assigned up to and including the current step\r\n    variablesUpToStep: function() {\r\n      let vars = this.ancestorVariables;\r\n      vars = vars.concat(this.localStep.variables);\r\n      return vars;\r\n    },\r\n    // Array of model-representations for API-call\r\n    modelChoiceRepresentation: function() {\r\n      let representation = [];\r\n      this.models.forEach((model, index) => {\r\n        representation.push({\r\n          localId: index,\r\n          title: model.title,\r\n          id: model.id\r\n        });\r\n      });\r\n      return representation;\r\n    },\r\n    // Array containing all children of the current step\r\n    childrenStepsExtended: function() {\r\n      let children = [];\r\n      this.childrenSteps.forEach((childId, index) => {\r\n        let step = this.steps[childId];\r\n        children.push({\r\n          stepId: childId,\r\n          colour: step.colour,\r\n          id: step.id,\r\n          ind: index,\r\n          title: step.title\r\n        });\r\n      });\r\n      return children;\r\n    }\r\n  },\r\n\r\n  mounted: function() {\r\n    let self = this;\r\n    $(\"#colorPalette\")\r\n      .colorPalette()\r\n      .on(\"selectColor\", function(evt) {\r\n        self.localStep.colour = evt.color;\r\n      });\r\n  },\r\n\r\n  watch: {\r\n    changed: function() {\r\n      this.reload();\r\n    }\r\n  },\r\n\r\n  methods: {\r\n    reload() {\r\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\r\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\r\n      this.setSelectedVariables();\r\n      this.setSelectedModels();\r\n      this.updateRuleTargetDetails();\r\n    },\r\n\r\n    /**\r\n     * Apply the changes made to the step (send an Event that does it)\r\n     */\r\n    apply() {\r\n      this.$emit(\"change\", {\r\n        step: this.localStep,\r\n        usedVars: this.localUsedVariables\r\n      });\r\n    },\r\n\r\n    remove() {\r\n      Event.fire(\"confirmDialog\", {\r\n        title: \"Removal of Step\",\r\n        message: \"Are you sure you want to remove this step?\",\r\n        type: \"removeStep\",\r\n        data: this.stepId\r\n      });\r\n    },\r\n\r\n    updateOrder(newOrderVariables) {\r\n      this.selectedVariables = newOrderVariables;\r\n      this.localStep.variables = newOrderVariables;\r\n    },\r\n\r\n    modelSelectAPI(model) {\r\n      this.localStep.apiCalls.push({\r\n        evidencioModelId: model.id,\r\n        title: model.title,\r\n        results: this.models[model.localId].resultVars.map(result => {\r\n          return {\r\n            name: result,\r\n            databaseId: -1\r\n          };\r\n        }),\r\n        variables: this.models[model.localId].variables.map(variable => {\r\n          return {\r\n            evidencioVariableId: variable.id,\r\n            evidencioTitle: variable.title,\r\n            localVariable: \"\"\r\n          };\r\n        })\r\n      });\r\n    },\r\n\r\n    modelRemoveApi(model) {\r\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\r\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\r\n          this.localStep.apiCalls.splice(index, 1);\r\n          return;\r\n        }\r\n      }\r\n    },\r\n\r\n    setSelectedModels() {\r\n      this.multiSelectedModels = [];\r\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\r\n        return {\r\n          localId: this.findModel(apiCall.evidencioModelId),\r\n          title: apiCall.title,\r\n          id: apiCall.evidencioModelId\r\n        };\r\n      });\r\n    },\r\n\r\n    findModel(evidencioModelId) {\r\n      for (let index = 0; index < this.models.length; index++) {\r\n        if (this.models[index].id == evidencioModelId) return index;\r\n      }\r\n      return -1;\r\n    },\r\n\r\n    /**\r\n     * Adds the selected variables to the selectedVariable part of the multiselect.\r\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\r\n     */\r\n    setSelectedVariables() {\r\n      this.multiSelectedVariables = [];\r\n      for (let index = 0; index < this.localStep.variables.length; index++) {\r\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\r\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\r\n          const element = this.models[indexOfMod];\r\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\r\n            if (element.variables[indexInMod].id == origID) {\r\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\r\n              break findVariable;\r\n            }\r\n          }\r\n        }\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Everytime the modal is opened, the details for the rule-targets shou;d be updated.\r\n     */\r\n    updateRuleTargetDetails() {\r\n      this.localStep.rules.forEach(rule => {\r\n        let next = rule.target,\r\n          nextStep = this.steps[next.stepId];\r\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\r\n      });\r\n    },\r\n\r\n    /**\r\n     * Returns the text shown when more than the limit of options are selected.\r\n     * @param {integer} [count] is the number of not-shown options.\r\n     */\r\n    multiselectVariablesText(count) {\r\n      return \" and \" + count + \" other variable(s)\";\r\n    },\r\n\r\n    /**\r\n     * Removes the variables from the step.\r\n     * @param {array||object} [removedVariables] are the variables to be removed\r\n     */\r\n    multiRemoveVariables(removedVariables) {\r\n      if (removedVariables.constructor == Array) {\r\n        removedVariables.forEach(element => {\r\n          this.multiRemoveSingleVariable(element);\r\n        });\r\n      } else {\r\n        this.multiRemoveSingleVariable(removedVariables);\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\r\n     * @param {Object} [removedVariable] the variable-object to be removed\r\n     */\r\n    multiRemoveSingleVariable(removedVariable) {\r\n      for (let index = 0; index < this.localStep.variables.length; index++) {\r\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\r\n          delete this.localUsedVariables[this.localStep.variables[index]];\r\n          this.localStep.variables.splice(index, 1);\r\n          return;\r\n        }\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Selects the variables from the step.\r\n     * @param {array||object} [selectedVariables] are the variables to be selected\r\n     */\r\n    multiSelectVariables(selectedVariables) {\r\n      if (selectedVariables.constructor == Array) {\r\n        selectedVariables.forEach(element => {\r\n          this.multiSelectSingleVariable(element);\r\n        });\r\n      } else {\r\n        this.multiSelectSingleVariable(selectedVariables);\r\n      }\r\n    },\r\n\r\n    /**\r\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\r\n     * @param {object} [selectedVariable] the variable-object to be selected\r\n     */\r\n    multiSelectSingleVariable(selectedVariable) {\r\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\r\n      this.localStep.variables.push(varName);\r\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\r\n    },\r\n\r\n    /**\r\n     * Changes the details of the step\r\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\r\n     */\r\n    changeStepDetails(newDetails) {\r\n      this.localStep.title = newDetails.title;\r\n      this.localStep.description = newDetails.description;\r\n    },\r\n\r\n    /**\r\n     * Changes the type of the chart used inside a step\r\n     * @param {Number} type Number representing the chart type.\r\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\r\n     */\r\n    changeChartType(type) {\r\n      this.localStep.chartTypeNumber = type;\r\n    },\r\n\r\n    /**\r\n     * Adds the object containing at least the label and the color\r\n     * corresponding to a graph field.\r\n     * @param {String} label\r\n     * @param {String} color\r\n     */\r\n    addNewField(label, color) {\r\n      let object = {\r\n        label,\r\n        color\r\n      };\r\n      this.localStep.chartData.push(object);\r\n    }\r\n\r\n    // /**\r\n    //  * Adds a rule to the list of rules\r\n    //  */\r\n    // addRule() {\r\n    //   this.modalRules.push({\r\n    //     name: \"Go to target\",\r\n    //     rule: [],\r\n    //     target: -1\r\n    //   });\r\n    //   this.modalEditRuleFlags.push(false);\r\n    // },\r\n\r\n    // /**\r\n    //  * Removes the rule with the given index from the list\r\n    //  * @param {integer} [ruleIndex] of rule to be removed\r\n    //  */\r\n    // removeRule(ruleIndex) {\r\n    //   this.modalRules.splice(ruleIndex, 1);\r\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\r\n    // },\r\n\r\n    // /**\r\n    //  * Allows for a rule to be edited.\r\n    //  * @param {integer} [index] of the rule to be edited\r\n    //  */\r\n    // editRule(index) {\r\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\r\n    // },\r\n\r\n    // /**\r\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\r\n    //  * @param {integer} [modelID] is the Evidencio model ID.\r\n    //  */\r\n    // getModelIndex(modelID) {\r\n    //   for (let index = 0; index < this.models.length; index++) {\r\n    //     if (this.models[index].id == modelID) return index;\r\n    //   }\r\n    //   return -1;\r\n    // },\r\n\r\n    // /**\r\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\r\n    //  * @param {object} [selectedModel] is the newly selected model\r\n    //  */\r\n    // apiCallModelChangeAction(selectedModel) {\r\n    //   let modID = this.getModelIndex(selectedModel.id);\r\n    //   if (modID == -1) {\r\n    //     this.modalApiCall.variables = [];\r\n    //     return;\r\n    //   }\r\n    //   let modVars = [];\r\n    //   this.models[modID].variables.forEach(element => {\r\n    //     modVars.push({\r\n    //       originalTitle: element.title,\r\n    //       originalID: element.id,\r\n    //       targetID: null\r\n    //     });\r\n    //   });\r\n    //   this.modalApiCall.variables = modVars;\r\n    // }\r\n  },\r\n\r\n  data() {\r\n    return {\r\n      localStep: {},\r\n      localUsedVariables: {},\r\n      multiSelectedVariables: []\r\n    };\r\n  }\r\n};\r\n</script>\r\n\r\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\r\n\r\n<style lang=\"css\" scoped>\r\n.variable-label {\r\n  font-weight: bold;\r\n}\r\n\r\n.spaced {\r\n  justify-content: space-between;\r\n}\r\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAmhBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<!--\n - Color changing\n - Gray functions\n    -->\n\n<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"accVariablesEdit\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\" v-if=\"variablesUpToStep.length != 0\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                        <template slot=\"tag\" slot-scope=\"props\">\n                                                            <span class=\"badge badge-info badge-larger\">\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                            </span>\n                                                        </template>\n                                                    </multiselect>\n                                                    <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\n                                                        :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\n                                                </div>\n                                                <div class=\"container-fluid\" v-else>\n                                                    <h6>A model calculation cannot be done without variables. Either add fields to the current step or link it to a precious step to use the fields of that step.</h6>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :chart-items=\"this.localStep.chartData\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"this.localStep.chartTypeNumber\" :chart-data=\"this.localStep.chartRenderingData\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport Multiselect from \"vue-multiselect\";\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    Multiselect,\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApi,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets shou;d be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    }\n\n    // /**\n    //  * Adds a rule to the list of rules\n    //  */\n    // addRule() {\n    //   this.modalRules.push({\n    //     name: \"Go to target\",\n    //     rule: [],\n    //     target: -1\n    //   });\n    //   this.modalEditRuleFlags.push(false);\n    // },\n\n    // /**\n    //  * Removes the rule with the given index from the list\n    //  * @param {integer} [ruleIndex] of rule to be removed\n    //  */\n    // removeRule(ruleIndex) {\n    //   this.modalRules.splice(ruleIndex, 1);\n    //   this.modalEditRuleFlags.splice(ruleIndex, 1);\n    // },\n\n    // /**\n    //  * Allows for a rule to be edited.\n    //  * @param {integer} [index] of the rule to be edited\n    //  */\n    // editRule(index) {\n    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);\n    // },\n\n    // /**\n    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.\n    //  * @param {integer} [modelID] is the Evidencio model ID.\n    //  */\n    // getModelIndex(modelID) {\n    //   for (let index = 0; index < this.models.length; index++) {\n    //     if (this.models[index].id == modelID) return index;\n    //   }\n    //   return -1;\n    // },\n\n    // /**\n    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model\n    //  * @param {object} [selectedModel] is the newly selected model\n    //  */\n    // apiCallModelChangeAction(selectedModel) {\n    //   let modID = this.getModelIndex(selectedModel.id);\n    //   if (modID == -1) {\n    //     this.modalApiCall.variables = [];\n    //     return;\n    //   }\n    //   let modVars = [];\n    //   this.models[modID].variables.forEach(element => {\n    //     modVars.push({\n    //       originalTitle: element.title,\n    //       originalID: element.id,\n    //       targetID: null\n    //     });\n    //   });\n    //   this.modalApiCall.variables = modVars;\n    // }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: []\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -34992,7 +34992,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableEditList.vue"
+Component.options.__file = "resources/assets/js/components/VariableEditList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -35001,9 +35001,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-d649044a", Component.options)
+    hotAPI.createRecord("data-v-0c99109b", Component.options)
   } else {
-    hotAPI.reload("data-v-d649044a", Component.options)
+    hotAPI.reload("data-v-0c99109b", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37088,7 +37088,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableEditItem.vue"
+Component.options.__file = "resources/assets/js/components/VariableEditItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37097,9 +37097,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-ea53f460", Component.options)
+    hotAPI.createRecord("data-v-02939890", Component.options)
   } else {
-    hotAPI.reload("data-v-ea53f460", Component.options)
+    hotAPI.reload("data-v-02939890", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37120,13 +37120,13 @@ var content = __webpack_require__(275);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("1da835ff", content, false, {});
+var update = __webpack_require__(12)("12702faf", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ea53f460\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ea53f460\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-02939890\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-02939890\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableEditItem.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -37144,7 +37144,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.icon-menu {\r\n  font-size: 120%;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableEditItem.vue"],"names":[],"mappings":";AA0CA;EACA,gBAAA;CACA","file":"VariableEditItem.vue","sourcesContent":["<template>\r\n    <div>\r\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" aria-expanded=\"false\" :aria-controls=\"'editVar_' + index\" :id=\"'headerVar_' + index\" @click=\"toggleShow\">\r\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\r\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\r\n              {{ variable.title }}\r\n            <i class=\"fo-icon icon-menu handle float-right\">&#xf0c9;</i>\r\n        </button>\r\n        <div class=\"form-group collapse\" :id=\"'editVar_' + index\">\r\n            <label for=\"title\" class=\"mb-0\">Title</label>\r\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"variable.title\" placeholder=\"Title\">\r\n            <label for=\"description\" class=\"mb-0 mt-2\">Description</label>\r\n            <textarea id=\"description\" cols=\"30\" class=\"form-control\" v-model=\"variable.description\" placeholder=\"Description\" rows=\"2\"></textarea>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n  props: {\r\n    variable: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    show: {\r\n      type: Boolean,\r\n      required: true\r\n    },\r\n    index: {\r\n      type: Number,\r\n      required: true\r\n    }\r\n  },\r\n  methods: {\r\n    toggleShow() {\r\n      this.$emit(\"toggle\", this.index);\r\n    }\r\n  }\r\n};\r\n</script>\r\n\r\n<style>\r\n.icon-menu {\r\n  font-size: 120%;\r\n}\r\n</style>\r\n\r\n\r\n<!--<template>\r\n    <div class=\"card\">\r\n        <div @click=\"toggleShow\" class=\"card-header collapsed\" :id=\"'varEditCollapseHeader_' + indexItem\" data-parent=\"#accVariablesEdit\"\r\n            aria-expanded=\"false\" :aria-controls=\"'varEditCollapse_' + indexItem\">\r\n            <h6 class=\"mb-0\">\r\n                {{ variable.title }}\r\n            </h6>\r\n        </div>\r\n\r\n        <div :id=\"'varEditCollapse_' + indexItem\" class=\"collapse\" :aria-labelledby=\"'#varEditCollapseHeader_' + indexItem\">\r\n            <div class=\"card-body\">\r\n                <form onsubmit=\"return false\">\r\n                    <div class=\"form-group\">\r\n                        <label :for=\"'titleVar_' + indexItem\">Title: </label>\r\n                        <input type=\"text\" name=\"\" :id=\"'titleVar_' + indexItem\" :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\"\r\n                            v-model=\"variable.title\" placeholder=\"Title\">\r\n                        <small :id=\"'titleVarHelp_' + indexItem\" class=\"form-text text-muted\">Title of the variable</small>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <label :for=\"'descriptionVar_' + indexItem\">Description: </label>\r\n                        <textarea :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\" :id=\"'descriptionVar_' + indexItem\"\r\n                            cols=\"30\" rows=\"3\" v-model=\"variable.description\"></textarea>\r\n                        <small :id=\"'descriptionVarHelp_' + indexItem\" class=\"form-text text-muted\">Description of the variable</small>\r\n                        <input type=\"image\" class=\"buttonIcon\" :src=\"getImage\" @click=\"editing = !editing\" alt=\"Edit\">\r\n                    </div>\r\n                </form>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n  props: {\r\n    variable: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    indexItem: {\r\n      type: Number,\r\n      required: true\r\n    }\r\n  },\r\n\r\n  data() {\r\n    return {\r\n      editing: false\r\n    };\r\n  },\r\n\r\n  methods: {\r\n    toggleShow() {\r\n      this.$emit(\"toggle\", this.indexItem);\r\n    }\r\n  },\r\n\r\n  computed: {\r\n    getImage: function() {\r\n      if (this.editing) return \"/images/check.svg\";\r\n      else return \"/images/pencil.svg\";\r\n    }\r\n  }\r\n};\r\n</script>-->"],"sourceRoot":""}]);
+exports.push([module.i, "\n.icon-menu {\n  font-size: 120%;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableEditItem.vue"],"names":[],"mappings":";AA0CA;EACA,gBAAA;CACA","file":"VariableEditItem.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" aria-expanded=\"false\" :aria-controls=\"'editVar_' + index\" :id=\"'headerVar_' + index\" @click=\"toggleShow\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n              {{ variable.title }}\n            <i class=\"fo-icon icon-menu handle float-right\">&#xf0c9;</i>\n        </button>\n        <div class=\"form-group collapse\" :id=\"'editVar_' + index\">\n            <label for=\"title\" class=\"mb-0\">Title</label>\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"variable.title\" placeholder=\"Title\">\n            <label for=\"description\" class=\"mb-0 mt-2\">Description</label>\n            <textarea id=\"description\" cols=\"30\" class=\"form-control\" v-model=\"variable.description\" placeholder=\"Description\" rows=\"2\"></textarea>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    variable: {\n      type: Object,\n      required: true\n    },\n    show: {\n      type: Boolean,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    }\n  },\n  methods: {\n    toggleShow() {\n      this.$emit(\"toggle\", this.index);\n    }\n  }\n};\n</script>\n\n<style>\n.icon-menu {\n  font-size: 120%;\n}\n</style>\n\n\n<!--<template>\n    <div class=\"card\">\n        <div @click=\"toggleShow\" class=\"card-header collapsed\" :id=\"'varEditCollapseHeader_' + indexItem\" data-parent=\"#accVariablesEdit\"\n            aria-expanded=\"false\" :aria-controls=\"'varEditCollapse_' + indexItem\">\n            <h6 class=\"mb-0\">\n                {{ variable.title }}\n            </h6>\n        </div>\n\n        <div :id=\"'varEditCollapse_' + indexItem\" class=\"collapse\" :aria-labelledby=\"'#varEditCollapseHeader_' + indexItem\">\n            <div class=\"card-body\">\n                <form onsubmit=\"return false\">\n                    <div class=\"form-group\">\n                        <label :for=\"'titleVar_' + indexItem\">Title: </label>\n                        <input type=\"text\" name=\"\" :id=\"'titleVar_' + indexItem\" :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\"\n                            v-model=\"variable.title\" placeholder=\"Title\">\n                        <small :id=\"'titleVarHelp_' + indexItem\" class=\"form-text text-muted\">Title of the variable</small>\n                    </div>\n                    <div class=\"form-group\">\n                        <label :for=\"'descriptionVar_' + indexItem\">Description: </label>\n                        <textarea :disabled=\"!editing\" :class=\"{'form-control': editing, 'form-control-plaintext': !editing}\" :id=\"'descriptionVar_' + indexItem\"\n                            cols=\"30\" rows=\"3\" v-model=\"variable.description\"></textarea>\n                        <small :id=\"'descriptionVarHelp_' + indexItem\" class=\"form-text text-muted\">Description of the variable</small>\n                        <input type=\"image\" class=\"buttonIcon\" :src=\"getImage\" @click=\"editing = !editing\" alt=\"Edit\">\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    variable: {\n      type: Object,\n      required: true\n    },\n    indexItem: {\n      type: Number,\n      required: true\n    }\n  },\n\n  data() {\n    return {\n      editing: false\n    };\n  },\n\n  methods: {\n    toggleShow() {\n      this.$emit(\"toggle\", this.indexItem);\n    }\n  },\n\n  computed: {\n    getImage: function() {\n      if (this.editing) return \"/images/check.svg\";\n      else return \"/images/pencil.svg\";\n    }\n  }\n};\n</script>-->"],"sourceRoot":""}]);
 
 // exports
 
@@ -37302,7 +37302,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-ea53f460", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-02939890", module.exports)
   }
 }
 
@@ -37366,7 +37366,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-d649044a", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-0c99109b", module.exports)
   }
 }
 
@@ -37396,7 +37396,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\RuleEditList.vue"
+Component.options.__file = "resources/assets/js/components/RuleEditList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37405,9 +37405,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-29e4c9db", Component.options)
+    hotAPI.createRecord("data-v-424c86ca", Component.options)
   } else {
-    hotAPI.reload("data-v-29e4c9db", Component.options)
+    hotAPI.reload("data-v-424c86ca", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37516,7 +37516,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\RuleEditItem.vue"
+Component.options.__file = "resources/assets/js/components/RuleEditItem.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37525,9 +37525,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1fdf51d0", Component.options)
+    hotAPI.createRecord("data-v-565776e0", Component.options)
   } else {
-    hotAPI.reload("data-v-1fdf51d0", Component.options)
+    hotAPI.reload("data-v-565776e0", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37940,7 +37940,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-1fdf51d0", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-565776e0", module.exports)
   }
 }
 
@@ -37994,7 +37994,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-29e4c9db", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-424c86ca", module.exports)
   }
 }
 
@@ -38024,7 +38024,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ChartDisplay.vue"
+Component.options.__file = "resources/assets/js/components/ChartDisplay.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38033,9 +38033,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1f02dffb", Component.options)
+    hotAPI.createRecord("data-v-58105a8a", Component.options)
   } else {
-    hotAPI.reload("data-v-1f02dffb", Component.options)
+    hotAPI.reload("data-v-58105a8a", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38135,7 +38135,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\BarChart.vue"
+Component.options.__file = "resources/assets/js/components/BarChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38144,9 +38144,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-208f2efc", Component.options)
+    hotAPI.createRecord("data-v-36d6897c", Component.options)
   } else {
-    hotAPI.reload("data-v-208f2efc", Component.options)
+    hotAPI.reload("data-v-36d6897c", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38207,7 +38207,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\PieChart.vue"
+Component.options.__file = "resources/assets/js/components/PieChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38216,9 +38216,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-ca4b69ae", Component.options)
+    hotAPI.createRecord("data-v-e092c42e", Component.options)
   } else {
-    hotAPI.reload("data-v-ca4b69ae", Component.options)
+    hotAPI.reload("data-v-e092c42e", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38279,7 +38279,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\PolarChart.vue"
+Component.options.__file = "resources/assets/js/components/PolarChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38288,9 +38288,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2ff369f7", Component.options)
+    hotAPI.createRecord("data-v-5f060cb7", Component.options)
   } else {
-    hotAPI.reload("data-v-2ff369f7", Component.options)
+    hotAPI.reload("data-v-5f060cb7", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38351,7 +38351,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\DoughnutChart.vue"
+Component.options.__file = "resources/assets/js/components/DoughnutChart.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38360,9 +38360,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4c4a25d6", Component.options)
+    hotAPI.createRecord("data-v-78f75b56", Component.options)
   } else {
-    hotAPI.reload("data-v-4c4a25d6", Component.options)
+    hotAPI.reload("data-v-78f75b56", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38451,7 +38451,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-1f02dffb", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-58105a8a", module.exports)
   }
 }
 
@@ -38474,7 +38474,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-eab3ac82"
+var __vue_scopeId__ = "data-v-094a0c7f"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -38485,7 +38485,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\VariableMappingApi.vue"
+Component.options.__file = "resources/assets/js/components/VariableMappingApi.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38494,9 +38494,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-eab3ac82", Component.options)
+    hotAPI.createRecord("data-v-094a0c7f", Component.options)
   } else {
-    hotAPI.reload("data-v-eab3ac82", Component.options)
+    hotAPI.reload("data-v-094a0c7f", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38517,13 +38517,13 @@ var content = __webpack_require__(298);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("d0a79916", content, false, {});
+var update = __webpack_require__(12)("9a569c74", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-eab3ac82\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableMappingApi.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-eab3ac82\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableMappingApi.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-094a0c7f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableMappingApi.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-094a0c7f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./VariableMappingApi.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -38541,7 +38541,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.warning[data-v-eab3ac82] {\r\n  border: solid 2px yellow;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableMappingApi.vue"],"names":[],"mappings":";AAgHA;EACA,yBAAA;CACA","file":"VariableMappingApi.vue","sourcesContent":["<template>\r\n    <div class=\"card mt-3\">\r\n        <div class=\"card-body\">\r\n            <h5 class=\"card-title\">{{ model.title }}</h5>\r\n            <div class=\"alert alert-warning\" role=\"alert\" v-if=\"warningExists\">\r\n                The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,\r\n                please do this mapping manually.\r\n            </div>\r\n            <form>\r\n                <div class=\"form-row\">\r\n                    <div class=\"form-group col-md-6\" v-for=\"(variableMap, indexMap) in model.variables\" :key=\"indexMap\">\r\n                        <label :for=\"'select_' + indexMap\">{{ variableMap.evidencioTitle }}</label>\r\n                        <multiselect :class=\"{warning: warnings[indexMap]}\" :options=\"reachableVariables\" :allow-empty=\"false\"\r\n                            deselect-label=\"Cannot be empty\" v-model=\"variableMap.localVariable\">\r\n                            <template slot=\"singleLabel\" slot-scope=\"props\">\r\n                                <span class=\"option__desc\">\r\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\r\n                                </span>\r\n                            </template>\r\n                            <template slot=\"option\" slot-scope=\"props\">\r\n                                <div class=\"option__desc\">\r\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\r\n                                </div>\r\n                             </template>\r\n                        </multiselect>\r\n                    </div>\r\n                </div>\r\n            </form>\r\n        </div>\r\n        <div class=\"card-body\">\r\n            <h6 class=\"card-title\">Result variables</h6>\r\n            <span class=\"badge badge-secondary mx-1\" v-for=\"(result, index) in model.results\" :key=\"index\">{{ result.name }}</span>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n\r\n<script>\r\nimport Multiselect from \"vue-multiselect\";\r\n\r\nexport default {\r\n  components: {\r\n    Multiselect\r\n  },\r\n  props: {\r\n    model: {\r\n      type: Object,\r\n      required: true\r\n    },\r\n    reachableVariables: {\r\n      type: Array,\r\n      required: true\r\n    },\r\n    usedVariables: {\r\n      type: Object,\r\n      required: true\r\n    }\r\n  },\r\n  computed: {\r\n    warnings: function() {\r\n      let ret = Array(this.model.variables.length).fill(false);\r\n      if (this.model.variables[0].localVariable == \"\") {\r\n        let ifNotFound = this.reachableVariables[0];\r\n        this.model.variables.forEach((variable, index) => {\r\n          let foundVariable;\r\n          if ((foundVariable = this.findReachableVariable(variable.evidencioVariableId))) {\r\n            variable.localVariable = foundVariable;\r\n          } else {\r\n            ret[index] = true;\r\n            variable.localVariable = ifNotFound;\r\n          }\r\n        });\r\n      }\r\n      return ret;\r\n    },\r\n    warningExists: function() {\r\n      return this.arrayOr(this.warnings);\r\n    }\r\n  },\r\n  watch: {\r\n    reachableVariables: function() {\r\n      let ifNotFound = this.reachableVariables[0];\r\n      this.model.variables.forEach(variable => {\r\n        if (this.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;\r\n      });\r\n    }\r\n  },\r\n  methods: {\r\n    findReachableVariable(evidencioVariableId) {\r\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\r\n        if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)\r\n          return this.reachableVariables[index];\r\n      }\r\n      return \"\";\r\n    },\r\n    arrayOr(array) {\r\n      for (let index = array.length - 1; index >= 0; index--) {\r\n        if (array[index]) return true;\r\n      }\r\n      return false;\r\n    },\r\n    getReachableIndex(varName) {\r\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\r\n        if (this.reachableVariables[index] == varName) return index;\r\n      }\r\n      return -1;\r\n    }\r\n  }\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.warning {\r\n  border: solid 2px yellow;\r\n}\r\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.warning[data-v-094a0c7f] {\n  border: solid 2px yellow;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableMappingApi.vue"],"names":[],"mappings":";AAgHA;EACA,yBAAA;CACA","file":"VariableMappingApi.vue","sourcesContent":["<template>\n    <div class=\"card mt-3\">\n        <div class=\"card-body\">\n            <h5 class=\"card-title\">{{ model.title }}</h5>\n            <div class=\"alert alert-warning\" role=\"alert\" v-if=\"warningExists\">\n                The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,\n                please do this mapping manually.\n            </div>\n            <form>\n                <div class=\"form-row\">\n                    <div class=\"form-group col-md-6\" v-for=\"(variableMap, indexMap) in model.variables\" :key=\"indexMap\">\n                        <label :for=\"'select_' + indexMap\">{{ variableMap.evidencioTitle }}</label>\n                        <multiselect :class=\"{warning: warnings[indexMap]}\" :options=\"reachableVariables\" :allow-empty=\"false\"\n                            deselect-label=\"Cannot be empty\" v-model=\"variableMap.localVariable\">\n                            <template slot=\"singleLabel\" slot-scope=\"props\">\n                                <span class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </span>\n                            </template>\n                            <template slot=\"option\" slot-scope=\"props\">\n                                <div class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </div>\n                             </template>\n                        </multiselect>\n                    </div>\n                </div>\n            </form>\n        </div>\n        <div class=\"card-body\">\n            <h6 class=\"card-title\">Result variables</h6>\n            <span class=\"badge badge-secondary mx-1\" v-for=\"(result, index) in model.results\" :key=\"index\">{{ result.name }}</span>\n        </div>\n    </div>\n</template>\n\n\n<script>\nimport Multiselect from \"vue-multiselect\";\n\nexport default {\n  components: {\n    Multiselect\n  },\n  props: {\n    model: {\n      type: Object,\n      required: true\n    },\n    reachableVariables: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    }\n  },\n  computed: {\n    warnings: function() {\n      let ret = Array(this.model.variables.length).fill(false);\n      if (this.model.variables[0].localVariable == \"\") {\n        let ifNotFound = this.reachableVariables[0];\n        this.model.variables.forEach((variable, index) => {\n          let foundVariable;\n          if ((foundVariable = this.findReachableVariable(variable.evidencioVariableId))) {\n            variable.localVariable = foundVariable;\n          } else {\n            ret[index] = true;\n            variable.localVariable = ifNotFound;\n          }\n        });\n      }\n      return ret;\n    },\n    warningExists: function() {\n      return this.arrayOr(this.warnings);\n    }\n  },\n  watch: {\n    reachableVariables: function() {\n      let ifNotFound = this.reachableVariables[0];\n      this.model.variables.forEach(variable => {\n        if (this.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;\n      });\n    }\n  },\n  methods: {\n    findReachableVariable(evidencioVariableId) {\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\n        if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)\n          return this.reachableVariables[index];\n      }\n      return \"\";\n    },\n    arrayOr(array) {\n      for (let index = array.length - 1; index >= 0; index--) {\n        if (array[index]) return true;\n      }\n      return false;\n    },\n    getReachableIndex(varName) {\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\n        if (this.reachableVariables[index] == varName) return index;\n      }\n      return -1;\n    }\n  }\n};\n</script>\n\n<style scoped>\n.warning {\n  border: solid 2px yellow;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -38783,7 +38783,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-eab3ac82", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-094a0c7f", module.exports)
   }
 }
 
@@ -38813,7 +38813,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ChartItemsList.vue"
+Component.options.__file = "resources/assets/js/components/ChartItemsList.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38822,9 +38822,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1522d177", Component.options)
+    hotAPI.createRecord("data-v-60a61437", Component.options)
   } else {
-    hotAPI.reload("data-v-1522d177", Component.options)
+    hotAPI.reload("data-v-60a61437", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -38916,7 +38916,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ChartItemEdit.vue"
+Component.options.__file = "resources/assets/js/components/ChartItemEdit.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -38925,9 +38925,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2eb6d358", Component.options)
+    hotAPI.createRecord("data-v-5b6408d8", Component.options)
   } else {
-    hotAPI.reload("data-v-2eb6d358", Component.options)
+    hotAPI.reload("data-v-5b6408d8", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -39229,7 +39229,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-2eb6d358", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-5b6408d8", module.exports)
   }
 }
 
@@ -39279,7 +39279,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-1522d177", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-60a61437", module.exports)
   }
 }
 
@@ -40021,7 +40021,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-253cdd32", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-682a3b1c", module.exports)
   }
 }
 
@@ -40051,7 +40051,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\ModalConfirm.vue"
+Component.options.__file = "resources/assets/js/components/ModalConfirm.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -40060,9 +40060,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-b932566c", Component.options)
+    hotAPI.createRecord("data-v-585bc78a", Component.options)
   } else {
-    hotAPI.reload("data-v-b932566c", Component.options)
+    hotAPI.reload("data-v-585bc78a", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -40209,7 +40209,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-b932566c", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-585bc78a", module.exports)
   }
 }
 
@@ -40232,7 +40232,7 @@ var __vue_template_functional__ = false
 /* styles */
 var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = "data-v-9eea9efc"
+var __vue_scopeId__ = "data-v-657fa342"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -40243,7 +40243,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\AlertMessage.vue"
+Component.options.__file = "resources/assets/js/components/AlertMessage.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -40252,9 +40252,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-9eea9efc", Component.options)
+    hotAPI.createRecord("data-v-657fa342", Component.options)
   } else {
-    hotAPI.reload("data-v-9eea9efc", Component.options)
+    hotAPI.reload("data-v-657fa342", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -40275,13 +40275,13 @@ var content = __webpack_require__(313);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("a95adf5a", content, false, {});
+var update = __webpack_require__(12)("531a47f4", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-9eea9efc\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AlertMessage.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-9eea9efc\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AlertMessage.vue");
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-657fa342\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AlertMessage.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-657fa342\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AlertMessage.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -40299,7 +40299,7 @@ exports = module.exports = __webpack_require__(11)(true);
 
 
 // module
-exports.push([module.i, "\n.alert[data-v-9eea9efc] {\r\n  display: inline;\n}\r\n", "", {"version":3,"sources":["C:/Users/Javier/Documents/GitHub/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/AlertMessage.vue"],"names":[],"mappings":";AAwCA;EACA,gBAAA;CACA","file":"AlertMessage.vue","sourcesContent":["<template>\r\n    <div class=\"alert ml-3\" :class=\"{fade: !show, show: show, 'alert-success' : type=='success', 'alert-danger': type=='danger'}\" role=\"alert\" aria-labelledby=\"alertSuccess\" :aria-hidden=\"!show\">\r\n        <strong>{{ message }}</strong>\r\n        <!--<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\r\n            <span aria-hidden=\"true\">&times;</span>\r\n        </button>-->\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n  props: {\r\n    type: {\r\n      type: String,\r\n      required: false,\r\n      default: \"success\"\r\n    },\r\n    message: {\r\n      type: String,\r\n      required: true,\r\n      default: \"Default\"\r\n    },\r\n    show: {\r\n      type: Boolean,\r\n      required: true\r\n    }\r\n  },\r\n  watch: {\r\n    show: function() {\r\n      if (this.show == true) {\r\n        window.setTimeout(() => {\r\n          this.$emit(\"hide\");\r\n        }, 2000);\r\n      }\r\n    }\r\n  }\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.alert {\r\n  display: inline;\r\n}\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.alert[data-v-657fa342] {\n  display: inline;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/AlertMessage.vue"],"names":[],"mappings":";AAwCA;EACA,gBAAA;CACA","file":"AlertMessage.vue","sourcesContent":["<template>\n    <div class=\"alert ml-3\" :class=\"{fade: !show, show: show, 'alert-success' : type=='success', 'alert-danger': type=='danger'}\" role=\"alert\" aria-labelledby=\"alertSuccess\" :aria-hidden=\"!show\">\n        <strong>{{ message }}</strong>\n        <!--<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n        </button>-->\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    type: {\n      type: String,\n      required: false,\n      default: \"success\"\n    },\n    message: {\n      type: String,\n      required: true,\n      default: \"Default\"\n    },\n    show: {\n      type: Boolean,\n      required: true\n    }\n  },\n  watch: {\n    show: function() {\n      if (this.show == true) {\n        window.setTimeout(() => {\n          this.$emit(\"hide\");\n        }, 2000);\n      }\n    }\n  }\n};\n</script>\n\n<style scoped>\n.alert {\n  display: inline;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -40383,7 +40383,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-9eea9efc", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-657fa342", module.exports)
   }
 }
 

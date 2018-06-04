@@ -10414,7 +10414,7 @@ a.text-dark:focus {
 @font-face {
   font-family: 'fontello';
   src: url(/fonts/fontello.eot?289ea695b4f26b33c9c44db5b1774705);
-  src: url(/fonts/fontello.eot?289ea695b4f26b33c9c44db5b1774705) format("embedded-opentype"), url(/fonts/fontello.woff?8e4f83469e7b183b95b007e1e2a8c1e4) format("woff"), url(/fonts/fontello.ttf?c04ec6b59e73d30385fadea5859fb84e) format("truetype"), url(/fonts/fontello.svg?ece07a7c146bb627a42e20e2671ed7cc) format("svg");
+  src: url(/fonts/fontello.eot?289ea695b4f26b33c9c44db5b1774705) format("embedded-opentype"), url(/fonts/fontello.woff?8e4f83469e7b183b95b007e1e2a8c1e4) format("woff"), url(/fonts/fontello.ttf?c04ec6b59e73d30385fadea5859fb84e) format("truetype"), url(/fonts/fontello.svg?b773d44502f5feb66b98e23d13f6d2db) format("svg");
   font-weight: normal;
   font-style: normal;
 }
