@@ -1,15 +1,15 @@
 <template>
     <div v-if="chartType === 0">
-        <bar-chart :label="label10" :chart-data="localChartDataUpper"></bar-chart>
+        <bar-chart :label="label10" :chart-data="localChartDataUpper" :options="optionsData"></bar-chart>
     </div>
     <div v-else-if="chartType === 1">
-        <pie-chart :label="label10" :chart-data="localChartDataUpper"></pie-chart>
+        <pie-chart :label="label10" :chart-data="localChartDataUpper" :options="optionsData"></pie-chart>
     </div>
     <div v-else-if="chartType === 2">
-        <polar-chart :label="label10" :chart-data="localChartDataUpper"></polar-chart>
+        <polar-chart :label="label10" :chart-data="localChartDataUpper" :options="optionsData"></polar-chart>
     </div>
     <div v-else>
-        <doughnut-chart :label="label10" :chart-data="localChartDataUpper"></doughnut-chart>
+        <doughnut-chart :label="label10" :chart-data="localChartDataUpper" :options="optionsData"></doughnut-chart>
     </div>
 
 </template>
@@ -42,7 +42,7 @@
             return {
               labels: ['January', 'February'],
               datasets: [{
-                label: "Edit Label",
+                // label: "Edit Label",
                 backgroundColor: ['#0000ff', '#ff0000'],
                 data: [40, 20]
               }]
@@ -65,7 +65,19 @@
       },
       data() {
         return {
-          localChartDataUpper: {}
+          localChartDataUpper: {},
+          optionsData: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: false,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
         }
       }
     }

@@ -3,7 +3,7 @@
         <div class="row">
             <button type="button" class="btn btn-primary ml-2" @click="addChartItem">Add item</button>
         </div>
-        <div class="row" id="chartItemAdder">
+        <div class="row list-group" id="chartItemAdder">
             <div class="col">
                 <chart-item-edit v-for="(item, index) in currentStepData.labels" :key="index" :index-item="index"
                                  :chart-item-label="item" :chart-item-color="currentStepData.datasets[0].backgroundColor[index]"

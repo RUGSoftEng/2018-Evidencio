@@ -8,10 +8,7 @@
       label: {
         type: String
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
+      options: {}
     },
     extends: Bar,
     mounted () {

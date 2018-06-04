@@ -570,8 +570,7 @@ window.vObj = new Vue({
         chartRenderingData: {
           labels: ['January', 'February'],
           datasets: [{
-            // label: 'A simple label',
-            label: "Edit Label",
+            // label: "Edit Label",
             backgroundColor: ['#0000ff', '#ff0000'],
             data: [40, 20]
           }]

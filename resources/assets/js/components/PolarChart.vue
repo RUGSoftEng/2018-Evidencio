@@ -9,6 +9,7 @@
       },
       data: {}
     },
+    options: {},
     mixins: [reactiveProp],
     extends: PolarArea,
     mounted () {
