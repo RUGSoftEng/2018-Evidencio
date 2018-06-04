@@ -7,7 +7,7 @@
         <div class="col-lg-10">
         <div class=" text-center">
           <br />
-          <img src="{{ URL::to('/images/evidenciologo.png') }}">
+          <img style="max-width:100%; height:auto;" src="{{ URL::to('/images/evidenciologo.png') }}">
           <h3>Patient Portal</h3>
           <br />
         </div>

@@ -43,24 +43,24 @@ class Result extends Model
     {
         return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data');
     }
-    
+
     public static function getResult($id)
     {
-      return Result::join('steps', 'steps.id', '=', 'results.step_id')
-        ->join('workflows', 'workflows.id', '=', 'steps.workflow_step_workflow_id')
-        ->where('workflows.id', '=', $id)
-        ->select('steps.id as sid', 'workflows.id as wid', 'results.*')
+      return  Result::join('steps', 'steps.id', '=', 'results.step_id')
+        ->join('result_step_chart_items', 'item_result_id', '=', 'results.id')
+        ->where('steps.workflow_step_workflow_id', '=', $id)
+        ->select('steps.id as sid', 'steps.description as desc', 'steps.result_step_chart_type as chartType', 'results.*', 'result_step_chart_items.*', 'steps.result_step_chart_options as opt')
         ->get();
-    }
+      }
 
 }
 
 /* Getting the friendly result from our DB. TODO convert to Eloquent
-SELECT results.*, w.id as wid, s.id as sid FROM results
-INNER JOIN steps as s ON s.id = results.step_id
-INNER JOIN workflows as w ON workflow_step_workflow_id = w.id
-WHERE w.id = 22
-ORDER BY results.result_number */
+SELECT result_step_chart_items.*, results.*, workflows.id FROM `result_step_chart_items`
+INNER JOIN results ON results.id = item_result_id
+INNER JOIN steps ON steps.id = item_result_step_id
+INNER JOIN workflows ON workflows.id = steps.workflow_step_workflow_id
+WHERE result_step_chart_items.item_result_step_id = 33*/
 
 /* Ordered steps. SQL equivalent. TODO convert to Eloquent
 SELECT * FROM fields as f

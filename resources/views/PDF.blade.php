@@ -108,7 +108,7 @@ if(isset($_POST["generatePDF"])){
   </tr>';
   foreach($_POST['qn'] as $q){
     $answerArr[$i] = str_replace('<', ' less than ', $answerArr[$i]);
-    $answerArr[$i] = str_replace('≥', ' more than or equal to ', $answerArr[$i]); //TODO known bugs: cannot parse text that contains <, ≥ and ≤
+    $answerArr[$i] = str_replace('≥', ' more than or equal to ', $answerArr[$i]); //known bugs: cannot parse text that contains <, ≥ and ≤
     $answerArr[$i] = str_replace('≤', ' less than or equal to ', $answerArr[$i]);
     $q = str_replace('<', ' less than ', $q);
     $q = str_replace('≥', ' more than or equal to ', $q);
@@ -123,22 +123,37 @@ if(isset($_POST["generatePDF"])){
   <div><table>
   <tr><th width="20%"></th><th width="5%"></th><th width="75%"></th></tr>
   <tr><td>';
+  if(count($_POST['res']) == 1){
   $content .='<img src="';
-  if($_POST['percentage'] < 15){
+  if($_POST['res'][0] < 15){
     $content .= "/images/lowRisk.png";
   }
-  elseif ($_POST['percentage'] < 65) {
+  elseif ($_POST['res'][0] < 65) {
     $content .= "/images/normalRisk.jpg";
   }
   else {
     $content.= "/images/highRisk.jpg";
   }
-  $content.='" width="200"/><br/>
-  </td><td></td><td style="cellpadding:50px;"><br/><br/><h6>Score:</h6><span>' . $_POST['percentage'] . '% </span><br/>
+  $content.='" width="200"/><br/>';
+  }
+  $content .='</td><td></td><td style="cellpadding:50px;"><br/><br/><br/>
   </td></tr>
   </table>
+  Description
+  <p> '. $_POST["friendlyRes"] . '
+  <br pagebreak="true" />
   <h3>Additional Information (if applicable):</h3>
   ';
+  $count = 0;
+  foreach($_POST['res'] as $x){
+    if(!empty($_POST['resText'])){
+      $content .=  'Score: '.  $x . $_POST['resText'][$count] . '<br/>';
+    }
+    else{
+      $content .=  'Score: '. $x . '<br/>';
+    }
+  $count = $count + 1;
+  }
   if(!empty($_POST["remarks"])){
     foreach($_POST["remarks"] as $txt){
       $content .= '<p>'. $txt .'</p>';
