@@ -121,11 +121,11 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-                                                <chart-items-list :current-step-data="this.localStep.chartRenderingData" @refresh-chart-data="updateChartData($event)"></chart-items-list>
+                                                <chart-items-list :current-step-data="localStep.chartRenderingData" @refresh-chart-data="updateChartData($event)" @refresh-chart-data1="updateChartData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="this.localStep.chartTypeNumber" :chart-data="this.localStep.chartRenderingData" :current-step="this.localStep"></chart-preview>
+                                            <chart-preview :chart-type="localStep.chartTypeNumber" :chart-data-upper="localStep.chartRenderingData" :changed="chartChanged"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -455,7 +455,9 @@ export default {
     },
 
     updateChartData(chartData) {
-      this.steps[this.stepId] = chartData;
+      Vue.set(this.localStep, "chartRenderingData", chartData);
+      this.chartChanged = !this.chartChanged;
+      // this.localStep.chartRenderingData = chartData;
     }
 
     // /**
@@ -524,7 +526,8 @@ export default {
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
+      multiSelectedVariables: [],
+      chartChanged: false
     };
   }
 };

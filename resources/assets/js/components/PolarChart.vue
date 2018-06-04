@@ -1,6 +1,7 @@
 <script>
 
-  import { PolarArea } from 'vue-chartjs';
+  import { PolarArea, mixins } from 'vue-chartjs';
+  const { reactiveProp } = mixins;
 
   export default {
     props : {
@@ -9,10 +10,11 @@
       },
       data: {}
     },
+    mixins: [reactiveProp],
     extends: PolarArea,
     mounted () {
       // Overwriting base render method with actual data.
-      this.renderChart(this.data);
+      this.renderChart(this.chartData, this.options);
     }
   }
 

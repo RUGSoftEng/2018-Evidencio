@@ -36,9 +36,13 @@
           this.currentStepData.labels.push("Enter Label");
           this.currentStepData.datasets[0].backgroundColor.push("#00ff00");
           this.currentStepData.datasets[0].data.push(17);
+          this.$emit("refresh-chart-data1", this.currentStepData);
         },
 
         refreshData(data) {
+          // this.$set(this.currentStepData.labels, data[3], data[0]);
+          // this.$set(this.currentStepData.datasets[0].backgroundColor, data[3], data[1]);
+          // this.$set(this.currentStepData.datasets[0].data, data[3], Number(data[2]));
           this.currentStepData.labels[data[3]] = data[0];
           this.currentStepData.datasets[0].backgroundColor[data[3]] = data[1];
           this.currentStepData.datasets[0].data[data[3]] = Number(data[2]);

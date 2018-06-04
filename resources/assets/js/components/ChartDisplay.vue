@@ -1,15 +1,15 @@
 <template>
     <div v-if="chartType === 0">
-        <bar-chart :label="label10" :data="this.chartData"></bar-chart>
+        <bar-chart :label="label10" :chart-data="localChartDataUpper"></bar-chart>
     </div>
     <div v-else-if="chartType === 1">
-        <pie-chart :label="label10" :data="this.chartData"></pie-chart>
+        <pie-chart :label="label10" :chart-data="localChartDataUpper"></pie-chart>
     </div>
     <div v-else-if="chartType === 2">
-        <polar-chart :label="label10" :data="this.chartData"></polar-chart>
+        <polar-chart :label="label10" :chart-data="localChartDataUpper"></polar-chart>
     </div>
     <div v-else>
-        <doughnut-chart :label="label10" :data="this.chartData"></doughnut-chart>
+        <doughnut-chart :label="label10" :chart-data="localChartDataUpper"></doughnut-chart>
     </div>
 
 </template>
@@ -31,21 +31,36 @@
           type: String,
           default: 'This is a label I want to create'
         },
-        chartType: //this.$parent.chartTypeNumber
+        chartType:
             {
           type: Number,
-          default: 0//this.$parent.chartTypeNumber,
+          default: 0
         },
-        chartData: {}
+        chartDataUpper: {
+          type: Object,
+          default: null
+        },
+        changed: {
+          type: Boolean,
+          required: true
+        }
+
       },
-      // methods: {
-      //   refreshChartPreview() {
-      //     switch (type) {
-      //       case 0:
-      //         BarChart.
-      //     }
-      //   }
-      // }
+      watch: {
+        changed: function() {
+          this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
+          console.log("watching");
+          //this.$forceUpdate();
+        }
+      },
+      mounted() {
+        this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
+      },
+      data() {
+        return {
+          localChartDataUpper: {}
+        }
+      }
     }
 
 </script>
