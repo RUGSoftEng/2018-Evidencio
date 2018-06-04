@@ -71,28 +71,28 @@
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <div class="container-fluid" v-if="variablesUpToStep.length != 0">
-                                                    <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
-                                                        track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
-                                                        :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
-                                                        @select="modelSelectAPI" @remove="modelRemoveApi">
-                                                        <template slot="tag" slot-scope="props">
-                                                            <span class="badge badge-info badge-larger">
-                                                                <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
-                                                                <span class="custom__remove" @click="props.remove(props.option)">❌</span>
-                                                            </span>
-                                                        </template>
-                                                    </multiselect>
-                                                    <div class="list-group">
-                                                        <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :index="index" :model="apiCall" :used-variables="localUsedVariables"
-                                                            :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                <div class="container-fluid">
+                                                    <div v-if="variablesUpToStep.length != 0">
+                                                        <label for="apiCallModelSelect">Select model for calculation:</label>
+                                                        <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
+                                                            track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
+                                                            :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                            @select="modelSelectAPI" @remove="modelRemoveApi">
+                                                            <template slot="tag" slot-scope="props">
+                                                                <span class="badge badge-info badge-larger">
+                                                                    <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                                    <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                                </span>
+                                                            </template>
+                                                        </multiselect>
                                                     </div>
-                                                </div>
-                                                <div class="container-fluid" v-else>
-                                                    <h6>A model calculation cannot be done without variables. Either add fields
-                                                        to the current step or link it to a precious step to use the fields
-                                                        of that step.</h6>
+                                                    <div v-else>
+                                                        <h6>A model calculation cannot be done without variables. Either add
+                                                            fields to the current step or link it to a precious step to use
+                                                            the fields of that step.</h6>
+                                                    </div>
+                                                    <variable-mapping-api-list :api-calls="localStep.apiCalls" :used-variables="localUsedVariables" :reachable-variables="variablesUpToStep"
+                                                        @remove="localStep.apiCalls = []"></variable-mapping-api-list>
                                                 </div>
                                             </div>
 
@@ -154,7 +154,7 @@ import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
 import DetailsEditable from "./DetailsEditable.vue";
-import VariableMappingApi from "./VariableMappingApi.vue";
+import VariableMappingApiList from "./VariableMappingApiList.vue";
 import ChartItemsList from "./ChartItemsList";
 
 export default {
@@ -163,7 +163,7 @@ export default {
     RuleEditList,
     ChartPreview,
     DetailsEditable,
-    VariableMappingApi,
+    VariableMappingApiList,
     ChartItemsList
   },
   props: {

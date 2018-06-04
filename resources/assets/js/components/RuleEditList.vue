@@ -39,7 +39,16 @@ export default {
       return "Add a rule to connect this step to the next";
     }
   },
-
+  watch: {
+    // reachableResults: function() {
+    //   if (this.reachableResults.length == 0) {
+    //     this.$emit("remove");
+    //   } else {
+    //     this.rules.forEach(rule => {
+    //     });
+    //   }
+    // }
+  },
   methods: {
     addRule() {
       this.rules.push({

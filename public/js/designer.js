@@ -4610,6 +4610,115 @@ module.exports = {
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4728,115 +4837,6 @@ helpers.extend(Element.prototype, {
 Element.extend = helpers.inherits;
 
 module.exports = Element;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
 
 
 /***/ }),
@@ -30877,7 +30877,7 @@ Chart.helpers = __webpack_require__(1);
 __webpack_require__(155)(Chart);
 
 Chart.defaults = __webpack_require__(2);
-Chart.Element = __webpack_require__(3);
+Chart.Element = __webpack_require__(4);
 Chart.elements = __webpack_require__(5);
 Chart.Interaction = __webpack_require__(19);
 Chart.layouts = __webpack_require__(8);
@@ -33440,7 +33440,7 @@ module.exports = {
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -33554,7 +33554,7 @@ module.exports = Element.extend({
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 
 var globalDefaults = defaults.global;
@@ -33652,7 +33652,7 @@ module.exports = Element.extend({
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 
 var defaultColor = defaults.global.defaultColor;
@@ -33765,7 +33765,7 @@ module.exports = Element.extend({
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 
 defaults._set('global', {
 	elements: {
@@ -34475,7 +34475,7 @@ helpers.removeEvent = removeEventListener;
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -35997,7 +35997,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 var Ticks = __webpack_require__(9);
 
@@ -36940,7 +36940,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -42631,7 +42631,7 @@ module.exports = {
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 var layouts = __webpack_require__(8);
 
@@ -43214,7 +43214,7 @@ module.exports = {
 
 
 var defaults = __webpack_require__(2);
-var Element = __webpack_require__(3);
+var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
 var layouts = __webpack_require__(8);
 
@@ -43483,7 +43483,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(247)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(250)
 /* template */
@@ -44028,17 +44028,17 @@ module.exports = __webpack_require__(246);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__ = __webpack_require__(327);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__ = __webpack_require__(330);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect__ = __webpack_require__(329);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect__ = __webpack_require__(332);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue_multiselect__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification__ = __webpack_require__(330);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification__ = __webpack_require__(333);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vue_notification__);
 Vue.component("detailsEditable", __webpack_require__(206));
 Vue.component("variableViewList", __webpack_require__(252));
 Vue.component("modalStep", __webpack_require__(271));
-Vue.component("modalConfirm", __webpack_require__(323));
-Vue.component("vueLoading", __webpack_require__(326));
+Vue.component("modalConfirm", __webpack_require__(326));
+Vue.component("vueLoading", __webpack_require__(329));
 
 
 Vue.component("multiselect", __WEBPACK_IMPORTED_MODULE_1_vue_multiselect___default.a);
@@ -44512,6 +44512,47 @@ window.vObj = new Vue({
       }
       return -1;
     },
+    checkPossibleVariableMappingFailures: function checkPossibleVariableMappingFailures() {
+      var _this6 = this;
+
+      this.steps.forEach(function (step, index) {
+        if (step.apiCalls.length > 0) {
+          var reachableVars = _this6.getVariablesUpToStep(index).concat(step.variables);
+          console.log(reachableVars);
+          if (reachableVars > 0) {
+            var ifNotFound = reachableVars[0];
+            step.apiCalls.forEach(function (apiCall) {
+              apiCall.variables.forEach(function (variable) {
+                if (_this6.getReachableIndex(variable.localVariable, reachableVars) == -1) variable.localVariable = ifNotFound;
+              });
+            });
+          } else {
+            step.apiCalls = [];
+          }
+        }
+      });
+    },
+    getVariablesUpToStep: function getVariablesUpToStep(localStepId) {
+      var _this7 = this;
+
+      var variables = [];
+      this.getAncestorStepList(localStepId).forEach(function (stepId) {
+        variables = variables.concat(_this7.steps[stepId].variables);
+      });
+      return variables;
+    },
+
+
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     */
+    getReachableIndex: function getReachableIndex(varName, reachableVariables) {
+      for (var index = reachableVariables.length - 1; index >= 0; index--) {
+        if (reachableVariables[index] == varName) return index;
+      }
+      return -1;
+    },
 
 
     /**
@@ -44578,7 +44619,7 @@ window.vObj = new Vue({
         create: true,
         destroy: false,
         chartTypeNumber: 0,
-        chartData: [],
+        // chartData: [],
         chartRenderingData: {
           labels: ['January', 'February'],
           datasets: [{
@@ -44709,7 +44750,7 @@ window.vObj = new Vue({
      * @param {Object} confirmInfo contains the title, message, data and type of the dialog
      */
     prepareConfirmDialog: function prepareConfirmDialog(confirmInfo) {
-      var _this6 = this;
+      var _this8 = this;
 
       this.confirmDialog.title = confirmInfo.title;
       this.confirmDialog.message = confirmInfo.message;
@@ -44717,19 +44758,19 @@ window.vObj = new Vue({
       switch (confirmInfo.type) {
         case "removeStep":
           this.confirmDialog.approvalFunction = function () {
-            _this6.removeStep(_this6.confirmDialog.data);
+            _this8.removeStep(_this8.confirmDialog.data);
           };
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = function () {
-            var stepIds = _this6.levels[_this6.confirmDialog.data - 1].steps;
+            var stepIds = _this8.levels[_this8.confirmDialog.data - 1].steps;
             for (var indexStep = 0; indexStep < stepIds.length; indexStep++) {
-              _this6.steps[stepIds[indexStep]].rules.map(function (x) {
+              _this8.steps[stepIds[indexStep]].rules.map(function (x) {
                 x.destroy = true;
               });
             }
-            _this6.connectionsChanged = !_this6.connectionsChanged;
-            _this6.addLevel(_this6.confirmDialog.data);
+            _this8.connectionsChanged = !_this8.connectionsChanged;
+            _this8.addLevel(_this8.confirmDialog.data);
           };
           break;
       }
@@ -44770,6 +44811,7 @@ window.vObj = new Vue({
         "background-color": changedStep.step.colour
       });
       this.recountVariableUses();
+      //this.checkPossibleVariableMappingFailures();
     },
 
 
@@ -44852,12 +44894,12 @@ window.vObj = new Vue({
      * @param {Number} stepId of the target step of an edge/rule
      */
     removeRulesByTarget: function removeRulesByTarget(stepId) {
-      var _this7 = this;
+      var _this9 = this;
 
       var levelIndex = this.getStepLevel(stepId) - 1;
       if (levelIndex >= 0) {
         this.levels[levelIndex].steps.forEach(function (stepIndex) {
-          var currentRules = _this7.steps[levelIndex].rules;
+          var currentRules = _this9.steps[levelIndex].rules;
           for (var ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId) currentRules.splice(ruleIndex, 1);
           }
@@ -44871,27 +44913,27 @@ window.vObj = new Vue({
      * @param {Number} stepId of the child to find ancestors of
      */
     getAncestorStepList: function getAncestorStepList(stepId) {
-      var _this8 = this;
+      var _this10 = this;
 
       var list = [];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this8.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this8.getAncestorStepListHelper(stId));
+        _this10.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this10.getAncestorStepListHelper(stId));
         });
       });
       return this.arrayUnique(list);
     },
     getAncestorStepListHelper: function getAncestorStepListHelper(stepId) {
-      var _this9 = this;
+      var _this11 = this;
 
       var list = [stepId];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this9.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this9.getAncestorStepListHelper(stId));
+        _this11.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this11.getAncestorStepListHelper(stId));
         });
       });
       return list;
@@ -44917,11 +44959,11 @@ window.vObj = new Vue({
      * Calculates the maximum number of steps per level.
      */
     calculateMaxStepsPerLevel: function calculateMaxStepsPerLevel() {
-      var _this10 = this;
+      var _this12 = this;
 
       this.maxStepsPerLevel = 0;
       this.levels.forEach(function (element) {
-        if (element.steps.length > _this10.maxStepsPerLevel) _this10.maxStepsPerLevel = element.steps.length;
+        if (element.steps.length > _this12.maxStepsPerLevel) _this12.maxStepsPerLevel = element.steps.length;
       });
     },
 
@@ -44930,12 +44972,12 @@ window.vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this11 = this;
+      var _this13 = this;
 
       this.timesUsedVariables = {};
       this.models.forEach(function (element) {
         element.variables.forEach(function (variable) {
-          _this11.timesUsedVariables[variable.id.toString()] = 0;
+          _this13.timesUsedVariables[variable.id.toString()] = 0;
         });
       });
 
@@ -45027,26 +45069,26 @@ window.vObj = new Vue({
      * Adds/removes/changes rules in required
      */
     connectionsChanged: function connectionsChanged() {
-      var _this12 = this;
+      var _this14 = this;
 
       this.steps.forEach(function (element, index) {
         for (var _index2 = element.rules.length - 1; _index2 >= 0; _index2--) {
           var currentRule = element.rules[_index2];
           if (currentRule.create) {
             var source = element.nodeId;
-            var target = _this12.steps[currentRule.target.stepId].nodeId;
+            var target = _this14.steps[currentRule.target.stepId].nodeId;
             currentRule.edgeId = cy.add({
               classes: "edge",
               data: {
-                id: "edge_" + _this12.edgeCounter,
+                id: "edge_" + _this14.edgeCounter,
                 source: source,
                 target: target
               }
             }).id();
             currentRule.create = false;
-            _this12.edgeCounter++;
+            _this14.edgeCounter++;
           } else if (currentRule.change) {
-            var _target = _this12.steps[currentRule.target.stepId].nodeId;
+            var _target = _this14.steps[currentRule.target.stepId].nodeId;
             cy.getElementById(currentRule.edgeId).move({
               target: _target
             });
@@ -45057,13 +45099,6 @@ window.vObj = new Vue({
           }
         }
       });
-    },
-
-    /**
-     * Should extra variables be selected, recount the variableuses.
-     */
-    selectedVariables: function selectedVariables() {
-      this.recountVariableUses();
     }
   }
 });
@@ -45346,7 +45381,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(253)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(255)
 /* template */
@@ -45503,7 +45538,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(257)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(259)
 /* template */
@@ -45789,7 +45824,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(262)
 /* template */
@@ -45897,7 +45932,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(264)
 /* template */
@@ -45991,7 +46026,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(267)
 /* template */
@@ -46254,11 +46289,11 @@ function injectStyle (ssrContext) {
   __webpack_require__(272)
   __webpack_require__(274)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(276)
 /* template */
-var __vue_template__ = __webpack_require__(322)
+var __vue_template__ = __webpack_require__(325)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -46371,7 +46406,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AA0fA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\" v-if=\"variablesUpToStep.length != 0\">\n                                                    <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                    <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                        track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                        :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                        @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                        <template slot=\"tag\" slot-scope=\"props\">\n                                                            <span class=\"badge badge-info badge-larger\">\n                                                                <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                            </span>\n                                                        </template>\n                                                    </multiselect>\n                                                    <div class=\"list-group\">\n                                                        <variable-mapping-api v-for=\"(apiCall, index) in localStep.apiCalls\" :key=\"index\" :index=\"index\" :model=\"apiCall\" :used-variables=\"localUsedVariables\"\n                                                            :reachable-variables=\"variablesUpToStep\"> </variable-mapping-api>\n                                                    </div>\n                                                </div>\n                                                <div class=\"container-fluid\" v-else>\n                                                    <h6>A model calculation cannot be done without variables. Either add fields\n                                                        to the current step or link it to a precious step to use the fields\n                                                        of that step.</h6>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :chart-items=\"this.localStep.chartData\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"this.localStep.chartTypeNumber\" :chart-data=\"this.localStep.chartRenderingData\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApi from \"./VariableMappingApi.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApi,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = this.ancestorResults;\n      this.localStep.apiCalls.forEach(apiCall => {\n        apiCall.results.map(result => {\n          results.push(result.name);\n        });\n      });\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: []\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAkgBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <div v-if=\"variablesUpToStep.length != 0\">\n                                                        <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                        <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                            track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                            :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                            @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                            <template slot=\"tag\" slot-scope=\"props\">\n                                                                <span class=\"badge badge-info badge-larger\">\n                                                                    <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                    <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                                </span>\n                                                            </template>\n                                                        </multiselect>\n                                                    </div>\n                                                    <div v-else>\n                                                        <h6>A model calculation cannot be done without variables. Either add\n                                                            fields to the current step or link it to a precious step to use\n                                                            the fields of that step.</h6>\n                                                    </div>\n                                                    <variable-mapping-api-list :api-calls=\"localStep.apiCalls\" :used-variables=\"localUsedVariables\" :reachable-variables=\"variablesUpToStep\"\n                                                        @remove=\"localStep.apiCalls = []\"></variable-mapping-api-list>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :current-step-data=\"localStep.chartRenderingData\" @refresh-chart-data=\"updateChartData($event)\" @refresh-chart-data1=\"updateChartData($event)\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"localStep.chartTypeNumber\" :chart-data-upper=\"localStep.chartRenderingData\" :changed=\"chartChanged\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApiList from \"./VariableMappingApiList.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApiList,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = this.ancestorResults;\n      this.localStep.apiCalls.forEach(apiCall => {\n        apiCall.results.map(result => {\n          results.push(result.name);\n        });\n      });\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n      this.chartChanged = !this.chartChanged;\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    },\n\n    updateChartData(chartData) {\n      Vue.set(this.localStep, \"chartRenderingData\", chartData);\n      this.chartChanged = !this.chartChanged;\n      // this.localStep.chartRenderingData = chartData;\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      chartChanged: false\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -46390,9 +46425,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__ = __webpack_require__(206);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue__ = __webpack_require__(311);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList__ = __webpack_require__(316);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue__ = __webpack_require__(311);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList__ = __webpack_require__(319);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__ChartItemsList__);
 //
 //
@@ -46559,7 +46594,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     RuleEditList: __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default.a,
     ChartPreview: __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default.a,
     DetailsEditable: __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default.a,
-    VariableMappingApi: __WEBPACK_IMPORTED_MODULE_4__VariableMappingApi_vue___default.a,
+    VariableMappingApiList: __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue___default.a,
     ChartItemsList: __WEBPACK_IMPORTED_MODULE_5__ChartItemsList___default.a
   },
   props: {
@@ -46668,6 +46703,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.setSelectedVariables();
       this.setSelectedModels();
       this.updateRuleTargetDetails();
+      this.chartChanged = !this.chartChanged;
     },
 
 
@@ -46909,6 +46945,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         color: color
       };
       this.localStep.chartData.push(object);
+    },
+    updateChartData: function updateChartData(chartData) {
+      Vue.set(this.localStep, "chartRenderingData", chartData);
+      this.chartChanged = !this.chartChanged;
+      // this.localStep.chartRenderingData = chartData;
     }
   },
 
@@ -46916,7 +46957,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
+      multiSelectedVariables: [],
+      chartChanged: false
     };
   }
 });
@@ -46926,7 +46968,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(278)
 /* template */
@@ -49050,7 +49092,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(282)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(284)
 /* template */
@@ -49363,7 +49405,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(288)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(290)
 /* template */
@@ -49440,7 +49482,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.rule-label[data-v-424c86ca] {\n  font-weight: bold;\n  display: block;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditList.vue"],"names":[],"mappings":";AA+DA;EACA,kBAAA;EACA,eAAA;CACA","file":"RuleEditList.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"btn btn-primary ml-2\" @click=\"addRule\" :disabled=\"isLeaf\" :title=\"buttonTitle\">Add rule</button>\n        <label for=\"ruleEditList\" class=\"rule-label mb-2\">Created Rules</label>\n        <div class=\"list-group\" id=\"ruleEditList\">\n            <rule-edit-item v-for=\"(rule, index) in rules\" :key=\"index\" :index=\"index\" :rule=\"rule\" :reachable-results=\"reachableResults\"\n                :children=\"children\"></rule-edit-item>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleEditItem from \"./RuleEditItem.vue\";\n\nexport default {\n  components: {\n    RuleEditItem\n  },\n  props: {\n    rules: {\n      type: Array,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    isLeaf: function() {\n      return this.children.length == 0;\n    },\n    buttonTitle: function() {\n      if (this.isLeaf) return \"You cannot add a rule to a step without steps on a next level\";\n      return \"Add a rule to connect this step to the next\";\n    }\n  },\n\n  methods: {\n    addRule() {\n      this.rules.push({\n        databaseId: -1,\n        title: \"Empty rule\",\n        description: \"\",\n        condition: {\n          label: \"rule\"\n        },\n        target: null,\n        edgeId: -1,\n        create: true,\n        destroy: false,\n        change: false\n      });\n    }\n  }\n};\n</script>\n\n<style scoped>\n.rule-label {\n  font-weight: bold;\n  display: block;\n}\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.rule-label[data-v-424c86ca] {\n  font-weight: bold;\n  display: block;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditList.vue"],"names":[],"mappings":";AAwEA;EACA,kBAAA;EACA,eAAA;CACA","file":"RuleEditList.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"btn btn-primary ml-2\" @click=\"addRule\" :disabled=\"isLeaf\" :title=\"buttonTitle\">Add rule</button>\n        <label for=\"ruleEditList\" class=\"rule-label mb-2\">Created Rules</label>\n        <div class=\"list-group\" id=\"ruleEditList\">\n            <rule-edit-item v-for=\"(rule, index) in rules\" :key=\"index\" :index=\"index\" :rule=\"rule\" :reachable-results=\"reachableResults\"\n                :children=\"children\"></rule-edit-item>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleEditItem from \"./RuleEditItem.vue\";\n\nexport default {\n  components: {\n    RuleEditItem\n  },\n  props: {\n    rules: {\n      type: Array,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    isLeaf: function() {\n      return this.children.length == 0;\n    },\n    buttonTitle: function() {\n      if (this.isLeaf) return \"You cannot add a rule to a step without steps on a next level\";\n      return \"Add a rule to connect this step to the next\";\n    }\n  },\n  watch: {\n    // reachableResults: function() {\n    //   if (this.reachableResults.length == 0) {\n    //     this.$emit(\"remove\");\n    //   } else {\n    //     this.rules.forEach(rule => {\n    //     });\n    //   }\n    // }\n  },\n  methods: {\n    addRule() {\n      this.rules.push({\n        databaseId: -1,\n        title: \"Empty rule\",\n        description: \"\",\n        condition: {\n          label: \"rule\"\n        },\n        target: null,\n        edgeId: -1,\n        create: true,\n        destroy: false,\n        change: false\n      });\n    }\n  }\n};\n</script>\n\n<style scoped>\n.rule-label {\n  font-weight: bold;\n  display: block;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -49494,7 +49536,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       return "Add a rule to connect this step to the next";
     }
   },
-
+  watch: {
+    // reachableResults: function() {
+    //   if (this.reachableResults.length == 0) {
+    //     this.$emit("remove");
+    //   } else {
+    //     this.rules.forEach(rule => {
+    //     });
+    //   }
+    // }
+  },
   methods: {
     addRule: function addRule() {
       this.rules.push({
@@ -49519,7 +49570,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(292)
 /* template */
@@ -49667,7 +49718,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(294)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(296)
 /* template */
@@ -50474,7 +50525,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(301)
 /* template */
@@ -50561,14 +50612,43 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   props: {
     label10: {
       type: String,
-      default: "This is a label I want to create"
+      default: 'This is a label I want to create'
     },
-    //this.$parent.chartTypeNumber
     chartType: {
       type: Number,
-      default: 0 //this.$parent.chartTypeNumber,
+      default: 0
     },
-    chartData: {}
+    chartDataUpper: {
+      type: Object,
+      default: function _default() {
+        return {
+          labels: ['January', 'February'],
+          datasets: [{
+            label: "Edit Label",
+            backgroundColor: ['#0000ff', '#ff0000'],
+            data: [40, 20]
+          }]
+        };
+      }
+    },
+    changed: {
+      type: Boolean,
+      required: true
+    }
+
+  },
+  watch: {
+    changed: function changed() {
+      this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
+    }
+  },
+  mounted: function mounted() {
+    this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
+  },
+  data: function data() {
+    return {
+      localChartDataUpper: {}
+    };
   }
 });
 
@@ -50577,7 +50657,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(303)
 /* template */
@@ -50628,18 +50708,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
 
 
+var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [reactiveProp],
   props: {
     label: {
       type: String
     },
-    data: {}
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
   },
   extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Bar"],
   mounted: function mounted() {
     // Overwriting base render method with actual data.
-    this.renderChart(this.data);
+    this.renderChart(this.chartData, this.options);
   }
 });
 
@@ -50648,7 +50734,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(305)
 /* template */
@@ -50699,6 +50785,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
 
 
+var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -50707,10 +50795,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: {}
   },
+  mixins: [reactiveProp],
   extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Pie"],
   mounted: function mounted() {
     // Overwriting base render method with actual data.
-    this.renderChart(this.data);
+    this.renderChart(this.chartData, this.options);
   }
 });
 
@@ -50719,7 +50808,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(307)
 /* template */
@@ -50770,6 +50859,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
 
 
+var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -50778,10 +50869,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: {}
   },
+  mixins: [reactiveProp],
   extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["PolarArea"],
   mounted: function mounted() {
     // Overwriting base render method with actual data.
-    this.renderChart(this.data);
+    this.renderChart(this.chartData, this.options);
   }
 });
 
@@ -50790,7 +50882,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
 var __vue_script__ = __webpack_require__(309)
 /* template */
@@ -50841,6 +50933,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
 
 
+var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -50849,10 +50943,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: {}
   },
+  mixins: [reactiveProp],
   extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Doughnut"],
   mounted: function mounted() {
     // Overwriting base render method with actual data.
-    this.renderChart(this.data);
+    this.renderChart(this.chartData, this.options);
   }
 });
 
@@ -50869,7 +50964,7 @@ var render = function() {
         "div",
         [
           _c("bar-chart", {
-            attrs: { label: _vm.label10, data: this.chartData }
+            attrs: { label: _vm.label10, "chart-data": _vm.localChartDataUpper }
           })
         ],
         1
@@ -50879,7 +50974,10 @@ var render = function() {
           "div",
           [
             _c("pie-chart", {
-              attrs: { label: _vm.label10, data: this.chartData }
+              attrs: {
+                label: _vm.label10,
+                "chart-data": _vm.localChartDataUpper
+              }
             })
           ],
           1
@@ -50889,7 +50987,10 @@ var render = function() {
             "div",
             [
               _c("polar-chart", {
-                attrs: { label: _vm.label10, data: this.chartData }
+                attrs: {
+                  label: _vm.label10,
+                  "chart-data": _vm.localChartDataUpper
+                }
               })
             ],
             1
@@ -50898,7 +50999,10 @@ var render = function() {
             "div",
             [
               _c("doughnut-chart", {
-                attrs: { label: _vm.label10, data: this.chartData }
+                attrs: {
+                  label: _vm.label10,
+                  "chart-data": _vm.localChartDataUpper
+                }
               })
             ],
             1
@@ -50919,15 +51023,136 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+var normalizeComponent = __webpack_require__(3)
+/* script */
+var __vue_script__ = __webpack_require__(312)
+/* template */
+var __vue_template__ = __webpack_require__(318)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/VariableMappingApiList.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7e9456bd", Component.options)
+  } else {
+    hotAPI.reload("data-v-7e9456bd", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 312 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue__ = __webpack_require__(313);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue__);
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    VariableMappingApi: __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue___default.a
+  },
+  props: {
+    apiCalls: {
+      type: Array,
+      required: true
+    },
+    usedVariables: {
+      type: Object,
+      required: true
+    },
+    reachableVariables: {
+      type: Array,
+      required: true
+    }
+  },
+  watch: {
+    // Change API mapping if a field is removed/added (only used in case of removal, actually)
+    reachableVariables: function reachableVariables() {
+      var _this = this;
+
+      if (this.reachableVariables.length == 0) {
+        this.$emit("remove");
+      } else {
+        var ifNotFound = this.reachableVariables[0];
+        this.apiCalls.forEach(function (apiCall) {
+          apiCall.variables.forEach(function (variable) {
+            if (_this.getReachableIndex(variable.localVariable) == -1) {
+              variable.localVariable = ifNotFound;
+              _this.$notify({
+                title: "Variable removed",
+                text: "You have removed one or more variables that were used in the model-calculation, it is now replaced with another.",
+                type: "warn"
+              });
+            }
+          });
+        });
+      }
+    }
+  },
+  methods: {
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     */
+    getReachableIndex: function getReachableIndex(varName) {
+      for (var index = this.reachableVariables.length - 1; index >= 0; index--) {
+        if (this.reachableVariables[index] == varName) return index;
+      }
+      return -1;
+    }
+  }
+});
+
+/***/ }),
+/* 313 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(312)
+  __webpack_require__(314)
 }
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(314)
+var __vue_script__ = __webpack_require__(316)
 /* template */
-var __vue_template__ = __webpack_require__(315)
+var __vue_template__ = __webpack_require__(317)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50966,13 +51191,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 312 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(313);
+var content = __webpack_require__(315);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -50992,7 +51217,7 @@ if(false) {
 }
 
 /***/ }),
-/* 313 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -51000,13 +51225,13 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.warning[data-v-094a0c7f] {\n  border: solid 2px yellow;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableMappingApi.vue"],"names":[],"mappings":";AA8IA;EACA,yBAAA;CACA","file":"VariableMappingApi.vue","sourcesContent":["<template>\n    <div class=\"mt-3\">\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editApi_' + index\"\n            aria-expanded=\"false\" :aria-controls=\"'editApi_' + index\" :id=\"'headerApi_' + index\" @click=\"show = !show\" :class=\"{warning: warningExists}\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n            {{ model.title }}\n            <span class=\"badge badge-secondary float-right\">Id: {{ model.evidencioModelId }}</span>\n        </button>\n        <div class=\"alert alert-warning\" role=\"alert\" v-if=\"warningExists\">\n            The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,\n            please do this mapping manually.\n        </div>\n        <div class=\"collapse\" :id=\"'editApi_' + index\">\n            <form>\n                <div class=\"form-row\">\n                    <div class=\"form-group col-md-6\" v-for=\"(variableMap, indexMap) in model.variables\" :key=\"indexMap\">\n                        <label :for=\"'select_' + indexMap\">{{ variableMap.evidencioTitle }}</label>\n                        <multiselect :class=\"{warning: warnings[indexMap]}\" :options=\"reachableVariables\" :allow-empty=\"false\" deselect-label=\"Cannot be empty\"\n                            v-model=\"variableMap.localVariable\">\n                            <template slot=\"singleLabel\" slot-scope=\"props\">\n                                <span class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </span>\n                            </template>\n                            <template slot=\"option\" slot-scope=\"props\">\n                                <div class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </div>\n                            </template>\n                        </multiselect>\n                    </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"card-body\">\n                        <h5 class=\"card-title\">Result variables</h5>\n                        <h5>\n                            <span class=\"badge badge-secondary mx-1\" v-for=\"(result, index) in model.results\" :key=\"index\">{{ result.name }}</span>\n                        </h5>\n                    </div>\n                </div>\n            </form>\n        </div>\n    </div>\n</template>\n\n\n<script>\nexport default {\n  props: {\n    model: {\n      type: Object,\n      required: true\n    },\n    reachableVariables: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    }\n  },\n  computed: {\n    // Preselect all fields, set a warning boolean to true if a field cannot be found\n    warnings: function() {\n      let ret = Array(this.model.variables.length).fill(false);\n      if (this.model.variables[0].localVariable == \"\") {\n        let ifNotFound = this.reachableVariables[0];\n        this.model.variables.forEach((variable, index) => {\n          let foundVariable;\n          if ((foundVariable = this.findReachableVariable(variable.evidencioVariableId))) {\n            variable.localVariable = foundVariable;\n          } else {\n            ret[index] = true;\n            variable.localVariable = ifNotFound;\n          }\n        });\n      }\n      return ret;\n    },\n    warningExists: function() {\n      return this.arrayOr(this.warnings);\n    }\n  },\n  watch: {\n    // Change API mapping if a field is removed/added (only used in case of removal, actually)\n    reachableVariables: function() {\n      let ifNotFound = this.reachableVariables[0];\n      this.model.variables.forEach(variable => {\n        if (this.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;\n      });\n    }\n  },\n  methods: {\n    /**\n     * Tries to find a field in the reachables that has the given evidencioVariableId\n     * @param {Number} evidencioVariableId\n     */\n    findReachableVariable(evidencioVariableId) {\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\n        if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)\n          return this.reachableVariables[index];\n      }\n      return \"\";\n    },\n\n    /**\n     * Performs the OR operation on the given array of booleans\n     * @param {Array}\n     */\n    arrayOr(array) {\n      for (let index = array.length - 1; index >= 0; index--) {\n        if (array[index]) return true;\n      }\n      return false;\n    },\n\n    /**\n     * Finds the index in the reachables based on the local variable name\n     * @param {String} varName\n     */\n    getReachableIndex(varName) {\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\n        if (this.reachableVariables[index] == varName) return index;\n      }\n      return -1;\n    }\n  },\n  data() {\n    return {\n      show: false\n    };\n  }\n};\n</script>\n\n<style scoped>\n.warning {\n  border: solid 2px yellow;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.warning[data-v-094a0c7f] {\n  border: solid 2px yellow;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableMappingApi.vue"],"names":[],"mappings":";AA0HA;EACA,yBAAA;CACA","file":"VariableMappingApi.vue","sourcesContent":["<template>\n    <div class=\"mt-2\">\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editApi_' + index\"\n            aria-expanded=\"false\" :aria-controls=\"'editApi_' + index\" :id=\"'headerApi_' + index\" @click=\"show = !show\" :class=\"{warning: warningExists}\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n            {{ model.title }}\n            <span class=\"badge badge-secondary float-right\">Id: {{ model.evidencioModelId }}</span>\n        </button>\n        <div class=\"alert alert-warning\" role=\"alert\" v-if=\"warningExists\">\n            The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,\n            please do this mapping manually.\n        </div>\n        <div class=\"collapse mt-2\" :id=\"'editApi_' + index\">\n            <form>\n                <div class=\"form-row\">\n                    <div class=\"form-group col-md-6\" v-for=\"(variableMap, indexMap) in model.variables\" :key=\"indexMap\">\n                        <label :for=\"'select_' + indexMap\">{{ variableMap.evidencioTitle }}</label>\n                        <multiselect :class=\"{warning: warnings[indexMap]}\" :options=\"reachableVariables\" :allow-empty=\"false\" deselect-label=\"Cannot be empty\"\n                            v-model=\"variableMap.localVariable\">\n                            <template slot=\"singleLabel\" slot-scope=\"props\">\n                                <span class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </span>\n                            </template>\n                            <template slot=\"option\" slot-scope=\"props\">\n                                <div class=\"option__desc\">\n                                    <span class=\"option__title\">{{ usedVariables[props.option].title }}</span>\n                                </div>\n                            </template>\n                        </multiselect>\n                    </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"card-body\">\n                        <h5 class=\"card-title\">Result variables</h5>\n                        <h5>\n                            <span class=\"badge badge-secondary mx-1\" v-for=\"(result, index) in model.results\" :key=\"index\">{{ result.name }}</span>\n                        </h5>\n                    </div>\n                </div>\n            </form>\n        </div>\n    </div>\n</template>\n\n\n<script>\nexport default {\n  props: {\n    model: {\n      type: Object,\n      required: true\n    },\n    reachableVariables: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    }\n  },\n  computed: {\n    // Preselect all fields, set a warning boolean to true if a field cannot be found\n    warnings: function() {\n      let ret = Array(this.model.variables.length).fill(false);\n      if (this.model.variables[0].localVariable == \"\") {\n        let ifNotFound = this.reachableVariables[0];\n        this.model.variables.forEach((variable, index) => {\n          let foundVariable;\n          if ((foundVariable = this.findReachableVariable(variable.evidencioVariableId))) {\n            variable.localVariable = foundVariable;\n          } else {\n            ret[index] = true;\n            variable.localVariable = ifNotFound;\n          }\n        });\n      }\n      return ret;\n    },\n    warningExists: function() {\n      return this.arrayOr(this.warnings);\n    }\n  },\n  methods: {\n    /**\n     * Tries to find a field in the reachables that has the given evidencioVariableId\n     * @param {Number} evidencioVariableId\n     */\n    findReachableVariable(evidencioVariableId) {\n      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {\n        if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)\n          return this.reachableVariables[index];\n      }\n      return \"\";\n    },\n\n    /**\n     * Performs the OR operation on the given array of booleans\n     * @param {Array}\n     */\n    arrayOr(array) {\n      for (let index = array.length - 1; index >= 0; index--) {\n        if (array[index]) return true;\n      }\n      return false;\n    }\n  },\n  data() {\n    return {\n      show: false\n    };\n  }\n};\n</script>\n\n<style scoped>\n.warning {\n  border: solid 2px yellow;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 314 */
+/* 316 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51102,17 +51327,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       return this.arrayOr(this.warnings);
     }
   },
-  watch: {
-    // Change API mapping if a field is removed/added (only used in case of removal, actually)
-    reachableVariables: function reachableVariables() {
-      var _this2 = this;
-
-      var ifNotFound = this.reachableVariables[0];
-      this.model.variables.forEach(function (variable) {
-        if (_this2.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;
-      });
-    }
-  },
   methods: {
     /**
      * Tries to find a field in the reachables that has the given evidencioVariableId
@@ -51135,18 +51349,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         if (array[index]) return true;
       }
       return false;
-    },
-
-
-    /**
-     * Finds the index in the reachables based on the local variable name
-     * @param {String} varName
-     */
-    getReachableIndex: function getReachableIndex(varName) {
-      for (var index = this.reachableVariables.length - 1; index >= 0; index--) {
-        if (this.reachableVariables[index] == varName) return index;
-      }
-      return -1;
     }
   },
   data: function data() {
@@ -51157,14 +51359,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 315 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "mt-3" }, [
+  return _c("div", { staticClass: "mt-2" }, [
     _c(
       "button",
       {
@@ -51209,7 +51411,7 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "collapse", attrs: { id: "editApi_" + _vm.index } },
+      { staticClass: "collapse mt-2", attrs: { id: "editApi_" + _vm.index } },
       [
         _c("form", [
           _c(
@@ -51309,15 +51511,49 @@ if (false) {
 }
 
 /***/ }),
-/* 316 */
+/* 318 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "list-group" },
+    _vm._l(_vm.apiCalls, function(apiCall, index) {
+      return _c("variable-mapping-api", {
+        key: index,
+        attrs: {
+          index: index,
+          model: apiCall,
+          "used-variables": _vm.usedVariables,
+          "reachable-variables": _vm.reachableVariables
+        }
+      })
+    })
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-7e9456bd", module.exports)
+  }
+}
+
+/***/ }),
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(317)
+var __vue_script__ = __webpack_require__(320)
 /* template */
-var __vue_template__ = __webpack_require__(321)
+var __vue_template__ = __webpack_require__(324)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -51356,13 +51592,16 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 317 */
+/* 320 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__ = __webpack_require__(318);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__ = __webpack_require__(321);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__);
+//
+//
+//
 //
 //
 //
@@ -51385,41 +51624,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     ChartItemEdit: __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue___default.a
   },
   props: {
-    chartItems: {
-      type: Array
-    }
+    currentStepData: {}
   },
   methods: {
     selectCard: function selectCard(index) {
-      for (var ind = 0; ind < this.chartItems.length; ind++) {
+      for (var ind = 0; ind < this.currentStepData.labels.length; ind++) {
         if (ind == index) $("#chartItemEditCollapse_" + ind).collapse("toggle");else $("#chartItemEditCollapse_" + ind).collapse("hide");
       }
     },
     addChartItem: function addChartItem() {
-      this.chartItems.push({
-        label: "Enter Label",
-        color: "#ff0000",
-        value: 10
-      });
+      this.currentStepData.labels.push("Enter Label");
+      this.currentStepData.datasets[0].backgroundColor.push("#00ff00");
+      this.currentStepData.datasets[0].data.push(17);
+      this.$emit("refresh-chart-data1", this.currentStepData);
     },
-    data: function data() {
-      return {
-        localChartItems: []
-      };
+    refreshData: function refreshData(data) {
+      // this.$set(this.currentStepData.labels, data[3], data[0]);
+      // this.$set(this.currentStepData.datasets[0].backgroundColor, data[3], data[1]);
+      // this.$set(this.currentStepData.datasets[0].data, data[3], Number(data[2]));
+      this.currentStepData.labels[data[3]] = data[0];
+      this.currentStepData.datasets[0].backgroundColor[data[3]] = data[1];
+      this.currentStepData.datasets[0].data[data[3]] = Number(data[2]);
+      this.$emit("refresh-chart-data", this.currentStepData);
     }
+  },
+  data: function data() {
+    return {
+      localChartItems: []
+    };
   }
 });
 
 /***/ }),
-/* 318 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(319)
+var __vue_script__ = __webpack_require__(322)
 /* template */
-var __vue_template__ = __webpack_require__(320)
+var __vue_template__ = __webpack_require__(323)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -51458,7 +51703,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 319 */
+/* 322 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51499,33 +51744,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    chartItem: {
-      type: Object,
+    chartItemLabel: {
+      type: String,
+      required: true
+    },
+    chartItemColor: {
+      type: String,
+      required: true
+    },
+    chartItemValue: {
+      type: Number,
       required: true
     },
     indexItem: {
       type: Number,
       required: true
-    }
+    },
+    currStepData: {}
   },
-
+  indexItem: {
+    type: Number,
+    required: true
+  },
   data: function data() {
     return {
-      editing: false
+      editing: false,
+      localItemLabel: this.chartItemLabel,
+      localItemColor: this.chartItemColor,
+      localItemValue: Number(this.chartItemValue)
     };
   },
-
 
   methods: {
     toggleShow: function toggleShow() {
       this.$emit("toggle1", this.indexItem);
+    },
+    toggleUpdate: function toggleUpdate() {
+      this.$emit("refresh-chart-data", [this.localItemLabel, this.localItemColor, Number(this.localItemValue), this.indexItem]);
     }
   },
-
   computed: {
     getImage: function getImage() {
       if (this.editing) return "/images/check.svg";else return "/images/pencil.svg";
@@ -51534,7 +51794,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 320 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -51557,7 +51817,11 @@ var render = function() {
       },
       [
         _c("h6", { staticClass: "mb-0" }, [
-          _vm._v("\n            " + _vm._s(_vm.chartItem.label) + "\n        ")
+          _vm._v(
+            "\n            " +
+              _vm._s(_vm.currStepData.labels[_vm.indexItem]) +
+              "\n        "
+          )
         ])
       ]
     ),
@@ -51586,8 +51850,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.chartItem.label,
-                    expression: "chartItem.label"
+                    value: _vm.localItemLabel,
+                    expression: "localItemLabel"
                   }
                 ],
                 staticClass: "form-control",
@@ -51598,13 +51862,16 @@ var render = function() {
                   placeholder: "Label",
                   disabled: !_vm.editing
                 },
-                domProps: { value: _vm.chartItem.label },
+                domProps: { value: _vm.localItemLabel },
                 on: {
+                  change: function($event) {
+                    _vm.toggleUpdate()
+                  },
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.chartItem, "label", $event.target.value)
+                    _vm.localItemLabel = $event.target.value
                   }
                 }
               }),
@@ -51631,8 +51898,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.chartItem.color,
-                    expression: "chartItem.color"
+                    value: _vm.localItemColor,
+                    expression: "localItemColor"
                   }
                 ],
                 staticClass: "form-control",
@@ -51642,13 +51909,16 @@ var render = function() {
                   id: "chartItemColor_" + _vm.indexItem,
                   disabled: !_vm.editing
                 },
-                domProps: { value: _vm.chartItem.color },
+                domProps: { value: _vm.localItemColor },
                 on: {
+                  change: function($event) {
+                    _vm.toggleUpdate()
+                  },
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.chartItem, "color", $event.target.value)
+                    _vm.localItemColor = $event.target.value
                   }
                 }
               }),
@@ -51675,8 +51945,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.chartItem.value,
-                    expression: "chartItem.value"
+                    value: _vm.localItemValue,
+                    expression: "localItemValue"
                   }
                 ],
                 staticClass: "form-control",
@@ -51686,13 +51956,16 @@ var render = function() {
                   id: "chartItemValue_" + _vm.indexItem,
                   disabled: !_vm.editing
                 },
-                domProps: { value: _vm.chartItem.value },
+                domProps: { value: _vm.localItemValue },
                 on: {
+                  change: function($event) {
+                    _vm.toggleUpdate()
+                  },
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.chartItem, "value", $event.target.value)
+                    _vm.localItemValue = $event.target.value
                   }
                 }
               }),
@@ -51714,26 +51987,17 @@ var render = function() {
                     _vm.editing = !_vm.editing
                   }
                 }
-              }),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary ml-2",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Add to chart")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary ml-2",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Remove from chart")]
-              )
-            ])
+              })
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary ml-2",
+                attrs: { type: "button" }
+              },
+              [_vm._v("Remove from chart")]
+            )
           ])
         ])
       ]
@@ -51751,44 +52015,57 @@ if (false) {
 }
 
 /***/ }),
-/* 321 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "row" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-primary ml-2",
-          attrs: { type: "button" },
-          on: { click: _vm.addChartItem }
-        },
-        [_vm._v("Add item")]
-      )
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row", attrs: { id: "chartItemAdder" } }, [
-      _c(
-        "div",
-        { staticClass: "col" },
-        _vm._l(_vm.chartItems, function(item, index) {
-          return _c("chart-item-edit", {
-            key: index,
-            attrs: { "index-item": index, chartItem: item },
-            on: {
-              toggle1: function($event) {
-                _vm.selectCard($event)
-              }
-            }
-          })
-        })
-      )
-    ])
-  ])
+  return _vm.currentStepData !== undefined
+    ? _c("div", [
+        _c("div", { staticClass: "row" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary ml-2",
+              attrs: { type: "button" },
+              on: { click: _vm.addChartItem }
+            },
+            [_vm._v("Add item")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "row", attrs: { id: "chartItemAdder" } }, [
+          _c(
+            "div",
+            { staticClass: "col" },
+            _vm._l(_vm.currentStepData.labels, function(item, index) {
+              return _c("chart-item-edit", {
+                key: index,
+                attrs: {
+                  "index-item": index,
+                  "chart-item-label": item,
+                  "chart-item-color":
+                    _vm.currentStepData.datasets[0].backgroundColor[index],
+                  "chart-item-value":
+                    _vm.currentStepData.datasets[0].data[index],
+                  "curr-step-data": _vm.currentStepData
+                },
+                on: {
+                  toggle1: function($event) {
+                    _vm.selectCard($event)
+                  },
+                  "refresh-chart-data": function($event) {
+                    _vm.refreshData($event)
+                  }
+                }
+              })
+            })
+          )
+        ])
+      ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -51801,7 +52078,7 @@ if (false) {
 }
 
 /***/ }),
-/* 322 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52075,146 +52352,145 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm.variablesUpToStep.length != 0
-                                        ? _c(
-                                            "div",
-                                            { staticClass: "container-fluid" },
-                                            [
-                                              _c(
-                                                "label",
-                                                {
-                                                  attrs: {
-                                                    for: "apiCallModelSelect"
-                                                  }
-                                                },
+                                      _c(
+                                        "div",
+                                        { staticClass: "container-fluid" },
+                                        [
+                                          _vm.variablesUpToStep.length != 0
+                                            ? _c(
+                                                "div",
                                                 [
-                                                  _vm._v(
-                                                    "Select model for calculation:"
-                                                  )
-                                                ]
-                                              ),
-                                              _vm._v(" "),
-                                              _c("multiselect", {
-                                                attrs: {
-                                                  id: "apiCallModelSelect",
-                                                  multiple: true,
-                                                  "deselect-label":
-                                                    "Remove model calculation",
-                                                  "track-by": "id",
-                                                  label: "title",
-                                                  placeholder: "Select a model",
-                                                  options:
-                                                    _vm.modelChoiceRepresentation,
-                                                  searchable: false,
-                                                  "allow-empty": true,
-                                                  "open-direction": "bottom",
-                                                  "close-on-select": false
-                                                },
-                                                on: {
-                                                  select: _vm.modelSelectAPI,
-                                                  remove: _vm.modelRemoveApi
-                                                },
-                                                scopedSlots: _vm._u([
-                                                  {
-                                                    key: "tag",
-                                                    fn: function(props) {
-                                                      return [
-                                                        _c(
-                                                          "span",
-                                                          {
-                                                            staticClass:
-                                                              "badge badge-info badge-larger"
-                                                          },
-                                                          [
+                                                  _c(
+                                                    "label",
+                                                    {
+                                                      attrs: {
+                                                        for:
+                                                          "apiCallModelSelect"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "Select model for calculation:"
+                                                      )
+                                                    ]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c("multiselect", {
+                                                    attrs: {
+                                                      id: "apiCallModelSelect",
+                                                      multiple: true,
+                                                      "deselect-label":
+                                                        "Remove model calculation",
+                                                      "track-by": "id",
+                                                      label: "title",
+                                                      placeholder:
+                                                        "Select a model",
+                                                      options:
+                                                        _vm.modelChoiceRepresentation,
+                                                      searchable: false,
+                                                      "allow-empty": true,
+                                                      "open-direction":
+                                                        "bottom",
+                                                      "close-on-select": false
+                                                    },
+                                                    on: {
+                                                      select:
+                                                        _vm.modelSelectAPI,
+                                                      remove: _vm.modelRemoveApi
+                                                    },
+                                                    scopedSlots: _vm._u([
+                                                      {
+                                                        key: "tag",
+                                                        fn: function(props) {
+                                                          return [
                                                             _c(
                                                               "span",
                                                               {
                                                                 staticClass:
-                                                                  "badge-maxwidth"
+                                                                  "badge badge-info badge-larger"
                                                               },
                                                               [
+                                                                _c(
+                                                                  "span",
+                                                                  {
+                                                                    staticClass:
+                                                                      "badge-maxwidth"
+                                                                  },
+                                                                  [
+                                                                    _vm._v(
+                                                                      _vm._s(
+                                                                        props
+                                                                          .option
+                                                                          .title
+                                                                      )
+                                                                    )
+                                                                  ]
+                                                                ),
                                                                 _vm._v(
-                                                                  _vm._s(
-                                                                    props.option
-                                                                      .title
-                                                                  )
+                                                                  " \n                                                                "
+                                                                ),
+                                                                _c(
+                                                                  "span",
+                                                                  {
+                                                                    staticClass:
+                                                                      "custom__remove",
+                                                                    on: {
+                                                                      click: function(
+                                                                        $event
+                                                                      ) {
+                                                                        props.remove(
+                                                                          props.option
+                                                                        )
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  [_vm._v("❌")]
                                                                 )
                                                               ]
-                                                            ),
-                                                            _vm._v(
-                                                              " \n                                                            "
-                                                            ),
-                                                            _c(
-                                                              "span",
-                                                              {
-                                                                staticClass:
-                                                                  "custom__remove",
-                                                                on: {
-                                                                  click: function(
-                                                                    $event
-                                                                  ) {
-                                                                    props.remove(
-                                                                      props.option
-                                                                    )
-                                                                  }
-                                                                }
-                                                              },
-                                                              [_vm._v("❌")]
                                                             )
                                                           ]
-                                                        )
-                                                      ]
-                                                    }
-                                                  }
-                                                ]),
-                                                model: {
-                                                  value:
-                                                    _vm.multiSelectedModels,
-                                                  callback: function($$v) {
-                                                    _vm.multiSelectedModels = $$v
-                                                  },
-                                                  expression:
-                                                    "multiSelectedModels"
-                                                }
-                                              }),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                { staticClass: "list-group" },
-                                                _vm._l(
-                                                  _vm.localStep.apiCalls,
-                                                  function(apiCall, index) {
-                                                    return _c(
-                                                      "variable-mapping-api",
-                                                      {
-                                                        key: index,
-                                                        attrs: {
-                                                          index: index,
-                                                          model: apiCall,
-                                                          "used-variables":
-                                                            _vm.localUsedVariables,
-                                                          "reachable-variables":
-                                                            _vm.variablesUpToStep
                                                         }
                                                       }
-                                                    )
-                                                  }
-                                                )
+                                                    ]),
+                                                    model: {
+                                                      value:
+                                                        _vm.multiSelectedModels,
+                                                      callback: function($$v) {
+                                                        _vm.multiSelectedModels = $$v
+                                                      },
+                                                      expression:
+                                                        "multiSelectedModels"
+                                                    }
+                                                  })
+                                                ],
+                                                1
                                               )
-                                            ],
-                                            1
-                                          )
-                                        : _c(
-                                            "div",
-                                            { staticClass: "container-fluid" },
-                                            [
-                                              _c("h6", [
-                                                _vm._v(
-                                                  "A model calculation cannot be done without variables. Either add fields\n                                                    to the current step or link it to a precious step to use the fields\n                                                    of that step."
-                                                )
-                                              ])
-                                            ]
-                                          )
+                                            : _c("div", [
+                                                _c("h6", [
+                                                  _vm._v(
+                                                    "A model calculation cannot be done without variables. Either add\n                                                        fields to the current step or link it to a precious step to use\n                                                        the fields of that step."
+                                                  )
+                                                ])
+                                              ]),
+                                          _vm._v(" "),
+                                          _c("variable-mapping-api-list", {
+                                            attrs: {
+                                              "api-calls":
+                                                _vm.localStep.apiCalls,
+                                              "used-variables":
+                                                _vm.localUsedVariables,
+                                              "reachable-variables":
+                                                _vm.variablesUpToStep
+                                            },
+                                            on: {
+                                              remove: function($event) {
+                                                _vm.localStep.apiCalls = []
+                                              }
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
                                     ]
                                   ),
                                   _vm._v(" "),
@@ -52359,8 +52635,20 @@ var render = function() {
                                         _vm._v(" "),
                                         _c("chart-items-list", {
                                           attrs: {
-                                            "chart-items": this.localStep
-                                              .chartData
+                                            "current-step-data":
+                                              _vm.localStep.chartRenderingData
+                                          },
+                                          on: {
+                                            "refresh-chart-data": function(
+                                              $event
+                                            ) {
+                                              _vm.updateChartData($event)
+                                            },
+                                            "refresh-chart-data1": function(
+                                              $event
+                                            ) {
+                                              _vm.updateChartData($event)
+                                            }
                                           }
                                         })
                                       ],
@@ -52378,10 +52666,11 @@ var render = function() {
                                   [
                                     _c("chart-preview", {
                                       attrs: {
-                                        "chart-type": this.localStep
-                                          .chartTypeNumber,
-                                        "chart-data": this.localStep
-                                          .chartRenderingData
+                                        "chart-type":
+                                          _vm.localStep.chartTypeNumber,
+                                        "chart-data-upper":
+                                          _vm.localStep.chartRenderingData,
+                                        changed: _vm.chartChanged
                                       }
                                     })
                                   ],
@@ -52550,15 +52839,15 @@ if (false) {
 }
 
 /***/ }),
-/* 323 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(324)
+var __vue_script__ = __webpack_require__(327)
 /* template */
-var __vue_template__ = __webpack_require__(325)
+var __vue_template__ = __webpack_require__(328)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -52597,7 +52886,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 324 */
+/* 327 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52639,7 +52928,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 325 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52738,7 +53027,7 @@ if (false) {
 }
 
 /***/ }),
-/* 326 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -53144,13 +53433,13 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 });
 
 /***/ }),
-/* 327 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(328);
+var content = __webpack_require__(331);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -53175,7 +53464,7 @@ if(false) {
 }
 
 /***/ }),
-/* 328 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(false);
@@ -53189,13 +53478,13 @@ exports.push([module.i, "@keyframes spinAround{0%{transform:rotate(0deg)}to{tran
 
 
 /***/ }),
-/* 329 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(t,e){ true?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.VueMultiselect=e():t.VueMultiselect=e()}(this,function(){return function(t){function e(i){if(n[i])return n[i].exports;var r=n[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,e),r.l=!0,r.exports}var n={};return e.m=t,e.c=n,e.i=function(t){return t},e.d=function(t,n,i){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:i})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="/",e(e.s=66)}([function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e,n){t.exports=!n(12)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){var i=n(10),r=n(43),o=n(31),s=Object.defineProperty;e.f=n(1)?Object.defineProperty:function(t,e,n){if(i(t),e=o(e,!0),i(n),r)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e,n){var i=n(77),r=n(21);t.exports=function(t){return i(r(t))}},function(t,e,n){var i=n(9),r=n(52),o=n(18),s=n(55),u=n(53),a=function(t,e,n){var l,c,f,p,h=t&a.F,d=t&a.G,v=t&a.S,y=t&a.P,g=t&a.B,b=d?i:v?i[e]||(i[e]={}):(i[e]||{}).prototype,m=d?r:r[e]||(r[e]={}),_=m.prototype||(m.prototype={});d&&(n=e);for(l in n)c=!h&&b&&void 0!==b[l],f=(c?b:n)[l],p=g&&c?u(f,i):y&&"function"==typeof f?u(Function.call,f):f,b&&s(b,l,f,t&a.U),m[l]!=f&&o(m,l,p),y&&_[l]!=f&&(_[l]=f)};i.core=r,a.F=1,a.G=2,a.S=4,a.P=8,a.B=16,a.W=32,a.U=64,a.R=128,t.exports=a},function(t,e,n){var i=n(3),r=n(15);t.exports=n(1)?function(t,e,n){return i.f(t,e,r(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e,n){var i=n(29)("wks"),r=n(16),o=n(0).Symbol,s="function"==typeof o;(t.exports=function(t){return i[t]||(i[t]=s&&o[t]||(s?o:r)("Symbol."+t))}).store=i},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e,n){var i=n(13);t.exports=function(t){if(!i(t))throw TypeError(t+" is not an object!");return t}},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){var i=n(48),r=n(22);t.exports=Object.keys||function(t){return i(t,r)}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e){var n=0,i=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+i).toString(36))}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e,n){var i=n(109),r=n(110);t.exports=n(35)?function(t,e,n){return i.f(t,e,r(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){var i=n(8);t.exports=function(t,e){return!!t&&i(function(){e?t.call(null,function(){},1):t.call(null)})}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,e,n){var i=n(0),r=n(11),o=n(74),s=n(6),u=function(t,e,n){var a,l,c,f=t&u.F,p=t&u.G,h=t&u.S,d=t&u.P,v=t&u.B,y=t&u.W,g=p?r:r[e]||(r[e]={}),b=g.prototype,m=p?i:h?i[e]:(i[e]||{}).prototype;p&&(n=e);for(a in n)(l=!f&&m&&void 0!==m[a])&&a in g||(c=l?m[a]:n[a],g[a]=p&&"function"!=typeof m[a]?n[a]:v&&l?o(c,i):y&&m[a]==c?function(t){var e=function(e,n,i){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(e);case 2:return new t(e,n)}return new t(e,n,i)}return t.apply(this,arguments)};return e.prototype=t.prototype,e}(c):d&&"function"==typeof c?o(Function.call,c):c,d&&((g.virtual||(g.virtual={}))[a]=c,t&u.R&&b&&!b[a]&&s(b,a,c)))};u.F=1,u.G=2,u.S=4,u.P=8,u.B=16,u.W=32,u.U=64,u.R=128,t.exports=u},function(t,e){t.exports={}},function(t,e){t.exports=!0},function(t,e){e.f={}.propertyIsEnumerable},function(t,e,n){var i=n(3).f,r=n(2),o=n(7)("toStringTag");t.exports=function(t,e,n){t&&!r(t=n?t:t.prototype,o)&&i(t,o,{configurable:!0,value:e})}},function(t,e,n){var i=n(29)("keys"),r=n(16);t.exports=function(t){return i[t]||(i[t]=r(t))}},function(t,e,n){var i=n(0),r=i["__core-js_shared__"]||(i["__core-js_shared__"]={});t.exports=function(t){return r[t]||(r[t]={})}},function(t,e){var n=Math.ceil,i=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?i:n)(t)}},function(t,e,n){var i=n(13);t.exports=function(t,e){if(!i(t))return t;var n,r;if(e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;if("function"==typeof(n=t.valueOf)&&!i(r=n.call(t)))return r;if(!e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;throw TypeError("Can't convert object to primitive value")}},function(t,e,n){var i=n(0),r=n(11),o=n(25),s=n(33),u=n(3).f;t.exports=function(t){var e=r.Symbol||(r.Symbol=o?{}:i.Symbol||{});"_"==t.charAt(0)||t in e||u(e,t,{value:s.f(t)})}},function(t,e,n){e.f=n(7)},function(t,e,n){var i=n(53),r=n(36),o=n(57),s=n(37),u=n(104);t.exports=function(t,e){var n=1==t,a=2==t,l=3==t,c=4==t,f=6==t,p=5==t||f,h=e||u;return function(e,u,d){for(var v,y,g=o(e),b=r(g),m=i(u,d,3),_=s(b.length),x=0,w=n?h(e,_):a?h(e,0):void 0;_>x;x++)if((p||x in b)&&(v=b[x],y=m(v,x,g),t))if(n)w[x]=y;else if(y)switch(t){case 3:return!0;case 5:return v;case 6:return x;case 2:w.push(v)}else if(c)return!1;return f?-1:l||c?c:w}}},function(t,e,n){t.exports=!n(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e,n){var i=n(51);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==i(t)?t.split(""):Object(t)}},function(t,e,n){var i=n(56),r=Math.min;t.exports=function(t){return t>0?r(i(t),9007199254740991):0}},function(t,e,n){var i=n(111)("wks"),r=n(58),o=n(9).Symbol,s="function"==typeof o;(t.exports=function(t){return i[t]||(i[t]=s&&o[t]||(s?o:r)("Symbol."+t))}).store=i},function(t,e,n){"use strict";function i(t){return 0!==t&&(!(!Array.isArray(t)||0!==t.length)||!t)}function r(t){return function(){return!t.apply(void 0,arguments)}}function o(t,e){return void 0===t&&(t="undefined"),null===t&&(t="null"),!1===t&&(t="false"),-1!==t.toString().toLowerCase().indexOf(e.trim())}function s(t,e,n,i){return t.filter(function(t){return o(i(t,n),e)})}function u(t){return t.filter(function(t){return!t.$isLabel})}function a(t,e){return function(n){return n.reduce(function(n,i){return i[t]&&i[t].length?(n.push({$groupLabel:i[e],$isLabel:!0}),n.concat(i[t])):n},[])}}function l(t,e,n,i,r){return function(o){return o.map(function(o){var u;if(!o[n])return console.warn("Options passed to vue-multiselect do not contain groups, despite the config."),[];var a=s(o[n],t,e,r);return a.length?(u={},v()(u,i,o[i]),v()(u,n,a),u):[]})}}var c=n(65),f=n.n(c),p=n(59),h=(n.n(p),n(122)),d=(n.n(h),n(64)),v=n.n(d),y=n(120),g=(n.n(y),n(121)),b=(n.n(g),n(117)),m=(n.n(b),n(123)),_=(n.n(m),n(118)),x=(n.n(_),n(119)),w=(n.n(x),function(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];return function(t){return e.reduce(function(t,e){return e(t)},t)}});e.a={data:function(){return{search:"",isOpen:!1,prefferedOpenDirection:"below",optimizedHeight:this.maxHeight}},props:{internalSearch:{type:Boolean,default:!0},options:{type:Array,required:!0},multiple:{type:Boolean,default:!1},value:{type:null,default:function(){return[]}},trackBy:{type:String},label:{type:String},searchable:{type:Boolean,default:!0},clearOnSelect:{type:Boolean,default:!0},hideSelected:{type:Boolean,default:!1},placeholder:{type:String,default:"Select option"},allowEmpty:{type:Boolean,default:!0},resetAfter:{type:Boolean,default:!1},closeOnSelect:{type:Boolean,default:!0},customLabel:{type:Function,default:function(t,e){return i(t)?"":e?t[e]:t}},taggable:{type:Boolean,default:!1},tagPlaceholder:{type:String,default:"Press enter to create a tag"},tagPosition:{type:String,default:"top"},max:{type:[Number,Boolean],default:!1},id:{default:null},optionsLimit:{type:Number,default:1e3},groupValues:{type:String},groupLabel:{type:String},groupSelect:{type:Boolean,default:!1},blockKeys:{type:Array,default:function(){return[]}},preserveSearch:{type:Boolean,default:!1},preselectFirst:{type:Boolean,default:!1}},mounted:function(){this.multiple||this.clearOnSelect||console.warn("[Vue-Multiselect warn]: ClearOnSelect and Multiple props can’t be both set to false."),!this.multiple&&this.max&&console.warn("[Vue-Multiselect warn]: Max prop should not be used when prop Multiple equals false."),this.preselectFirst&&!this.internalValue.length&&this.options.length&&this.select(this.filteredOptions[0])},computed:{internalValue:function(){return this.value||0===this.value?Array.isArray(this.value)?this.value:[this.value]:[]},filteredOptions:function(){var t=this.search||"",e=t.toLowerCase().trim(),n=this.options.concat();return n=this.internalSearch?this.groupValues?this.filterAndFlat(n,e,this.label):s(n,e,this.label,this.customLabel):this.groupValues?a(this.groupValues,this.groupLabel)(n):n,n=this.hideSelected?n.filter(r(this.isSelected)):n,this.taggable&&e.length&&!this.isExistingOption(e)&&("bottom"===this.tagPosition?n.push({isTag:!0,label:t}):n.unshift({isTag:!0,label:t})),n.slice(0,this.optionsLimit)},valueKeys:function(){var t=this;return this.trackBy?this.internalValue.map(function(e){return e[t.trackBy]}):this.internalValue},optionKeys:function(){var t=this;return(this.groupValues?this.flatAndStrip(this.options):this.options).map(function(e){return t.customLabel(e,t.label).toString().toLowerCase()})},currentOptionLabel:function(){return this.multiple?this.searchable?"":this.placeholder:this.internalValue.length?this.getOptionLabel(this.internalValue[0]):this.searchable?"":this.placeholder}},watch:{internalValue:function(){this.resetAfter&&this.internalValue.length&&(this.search="",this.$emit("input",this.multiple?[]:null))},search:function(){this.$emit("search-change",this.search,this.id)}},methods:{getValue:function(){return this.multiple?this.internalValue:0===this.internalValue.length?null:this.internalValue[0]},filterAndFlat:function(t,e,n){return w(l(e,n,this.groupValues,this.groupLabel,this.customLabel),a(this.groupValues,this.groupLabel))(t)},flatAndStrip:function(t){return w(a(this.groupValues,this.groupLabel),u)(t)},updateSearch:function(t){this.search=t},isExistingOption:function(t){return!!this.options&&this.optionKeys.indexOf(t)>-1},isSelected:function(t){var e=this.trackBy?t[this.trackBy]:t;return this.valueKeys.indexOf(e)>-1},getOptionLabel:function(t){if(i(t))return"";if(t.isTag)return t.label;if(t.$isLabel)return t.$groupLabel;var e=this.customLabel(t,this.label);return i(e)?"":e},select:function(t,e){if(t.$isLabel&&this.groupSelect)return void this.selectGroup(t);if(!(-1!==this.blockKeys.indexOf(e)||this.disabled||t.$isDisabled||t.$isLabel)&&(!this.max||!this.multiple||this.internalValue.length!==this.max)&&("Tab"!==e||this.pointerDirty)){if(t.isTag)this.$emit("tag",t.label,this.id),this.search="",this.closeOnSelect&&!this.multiple&&this.deactivate();else{if(this.isSelected(t))return void("Tab"!==e&&this.removeElement(t));this.$emit("select",t,this.id),this.multiple?this.$emit("input",this.internalValue.concat([t]),this.id):this.$emit("input",t,this.id),this.clearOnSelect&&(this.search="")}this.closeOnSelect&&this.deactivate()}},selectGroup:function(t){var e=this,n=this.options.find(function(n){return n[e.groupLabel]===t.$groupLabel});if(n)if(this.wholeGroupSelected(n)){this.$emit("remove",n[this.groupValues],this.id);var i=this.internalValue.filter(function(t){return-1===n[e.groupValues].indexOf(t)});this.$emit("input",i,this.id)}else{var o=n[this.groupValues].filter(r(this.isSelected));this.$emit("select",o,this.id),this.$emit("input",this.internalValue.concat(o),this.id)}},wholeGroupSelected:function(t){return t[this.groupValues].every(this.isSelected)},removeElement:function(t){var e=!(arguments.length>1&&void 0!==arguments[1])||arguments[1];if(!this.disabled){if(!this.allowEmpty&&this.internalValue.length<=1)return void this.deactivate();var n="object"===f()(t)?this.valueKeys.indexOf(t[this.trackBy]):this.valueKeys.indexOf(t);if(this.$emit("remove",t,this.id),this.multiple){var i=this.internalValue.slice(0,n).concat(this.internalValue.slice(n+1));this.$emit("input",i,this.id)}else this.$emit("input",null,this.id);this.closeOnSelect&&e&&this.deactivate()}},removeLastElement:function(){-1===this.blockKeys.indexOf("Delete")&&0===this.search.length&&Array.isArray(this.internalValue)&&this.removeElement(this.internalValue[this.internalValue.length-1],!1)},activate:function(){var t=this;this.isOpen||this.disabled||(this.adjustPosition(),this.groupValues&&0===this.pointer&&this.filteredOptions.length&&(this.pointer=1),this.isOpen=!0,this.searchable?(this.preserveSearch||(this.search=""),this.$nextTick(function(){return t.$refs.search.focus()})):this.$el.focus(),this.$emit("open",this.id))},deactivate:function(){this.isOpen&&(this.isOpen=!1,this.searchable?this.$refs.search.blur():this.$el.blur(),this.preserveSearch||(this.search=""),this.$emit("close",this.getValue(),this.id))},toggle:function(){this.isOpen?this.deactivate():this.activate()},adjustPosition:function(){if("undefined"!=typeof window){var t=this.$el.getBoundingClientRect().top,e=window.innerHeight-this.$el.getBoundingClientRect().bottom;e>this.maxHeight||e>t||"below"===this.openDirection||"bottom"===this.openDirection?(this.prefferedOpenDirection="below",this.optimizedHeight=Math.min(e-40,this.maxHeight)):(this.prefferedOpenDirection="above",this.optimizedHeight=Math.min(t-40,this.maxHeight))}}}}},function(t,e,n){"use strict";var i=n(59);n.n(i);e.a={data:function(){return{pointer:0,pointerDirty:!1}},props:{showPointer:{type:Boolean,default:!0},optionHeight:{type:Number,default:40}},computed:{pointerPosition:function(){return this.pointer*this.optionHeight},visibleElements:function(){return this.optimizedHeight/this.optionHeight}},watch:{filteredOptions:function(){this.pointerAdjust()},isOpen:function(){this.pointerDirty=!1}},methods:{optionHighlight:function(t,e){return{"multiselect__option--highlight":t===this.pointer&&this.showPointer,"multiselect__option--selected":this.isSelected(e)}},groupHighlight:function(t,e){var n=this;if(!this.groupSelect)return["multiselect__option--disabled"];var i=this.options.find(function(t){return t[n.groupLabel]===e.$groupLabel});return[this.groupSelect?"multiselect__option--group":"multiselect__option--disabled",{"multiselect__option--highlight":t===this.pointer&&this.showPointer},{"multiselect__option--group-selected":this.wholeGroupSelected(i)}]},addPointerElement:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"Enter",e=t.key;this.filteredOptions.length>0&&this.select(this.filteredOptions[this.pointer],e),this.pointerReset()},pointerForward:function(){this.pointer<this.filteredOptions.length-1&&(this.pointer++,this.$refs.list.scrollTop<=this.pointerPosition-(this.visibleElements-1)*this.optionHeight&&(this.$refs.list.scrollTop=this.pointerPosition-(this.visibleElements-1)*this.optionHeight),this.filteredOptions[this.pointer]&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerForward()),this.pointerDirty=!0},pointerBackward:function(){this.pointer>0?(this.pointer--,this.$refs.list.scrollTop>=this.pointerPosition&&(this.$refs.list.scrollTop=this.pointerPosition),this.filteredOptions[this.pointer]&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerBackward()):this.filteredOptions[this.pointer]&&this.filteredOptions[0].$isLabel&&!this.groupSelect&&this.pointerForward(),this.pointerDirty=!0},pointerReset:function(){this.closeOnSelect&&(this.pointer=0,this.$refs.list&&(this.$refs.list.scrollTop=0))},pointerAdjust:function(){this.pointer>=this.filteredOptions.length-1&&(this.pointer=this.filteredOptions.length?this.filteredOptions.length-1:0),this.filteredOptions.length>0&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerForward()},pointerSet:function(t){this.pointer=t,this.pointerDirty=!0}}}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e,n){var i=n(13),r=n(0).document,o=i(r)&&i(r.createElement);t.exports=function(t){return o?r.createElement(t):{}}},function(t,e,n){t.exports=!n(1)&&!n(12)(function(){return 7!=Object.defineProperty(n(42)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){"use strict";var i=n(25),r=n(23),o=n(49),s=n(6),u=n(2),a=n(24),l=n(79),c=n(27),f=n(86),p=n(7)("iterator"),h=!([].keys&&"next"in[].keys()),d=function(){return this};t.exports=function(t,e,n,v,y,g,b){l(n,e,v);var m,_,x,w=function(t){if(!h&&t in P)return P[t];switch(t){case"keys":case"values":return function(){return new n(this,t)}}return function(){return new n(this,t)}},S=e+" Iterator",O="values"==y,L=!1,P=t.prototype,k=P[p]||P["@@iterator"]||y&&P[y],E=k||w(y),j=y?O?w("entries"):E:void 0,V="Array"==e?P.entries||k:k;if(V&&(x=f(V.call(new t)))!==Object.prototype&&(c(x,S,!0),i||u(x,p)||s(x,p,d)),O&&k&&"values"!==k.name&&(L=!0,E=function(){return k.call(this)}),i&&!b||!h&&!L&&P[p]||s(P,p,E),a[e]=E,a[S]=d,y)if(m={values:O?E:w("values"),keys:g?E:w("keys"),entries:j},b)for(_ in m)_ in P||o(P,_,m[_]);else r(r.P+r.F*(h||L),e,m);return m}},function(t,e,n){var i=n(10),r=n(83),o=n(22),s=n(28)("IE_PROTO"),u=function(){},a=function(){var t,e=n(42)("iframe"),i=o.length;for(e.style.display="none",n(76).appendChild(e),e.src="javascript:",t=e.contentWindow.document,t.open(),t.write("<script>document.F=Object<\/script>"),t.close(),a=t.F;i--;)delete a.prototype[o[i]];return a()};t.exports=Object.create||function(t,e){var n;return null!==t?(u.prototype=i(t),n=new u,u.prototype=null,n[s]=t):n=a(),void 0===e?n:r(n,e)}},function(t,e,n){var i=n(48),r=n(22).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return i(t,r)}},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e,n){var i=n(2),r=n(4),o=n(73)(!1),s=n(28)("IE_PROTO");t.exports=function(t,e){var n,u=r(t),a=0,l=[];for(n in u)n!=s&&i(u,n)&&l.push(n);for(;e.length>a;)i(u,n=e[a++])&&(~o(l,n)||l.push(n));return l}},function(t,e,n){t.exports=n(6)},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e,n){var i=n(50);t.exports=function(t,e,n){if(i(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,i){return t.call(e,n,i)};case 3:return function(n,i,r){return t.call(e,n,i,r)}}return function(){return t.apply(e,arguments)}}},function(t,e,n){var i=n(51);t.exports=Array.isArray||function(t){return"Array"==i(t)}},function(t,e,n){var i=n(9),r=n(18),o=n(107),s=n(58)("src"),u=Function.toString,a=(""+u).split("toString");n(52).inspectSource=function(t){return u.call(t)},(t.exports=function(t,e,n,u){var l="function"==typeof n;l&&(o(n,"name")||r(n,"name",e)),t[e]!==n&&(l&&(o(n,s)||r(n,s,t[e]?""+t[e]:a.join(String(e)))),t===i?t[e]=n:u?t[e]?t[e]=n:r(t,e,n):(delete t[e],r(t,e,n)))})(Function.prototype,"toString",function(){return"function"==typeof this&&this[s]||u.call(this)})},function(t,e){var n=Math.ceil,i=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?i:n)(t)}},function(t,e,n){var i=n(17);t.exports=function(t){return Object(i(t))}},function(t,e){var n=0,i=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+i).toString(36))}},function(t,e,n){"use strict";var i=n(5),r=n(34)(5),o=!0;"find"in[]&&Array(1).find(function(){o=!1}),i(i.P+i.F*o,"Array",{find:function(t){return r(this,t,arguments.length>1?arguments[1]:void 0)}}),n(99)("find")},function(t,e,n){"use strict";function i(t){n(124)}var r=n(67),o=n(126),s=n(125),u=i,a=s(r.a,o.a,!1,u,null,null);e.a=a.exports},function(t,e,n){t.exports=n(68)},function(t,e,n){t.exports=n(69)},function(t,e,n){t.exports=n(70)},function(t,e,n){function i(t,e,n){return e in t?r(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}var r=n(61);t.exports=i},function(t,e,n){function i(t){return(i="function"==typeof s&&"symbol"==typeof o?function(t){return typeof t}:function(t){return t&&"function"==typeof s&&t.constructor===s&&t!==s.prototype?"symbol":typeof t})(t)}function r(e){return"function"==typeof s&&"symbol"===i(o)?t.exports=r=function(t){return i(t)}:t.exports=r=function(t){return t&&"function"==typeof s&&t.constructor===s&&t!==s.prototype?"symbol":i(t)},r(e)}var o=n(63),s=n(62);t.exports=r},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(60),r=n(39),o=n(40);n.d(e,"Multiselect",function(){return i.a}),n.d(e,"multiselectMixin",function(){return r.a}),n.d(e,"pointerMixin",function(){return o.a}),e.default=i.a},function(t,e,n){"use strict";var i=n(39),r=n(40);e.a={name:"vue-multiselect",mixins:[i.a,r.a],props:{name:{type:String,default:""},selectLabel:{type:String,default:"Press enter to select"},selectGroupLabel:{type:String,default:"Press enter to select group"},selectedLabel:{type:String,default:"Selected"},deselectLabel:{type:String,default:"Press enter to remove"},deselectGroupLabel:{type:String,default:"Press enter to deselect group"},showLabels:{type:Boolean,default:!0},limit:{type:Number,default:99999},maxHeight:{type:Number,default:300},limitText:{type:Function,default:function(t){return"and ".concat(t," more")}},loading:{type:Boolean,default:!1},disabled:{type:Boolean,default:!1},openDirection:{type:String,default:""},showNoResults:{type:Boolean,default:!0},tabindex:{type:Number,default:0}},computed:{isSingleLabelVisible:function(){return this.singleValue&&(!this.isOpen||!this.searchable)&&!this.visibleValues.length},isPlaceholderVisible:function(){return!(this.internalValue.length||this.searchable&&this.isOpen)},visibleValues:function(){return this.multiple?this.internalValue.slice(0,this.limit):[]},singleValue:function(){return this.internalValue[0]},deselectLabelText:function(){return this.showLabels?this.deselectLabel:""},deselectGroupLabelText:function(){return this.showLabels?this.deselectGroupLabel:""},selectLabelText:function(){return this.showLabels?this.selectLabel:""},selectGroupLabelText:function(){return this.showLabels?this.selectGroupLabel:""},selectedLabelText:function(){return this.showLabels?this.selectedLabel:""},inputStyle:function(){if(this.multiple&&this.value&&this.value.length)return this.isOpen?{width:"auto"}:{width:"0",position:"absolute",padding:"0"}},contentStyle:function(){return this.options.length?{display:"inline-block"}:{display:"block"}},isAbove:function(){return"above"===this.openDirection||"top"===this.openDirection||"below"!==this.openDirection&&"bottom"!==this.openDirection&&"above"===this.prefferedOpenDirection},showSearchInput:function(){return this.searchable&&(!this.hasSingleSelectedSlot||!this.visibleSingleValue&&0!==this.visibleSingleValue||this.isOpen)}}}},function(t,e,n){n(92);var i=n(11).Object;t.exports=function(t,e,n){return i.defineProperty(t,e,n)}},function(t,e,n){n(95),n(93),n(96),n(97),t.exports=n(11).Symbol},function(t,e,n){n(94),n(98),t.exports=n(33).f("iterator")},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e){t.exports=function(){}},function(t,e,n){var i=n(4),r=n(89),o=n(88);t.exports=function(t){return function(e,n,s){var u,a=i(e),l=r(a.length),c=o(s,l);if(t&&n!=n){for(;l>c;)if((u=a[c++])!=u)return!0}else for(;l>c;c++)if((t||c in a)&&a[c]===n)return t||c||0;return!t&&-1}}},function(t,e,n){var i=n(71);t.exports=function(t,e,n){if(i(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,i){return t.call(e,n,i)};case 3:return function(n,i,r){return t.call(e,n,i,r)}}return function(){return t.apply(e,arguments)}}},function(t,e,n){var i=n(14),r=n(47),o=n(26);t.exports=function(t){var e=i(t),n=r.f;if(n)for(var s,u=n(t),a=o.f,l=0;u.length>l;)a.call(t,s=u[l++])&&e.push(s);return e}},function(t,e,n){t.exports=n(0).document&&document.documentElement},function(t,e,n){var i=n(41);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==i(t)?t.split(""):Object(t)}},function(t,e,n){var i=n(41);t.exports=Array.isArray||function(t){return"Array"==i(t)}},function(t,e,n){"use strict";var i=n(45),r=n(15),o=n(27),s={};n(6)(s,n(7)("iterator"),function(){return this}),t.exports=function(t,e,n){t.prototype=i(s,{next:r(1,n)}),o(t,e+" Iterator")}},function(t,e){t.exports=function(t,e){return{value:e,done:!!t}}},function(t,e,n){var i=n(14),r=n(4);t.exports=function(t,e){for(var n,o=r(t),s=i(o),u=s.length,a=0;u>a;)if(o[n=s[a++]]===e)return n}},function(t,e,n){var i=n(16)("meta"),r=n(13),o=n(2),s=n(3).f,u=0,a=Object.isExtensible||function(){return!0},l=!n(12)(function(){return a(Object.preventExtensions({}))}),c=function(t){s(t,i,{value:{i:"O"+ ++u,w:{}}})},f=function(t,e){if(!r(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!o(t,i)){if(!a(t))return"F";if(!e)return"E";c(t)}return t[i].i},p=function(t,e){if(!o(t,i)){if(!a(t))return!0;if(!e)return!1;c(t)}return t[i].w},h=function(t){return l&&d.NEED&&a(t)&&!o(t,i)&&c(t),t},d=t.exports={KEY:i,NEED:!1,fastKey:f,getWeak:p,onFreeze:h}},function(t,e,n){var i=n(3),r=n(10),o=n(14);t.exports=n(1)?Object.defineProperties:function(t,e){r(t);for(var n,s=o(e),u=s.length,a=0;u>a;)i.f(t,n=s[a++],e[n]);return t}},function(t,e,n){var i=n(26),r=n(15),o=n(4),s=n(31),u=n(2),a=n(43),l=Object.getOwnPropertyDescriptor;e.f=n(1)?l:function(t,e){if(t=o(t),e=s(e,!0),a)try{return l(t,e)}catch(t){}if(u(t,e))return r(!i.f.call(t,e),t[e])}},function(t,e,n){var i=n(4),r=n(46).f,o={}.toString,s="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],u=function(t){try{return r(t)}catch(t){return s.slice()}};t.exports.f=function(t){return s&&"[object Window]"==o.call(t)?u(t):r(i(t))}},function(t,e,n){var i=n(2),r=n(90),o=n(28)("IE_PROTO"),s=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=r(t),i(t,o)?t[o]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?s:null}},function(t,e,n){var i=n(30),r=n(21);t.exports=function(t){return function(e,n){var o,s,u=String(r(e)),a=i(n),l=u.length;return a<0||a>=l?t?"":void 0:(o=u.charCodeAt(a),o<55296||o>56319||a+1===l||(s=u.charCodeAt(a+1))<56320||s>57343?t?u.charAt(a):o:t?u.slice(a,a+2):s-56320+(o-55296<<10)+65536)}}},function(t,e,n){var i=n(30),r=Math.max,o=Math.min;t.exports=function(t,e){return t=i(t),t<0?r(t+e,0):o(t,e)}},function(t,e,n){var i=n(30),r=Math.min;t.exports=function(t){return t>0?r(i(t),9007199254740991):0}},function(t,e,n){var i=n(21);t.exports=function(t){return Object(i(t))}},function(t,e,n){"use strict";var i=n(72),r=n(80),o=n(24),s=n(4);t.exports=n(44)(Array,"Array",function(t,e){this._t=s(t),this._i=0,this._k=e},function(){var t=this._t,e=this._k,n=this._i++;return!t||n>=t.length?(this._t=void 0,r(1)):"keys"==e?r(0,n):"values"==e?r(0,t[n]):r(0,[n,t[n]])},"values"),o.Arguments=o.Array,i("keys"),i("values"),i("entries")},function(t,e,n){var i=n(23);i(i.S+i.F*!n(1),"Object",{defineProperty:n(3).f})},function(t,e){},function(t,e,n){"use strict";var i=n(87)(!0);n(44)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,e=this._t,n=this._i;return n>=e.length?{value:void 0,done:!0}:(t=i(e,n),this._i+=t.length,{value:t,done:!1})})},function(t,e,n){"use strict";var i=n(0),r=n(2),o=n(1),s=n(23),u=n(49),a=n(82).KEY,l=n(12),c=n(29),f=n(27),p=n(16),h=n(7),d=n(33),v=n(32),y=n(81),g=n(75),b=n(78),m=n(10),_=n(4),x=n(31),w=n(15),S=n(45),O=n(85),L=n(84),P=n(3),k=n(14),E=L.f,j=P.f,V=O.f,C=i.Symbol,T=i.JSON,A=T&&T.stringify,$=h("_hidden"),D=h("toPrimitive"),F={}.propertyIsEnumerable,M=c("symbol-registry"),B=c("symbols"),N=c("op-symbols"),R=Object.prototype,H="function"==typeof C,G=i.QObject,I=!G||!G.prototype||!G.prototype.findChild,K=o&&l(function(){return 7!=S(j({},"a",{get:function(){return j(this,"a",{value:7}).a}})).a})?function(t,e,n){var i=E(R,e);i&&delete R[e],j(t,e,n),i&&t!==R&&j(R,e,i)}:j,z=function(t){var e=B[t]=S(C.prototype);return e._k=t,e},U=H&&"symbol"==typeof C.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof C},W=function(t,e,n){return t===R&&W(N,e,n),m(t),e=x(e,!0),m(n),r(B,e)?(n.enumerable?(r(t,$)&&t[$][e]&&(t[$][e]=!1),n=S(n,{enumerable:w(0,!1)})):(r(t,$)||j(t,$,w(1,{})),t[$][e]=!0),K(t,e,n)):j(t,e,n)},J=function(t,e){m(t);for(var n,i=g(e=_(e)),r=0,o=i.length;o>r;)W(t,n=i[r++],e[n]);return t},q=function(t,e){return void 0===e?S(t):J(S(t),e)},X=function(t){var e=F.call(this,t=x(t,!0));return!(this===R&&r(B,t)&&!r(N,t))&&(!(e||!r(this,t)||!r(B,t)||r(this,$)&&this[$][t])||e)},Y=function(t,e){if(t=_(t),e=x(e,!0),t!==R||!r(B,e)||r(N,e)){var n=E(t,e);return!n||!r(B,e)||r(t,$)&&t[$][e]||(n.enumerable=!0),n}},Q=function(t){for(var e,n=V(_(t)),i=[],o=0;n.length>o;)r(B,e=n[o++])||e==$||e==a||i.push(e);return i},Z=function(t){for(var e,n=t===R,i=V(n?N:_(t)),o=[],s=0;i.length>s;)!r(B,e=i[s++])||n&&!r(R,e)||o.push(B[e]);return o};H||(C=function(){if(this instanceof C)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),e=function(n){this===R&&e.call(N,n),r(this,$)&&r(this[$],t)&&(this[$][t]=!1),K(this,t,w(1,n))};return o&&I&&K(R,t,{configurable:!0,set:e}),z(t)},u(C.prototype,"toString",function(){return this._k}),L.f=Y,P.f=W,n(46).f=O.f=Q,n(26).f=X,n(47).f=Z,o&&!n(25)&&u(R,"propertyIsEnumerable",X,!0),d.f=function(t){return z(h(t))}),s(s.G+s.W+s.F*!H,{Symbol:C});for(var tt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;tt.length>et;)h(tt[et++]);for(var tt=k(h.store),et=0;tt.length>et;)v(tt[et++]);s(s.S+s.F*!H,"Symbol",{for:function(t){return r(M,t+="")?M[t]:M[t]=C(t)},keyFor:function(t){if(U(t))return y(M,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){I=!0},useSimple:function(){I=!1}}),s(s.S+s.F*!H,"Object",{create:q,defineProperty:W,defineProperties:J,getOwnPropertyDescriptor:Y,getOwnPropertyNames:Q,getOwnPropertySymbols:Z}),T&&s(s.S+s.F*(!H||l(function(){var t=C();return"[null]"!=A([t])||"{}"!=A({a:t})||"{}"!=A(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!U(t)){for(var e,n,i=[t],r=1;arguments.length>r;)i.push(arguments[r++]);return e=i[1],"function"==typeof e&&(n=e),!n&&b(e)||(e=function(t,e){if(n&&(e=n.call(this,t,e)),!U(e))return e}),i[1]=e,A.apply(T,i)}}}),C.prototype[D]||n(6)(C.prototype,D,C.prototype.valueOf),f(C,"Symbol"),f(Math,"Math",!0),f(i.JSON,"JSON",!0)},function(t,e,n){n(32)("asyncIterator")},function(t,e,n){n(32)("observable")},function(t,e,n){n(91);for(var i=n(0),r=n(6),o=n(24),s=n(7)("toStringTag"),u=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],a=0;a<5;a++){var l=u[a],c=i[l],f=c&&c.prototype;f&&!f[s]&&r(f,s,l),o[l]=o.Array}},function(t,e,n){var i=n(38)("unscopables"),r=Array.prototype;void 0==r[i]&&n(18)(r,i,{}),t.exports=function(t){r[i][t]=!0}},function(t,e,n){var i=n(19);t.exports=function(t){if(!i(t))throw TypeError(t+" is not an object!");return t}},function(t,e,n){var i=n(115),r=n(37),o=n(114);t.exports=function(t){return function(e,n,s){var u,a=i(e),l=r(a.length),c=o(s,l);if(t&&n!=n){for(;l>c;)if((u=a[c++])!=u)return!0}else for(;l>c;c++)if((t||c in a)&&a[c]===n)return t||c||0;return!t&&-1}}},function(t,e,n){var i=n(50),r=n(57),o=n(36),s=n(37);t.exports=function(t,e,n,u,a){i(e);var l=r(t),c=o(l),f=s(l.length),p=a?f-1:0,h=a?-1:1;if(n<2)for(;;){if(p in c){u=c[p],p+=h;break}if(p+=h,a?p<0:f<=p)throw TypeError("Reduce of empty array with no initial value")}for(;a?p>=0:f>p;p+=h)p in c&&(u=e(u,c[p],p,l));return u}},function(t,e,n){var i=n(19),r=n(54),o=n(38)("species");t.exports=function(t){var e;return r(t)&&(e=t.constructor,"function"!=typeof e||e!==Array&&!r(e.prototype)||(e=void 0),i(e)&&null===(e=e[o])&&(e=void 0)),void 0===e?Array:e}},function(t,e,n){var i=n(103);t.exports=function(t,e){return new(i(t))(e)}},function(t,e,n){var i=n(19),r=n(9).document,o=i(r)&&i(r.createElement);t.exports=function(t){return o?r.createElement(t):{}}},function(t,e,n){"use strict";var i=n(18),r=n(55),o=n(8),s=n(17),u=n(38);t.exports=function(t,e,n){var a=u(t),l=n(s,a,""[t]),c=l[0],f=l[1];o(function(){var e={};return e[a]=function(){return 7},7!=""[t](e)})&&(r(String.prototype,t,c),i(RegExp.prototype,a,2==e?function(t,e){return f.call(t,this,e)}:function(t){return f.call(t,this)}))}},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){t.exports=!n(35)&&!n(8)(function(){return 7!=Object.defineProperty(n(105)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){var i=n(100),r=n(108),o=n(116),s=Object.defineProperty;e.f=n(35)?Object.defineProperty:function(t,e,n){if(i(t),e=o(e,!0),i(n),r)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e,n){var i=n(9),r=i["__core-js_shared__"]||(i["__core-js_shared__"]={});t.exports=function(t){return r[t]||(r[t]={})}},function(t,e,n){var i=n(5),r=n(17),o=n(8),s=n(113),u="["+s+"]",a="​",l=RegExp("^"+u+u+"*"),c=RegExp(u+u+"*$"),f=function(t,e,n){var r={},u=o(function(){return!!s[t]()||a[t]()!=a}),l=r[t]=u?e(p):s[t];n&&(r[n]=l),i(i.P+i.F*u,"String",r)},p=f.trim=function(t,e){return t=String(r(t)),1&e&&(t=t.replace(l,"")),2&e&&(t=t.replace(c,"")),t};t.exports=f},function(t,e){t.exports="\t\n\v\f\r   ᠎             　\u2028\u2029\ufeff"},function(t,e,n){var i=n(56),r=Math.max,o=Math.min;t.exports=function(t,e){return t=i(t),t<0?r(t+e,0):o(t,e)}},function(t,e,n){var i=n(36),r=n(17);t.exports=function(t){return i(r(t))}},function(t,e,n){var i=n(19);t.exports=function(t,e){if(!i(t))return t;var n,r;if(e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;if("function"==typeof(n=t.valueOf)&&!i(r=n.call(t)))return r;if(!e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;throw TypeError("Can't convert object to primitive value")}},function(t,e,n){"use strict";var i=n(5),r=n(34)(2);i(i.P+i.F*!n(20)([].filter,!0),"Array",{filter:function(t){return r(this,t,arguments[1])}})},function(t,e,n){"use strict";var i=n(5),r=n(101)(!1),o=[].indexOf,s=!!o&&1/[1].indexOf(1,-0)<0;i(i.P+i.F*(s||!n(20)(o)),"Array",{indexOf:function(t){return s?o.apply(this,arguments)||0:r(this,t,arguments[1])}})},function(t,e,n){var i=n(5);i(i.S,"Array",{isArray:n(54)})},function(t,e,n){"use strict";var i=n(5),r=n(34)(1);i(i.P+i.F*!n(20)([].map,!0),"Array",{map:function(t){return r(this,t,arguments[1])}})},function(t,e,n){"use strict";var i=n(5),r=n(102);i(i.P+i.F*!n(20)([].reduce,!0),"Array",{reduce:function(t){return r(this,t,arguments.length,arguments[1],!1)}})},function(t,e,n){n(106)("search",1,function(t,e,n){return[function(n){"use strict";var i=t(this),r=void 0==n?void 0:n[e];return void 0!==r?r.call(n,i):new RegExp(n)[e](String(i))},n]})},function(t,e,n){"use strict";n(112)("trim",function(t){return function(){return t(this,3)}})},function(t,e){},function(t,e){t.exports=function(t,e,n,i,r,o){var s,u=t=t||{},a=typeof t.default;"object"!==a&&"function"!==a||(s=t,u=t.default);var l="function"==typeof u?u.options:u;e&&(l.render=e.render,l.staticRenderFns=e.staticRenderFns,l._compiled=!0),n&&(l.functional=!0),r&&(l._scopeId=r);var c;if(o?(c=function(t){t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext,t||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),i&&i.call(this,t),t&&t._registeredComponents&&t._registeredComponents.add(o)},l._ssrRegister=c):i&&(c=i),c){var f=l.functional,p=f?l.render:l.beforeCreate;f?(l._injectStyles=c,l.render=function(t,e){return c.call(e),p(t,e)}):l.beforeCreate=p?[].concat(p,c):[c]}return{esModule:s,exports:u,options:l}}},function(t,e,n){"use strict";var i=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"multiselect",class:{"multiselect--active":t.isOpen,"multiselect--disabled":t.disabled,"multiselect--above":t.isAbove},attrs:{tabindex:t.searchable?-1:t.tabindex},on:{focus:function(e){t.activate()},blur:function(e){!t.searchable&&t.deactivate()},keydown:[function(e){return"button"in e||!t._k(e.keyCode,"down",40,e.key,"ArrowDown")?e.target!==e.currentTarget?null:(e.preventDefault(),void t.pointerForward()):null},function(e){return"button"in e||!t._k(e.keyCode,"up",38,e.key,"ArrowUp")?e.target!==e.currentTarget?null:(e.preventDefault(),void t.pointerBackward()):null},function(e){return"button"in e||!t._k(e.keyCode,"enter",13,e.key,"Enter")||!t._k(e.keyCode,"tab",9,e.key,"Tab")?(e.stopPropagation(),e.target!==e.currentTarget?null:void t.addPointerElement(e)):null}],keyup:function(e){if(!("button"in e)&&t._k(e.keyCode,"esc",27,e.key,"Escape"))return null;t.deactivate()}}},[t._t("caret",[n("div",{staticClass:"multiselect__select",on:{mousedown:function(e){e.preventDefault(),e.stopPropagation(),t.toggle()}}})],{toggle:t.toggle}),t._v(" "),t._t("clear",null,{search:t.search}),t._v(" "),n("div",{ref:"tags",staticClass:"multiselect__tags"},[n("div",{directives:[{name:"show",rawName:"v-show",value:t.visibleValues.length>0,expression:"visibleValues.length > 0"}],staticClass:"multiselect__tags-wrap"},[t._l(t.visibleValues,function(e){return[t._t("tag",[n("span",{staticClass:"multiselect__tag"},[n("span",{domProps:{textContent:t._s(t.getOptionLabel(e))}}),t._v(" "),n("i",{staticClass:"multiselect__tag-icon",attrs:{"aria-hidden":"true",tabindex:"1"},on:{keydown:function(n){if(!("button"in n)&&t._k(n.keyCode,"enter",13,n.key,"Enter"))return null;n.preventDefault(),t.removeElement(e)},mousedown:function(n){n.preventDefault(),t.removeElement(e)}}})])],{option:e,search:t.search,remove:t.removeElement})]})],2),t._v(" "),t.internalValue&&t.internalValue.length>t.limit?[t._t("limit",[n("strong",{staticClass:"multiselect__strong",domProps:{textContent:t._s(t.limitText(t.internalValue.length-t.limit))}})])]:t._e(),t._v(" "),n("transition",{attrs:{name:"multiselect__loading"}},[t._t("loading",[n("div",{directives:[{name:"show",rawName:"v-show",value:t.loading,expression:"loading"}],staticClass:"multiselect__spinner"})])],2),t._v(" "),n("input",{directives:[{name:"show",rawName:"v-show",value:t.isOpen&&t.searchable,expression:"isOpen && searchable"}],ref:"search",staticClass:"multiselect__input",style:t.inputStyle,attrs:{name:t.name,id:t.id,type:"text",autocomplete:"off",placeholder:t.placeholder,disabled:t.disabled,tabindex:t.tabindex},domProps:{value:t.search},on:{input:function(e){t.updateSearch(e.target.value)},focus:function(e){e.preventDefault(),t.activate()},blur:function(e){e.preventDefault(),t.deactivate()},keyup:function(e){if(!("button"in e)&&t._k(e.keyCode,"esc",27,e.key,"Escape"))return null;t.deactivate()},keydown:[function(e){if(!("button"in e)&&t._k(e.keyCode,"down",40,e.key,"ArrowDown"))return null;e.preventDefault(),t.pointerForward()},function(e){if(!("button"in e)&&t._k(e.keyCode,"up",38,e.key,"ArrowUp"))return null;e.preventDefault(),t.pointerBackward()},function(e){return"button"in e||!t._k(e.keyCode,"enter",13,e.key,"Enter")?(e.preventDefault(),e.stopPropagation(),e.target!==e.currentTarget?null:void t.addPointerElement(e)):null},function(e){if(!("button"in e)&&t._k(e.keyCode,"delete",[8,46],e.key,["Backspace","Delete"]))return null;e.stopPropagation(),t.removeLastElement()}]}}),t._v(" "),t.isSingleLabelVisible?n("span",{staticClass:"multiselect__single",on:{mousedown:function(e){return e.preventDefault(),t.toggle(e)}}},[t._t("singleLabel",[[t._v(t._s(t.currentOptionLabel))]],{option:t.singleValue})],2):t._e(),t._v(" "),t.isPlaceholderVisible?n("span",{on:{mousedown:function(e){return e.preventDefault(),t.toggle(e)}}},[t._t("placeholder",[n("span",{staticClass:"multiselect__single"},[t._v("\n            "+t._s(t.placeholder)+"\n          ")])])],2):t._e()],2),t._v(" "),n("transition",{attrs:{name:"multiselect"}},[n("div",{directives:[{name:"show",rawName:"v-show",value:t.isOpen,expression:"isOpen"}],ref:"list",staticClass:"multiselect__content-wrapper",style:{maxHeight:t.optimizedHeight+"px"},on:{focus:t.activate,mousedown:function(t){t.preventDefault()}}},[n("ul",{staticClass:"multiselect__content",style:t.contentStyle},[t._t("beforeList"),t._v(" "),t.multiple&&t.max===t.internalValue.length?n("li",[n("span",{staticClass:"multiselect__option"},[t._t("maxElements",[t._v("Maximum of "+t._s(t.max)+" options selected. First remove a selected option to select another.")])],2)]):t._e(),t._v(" "),!t.max||t.internalValue.length<t.max?t._l(t.filteredOptions,function(e,i){return n("li",{key:i,staticClass:"multiselect__element"},[e&&(e.$isLabel||e.$isDisabled)?t._e():n("span",{staticClass:"multiselect__option",class:t.optionHighlight(i,e),attrs:{"data-select":e&&e.isTag?t.tagPlaceholder:t.selectLabelText,"data-selected":t.selectedLabelText,"data-deselect":t.deselectLabelText},on:{click:function(n){n.stopPropagation(),t.select(e)},mouseenter:function(e){if(e.target!==e.currentTarget)return null;t.pointerSet(i)}}},[t._t("option",[n("span",[t._v(t._s(t.getOptionLabel(e)))])],{option:e,search:t.search})],2),t._v(" "),e&&(e.$isLabel||e.$isDisabled)?n("span",{staticClass:"multiselect__option",class:t.groupHighlight(i,e),attrs:{"data-select":t.groupSelect&&t.selectGroupLabelText,"data-deselect":t.groupSelect&&t.deselectGroupLabelText},on:{mouseenter:function(e){if(e.target!==e.currentTarget)return null;t.groupSelect&&t.pointerSet(i)},mousedown:function(n){n.preventDefault(),t.selectGroup(e)}}},[t._t("option",[n("span",[t._v(t._s(t.getOptionLabel(e)))])],{option:e,search:t.search})],2):t._e()])}):t._e(),t._v(" "),n("li",{directives:[{name:"show",rawName:"v-show",value:t.showNoResults&&0===t.filteredOptions.length&&t.search&&!t.loading,expression:"showNoResults && (filteredOptions.length === 0 && search && !loading)"}]},[n("span",{staticClass:"multiselect__option"},[t._t("noResult",[t._v("No elements found. Consider changing the search query.")])],2)]),t._v(" "),t._t("afterList")],2)])])],2)},r=[],o={render:i,staticRenderFns:r};e.a=o}])});
 
 /***/ }),
-/* 330 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {

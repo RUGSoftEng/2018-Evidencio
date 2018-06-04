@@ -310,7 +310,7 @@ window.vObj = new Vue({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
               type: "success"
-            })
+            });
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
             window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
@@ -462,6 +462,44 @@ window.vObj = new Vue({
     getLocalIdFromModelId(modelId) {
       for (let index = 0; index < this.modelIds.length; index++) {
         if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
+    checkPossibleVariableMappingFailures() {
+      this.steps.forEach((step, index) => {
+        if (step.apiCalls.length > 0) {
+          let reachableVars = this.getVariablesUpToStep(index).concat(step.variables);
+          console.log(reachableVars);
+          if (reachableVars > 0) {
+            let ifNotFound = reachableVars[0];
+            step.apiCalls.forEach(apiCall => {
+              apiCall.variables.forEach(variable => {
+                if (this.getReachableIndex(variable.localVariable, reachableVars) == -1) variable.localVariable = ifNotFound;
+              });
+            })
+          } else {
+            step.apiCalls = [];
+          }
+        }
+      });
+    },
+
+    getVariablesUpToStep(localStepId) {
+      let variables = [];
+      this.getAncestorStepList(localStepId).forEach(stepId => {
+        variables = variables.concat(this.steps[stepId].variables);
+      });
+      return variables;
+    },
+
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     */
+    getReachableIndex(varName, reachableVariables) {
+      for (let index = reachableVariables.length - 1; index >= 0; index--) {
+        if (reachableVariables[index] == varName) return index;
       }
       return -1;
     },
@@ -707,6 +745,7 @@ window.vObj = new Vue({
         "background-color": changedStep.step.colour
       });
       this.recountVariableUses();
+      //this.checkPossibleVariableMappingFailures();
     },
 
     /**
@@ -979,13 +1018,6 @@ window.vObj = new Vue({
           }
         }
       });
-    },
-
-    /**
-     * Should extra variables be selected, recount the variableuses.
-     */
-    selectedVariables: function () {
-      this.recountVariableUses();
     }
   }
 });
