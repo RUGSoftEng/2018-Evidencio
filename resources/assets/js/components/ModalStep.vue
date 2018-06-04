@@ -120,15 +120,7 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-                                                <chart-items-list :current-step-data="localStep.chartRenderingData"
-                                                                  :item-reference-upper="localStep.chartItemReference"
-                                                                  @refresh-chart-data="updateChartData($event)"
-                                                                  @refresh-chart-data1="updateChartData($event)"
-                                                                  @refresh-chart-data-after-deletion="updateChartData($event)"
-                                                                  @refresh-reference-data-after-deletion="updateReferenceData($event)"
-                                                                  @refresh-reference-data="updateReferenceData($event)"
-                                                                  @refresh-reference-data1="updateReferenceData($event)"
-                                                                    :available-results-upper="resultsUpToStep"></chart-items-list>
+                                                <chart-items-list :current-step-data="localStep.chartRenderingData" @refresh-chart-data="updateChartData($event)" @refresh-chart-data1="updateChartData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
@@ -219,13 +211,11 @@ export default {
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
       let results = this.ancestorResults;
-      if (this.localStep.hasOwnProperty("apiCalls")) {
-        this.localStep.apiCalls.forEach(apiCall => {
-          apiCall.results.map(result => {
-            results.push(result.name);
-          });
+      this.localStep.apiCalls.forEach(apiCall => {
+        apiCall.results.map(result => {
+          results.push(result.name);
         });
-      }
+      });
       return results;
     },
     // Array of model-representations for API-call
@@ -503,12 +493,8 @@ export default {
 
     updateChartData(chartData) {
       Vue.set(this.localStep, "chartRenderingData", chartData);
-      this.localStep.chartItemReference = chartData[1];
       this.chartChanged = !this.chartChanged;
-    },
-
-    updateReferenceData(refData) {
-      Vue.set(this.localStep, "chartItemReference", refData)
+      // this.localStep.chartRenderingData = chartData;
     }
   },
 

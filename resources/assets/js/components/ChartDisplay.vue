@@ -52,7 +52,8 @@
         changed: {
           type: Boolean,
           required: true
-        },
+        }
+
       },
       watch: {
         changed: function() {

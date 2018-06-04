@@ -574,8 +574,7 @@ window.vObj = new Vue({
             backgroundColor: ['#0000ff', '#ff0000'],
             data: [40, 20]
           }]
-        },
-        chartItemReference: ["first", "second"]
+        }
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
