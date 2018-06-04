@@ -272,6 +272,7 @@ export default {
       this.setSelectedVariables();
       this.setSelectedModels();
       this.updateRuleTargetDetails();
+      this.chartChanged = !this.chartChanged;
     },
 
     /**

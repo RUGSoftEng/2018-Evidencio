@@ -38,7 +38,16 @@
         },
         chartDataUpper: {
           type: Object,
-          default: null
+          default: () => {
+            return {
+              labels: ['January', 'February'],
+              datasets: [{
+                label: "Edit Label",
+                backgroundColor: ['#0000ff', '#ff0000'],
+                data: [40, 20]
+              }]
+            }
+          }
         },
         changed: {
           type: Boolean,
@@ -49,8 +58,6 @@
       watch: {
         changed: function() {
           this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
-          console.log("watching");
-          //this.$forceUpdate();
         }
       },
       mounted() {
