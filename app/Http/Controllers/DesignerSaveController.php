@@ -391,6 +391,9 @@ class DesignerSaveController extends Controller
                 $opt = $opt->first();
                 $opt->friendly_title = $option["friendlyTitle"];
                 $opt->save();
+                $savedOptions = $savedOptions->reject(function ($value) use ($option) {
+                    return ($value->id == $option["databaseId"]);
+                });
             } else {
                 $opt = new Option;
                 $opt->title = $option["title"];
