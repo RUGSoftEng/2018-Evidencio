@@ -7,9 +7,7 @@ window.appRegistration = new Vue({
   data: {
     maxFileNum: 5,
     fileList: [
-      { id: 0 },
-      { id: 1 },
-      { id: 2 }
+      { id: 0 }
     ],
     next_id: 3
   },
