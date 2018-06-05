@@ -1,15 +1,15 @@
 <template>
     <div v-if="chartType === 0">
-        <bar-chart :label="label10" :chart-data="localChartDataUpper" :options="options"></bar-chart>
+        <bar-chart :label="label10" :chart-data="localChartDataUpper" :options="chartOptions"></bar-chart>
     </div>
     <div v-else-if="chartType === 1">
-        <pie-chart :label="label10" :chart-data="localChartDataUpper" :options="options"></pie-chart>
+        <pie-chart :label="label10" :chart-data="localChartDataUpper"></pie-chart>
     </div>
     <div v-else-if="chartType === 2">
-        <polar-chart :label="label10" :chart-data="localChartDataUpper" :options="options"></polar-chart>
+        <polar-chart :label="label10" :chart-data="localChartDataUpper"></polar-chart>
     </div>
     <div v-else>
-        <doughnut-chart :label="label10" :chart-data="localChartDataUpper" :options="options"></doughnut-chart>
+        <doughnut-chart :label="label10" :chart-data="localChartDataUpper"></doughnut-chart>
     </div>
 
 </template>
@@ -65,9 +65,9 @@
       data() {
         return {
           localChartDataUpper: {},
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
+          chartOptions: {
+            // responsive: true,
+            maintainAspectRatio: true,
             legend: false,
             scales: {
               yAxes: [{
@@ -83,8 +83,3 @@
 
 </script>
 
-<style scoped>
-    div {
-        display: block;
-    }
-</style>
