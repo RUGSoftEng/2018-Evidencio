@@ -1,70 +1,111 @@
 <template>
-    <div class="card border-secondary">
-        <a href="#" @click="toggleShow" class="card-header collapsed" :id="'chartItemEditCollapseHeader_' + indexItem" data-parent="#accRulesEdit"
-            aria-expanded="false" :aria-controls="'chartItemEditCollapse_' + indexItem">
-            <h6 class="mb-0">
-                {{ chartItem.label }}
-            </h6>
-        </a>
-
-        <div :id="'chartItemEditCollapse_' + indexItem" class="collapse" :aria-labelledby="'#chartItemEditCollapseHeader_' + indexItem">
-            <div class="card-body">
-                <form onsubmit="return false">
-                    <div class="form-group">
-                        <label :for="'chartItemTitle_' + indexItem">Label </label>
-                        <input type="text" name="" :id="'chartItemTitle_' + indexItem" class="form-control" v-model="chartItem.label" placeholder="Label"
-                            :disabled="!editing">
-                        <small :id="'chartItemTitleHelp_' + indexItem" class="form-text text-muted">Label of the variable</small>
-                    </div>
-                    <div class="form-group">
-                        <label :for="'chartItemColor_' + indexItem">Color </label>
-                        <input type="text" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="chartItem.color" :disabled="!editing">
-                        <small :id="'chartItemColorHelp_' + indexItem" class="form-text text-muted">Color of the item</small>
-                    </div>
-                    <div class="form-group">
-                        <label :for="'chartItemValue_' + indexItem">Value </label>
-                        <input type="number" name="" class="form-control" :id="'chartItemValue_' + indexItem" v-model="chartItem.value" :disabled="!editing">
-                        <small :id="'chartItemValueHelp_' + indexItem" class="form-text text-muted">Placeholder value of the item</small>
-                        <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
-                        <button type="button" class="btn btn-primary ml-2">Add to chart</button>
-                        <button type="button" class="btn btn-primary ml-2">Remove from chart</button>
-                    </div>
-                </form>
-            </div>
+    <div class="mt-2">
+        <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editChartItem_' + indexItem"
+                aria-expanded="false" :aria-controls="'editChartItem_' + indexItem" :id="'headerChartItem_' + indexItem" @click="show = !show">
+            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            {{ chartItemLabel }}
+        </button>
+        <div class="collapse mt-2" :id="'editChartItem_' + indexItem">
+            <form onsubmit="return false">
+                <div class="form-group">
+                    <label :for="'chartItemTitle_' + indexItem">Label</label>
+                    <input type="text" name="" :id="'chartItemTitle_' + indexItem" class="form-control" v-model="localItemLabel" placeholder="Label" @change="toggleUpdate()">
+                </div>
+                <div class="form-group">
+                    <label :for="'chartItemColor_' + indexItem">Color</label>
+                    <input type="text" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="localItemColor" @change="toggleUpdate()">
+                </div>
+                <div class="form-group">
+                    <label :for="'chartItemValue_' + indexItem">Value</label>
+                    <input type="number" name="" class="form-control" :id="'chartItemValue_' + indexItem" v-model="localItemValue" @change="toggleUpdate()">
+                </div>
+                <div class="form-group">
+                    <label :for="'chartItemReference_' + indexItem">Variable</label>
+                    <select class="form-control" :id="'chartItemReference_' + indexItem" v-model="localReference" @change="toggleUpdate()">
+                        <option v-for="(result, index) in availableResults" :key="index" value="result">{{ result }}</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary ml-2" style="float: right; margin-bottom: 20px;" @click="toggleRemoval()">Remove</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
-export default {
-  props: {
-    chartItem: {
-      type: Object,
-      required: true
+  export default {
+    props: {
+      chartItemLabel: {
+        type: String,
+        required: true
+      },
+      chartItemColor: {
+        type: String,
+        required: true
+      },
+      chartItemValue: {
+        type: Number,
+        required: true,
+      },
+      chartItemReference: {
+        type: String,
+        required: true
+      },
+      indexItem: {
+        type: Number,
+        required: true
+      },
+      availableResults: {
+        type: Array
+      },
     },
-    indexItem: {
-      type: Number,
-      required: true
-    }
-  },
+    mounted() {
+      this.reload();
+    },
+    data() {
+      return {
+        localItemLabel: " ",
+        localItemColor: " ",
+        localItemValue: 0,
+        localReference: " ",
+        show: false
 
-  data() {
-    return {
-      editing: false
-    };
-  },
+      };
+    },
+    watch: {
+      chartItemLabel() {
+        this.reload();
+      },
+      chartItemColor() {
+        this.reload();
+      },
+      chartItemValue() {
+        this.reload();
+      },
+      chartItemReference() {
+        this.reload();
+      },
+    },
+    methods: {
+      reload() {
+        this.localItemLabel = this.chartItemLabel;
+        this.localItemColor = this.chartItemColor;
+        this.localItemValue = this.chartItemValue;
+        this.localReference = this.chartItemReference;
+      },
+      toggleShow() {
+        this.$emit("toggle1", this.indexItem);
+      },
 
-  methods: {
-    toggleShow() {
-      this.$emit("toggle1", this.indexItem);
-    }
-  },
+      toggleUpdate() {
+        this.$emit("refresh-chart-data-lower", [this.localItemLabel, this.localItemColor, this.localItemValue, this.indexItem, this.localReference]);
+      },
 
-  computed: {
-    getImage: function() {
-      if (this.editing) return "/images/check.svg";
-      else return "/images/pencil.svg";
+      toggleRemoval() {
+        this.$emit("remove-chart-item", this.indexItem);
+      }
     }
-  }
-};
+  };
 </script>

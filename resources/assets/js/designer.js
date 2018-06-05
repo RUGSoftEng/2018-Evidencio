@@ -310,7 +310,7 @@ window.vObj = new Vue({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
               type: "success"
-            })
+            });
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
             window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
@@ -466,6 +466,44 @@ window.vObj = new Vue({
       return -1;
     },
 
+    checkPossibleVariableMappingFailures() {
+      this.steps.forEach((step, index) => {
+        if (step.apiCalls.length > 0) {
+          let reachableVars = this.getVariablesUpToStep(index).concat(step.variables);
+          console.log(reachableVars);
+          if (reachableVars > 0) {
+            let ifNotFound = reachableVars[0];
+            step.apiCalls.forEach(apiCall => {
+              apiCall.variables.forEach(variable => {
+                if (this.getReachableIndex(variable.localVariable, reachableVars) == -1) variable.localVariable = ifNotFound;
+              });
+            })
+          } else {
+            step.apiCalls = [];
+          }
+        }
+      });
+    },
+
+    getVariablesUpToStep(localStepId) {
+      let variables = [];
+      this.getAncestorStepList(localStepId).forEach(stepId => {
+        variables = variables.concat(this.steps[stepId].variables);
+      });
+      return variables;
+    },
+
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     */
+    getReachableIndex(varName, reachableVariables) {
+      for (let index = reachableVariables.length - 1; index >= 0; index--) {
+        if (reachableVariables[index] == varName) return index;
+      }
+      return -1;
+    },
+
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {Number} index of position level should be added
@@ -528,16 +566,15 @@ window.vObj = new Vue({
         create: true,
         destroy: false,
         chartTypeNumber: 0,
-        chartData: [],
         chartRenderingData: {
           labels: ['January', 'February'],
           datasets: [{
-            // label: 'A simple label',
-            label: "Edit Label",
+            // label: "Edit Label",
             backgroundColor: ['#0000ff', '#ff0000'],
             data: [40, 20]
           }]
-        }
+        },
+        chartItemReference: ["first", "second"]
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
@@ -707,6 +744,7 @@ window.vObj = new Vue({
         "background-color": changedStep.step.colour
       });
       this.recountVariableUses();
+      //this.checkPossibleVariableMappingFailures();
     },
 
     /**
@@ -979,13 +1017,6 @@ window.vObj = new Vue({
           }
         }
       });
-    },
-
-    /**
-     * Should extra variables be selected, recount the variableuses.
-     */
-    selectedVariables: function () {
-      this.recountVariableUses();
     }
   }
 });

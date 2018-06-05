@@ -31,4 +31,17 @@ class Result extends Model
     {
         return $this->belongsTo('App\Step','step_id');
     }
+
+    /**
+     * Result steps where this result is used in a chart
+     * @property string item_label label of the result in the chart
+     * @property string item_background_colour colour of the result item in the
+     * chart, in the HTML format
+     * @property int item_data placeholder value for the result for presentational
+     * purposes used on the designer side
+     */
+    public function usedInChartsInResultSteps()
+    {
+        return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data');
+    }
 }

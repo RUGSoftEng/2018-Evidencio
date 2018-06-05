@@ -4583,7 +4583,7 @@
 "use strict";
 
 
-module.exports = __webpack_require__(12);
+module.exports = __webpack_require__(13);
 module.exports.easing = __webpack_require__(152);
 module.exports.canvas = __webpack_require__(153);
 module.exports.options = __webpack_require__(154);
@@ -5587,7 +5587,8 @@ module.exports = {
 
 /***/ }),
 /* 10 */,
-/* 11 */
+/* 11 */,
+/* 12 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -5777,7 +5778,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6123,7 +6124,6 @@ helpers.getValueAtIndexOrDefault = helpers.valueAtIndexOrDefault;
 
 
 /***/ }),
-/* 13 */,
 /* 14 */,
 /* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -6420,7 +6420,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(11)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(12)))
 
 /***/ }),
 /* 18 */
@@ -30661,7 +30661,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
 /* 148 */
@@ -31049,7 +31049,7 @@ module.exports = function() {
 "use strict";
 
 
-var helpers = __webpack_require__(12);
+var helpers = __webpack_require__(13);
 
 /**
  * Easing functions adapted from Robert Penner's easing equations.
@@ -31306,7 +31306,7 @@ helpers.easingEffects = effects;
 "use strict";
 
 
-var helpers = __webpack_require__(12);
+var helpers = __webpack_require__(13);
 
 /**
  * @namespace Chart.helpers.canvas
@@ -31527,7 +31527,7 @@ helpers.drawRoundedRectangle = function(ctx) {
 "use strict";
 
 
-var helpers = __webpack_require__(12);
+var helpers = __webpack_require__(13);
 
 /**
  * @alias Chart.helpers.options

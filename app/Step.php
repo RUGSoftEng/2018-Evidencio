@@ -22,10 +22,14 @@ use Illuminate\Database\Eloquent\Model;
  * starting point for new steps
  * @property int workflow_step_level Level (depth) of the step in workflow tree
  * @property string colour Colour of the node in HTML format (#rrggbb)
+ * @property int result_step_chart_type
+ * @property string result_step_main_label
  */
 class Step extends Model
 {
-    protected $fillable = ['title','description','workflow_step_level','colour','is_stored'];
+    protected $fillable = ['title','description','workflow_step_level','colour',
+                           'is_stored', 'result_step_chart_type',
+                           'result_step_main_label'];
     protected $touches = ['workflow'];
 
     public function workflow()
@@ -98,5 +102,18 @@ class Step extends Model
     public function modelRunFieldsById($modelId)
     {
         return $this->belongsToMany('App\Field','model_run_field_mappings','step_id','field_id')->withPivot('evidencio_field_id')->wherePivot('evidencio_model_id', $modelId);
+    }
+
+    /**
+     * Results used in the chart displayed in the result step
+     * @property string item_label label of the result in the chart
+     * @property string item_background_colour colour of the result item in the
+     * chart, in the HTML format
+     * @property int item_data placeholder value for the result for presentational
+     * purposes used on the designer side
+     */
+    public function resultStepChartItems()
+    {
+        return $this->belongsToMany('App\Result','result_step_chart_items','item_result_step_id','item_result_id')->withPivot('item_label','item_background_colour','item_data');
     }
 }
