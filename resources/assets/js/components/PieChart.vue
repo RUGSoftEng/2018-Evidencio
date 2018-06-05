@@ -9,12 +9,11 @@
       },
       data: {}
     },
-    options: {},
     mixins: [reactiveProp],
     extends: Pie,
     mounted () {
       // Overwriting base render method with actual data.
       this.renderChart(this.chartData, this.options);
     }
-  };
+  }
 </script>

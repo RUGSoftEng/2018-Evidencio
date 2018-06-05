@@ -122,13 +122,13 @@
                                                 </div>
                                                 <chart-items-list :current-step-data="localStep.chartRenderingData"
                                                                   :item-reference-upper="localStep.chartItemReference"
+                                                                  :available-results-upper="resultsUpToStep"
                                                                   @refresh-chart-data="updateChartData($event)"
                                                                   @refresh-chart-data1="updateChartData($event)"
                                                                   @refresh-chart-data-after-deletion="updateChartData($event)"
-                                                                  @refresh-reference-data-after-deletion="updateReferenceData($event)"
                                                                   @refresh-reference-data="updateReferenceData($event)"
                                                                   @refresh-reference-data1="updateReferenceData($event)"
-                                                                    :available-results-upper="resultsUpToStep"></chart-items-list>
+                                                                  @refresh-reference-data-after-deletion="updateReferenceData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
@@ -502,13 +502,12 @@ export default {
     },
 
     updateChartData(chartData) {
-      Vue.set(this.localStep, "chartRenderingData", chartData);
-      this.localStep.chartItemReference = chartData[1];
+      Vue.set(this.localStep, "chartRenderingData", JSON.parse(JSON.stringify(chartData)));
       this.chartChanged = !this.chartChanged;
     },
 
     updateReferenceData(refData) {
-      Vue.set(this.localStep, "chartItemReference", refData)
+      Vue.set(this.localStep, "chartItemReference", JSON.parse(JSON.stringify(refData)));
     }
   },
 
