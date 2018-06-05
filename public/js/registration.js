@@ -194,7 +194,7 @@ window.appRegistration = new Vue({
   el: '#files',
   data: {
     maxFileNum: 5,
-    fileList: [{ id: 0 }, { id: 1 }, { id: 2 }],
+    fileList: [{ id: 0 }],
     next_id: 3
   },
   methods: {
