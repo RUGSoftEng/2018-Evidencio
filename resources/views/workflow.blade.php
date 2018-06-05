@@ -71,13 +71,15 @@ or radio buttons for categorical values.--}}
       @if ($item['type']=='categorical')
         <?php  echo $item['title'].": ";?>
         <br>
-
+        <div class="btn-group btn-group-toggle"  data-toggle="buttons">
         @foreach ($item['options'] as $value)
+        <label class="btn btn-outline-primary  btn-sm" >
           <input type="radio" name="answer[<?php echo $item['id']; ?>]" value="<?php echo $value['title']; ?>" >
           <?php echo $value['title']; ?>
-          <br>
-        @endforeach
+          </label>
 
+        @endforeach
+      </div>
       @endif
     </li>
     @endforeach
