@@ -91,6 +91,7 @@
                                                             fields to the current step or link it to a precious step to use
                                                             the fields of that step.</h6>
                                                     </div>
+                                                    <label for="variableMappingList" class="variable-label mb-2">Selected models</label>
                                                     <variable-mapping-api-list :api-calls="localStep.apiCalls" :used-variables="localUsedVariables" :reachable-variables="variablesUpToStep"
                                                         @remove="localStep.apiCalls = []"></variable-mapping-api-list>
                                                 </div>

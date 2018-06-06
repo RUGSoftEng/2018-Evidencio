@@ -3,8 +3,8 @@
         <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf" :title="buttonTitle">Add rule</button>
         <label for="ruleEditList" class="rule-label mb-2">Created Rules</label>
         <div class="list-group" id="ruleEditList">
-            <rule-edit-item v-for="(rule, index) in rules" :key="index" :index="index" :rule="rule" :reachable-results="reachableResults"
-                :children="children"></rule-edit-item>
+            <rule-edit-item v-for="(rule, index) in existingRules" :key="index" :index="index" :rule="rule" :reachable-results="reachableResults"
+                :children="children" @remove="removeRule($event)"></rule-edit-item>
         </div>
     </div>
 </template>
@@ -37,6 +37,11 @@ export default {
     buttonTitle: function() {
       if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
       return "Add a rule to connect this step to the next";
+    },
+    existingRules: function() {
+      return this.rules.filter(rule => {
+        return rule.action !== "destroy";
+      });
     }
   },
   watch: {
@@ -60,10 +65,12 @@ export default {
         },
         target: null,
         edgeId: -1,
-        create: true,
-        destroy: false,
-        change: false
+        action: "create"
       });
+    },
+    removeRule(index) {
+      Vue.set(this.rules[index], "action", "destroy");
+      // this.rules[index].destroy = true;
     }
   }
 };
