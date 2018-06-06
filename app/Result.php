@@ -39,9 +39,11 @@ class Result extends Model
      * chart, in the HTML format
      * @property int item_data placeholder value for the result for presentational
      * purposes used on the designer side
+     * @property bool item_is_negated specifies if the value in the chart should
+     * be displayed as 100 - variable_value
      */
     public function usedInChartsInResultSteps()
     {
-        return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data');
+        return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data','item_is_negated');
     }
 }
