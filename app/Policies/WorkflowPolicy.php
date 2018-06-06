@@ -24,7 +24,7 @@ class WorkflowPolicy
             return true;
         }
     }
-    
+
     /**
      * Determine whether the user can view the workflow on the designer side.
      *
@@ -34,7 +34,7 @@ class WorkflowPolicy
      */
     public function view(User $user, Workflow $workflow)
     {
-        $workflow->author_id == $user->id || $user->is_reviewer;
+        return $workflow->author_id == $user->id || $user->is_reviewer;
     }
 
     /**
@@ -46,7 +46,7 @@ class WorkflowPolicy
      */
     public function save(User $user, $workflow)
     {
-        $workflow->author_id == $user->id;
+        return $workflow->author_id == $user->id;
     }
 
     /**
@@ -58,6 +58,6 @@ class WorkflowPolicy
      */
     public function delete(User $user, Workflow $workflow)
     {
-        $workflow->author_id == $user->id;
+        return $workflow->author_id == $user->id;
     }
 }
