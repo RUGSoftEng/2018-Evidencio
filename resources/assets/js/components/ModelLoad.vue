@@ -12,7 +12,7 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                      <input type="text" name="inputModelSearch" v-model="modelSearch" class="form-control" style="width:100%; font-size:x-large; height:50px;" placeholder="Search for Model..." v-on:keyup.enter="loadModelEvidencio"></input>
+                      <input type="text" name="inputModelSearch" v-model="modelSearch" class="form-control" style="width:100%; font-size:x-large; height:50px;" placeholder="Search for Model..." v-on:keyup.enter="loadModelEvidencio" autofocus>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
