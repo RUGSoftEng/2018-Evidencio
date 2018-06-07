@@ -15,7 +15,7 @@ Clone the repository and create your own `.env` file by copying `.env.example` a
 
     ./install.sh
 
-You will also need to run it every time there is a new database migration available.
+You may need to run some of the commands in the installation script if there's a new migration or dependency.
 
 To enable the task scheduler, add the following cron entry:
 
