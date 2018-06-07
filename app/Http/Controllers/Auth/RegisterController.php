@@ -148,7 +148,7 @@ class RegisterController extends Controller
             ]);
         }
 
-        Mail::to($user)->send(new VerifyMail($user));
+        Mail::to($user)->queue(new VerifyMail($user));
 
         return $user;
     }
