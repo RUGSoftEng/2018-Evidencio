@@ -17,6 +17,16 @@ Clone the repository and create your own `.env` file by copying `.env.example` a
 
 You will also need to run it every time there is a new database migration available.
 
+To enable the task scheduler, add the following cron entry:
+
+    * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+
+You can add this for example by running:
+
+    crontab -e
+
+and saving your file there
+
 ### How to run
 
 Run the following command:
