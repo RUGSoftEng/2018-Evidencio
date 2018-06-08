@@ -398,14 +398,21 @@ window.vObj = new Vue({
               self.addStep(element.title, element.description, element.level);
               let localStep = self.steps[index];
               localStep.id = element.id;
+              localStep.type = element.type;
               localStep.colour = element.colour;
-              localStep.variables = element.variables;
-              localStep.varCounter = element.variables.length;
               localStep.rules = [];
-              element.rules.map(rule => {
-                localStep.rules.push(self.prepareSingleRule(rule));
-              });
-              localStep.apiCalls = element.apiCalls;
+              if (localStep.type == "input") {
+                localStep.variables = element.variables;
+                localStep.varCounter = element.variables.length;
+                element.rules.map(rule => {
+                  localStep.rules.push(self.prepareSingleRule(rule));
+                });
+                localStep.apiCalls = element.apiCalls;
+              } else {
+                localStep.chartTypeNumber = Number(element.chartTypeNumber);
+                localStep.chartItemReference = element.chartItemReference;
+                localStep.chartRenderingData = element.chartRenderingData;
+              }
             });
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
@@ -425,6 +432,7 @@ window.vObj = new Vue({
             text: "Your workflow failed to load. Please try again later.",
             type: "error"
           });
+          self.isLoading = false;
           console.log(errorThrown);
         }
       });
@@ -606,14 +614,30 @@ window.vObj = new Vue({
         action: "create",
         chartTypeNumber: 0,
         chartRenderingData: {
-          labels: ['January', 'February'],
+          labels: [],
           datasets: [{
-            // label: "Edit Label",
-            backgroundColor: ['#0000ff', '#ff0000'],
-            data: [40, 20]
+            backgroundColor: [],
+            data: []
           }]
         },
-        chartItemReference: ["first", "second"]
+        /*{
+                 labels: ['January', 'February'],
+                 datasets: [{
+                   // label: "Edit Label",
+                   backgroundColor: ['#0000ff', '#ff0000'],
+                   data: [40, 20]
+                 }]
+               },*/
+        chartItemReference: []
+        /*[{
+                    reference: "first",
+                    negation: false
+                  },
+                  {
+                    reference: "second",
+                    negation: false
+                  }
+                ]*/
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);

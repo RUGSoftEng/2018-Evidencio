@@ -44439,14 +44439,21 @@ window.vObj = new Vue({
               self.addStep(element.title, element.description, element.level);
               var localStep = self.steps[index];
               localStep.id = element.id;
+              localStep.type = element.type;
               localStep.colour = element.colour;
-              localStep.variables = element.variables;
-              localStep.varCounter = element.variables.length;
               localStep.rules = [];
-              element.rules.map(function (rule) {
-                localStep.rules.push(self.prepareSingleRule(rule));
-              });
-              localStep.apiCalls = element.apiCalls;
+              if (localStep.type == "input") {
+                localStep.variables = element.variables;
+                localStep.varCounter = element.variables.length;
+                element.rules.map(function (rule) {
+                  localStep.rules.push(self.prepareSingleRule(rule));
+                });
+                localStep.apiCalls = element.apiCalls;
+              } else {
+                localStep.chartTypeNumber = Number(element.chartTypeNumber);
+                localStep.chartItemReference = element.chartItemReference;
+                localStep.chartRenderingData = element.chartRenderingData;
+              }
             });
             if (result.usedVariables.constructor !== Array) self.usedVariables = result.usedVariables;
             self.recountVariableUses();
@@ -44465,6 +44472,7 @@ window.vObj = new Vue({
             text: "Your workflow failed to load. Please try again later.",
             type: "error"
           });
+          self.isLoading = false;
           console.log(errorThrown);
         }
       });
@@ -44658,14 +44666,30 @@ window.vObj = new Vue({
         action: "create",
         chartTypeNumber: 0,
         chartRenderingData: {
-          labels: ['January', 'February'],
+          labels: [],
           datasets: [{
-            // label: "Edit Label",
-            backgroundColor: ['#0000ff', '#ff0000'],
-            data: [40, 20]
+            backgroundColor: [],
+            data: []
           }]
         },
-        chartItemReference: ["first", "second"]
+        /*{
+                 labels: ['January', 'February'],
+                 datasets: [{
+                   // label: "Edit Label",
+                   backgroundColor: ['#0000ff', '#ff0000'],
+                   data: [40, 20]
+                 }]
+               },*/
+        chartItemReference: []
+        /*[{
+                    reference: "first",
+                    negation: false
+                  },
+                  {
+                    reference: "second",
+                    negation: false
+                  }
+                ]*/
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
@@ -51820,6 +51844,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       type: Array
     }
   },
+  computed: {
+    addLabelButtonTitle: function addLabelButtonTitle() {
+      if (this.availableResultsUpper.length == 0) return "No model-calculation results available to show. Please add a calculation in a parent-step.";else return "Add a label to the graph to show the result of a calculation.";
+    }
+  },
   methods: {
     selectCard: function selectCard(index) {
       for (var ind = 0; ind < this.currentStepData.labels.length; ind++) {
@@ -51830,7 +51859,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.currentStepData.labels.push("Enter Label");
       this.currentStepData.datasets[0].backgroundColor.push("#00ff00");
       this.currentStepData.datasets[0].data.push(17);
-      this.itemReferenceUpper.push(" ");
+      this.itemReferenceUpper.push({
+        reference: this.availableResultsUpper[0],
+        negation: false
+      });
       this.$emit("refresh-chart-data1", this.currentStepData);
       this.$emit("refresh-reference-data1", this.itemReferenceUpper);
     },
@@ -51950,6 +51982,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -51966,7 +52005,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: true
     },
     chartItemReference: {
-      type: String,
+      type: Object,
       required: true
     },
     indexItem: {
@@ -51987,7 +52026,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       localItemValue: 0,
       localReference: " ",
       show: false
-
     };
   },
 
@@ -52187,8 +52225,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.localReference,
-                    expression: "localReference"
+                    value: _vm.localReference.reference,
+                    expression: "localReference.reference"
                   }
                 ],
                 staticClass: "form-control",
@@ -52204,9 +52242,13 @@ var render = function() {
                           var val = "_value" in o ? o._value : o.value
                           return val
                         })
-                      _vm.localReference = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
+                      _vm.$set(
+                        _vm.localReference,
+                        "reference",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
                     },
                     function($event) {
                       _vm.toggleUpdate()
@@ -52217,10 +52259,81 @@ var render = function() {
               _vm._l(_vm.availableResults, function(result, index) {
                 return _c(
                   "option",
-                  { key: index, attrs: { value: "result" } },
+                  { key: index, domProps: { value: result } },
                   [_vm._v(_vm._s(result))]
                 )
               })
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "form-check",
+                attrs: {
+                  title:
+                    "Negated result means '100-result', mainly useful for percentage-results."
+                }
+              },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.localReference.negation,
+                      expression: "localReference.negation"
+                    }
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "checkbox", id: "negation_" + _vm.indexItem },
+                  domProps: {
+                    checked: Array.isArray(_vm.localReference.negation)
+                      ? _vm._i(_vm.localReference.negation, null) > -1
+                      : _vm.localReference.negation
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.localReference.negation,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(
+                              _vm.localReference,
+                              "negation",
+                              $$a.concat([$$v])
+                            )
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.localReference,
+                              "negation",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.localReference, "negation", $$c)
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "negation_" + _vm.indexItem }
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Negate the result\n                    "
+                    )
+                  ]
+                )
+              ]
             )
           ]),
           _vm._v(" "),
@@ -52270,7 +52383,11 @@ var render = function() {
             "button",
             {
               staticClass: "btn btn-primary ml-2",
-              attrs: { type: "button" },
+              attrs: {
+                type: "button",
+                disabled: _vm.availableResultsUpper.length == 0,
+                title: _vm.addLabelButtonTitle
+              },
               on: { click: _vm.addChartItem }
             },
             [_vm._v("Add item")]
