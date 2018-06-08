@@ -44472,8 +44472,10 @@ window.vObj = new Vue({
             text: "Your workflow failed to load. Please try again later.",
             type: "error"
           });
-          self.isLoading = false;
           console.log(errorThrown);
+          window.setTimeout(function () {
+            window.location.replace("/designer");
+          }, 2000);
         }
       });
     },
@@ -44512,6 +44514,9 @@ window.vObj = new Vue({
         });
         console.log("At least one of the requests failed.");
         console.log(e);
+        window.setTimeout(function () {
+          window.location.replace("/designer");
+        }, 2000);
       });
     },
 
@@ -44551,6 +44556,11 @@ window.vObj = new Vue({
       }
       return -1;
     },
+
+
+    /**
+     * Checks if variables used in a VariableMapping for the API call is not available anymore. If so, replace it with an available variable.
+     */
     checkPossibleVariableMappingFailures: function checkPossibleVariableMappingFailures() {
       var _this6 = this;
 
@@ -44562,7 +44572,7 @@ window.vObj = new Vue({
             var ifNotFound = reachableVars[0];
             step.apiCalls.forEach(function (apiCall) {
               apiCall.variables.forEach(function (variable) {
-                if (_this6.getReachableIndex(variable.localVariable, reachableVars) == -1) {
+                if (_this6.getReachableVariableIndex(variable.localVariable, reachableVars) == -1) {
                   variable.localVariable = ifNotFound;
                   showNotification = true;
                 }
@@ -44570,6 +44580,7 @@ window.vObj = new Vue({
             });
           } else {
             step.apiCalls = [];
+            showNotification = true;
           }
         }
       });
@@ -44579,24 +44590,102 @@ window.vObj = new Vue({
         type: "warn"
       });
     },
-    getVariablesUpToStep: function getVariablesUpToStep(localStepId) {
+
+
+    /**
+     * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     */
+    checkPossibleResultLabelFailures: function checkPossibleResultLabelFailures() {
       var _this7 = this;
+
+      var showNotification = false;
+      this.steps.forEach(function (step, index) {
+        if (step.type == "result") {
+          var reachableResults = _this7.getResultsUpToStep(index);
+          if (reachableResults.length > 0) {
+            for (var resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
+              if (_this7.getReachableResultIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
+                step.chartItemReference.splice(resultIndex, 1);
+                step.chartRenderingData.labels.splice(resultIndex, 1);
+                step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
+                step.chartRenderingData.datasets[0].backgroundColor.splice(resultIndex, 1);
+                showNotification = true;
+              }
+            }
+          } else {
+            step.chartItemReference = [];
+            step.chartRenderingData = {
+              labels: [],
+              datasets: [{
+                data: [],
+                backgroundColor: []
+              }]
+            };
+            showNotification = true;
+          }
+        }
+      });
+      if (showNotification) this.$notify({
+        title: "Result-label removed",
+        text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
+        type: "warn"
+      });
+    },
+
+
+    /**
+     * Find all variables reachable/known up to (but not including) the given step
+     * @param {Number} localStepId 
+     */
+    getVariablesUpToStep: function getVariablesUpToStep(localStepId) {
+      var _this8 = this;
 
       var variables = [];
       this.getAncestorStepList(localStepId).forEach(function (stepId) {
-        variables = variables.concat(_this7.steps[stepId].variables);
+        variables = variables.concat(_this8.steps[stepId].variables);
       });
       return variables;
     },
 
 
     /**
+     * Find all results reachable/known up to (but no including) the given step
+     * @param {Number} localStepId 
+     */
+    getResultsUpToStep: function getResultsUpToStep(localStepId) {
+      var _this9 = this;
+
+      var results = [];
+      this.getAncestorStepList(localStepId).forEach(function (stepId) {
+        _this9.steps[stepId].apiCalls.forEach(function (apiCall) {
+          results = results.concat(apiCall.results);
+        });
+      });
+      return results;
+    },
+
+
+    /**
      * Finds the index in the reachables based on the local variable name
      * @param {String} varName
+     * @param {Array} reachableVariables
      */
-    getReachableIndex: function getReachableIndex(varName, reachableVariables) {
+    getReachableVariableIndex: function getReachableVariableIndex(varName, reachableVariables) {
       for (var index = reachableVariables.length - 1; index >= 0; index--) {
         if (reachableVariables[index] == varName) return index;
+      }
+      return -1;
+    },
+
+
+    /**
+     * Finds the index in the reachables based on the result name
+     * @param {String} resName 
+     * @param {Array} reachableResults 
+     */
+    getReachableResultIndex: function getReachableResultIndex(resName, reachableResults) {
+      for (var index = reachableResults.length - 1; index >= 0; index--) {
+        if (reachableResults[index].name == resName) return index;
       }
       return -1;
     },
@@ -44811,7 +44900,7 @@ window.vObj = new Vue({
      * @param {Object} confirmInfo contains the title, message, data and type of the dialog
      */
     prepareConfirmDialog: function prepareConfirmDialog(confirmInfo) {
-      var _this8 = this;
+      var _this10 = this;
 
       this.confirmDialog.title = confirmInfo.title;
       this.confirmDialog.message = confirmInfo.message;
@@ -44819,19 +44908,19 @@ window.vObj = new Vue({
       switch (confirmInfo.type) {
         case "removeStep":
           this.confirmDialog.approvalFunction = function () {
-            _this8.removeStep(_this8.confirmDialog.data);
+            _this10.removeStep(_this10.confirmDialog.data);
           };
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = function () {
-            var stepIds = _this8.levels[_this8.confirmDialog.data - 1].steps;
+            var stepIds = _this10.levels[_this10.confirmDialog.data - 1].steps;
             for (var indexStep = 0; indexStep < stepIds.length; indexStep++) {
-              _this8.steps[stepIds[indexStep]].rules.map(function (rule) {
+              _this10.steps[stepIds[indexStep]].rules.map(function (rule) {
                 rule.action = "destroy";
               });
             }
-            _this8.connectionsChanged = !_this8.connectionsChanged;
-            _this8.addLevel(_this8.confirmDialog.data);
+            _this10.connectionsChanged = !_this10.connectionsChanged;
+            _this10.addLevel(_this10.confirmDialog.data);
           };
           break;
       }
@@ -44872,6 +44961,7 @@ window.vObj = new Vue({
       });
       this.recountVariableUses();
       this.checkPossibleVariableMappingFailures();
+      this.checkPossibleResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
     },
 
@@ -44955,12 +45045,12 @@ window.vObj = new Vue({
      * @param {Number} stepId of the target step of an edge/rule
      */
     removeRulesByTarget: function removeRulesByTarget(stepId) {
-      var _this9 = this;
+      var _this11 = this;
 
       var levelIndex = this.getStepLevel(stepId) - 1;
       if (levelIndex >= 0) {
         this.levels[levelIndex].steps.forEach(function (stepIndex) {
-          var currentRules = _this9.steps[levelIndex].rules;
+          var currentRules = _this11.steps[levelIndex].rules;
           for (var ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId) currentRules.splice(ruleIndex, 1);
           }
@@ -44974,27 +45064,27 @@ window.vObj = new Vue({
      * @param {Number} stepId of the child to find ancestors of
      */
     getAncestorStepList: function getAncestorStepList(stepId) {
-      var _this10 = this;
+      var _this12 = this;
 
       var list = [];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this10.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this10.getAncestorStepListHelper(stId));
+        _this12.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this12.getAncestorStepListHelper(stId));
         });
       });
       return this.arrayUnique(list);
     },
     getAncestorStepListHelper: function getAncestorStepListHelper(stepId) {
-      var _this11 = this;
+      var _this13 = this;
 
       var list = [stepId];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this11.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this11.getAncestorStepListHelper(stId));
+        _this13.steps[stId].rules.forEach(function (rule) {
+          if (rule.target.stepId == stepId) list = list.concat(_this13.getAncestorStepListHelper(stId));
         });
       });
       return list;
@@ -45020,11 +45110,11 @@ window.vObj = new Vue({
      * Calculates the maximum number of steps per level.
      */
     calculateMaxStepsPerLevel: function calculateMaxStepsPerLevel() {
-      var _this12 = this;
+      var _this14 = this;
 
       this.maxStepsPerLevel = 0;
       this.levels.forEach(function (element) {
-        if (element.steps.length > _this12.maxStepsPerLevel) _this12.maxStepsPerLevel = element.steps.length;
+        if (element.steps.length > _this14.maxStepsPerLevel) _this14.maxStepsPerLevel = element.steps.length;
       });
     },
 
@@ -45033,12 +45123,12 @@ window.vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this13 = this;
+      var _this15 = this;
 
       this.timesUsedVariables = {};
       this.models.forEach(function (element) {
         element.variables.forEach(function (variable) {
-          _this13.timesUsedVariables[variable.id.toString()] = 0;
+          _this15.timesUsedVariables[variable.id.toString()] = 0;
         });
       });
 
@@ -45134,7 +45224,7 @@ window.vObj = new Vue({
      * Adds/removes/changes rules in required
      */
     connectionsChanged: function connectionsChanged() {
-      var _this14 = this;
+      var _this16 = this;
 
       this.steps.forEach(function (step, index) {
         for (var _index2 = step.rules.length - 1; _index2 >= 0; _index2--) {
@@ -45142,20 +45232,20 @@ window.vObj = new Vue({
           switch (currentRule.action) {
             case "create":
               var source = step.nodeId;
-              var target = _this14.steps[currentRule.target.stepId].nodeId;
+              var target = _this16.steps[currentRule.target.stepId].nodeId;
               currentRule.edgeId = cy.add({
                 classes: "edge",
                 data: {
-                  id: "edge_" + _this14.edgeCounter,
+                  id: "edge_" + _this16.edgeCounter,
                   source: source,
                   target: target
                 }
               }).id();
-              _this14.edgeCounter++;
+              _this16.edgeCounter++;
               currentRule.action = "none";
               break;
             case "change":
-              var newTarget = _this14.steps[currentRule.target.stepId].nodeId;
+              var newTarget = _this16.steps[currentRule.target.stepId].nodeId;
               cy.getElementById(currentRule.edgeId).move({
                 target: newTarget
               });
@@ -46495,7 +46585,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAghBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <div v-if=\"variablesUpToStep.length != 0\">\n                                                        <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                        <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                            track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                            :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                            @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                            <template slot=\"tag\" slot-scope=\"props\">\n                                                                <span class=\"badge badge-info badge-larger\">\n                                                                    <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                    <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                                </span>\n                                                            </template>\n                                                        </multiselect>\n                                                    </div>\n                                                    <div v-else>\n                                                        <h6>A model calculation cannot be done without variables. Either add\n                                                            fields to the current step or link it to a precious step to use\n                                                            the fields of that step.</h6>\n                                                    </div>\n                                                    <label for=\"variableMappingList\" class=\"variable-label mb-2\">Selected models</label>\n                                                    <variable-mapping-api-list :api-calls=\"localStep.apiCalls\" :used-variables=\"localUsedVariables\" :reachable-variables=\"variablesUpToStep\"\n                                                        @remove=\"localStep.apiCalls = []\"></variable-mapping-api-list>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :current-step-data=\"localStep.chartRenderingData\"\n                                                                  :item-reference-upper=\"localStep.chartItemReference\"\n                                                                  :available-results-upper=\"resultsUpToStep\"\n                                                                  @refresh-chart-data=\"updateChartData($event)\"\n                                                                  @refresh-chart-data1=\"updateChartData($event)\"\n                                                                  @refresh-chart-data-after-deletion=\"updateChartData($event)\"\n                                                                  @refresh-reference-data=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data1=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data-after-deletion=\"updateReferenceData($event)\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"localStep.chartTypeNumber\" :chart-data-upper=\"localStep.chartRenderingData\" :changed=\"chartChanged\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApiList from \"./VariableMappingApiList.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApiList,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = this.ancestorVariables;\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = this.ancestorResults;\n      if (this.localStep.hasOwnProperty(\"apiCalls\")) {\n        this.localStep.apiCalls.forEach(apiCall => {\n          apiCall.results.map(result => {\n            results.push(result.name);\n          });\n        });\n      }\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n      this.chartChanged = !this.chartChanged;\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    },\n\n    updateChartData(chartData) {\n      Vue.set(this.localStep, \"chartRenderingData\", JSON.parse(JSON.stringify(chartData)));\n      this.chartChanged = !this.chartChanged;\n    },\n\n    updateReferenceData(refData) {\n      Vue.set(this.localStep, \"chartItemReference\", JSON.parse(JSON.stringify(refData)));\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      chartChanged: false\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AAkhBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <div v-if=\"variablesUpToStep.length != 0\">\n                                                        <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                        <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                            track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                            :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                            @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                            <template slot=\"tag\" slot-scope=\"props\">\n                                                                <span class=\"badge badge-info badge-larger\">\n                                                                    <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                    <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                                </span>\n                                                            </template>\n                                                        </multiselect>\n                                                    </div>\n                                                    <div v-else>\n                                                        <h6>A model calculation cannot be done without variables. Either add\n                                                            fields to the current step or link it to a precious step to use\n                                                            the fields of that step.</h6>\n                                                    </div>\n                                                    <label for=\"variableMappingList\" class=\"variable-label mb-2\">Selected models</label>\n                                                    <variable-mapping-api-list :api-calls=\"localStep.apiCalls\" :used-variables=\"localUsedVariables\" :reachable-variables=\"variablesUpToStep\"\n                                                        @remove=\"localStep.apiCalls = []\"></variable-mapping-api-list>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\" :children-changed=\"childrenChanged\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :current-step-data=\"localStep.chartRenderingData\"\n                                                                  :item-reference-upper=\"localStep.chartItemReference\"\n                                                                  :available-results-upper=\"resultsUpToStep\"\n                                                                  @refresh-chart-data=\"updateChartData($event)\"\n                                                                  @refresh-chart-data1=\"updateChartData($event)\"\n                                                                  @refresh-chart-data-after-deletion=\"updateChartData($event)\"\n                                                                  @refresh-reference-data=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data1=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data-after-deletion=\"updateReferenceData($event)\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"localStep.chartTypeNumber\" :chart-data-upper=\"localStep.chartRenderingData\" :changed=\"chartChanged\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApiList from \"./VariableMappingApiList.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApiList,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = JSON.parse(JSON.stringify(this.ancestorResults));\n      if (this.localStep.hasOwnProperty(\"apiCalls\")) {\n        this.localStep.apiCalls.forEach(apiCall => {\n          apiCall.results.map(result => {\n            results.push(result.name);\n          });\n        });\n      }\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n      this.chartChanged = !this.chartChanged;\n      this.childrenChanged = !this.childrenChanged;\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    },\n\n    updateChartData(chartData) {\n      Vue.set(this.localStep, \"chartRenderingData\", JSON.parse(JSON.stringify(chartData)));\n      this.chartChanged = !this.chartChanged;\n    },\n\n    updateReferenceData(refData) {\n      Vue.set(this.localStep, \"chartItemReference\", JSON.parse(JSON.stringify(refData)));\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      chartChanged: false,\n      childrenChanged: false\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -46733,13 +46823,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   computed: {
     // Array containing all variables assigned up to and including the current step
     variablesUpToStep: function variablesUpToStep() {
-      var vars = this.ancestorVariables;
+      var vars = JSON.parse(JSON.stringify(this.ancestorVariables));
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function resultsUpToStep() {
-      var results = this.ancestorResults;
+      var results = JSON.parse(JSON.stringify(this.ancestorResults));
       if (this.localStep.hasOwnProperty("apiCalls")) {
         this.localStep.apiCalls.forEach(function (apiCall) {
           apiCall.results.map(function (result) {
@@ -46804,6 +46894,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.setSelectedModels();
       this.updateRuleTargetDetails();
       this.chartChanged = !this.chartChanged;
+      this.childrenChanged = !this.childrenChanged;
     },
 
 
@@ -47060,7 +47151,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       localStep: {},
       localUsedVariables: {},
       multiSelectedVariables: [],
-      chartChanged: false
+      chartChanged: false,
+      childrenChanged: false
     };
   }
 });
@@ -49584,7 +49676,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.rule-label[data-v-424c86ca] {\n  font-weight: bold;\n  display: block;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditList.vue"],"names":[],"mappings":";AA+EA;EACA,kBAAA;EACA,eAAA;CACA","file":"RuleEditList.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"btn btn-primary ml-2\" @click=\"addRule\" :disabled=\"isLeaf\" :title=\"buttonTitle\">Add rule</button>\n        <label for=\"ruleEditList\" class=\"rule-label mb-2\">Created Rules</label>\n        <div class=\"list-group\" id=\"ruleEditList\">\n            <rule-edit-item v-for=\"(rule, index) in existingRules\" :key=\"index\" :index=\"index\" :rule=\"rule\" :reachable-results=\"reachableResults\"\n                :children=\"children\" @remove=\"removeRule($event)\"></rule-edit-item>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleEditItem from \"./RuleEditItem.vue\";\n\nexport default {\n  components: {\n    RuleEditItem\n  },\n  props: {\n    rules: {\n      type: Array,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    isLeaf: function() {\n      return this.children.length == 0;\n    },\n    buttonTitle: function() {\n      if (this.isLeaf) return \"You cannot add a rule to a step without steps on a next level\";\n      return \"Add a rule to connect this step to the next\";\n    },\n    existingRules: function() {\n      return this.rules.filter(rule => {\n        return rule.action !== \"destroy\";\n      });\n    }\n  },\n  watch: {\n    // reachableResults: function() {\n    //   if (this.reachableResults.length == 0) {\n    //     this.$emit(\"remove\");\n    //   } else {\n    //     this.rules.forEach(rule => {\n    //     });\n    //   }\n    // }\n  },\n  methods: {\n    addRule() {\n      this.rules.push({\n        databaseId: -1,\n        title: \"Empty rule\",\n        description: \"\",\n        condition: {\n          label: \"rule\"\n        },\n        target: null,\n        edgeId: -1,\n        action: \"create\"\n      });\n    },\n    removeRule(index) {\n      Vue.set(this.rules[index], \"action\", \"destroy\");\n      // this.rules[index].destroy = true;\n    }\n  }\n};\n</script>\n\n<style scoped>\n.rule-label {\n  font-weight: bold;\n  display: block;\n}\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.rule-label[data-v-424c86ca] {\n  font-weight: bold;\n  display: block;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditList.vue"],"names":[],"mappings":";AA+HA;EACA,kBAAA;EACA,eAAA;CACA","file":"RuleEditList.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"btn btn-primary ml-2\" @click=\"addRule\" :disabled=\"isLeaf || !isAvailable\" :title=\"buttonTitle\">Add rule</button>\n        <label for=\"ruleEditList\" class=\"rule-label mb-2\">Created Rules</label>\n        <div class=\"list-group\" id=\"ruleEditList\">\n            <rule-edit-item v-for=\"(rule, index) in existingRules\" :key=\"index\" :index=\"index\" :rule=\"rule\" :reachable-results=\"reachableResults\"\n                :children=\"childrenAvailable\" @remove=\"removeRule($event)\" @children-changed=\"setChildrenAvailable\"></rule-edit-item>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleEditItem from \"./RuleEditItem.vue\";\n\nexport default {\n  components: {\n    RuleEditItem\n  },\n  props: {\n    rules: {\n      type: Array,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    },\n    childrenChanged: {\n      type: Boolean,\n      required: true\n    }\n  },\n  computed: {\n    isLeaf: function() {\n      return this.children.length == 0;\n    },\n    buttonTitle: function() {\n      if (this.isLeaf) return \"You cannot add a rule to a step without steps on a next level\";\n      if (!this.isAvailable) return \"All steps on the next level are already connected\";\n      return \"Add a rule to connect this step to the next\";\n    },\n    existingRules: function() {\n      return this.rules.filter(rule => {\n        return rule.action !== \"destroy\";\n      });\n    }\n  },\n  mounted() {\n    this.setChildrenAvailable();\n  },\n  watch: {\n    childrenChanged() {\n      this.setChildrenAvailable();\n    }\n    // reachableResults: function() {\n    //   if (this.reachableResults.length == 0) {\n    //     this.$emit(\"remove\");\n    //   } else {\n    //     this.rules.forEach(rule => {\n    //     });\n    //   }\n    // }\n  },\n  methods: {\n    addRule() {\n      this.rules.push({\n        databaseId: -1,\n        title: \"Empty rule\",\n        description: \"\",\n        condition: {\n          label: \"rule\"\n        },\n        target: this.getFirstAvailableTarget(),\n        edgeId: -1,\n        action: \"create\"\n      });\n    },\n    removeRule(index) {\n      Vue.set(this.rules[index], \"action\", \"destroy\");\n      this.setChildrenAvailable();\n    },\n    calculateAvailability() {\n      for (let index = this.childrenAvailable.length - 1; index >= 0; index--) {\n        if (!this.childrenAvailable[index].$isDisabled) return (this.isAvailable = true);\n      }\n      this.isAvailable = false;\n    },\n    getFirstAvailableTarget() {\n      for (let index = this.childrenAvailable.length - 1; index >= 0; index--) {\n        if (!this.childrenAvailable[index].$isDisabled) return this.childrenAvailable[index];\n      }\n      return null;\n    },\n    setChildrenAvailable() {\n      let newChildren = JSON.parse(JSON.stringify(this.children));\n      newChildren.map(child => {\n        child.$isDisabled = false;\n      });\n      for (let ruleIndex = this.existingRules.length - 1; ruleIndex >= 0; ruleIndex--) {\n        const ruleTarget = this.existingRules[ruleIndex].target;\n        if (ruleTarget != null) {\n          for (let index = newChildren.length - 1; index >= 0; index--) {\n            if (newChildren[index].stepId === ruleTarget.stepId) {\n              newChildren[index].$isDisabled = true;\n              break;\n            }\n          }\n        }\n      }\n      this.childrenAvailable = newChildren;\n      this.calculateAvailability();\n    }\n  },\n  data() {\n    return {\n      isAvailable: false,\n      childrenAvailable: []\n    };\n  }\n};\n</script>\n\n<style scoped>\n.rule-label {\n  font-weight: bold;\n  display: block;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -49627,6 +49719,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     reachableResults: {
       type: Array,
       required: true
+    },
+    childrenChanged: {
+      type: Boolean,
+      required: true
     }
   },
   computed: {
@@ -49635,6 +49731,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     buttonTitle: function buttonTitle() {
       if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
+      if (!this.isAvailable) return "All steps on the next level are already connected";
       return "Add a rule to connect this step to the next";
     },
     existingRules: function existingRules() {
@@ -49643,7 +49740,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       });
     }
   },
+  mounted: function mounted() {
+    this.setChildrenAvailable();
+  },
+
   watch: {
+    childrenChanged: function childrenChanged() {
+      this.setChildrenAvailable();
+    }
     // reachableResults: function() {
     //   if (this.reachableResults.length == 0) {
     //     this.$emit("remove");
@@ -49652,6 +49756,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     //     });
     //   }
     // }
+
   },
   methods: {
     addRule: function addRule() {
@@ -49662,15 +49767,52 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         condition: {
           label: "rule"
         },
-        target: null,
+        target: this.getFirstAvailableTarget(),
         edgeId: -1,
         action: "create"
       });
     },
     removeRule: function removeRule(index) {
       Vue.set(this.rules[index], "action", "destroy");
-      // this.rules[index].destroy = true;
+      this.setChildrenAvailable();
+    },
+    calculateAvailability: function calculateAvailability() {
+      for (var index = this.childrenAvailable.length - 1; index >= 0; index--) {
+        if (!this.childrenAvailable[index].$isDisabled) return this.isAvailable = true;
+      }
+      this.isAvailable = false;
+    },
+    getFirstAvailableTarget: function getFirstAvailableTarget() {
+      for (var index = this.childrenAvailable.length - 1; index >= 0; index--) {
+        if (!this.childrenAvailable[index].$isDisabled) return this.childrenAvailable[index];
+      }
+      return null;
+    },
+    setChildrenAvailable: function setChildrenAvailable() {
+      var newChildren = JSON.parse(JSON.stringify(this.children));
+      newChildren.map(function (child) {
+        child.$isDisabled = false;
+      });
+      for (var ruleIndex = this.existingRules.length - 1; ruleIndex >= 0; ruleIndex--) {
+        var ruleTarget = this.existingRules[ruleIndex].target;
+        if (ruleTarget != null) {
+          for (var index = newChildren.length - 1; index >= 0; index--) {
+            if (newChildren[index].stepId === ruleTarget.stepId) {
+              newChildren[index].$isDisabled = true;
+              break;
+            }
+          }
+        }
+      }
+      this.childrenAvailable = newChildren;
+      this.calculateAvailability();
     }
+  },
+  data: function data() {
+    return {
+      isAvailable: false,
+      childrenAvailable: []
+    };
   }
 });
 
@@ -49760,7 +49902,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.icon-trash {\n  font-size: 120%;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditItem.vue"],"names":[],"mappings":";AAiGA;EACA,gBAAA;CACA","file":"RuleEditItem.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editRule_' + index\"\n            aria-expanded=\"false\" :aria-controls=\"'editRule_' + index\" :id=\"'headerRule_' + index\" @click=\"show = !show\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n            {{ rule.title }}\n            <i class=\"fo-icon icon-trash float-right\" @click=\"removeRule\">&#xf1f8;</i>\n        </button>\n        <div class=\"form-group collapse\" :id=\"'editRule_' + index\">\n            <label for=\"title\" class=\"mb-0\">Title</label>\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"rule.title\" placeholder=\"Title\">\n            <label for=\"condition\" class=\"mb-0\">Condition</label>\n            <div class=\"card border-secondary\">\n                <div class=\"card-body\">\n                    <rule-logic name=\"condition\" :logic=\"rule.condition\" :current-label=\"rule.condition.label\" :reachable-results=\"reachableResults\"></rule-logic>\n                </div>\n            </div>\n            <label class=\"mb-0\" for=\"target\">Target</label>\n            <multiselect name=\"target\" v-model=\"rule.target\" label=\"title\" track-by=\"ind\" :options=\"children\" :option-height=\"44\" :show-labels=\"false\"\n                preselect-first :allow-empty=\"false\">\n                <template slot=\"singleLabel\" slot-scope=\"props\">\n                    <div class=\"container-fluid\">\n                        <div class=\"row\">\n                            <div class=\"col\">\n                                <svg class=\"option__image\" viewBox=\"0 0 44 44\" width=\"44\" height=\"44\">\n                                    <rect x=\"2\" y=\"2\" width=\"40\" height=\"40\" rx=\"4\" ry=\"4\" :style=\"'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'\"\n                                    />\n                                </svg>\n                            </div>\n                            <div class=\"col option__desc\">\n                                <span class=\"option__title\">{{ props.option.title }}</span>\n                                <span>{{ props.option.id }}</span>\n                            </div>\n                        </div>\n                    </div>\n                </template>\n                <template slot=\"option\" slot-scope=\"props\">\n                    <div class=\"container-fluid\">\n                        <div class=\"row\">\n                            <div class=\"col\">\n                                <svg class=\"option__image\" viewBox=\"0 0 44 44\" width=\"44\" height=\"44\">\n                                    <rect x=\"2\" y=\"2\" width=\"40\" height=\"40\" rx=\"4\" ry=\"4\" :style=\"'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'\"\n                                    />\n                                </svg>\n                            </div>\n                            <div class=\"col option__desc\">\n                                <span class=\"option__title\">{{ props.option.title }}</span>\n                                <span>{{ props.option.id }}</span>\n                            </div>\n                        </div>\n                    </div>\n                </template>\n            </multiselect>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleLogic from \"./RuleLogic.vue\";\n\nexport default {\n  components: {\n    RuleLogic\n  },\n  props: {\n    rule: {\n      type: Object,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  methods: {\n    removeRule() {\n      this.$emit(\"remove\", this.index);\n    }\n  },\n  data() {\n    return {\n      show: false\n    };\n  }\n};\n</script>\n\n<style>\n.icon-trash {\n  font-size: 120%;\n}\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.icon-trash {\n  font-size: 120%;\n}\n.border-secondary {\n  border-color: #ced4da !important;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleEditItem.vue"],"names":[],"mappings":";AAiGA;EACA,gBAAA;CACA;AACA;EACA,iCAAA;CACA","file":"RuleEditItem.vue","sourcesContent":["<template>\n    <div>\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editRule_' + index\"\n            aria-expanded=\"false\" :aria-controls=\"'editRule_' + index\" :id=\"'headerRule_' + index\" @click=\"show = !show\">\n            <i class=\"fo-icon icon-down-open\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open\" v-else>&#xe803;</i>\n            {{ rule.title }}\n            <i class=\"fo-icon icon-trash float-right\" @click=\"removeRule\">&#xf1f8;</i>\n        </button>\n        <div class=\"form-group collapse\" :id=\"'editRule_' + index\">\n            <label for=\"title\" class=\"mb-0\">Title</label>\n            <input type=\"text\" name=\"title\" class=\"form-control\" v-model=\"rule.title\" placeholder=\"Title\">\n            <label for=\"condition\" class=\"mb-0\">Condition</label>\n            <div class=\"card border-secondary\">\n                <div class=\"card-body\">\n                    <rule-logic name=\"condition\" :logic=\"rule.condition\" :current-label=\"rule.condition.label\" :reachable-results=\"reachableResults\"></rule-logic>\n                </div>\n            </div>\n            <label class=\"mb-0\" for=\"target\">Target</label>\n            <multiselect name=\"target\" v-model=\"rule.target\" label=\"title\" track-by=\"ind\" :options=\"children\" :option-height=\"44\" :show-labels=\"false\"\n                preselect-first :allow-empty=\"false\" @input=\"$emit('children-changed')\">\n                <template slot=\"singleLabel\" slot-scope=\"props\">\n                    <div class=\"container-fluid\">\n                        <div class=\"row\">\n                            <div class=\"col\">\n                                <svg class=\"option__image\" viewBox=\"0 0 44 44\" width=\"44\" height=\"44\">\n                                    <rect x=\"2\" y=\"2\" width=\"40\" height=\"40\" rx=\"4\" ry=\"4\" :style=\"'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'\"\n                                    />\n                                </svg>\n                            </div>\n                            <div class=\"col option__desc\">\n                                <span class=\"option__title\">{{ props.option.title }}</span>\n                                <span>{{ props.option.id }}</span>\n                            </div>\n                        </div>\n                    </div>\n                </template>\n                <template slot=\"option\" slot-scope=\"props\">\n                    <div class=\"container-fluid\">\n                        <div class=\"row\">\n                            <div class=\"col\">\n                                <svg class=\"option__image\" viewBox=\"0 0 44 44\" width=\"44\" height=\"44\">\n                                    <rect x=\"2\" y=\"2\" width=\"40\" height=\"40\" rx=\"4\" ry=\"4\" :style=\"'fill:'+props.option.colour+';stroke-width:1;stroke:rgb(0,0,0)'\"\n                                    />\n                                </svg>\n                            </div>\n                            <div class=\"col option__desc\">\n                                <span class=\"option__title\">{{ props.option.title }}</span>\n                                <span>{{ props.option.id }}</span>\n                            </div>\n                        </div>\n                    </div>\n                </template>\n            </multiselect>\n        </div>\n    </div>\n</template>\n\n<script>\nimport RuleLogic from \"./RuleLogic.vue\";\n\nexport default {\n  components: {\n    RuleLogic\n  },\n  props: {\n    rule: {\n      type: Object,\n      required: true\n    },\n    index: {\n      type: Number,\n      required: true\n    },\n    children: {\n      type: Array,\n      required: true\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  methods: {\n    removeRule() {\n      this.$emit(\"remove\", this.index);\n    }\n  },\n  data() {\n    return {\n      show: false\n    };\n  }\n};\n</script>\n\n<style>\n.icon-trash {\n  font-size: 120%;\n}\n.border-secondary {\n  border-color: #ced4da !important;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -49954,7 +50096,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAqLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.hasOwnProperty(\"always\")) return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"always\", {});\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAqLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.label == \"rule_ALWAYS\" || this.logic.hasOwnProperty(\"always\")) return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"always\", {});\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -50037,7 +50179,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     type: function type() {
-      if (this.logic.hasOwnProperty("always")) return "always";
+      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";
@@ -50548,6 +50690,11 @@ var render = function() {
             "preselect-first": "",
             "allow-empty": false
           },
+          on: {
+            input: function($event) {
+              _vm.$emit("children-changed")
+            }
+          },
           scopedSlots: _vm._u([
             {
               key: "singleLabel",
@@ -50682,7 +50829,11 @@ var render = function() {
       "button",
       {
         staticClass: "btn btn-primary ml-2",
-        attrs: { type: "button", disabled: _vm.isLeaf, title: _vm.buttonTitle },
+        attrs: {
+          type: "button",
+          disabled: _vm.isLeaf || !_vm.isAvailable,
+          title: _vm.buttonTitle
+        },
         on: { click: _vm.addRule }
       },
       [_vm._v("Add rule")]
@@ -50704,12 +50855,13 @@ var render = function() {
             index: index,
             rule: rule,
             "reachable-results": _vm.reachableResults,
-            children: _vm.children
+            children: _vm.childrenAvailable
           },
           on: {
             remove: function($event) {
               _vm.removeRule($event)
-            }
+            },
+            "children-changed": _vm.setChildrenAvailable
           }
         })
       })
@@ -52888,7 +53040,9 @@ var render = function() {
                                           rules: _vm.localStep.rules,
                                           children: _vm.childrenStepsExtended,
                                           "reachable-results":
-                                            _vm.resultsUpToStep
+                                            _vm.resultsUpToStep,
+                                          "children-changed":
+                                            _vm.childrenChanged
                                         }
                                       })
                                     ],

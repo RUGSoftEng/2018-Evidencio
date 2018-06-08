@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     type() {
-      if (this.logic.hasOwnProperty("always")) return "always";
+      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";

@@ -432,8 +432,10 @@ window.vObj = new Vue({
             text: "Your workflow failed to load. Please try again later.",
             type: "error"
           });
-          self.isLoading = false;
           console.log(errorThrown);
+          window.setTimeout(() => {
+            window.location.replace("/designer");
+          }, 2000);
         }
       });
     },
@@ -468,6 +470,9 @@ window.vObj = new Vue({
         });
         console.log("At least one of the requests failed.");
         console.log(e);
+        window.setTimeout(() => {
+          window.location.replace("/designer");
+        }, 2000);
       });
     },
 
@@ -505,6 +510,9 @@ window.vObj = new Vue({
       return -1;
     },
 
+    /**
+     * Checks if variables used in a VariableMapping for the API call is not available anymore. If so, replace it with an available variable.
+     */
     checkPossibleVariableMappingFailures() {
       let showNotification = false;
       this.steps.forEach((step, index) => {
@@ -514,7 +522,7 @@ window.vObj = new Vue({
             let ifNotFound = reachableVars[0];
             step.apiCalls.forEach(apiCall => {
               apiCall.variables.forEach(variable => {
-                if (this.getReachableIndex(variable.localVariable, reachableVars) == -1) {
+                if (this.getReachableVariableIndex(variable.localVariable, reachableVars) == -1) {
                   variable.localVariable = ifNotFound;
                   showNotification = true;
                 }
@@ -522,6 +530,7 @@ window.vObj = new Vue({
             })
           } else {
             step.apiCalls = [];
+            showNotification = true;
           }
         }
       });
@@ -533,6 +542,49 @@ window.vObj = new Vue({
         });
     },
 
+    /**
+     * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     */
+    checkPossibleResultLabelFailures() {
+      let showNotification = false;
+      this.steps.forEach((step, index) => {
+        if (step.type == "result") {
+          let reachableResults = this.getResultsUpToStep(index);
+          if (reachableResults.length > 0) {
+            for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
+              if (this.getReachableResultIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
+                step.chartItemReference.splice(resultIndex, 1);
+                step.chartRenderingData.labels.splice(resultIndex, 1);
+                step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
+                step.chartRenderingData.datasets[0].backgroundColor.splice(resultIndex, 1);
+                showNotification = true;
+              }
+            }
+          } else {
+            step.chartItemReference = [];
+            step.chartRenderingData = {
+              labels: [],
+              datasets: [{
+                data: [],
+                backgroundColor: []
+              }]
+            }
+            showNotification = true;
+          }
+        }
+      });
+      if (showNotification)
+        this.$notify({
+          title: "Result-label removed",
+          text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
+          type: "warn"
+        });
+    },
+
+    /**
+     * Find all variables reachable/known up to (but not including) the given step
+     * @param {Number} localStepId 
+     */
     getVariablesUpToStep(localStepId) {
       let variables = [];
       this.getAncestorStepList(localStepId).forEach(stepId => {
@@ -542,12 +594,39 @@ window.vObj = new Vue({
     },
 
     /**
+     * Find all results reachable/known up to (but no including) the given step
+     * @param {Number} localStepId 
+     */
+    getResultsUpToStep(localStepId) {
+      let results = [];
+      this.getAncestorStepList(localStepId).forEach(stepId => {
+        this.steps[stepId].apiCalls.forEach(apiCall => {
+          results = results.concat(apiCall.results);
+        });
+      });
+      return results;
+    },
+
+    /**
      * Finds the index in the reachables based on the local variable name
      * @param {String} varName
+     * @param {Array} reachableVariables
      */
-    getReachableIndex(varName, reachableVariables) {
+    getReachableVariableIndex(varName, reachableVariables) {
       for (let index = reachableVariables.length - 1; index >= 0; index--) {
         if (reachableVariables[index] == varName) return index;
+      }
+      return -1;
+    },
+
+    /**
+     * Finds the index in the reachables based on the result name
+     * @param {String} resName 
+     * @param {Array} reachableResults 
+     */
+    getReachableResultIndex(resName, reachableResults) {
+      for (let index = reachableResults.length - 1; index >= 0; index--) {
+        if (reachableResults[index].name == resName) return index;
       }
       return -1;
     },
@@ -807,6 +886,7 @@ window.vObj = new Vue({
       });
       this.recountVariableUses();
       this.checkPossibleVariableMappingFailures();
+      this.checkPossibleResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
     },
 

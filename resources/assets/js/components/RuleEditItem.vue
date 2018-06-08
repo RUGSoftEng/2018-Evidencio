@@ -18,7 +18,7 @@
             </div>
             <label class="mb-0" for="target">Target</label>
             <multiselect name="target" v-model="rule.target" label="title" track-by="ind" :options="children" :option-height="44" :show-labels="false"
-                preselect-first :allow-empty="false">
+                preselect-first :allow-empty="false" @input="$emit('children-changed')">
                 <template slot="singleLabel" slot-scope="props">
                     <div class="container-fluid">
                         <div class="row">
@@ -97,5 +97,8 @@ export default {
 <style>
 .icon-trash {
   font-size: 120%;
+}
+.border-secondary {
+  border-color: #ced4da !important;
 }
 </style>

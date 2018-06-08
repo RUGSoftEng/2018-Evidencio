@@ -1,10 +1,10 @@
 <template>
     <div>
-        <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf" :title="buttonTitle">Add rule</button>
+        <button type="button" class="btn btn-primary ml-2" @click="addRule" :disabled="isLeaf || !isAvailable" :title="buttonTitle">Add rule</button>
         <label for="ruleEditList" class="rule-label mb-2">Created Rules</label>
         <div class="list-group" id="ruleEditList">
             <rule-edit-item v-for="(rule, index) in existingRules" :key="index" :index="index" :rule="rule" :reachable-results="reachableResults"
-                :children="children" @remove="removeRule($event)"></rule-edit-item>
+                :children="childrenAvailable" @remove="removeRule($event)" @children-changed="setChildrenAvailable"></rule-edit-item>
         </div>
     </div>
 </template>
@@ -28,6 +28,10 @@ export default {
     reachableResults: {
       type: Array,
       required: true
+    },
+    childrenChanged: {
+      type: Boolean,
+      required: true
     }
   },
   computed: {
@@ -36,6 +40,7 @@ export default {
     },
     buttonTitle: function() {
       if (this.isLeaf) return "You cannot add a rule to a step without steps on a next level";
+      if (!this.isAvailable) return "All steps on the next level are already connected";
       return "Add a rule to connect this step to the next";
     },
     existingRules: function() {
@@ -44,7 +49,13 @@ export default {
       });
     }
   },
+  mounted() {
+    this.setChildrenAvailable();
+  },
   watch: {
+    childrenChanged() {
+      this.setChildrenAvailable();
+    }
     // reachableResults: function() {
     //   if (this.reachableResults.length == 0) {
     //     this.$emit("remove");
@@ -63,15 +74,52 @@ export default {
         condition: {
           label: "rule"
         },
-        target: null,
+        target: this.getFirstAvailableTarget(),
         edgeId: -1,
         action: "create"
       });
     },
     removeRule(index) {
       Vue.set(this.rules[index], "action", "destroy");
-      // this.rules[index].destroy = true;
+      this.setChildrenAvailable();
+    },
+    calculateAvailability() {
+      for (let index = this.childrenAvailable.length - 1; index >= 0; index--) {
+        if (!this.childrenAvailable[index].$isDisabled) return (this.isAvailable = true);
+      }
+      this.isAvailable = false;
+    },
+    getFirstAvailableTarget() {
+      for (let index = this.childrenAvailable.length - 1; index >= 0; index--) {
+        if (!this.childrenAvailable[index].$isDisabled) return this.childrenAvailable[index];
+      }
+      return null;
+    },
+    setChildrenAvailable() {
+      let newChildren = JSON.parse(JSON.stringify(this.children));
+      newChildren.map(child => {
+        child.$isDisabled = false;
+      });
+      for (let ruleIndex = this.existingRules.length - 1; ruleIndex >= 0; ruleIndex--) {
+        const ruleTarget = this.existingRules[ruleIndex].target;
+        if (ruleTarget != null) {
+          for (let index = newChildren.length - 1; index >= 0; index--) {
+            if (newChildren[index].stepId === ruleTarget.stepId) {
+              newChildren[index].$isDisabled = true;
+              break;
+            }
+          }
+        }
+      }
+      this.childrenAvailable = newChildren;
+      this.calculateAvailability();
     }
+  },
+  data() {
+    return {
+      isAvailable: false,
+      childrenAvailable: []
+    };
   }
 };
 </script>

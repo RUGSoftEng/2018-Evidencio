@@ -98,7 +98,7 @@
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep"></rule-edit-list>
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -213,13 +213,13 @@ export default {
   computed: {
     // Array containing all variables assigned up to and including the current step
     variablesUpToStep: function() {
-      let vars = this.ancestorVariables;
+      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
-      let results = this.ancestorResults;
+      let results = JSON.parse(JSON.stringify(this.ancestorResults));
       if (this.localStep.hasOwnProperty("apiCalls")) {
         this.localStep.apiCalls.forEach(apiCall => {
           apiCall.results.map(result => {
@@ -284,6 +284,7 @@ export default {
       this.setSelectedModels();
       this.updateRuleTargetDetails();
       this.chartChanged = !this.chartChanged;
+      this.childrenChanged = !this.childrenChanged;
     },
 
     /**
@@ -517,7 +518,8 @@ export default {
       localStep: {},
       localUsedVariables: {},
       multiSelectedVariables: [],
-      chartChanged: false
+      chartChanged: false,
+      childrenChanged: false
     };
   }
 };
