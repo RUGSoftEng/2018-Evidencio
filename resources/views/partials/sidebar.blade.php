@@ -33,13 +33,14 @@
             </li>
             <br/><br/><br/>
             <li>
-                <a  href="#">User Guide</a>
+                <a  href="{{ route('userguide') }}">User Guide</a>
             </li>
             <li>
                 <a  href="https://www.evidencio.com/contact">Contact Us</a>
-                <a  href="https://www.evidencio.com/privacy-policy">Privacy Policy</a>
-                <a  href="https://www.evidencio.com/terms-conditions">Terms & Conditions</a>
-                <a  href="https://www.evidencio.com/disclaimer">Disclaimer</a>
+                <a  href="{{ route('about') }}">About</a>
+                <a  href="{{ route('privacypolicy') }}">Privacy Policy</a>
+                <a  href="{{ route('termsandconditions') }}">Terms & Conditions</a>
+                <a  href="{{ route('disclaimer') }}">Disclaimer</a>
             </li>
         </ul>
     </nav>

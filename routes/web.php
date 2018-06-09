@@ -47,3 +47,23 @@ Route::post('/designer/search', 'DesignerController@fetchSearch')->middleware('a
 Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')->middleware('auth');
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow')->middleware('auth');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow')->middleware('auth');
+
+Route::get('/about', function () {
+  return view('about');
+})->name('about');
+
+Route::get('/termsandconditions', function () {
+  return view('termsandconditions');
+})->name('termsandconditions');
+
+Route::get('/privacypolicy', function () {
+  return view('privacypolicy');
+})->name('privacypolicy');
+
+Route::get('/userguide',function() {
+	return view('userguide');
+})->name('userguide')->middleware('auth');
+
+Route::get('/disclaimer',function() {
+	return view('disclaimer');
+})->name('disclaimer');
