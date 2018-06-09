@@ -172,7 +172,7 @@ class DesignerSaveController extends Controller
         // Save the result-step
         $possibleResults = $workflow->resultsOfWorkflow();
         foreach ($steps as $stepKey => $step) {
-            if ($step["type"] == "result") {
+            if ($step["type"] == "result" && isset($step["chartItemReference"])) {
                 $dbStep = $workflow->steps()->where("id", $stepIds[$stepKey])->first();
                 $dbStep->result_step_chart_type = $step["chartTypeNumber"];
                 $dbStep->save();
