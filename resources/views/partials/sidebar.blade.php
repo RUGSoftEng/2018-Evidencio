@@ -16,12 +16,12 @@
                 <a href="/myworkflows">My Workflows</a>
             </li>
             <li>
-                <a class="somethingSomething" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
+                <a class="subMenu" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
-                    <li><a href="{{ route('usersverification.index') }}">Users verification</a></li>
-                    <li><a href="#">Submitted Workflows</a></li>
-                    <li><a href="#">User Questions</a></li>
-                    <li><a href="#">User Requests</a></li>
+                    <li><a class="sidebar-listitem" href="{{ route('usersverification.index') }}">Users verification</a></li>
+                    <li><a class="sidebar-listitem" href="#">Submitted Workflows</a></li>
+                    <li><a class="sidebar-listitem" href="#">User Questions</a></li>
+                    <li><a class="sidebar-listitem" href="#">User Requests</a></li>
                 </ul>
                 <a href="#">Edit Account Details</a>
             </li>

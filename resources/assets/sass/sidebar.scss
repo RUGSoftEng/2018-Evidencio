@@ -101,25 +101,27 @@ a:focus {
   background: #6d7fcc;
 }
 
-.somethingSomething[data-toggle="collapse"] {
+.subMenu[data-toggle="collapse"] {
   position: relative;
 }
 
-.somethingSomething[aria-expanded="false"]::before,
-.somethingSomething[aria-expanded="true"]::before {
-  content: "˅";
+.subMenu[aria-expanded="false"]::before,
+.subMenu[aria-expanded="true"]::before {
+  content: '\e802';
   display: block;
   position: absolute;
   right: 20px;
   font-size: 0.9em;
+  font-family: 'fontello';
 }
 
-.somethingSomething[aria-expanded="true"]::before {
-  content: "˄";
+.subMenu[aria-expanded="true"]::before {
+  content: '\e803';
   font-size: 0.9em;
+  font-family: 'fontello';
 }
 
-.doubleMenu {
+.sidebar-listitem {
   font-size: 0.9em !important;
   padding-left: 30px !important;
   background: #6d7fcc;
@@ -135,17 +137,6 @@ ul.CTAs a {
   display: block;
   border-radius: 5px;
   margin-bottom: 5px;
-}
-
-a.download {
-  background: #fff;
-  color: #7386d5;
-}
-
-a.article,
-a.article:hover {
-  background: #6d7fcc !important;
-  color: #fff !important;
 }
 
 #sidebarPlaceholder {

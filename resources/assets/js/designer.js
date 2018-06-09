@@ -400,7 +400,6 @@ window.vObj = new Vue({
               localStep.id = element.id;
               localStep.type = element.type;
               localStep.colour = element.colour;
-              localStep.rules = [];
               if (localStep.type == "input") {
                 localStep.variables = element.variables;
                 localStep.varCounter = element.variables.length;
@@ -522,7 +521,7 @@ window.vObj = new Vue({
             let ifNotFound = reachableVars[0];
             step.apiCalls.forEach(apiCall => {
               apiCall.variables.forEach(variable => {
-                if (this.getReachableVariableIndex(variable.localVariable, reachableVars) == -1) {
+                if (this.getArrayIndex(variable.localVariable, reachableVars) == -1) {
                   variable.localVariable = ifNotFound;
                   showNotification = true;
                 }
@@ -545,20 +544,39 @@ window.vObj = new Vue({
     /**
      * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
      */
-    checkPossibleResultLabelFailures() {
+    checkPossibleLogicOrResultLabelFailures() {
       let showNotification = false;
+      let notificationType = "all"
       this.steps.forEach((step, index) => {
-        if (step.type == "result") {
+        if (step.type == "result" || step.rules.length > 0) {
           let reachableResults = this.getResultsUpToStep(index);
+          step.apiCalls.forEach(apiCall => {
+            reachableResults = reachableResults.concat(apiCall.results.map(result => {
+              return result.name;
+            }));
+          })
+          console.log(reachableResults);
           if (reachableResults.length > 0) {
-            for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
-              if (this.getReachableResultIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
-                step.chartItemReference.splice(resultIndex, 1);
-                step.chartRenderingData.labels.splice(resultIndex, 1);
-                step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
-                step.chartRenderingData.datasets[0].backgroundColor.splice(resultIndex, 1);
-                showNotification = true;
+            if (step.type == "result") {
+              for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
+                if (this.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
+                  step.chartItemReference.splice(resultIndex, 1);
+                  step.chartRenderingData.labels.splice(resultIndex, 1);
+                  step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
+                  step.chartRenderingData.datasets[0].backgroundColor.splice(resultIndex, 1);
+                  showNotification = true;
+                  notificationType = "item";
+                }
               }
+            }
+            if (step.rules.length > 0) {
+              let baseFact = reachableResults[0];
+              step.rules.forEach(rule => {
+                if (this.checkRuleReachability(rule.condition, reachableResults, baseFact)) {
+                  showNotification = true;
+                  notificationType = "rule";
+                }
+              });
             }
           } else {
             step.chartItemReference = [];
@@ -569,16 +587,64 @@ window.vObj = new Vue({
                 backgroundColor: []
               }]
             }
+            step.rules = [];
             showNotification = true;
+            notificationType = "all";
           }
         }
       });
       if (showNotification)
-        this.$notify({
-          title: "Result-label removed",
-          text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
-          type: "warn"
+        switch (notificationType) {
+          case "item":
+            this.$notify({
+              title: "Result-item removed",
+              text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
+              type: "warn"
+            });
+            break;
+          case "rule":
+            this.$notify({
+              title: "Rule changed",
+              text: "You have removed one or more model-calculations that were used in a result-step, please check your current rules.",
+              type: "warn"
+            });
+            break;
+          case "all":
+            this.$notify({
+              title: "Result-items or logical rules removed",
+              text: "You have removed (access to) all model-calculations that were used in a step, the components using these (rules or result-items) have been removed.",
+              type: "warn"
+            });
+            break;
+        }
+
+    },
+
+    /**
+     * Checks if a rule is still possible, if not make changes.
+     *  - Missing fact? Replace with first known fact (breaks the logic, but still allows the designer to keep the structure)
+     *  - All facts missing? Delete the rule (no feasible way to keep the structure)
+     * @param {Object} rule 
+     * @param {Array} reachableResults 
+     * @param {String} baseFact 
+     */
+    checkRuleReachability(rule, reachableResults, baseFact) {
+      let showNotification = false;
+      if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
+        if (this.getArrayIndex(rule.fact, reachableResults) == -1) {
+          rule.fact = baseFact;
+          showNotification = true;
+        }
+      } else if (rule.hasOwnProperty("any")) {
+        rule.any.forEach(part => {
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
         });
+      } else if (rule.hasOwnProperty("all")) {
+        rule.all.forEach(part => {
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+        });
+      }
+      return showNotification;
     },
 
     /**
@@ -601,7 +667,9 @@ window.vObj = new Vue({
       let results = [];
       this.getAncestorStepList(localStepId).forEach(stepId => {
         this.steps[stepId].apiCalls.forEach(apiCall => {
-          results = results.concat(apiCall.results);
+          results = results.concat(apiCall.results.map(result => {
+            return result.name;
+          }));
         });
       });
       return results;
@@ -612,21 +680,9 @@ window.vObj = new Vue({
      * @param {String} varName
      * @param {Array} reachableVariables
      */
-    getReachableVariableIndex(varName, reachableVariables) {
+    getArrayIndex(varName, reachableVariables) {
       for (let index = reachableVariables.length - 1; index >= 0; index--) {
         if (reachableVariables[index] == varName) return index;
-      }
-      return -1;
-    },
-
-    /**
-     * Finds the index in the reachables based on the result name
-     * @param {String} resName 
-     * @param {Array} reachableResults 
-     */
-    getReachableResultIndex(resName, reachableResults) {
-      for (let index = reachableResults.length - 1; index >= 0; index--) {
-        if (reachableResults[index].name == resName) return index;
       }
       return -1;
     },
@@ -886,7 +942,7 @@ window.vObj = new Vue({
       });
       this.recountVariableUses();
       this.checkPossibleVariableMappingFailures();
-      this.checkPossibleResultLabelFailures();
+      this.checkPossibleLogicOrResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
     },
 
@@ -987,7 +1043,7 @@ window.vObj = new Vue({
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
         this.steps[stId].rules.forEach(rule => {
-          if (rule.target.stepId == stepId)
+          if (rule.action != "destroy" && rule.target.stepId == stepId)
             list = list.concat(this.getAncestorStepListHelper(stId));
         });
       });

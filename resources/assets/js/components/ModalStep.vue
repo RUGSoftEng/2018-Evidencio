@@ -98,7 +98,7 @@
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged"></rule-edit-list>
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged" @remove="removeResultUsingRules"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -316,6 +316,18 @@ export default {
     updateOrder(newOrderVariables) {
       this.selectedVariables = newOrderVariables;
       this.localStep.variables = newOrderVariables;
+    },
+
+    /**
+     * Remove all rules in the current step that use results.
+     */
+    removeResultUsingRules() {
+      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {
+        const rule = this.localStep.rules[index].condition;
+        if (!(rule.hasOwnProperty("any") && rule.any[0].fact == "trueValue")) {
+          this.localStep.rules.splice(index, 1);
+        }
+      }
     },
 
     /**

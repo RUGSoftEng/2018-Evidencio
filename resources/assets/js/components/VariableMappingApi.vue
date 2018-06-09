@@ -2,8 +2,8 @@
     <div class="mt-2">
         <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editApi_' + index"
             aria-expanded="false" :aria-controls="'editApi_' + index" :id="'headerApi_' + index" @click="show = !show" :class="{warning: warningExists}">
-            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
             {{ model.title }}
             <span class="badge badge-secondary float-right">Id: {{ model.evidencioModelId }}</span>
         </button>
@@ -122,5 +122,8 @@ export default {
 <style scoped>
 .warning {
   border: solid 2px yellow;
+}
+.arrow {
+  font-size: 120%;
 }
 </style>
