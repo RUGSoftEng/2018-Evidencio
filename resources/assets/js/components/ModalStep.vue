@@ -325,7 +325,7 @@ export default {
       for (let index = this.localStep.rules.length - 1; index >= 0; index--) {
         const rule = this.localStep.rules[index].condition;
         if (!(rule.hasOwnProperty("any") && rule.any[0].fact == "trueValue")) {
-          this.localStep.rules.splice(index, 1);
+          this.localStep.rules.action = "destroy";
         }
       }
     },

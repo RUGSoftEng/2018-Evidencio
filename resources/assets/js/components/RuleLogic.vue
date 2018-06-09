@@ -4,7 +4,7 @@
             <label for="selectType">Choose a type</label>
             <select name="selectType" id="selectType" class="form-control" v-model="newType">
                 <option v-if="logic.label=='rule'" value="ALWAYS">No condition</option>
-                <option value="LOGIC">Comparison</option>
+                <option v-if="reachableResults.length > 0" value="LOGIC">Comparison</option>
                 <option value="AND">Logical AND</option>
                 <option value="OR">Logical OR</option>
             </select>

@@ -555,7 +555,6 @@ window.vObj = new Vue({
               return result.name;
             }));
           })
-          console.log(reachableResults);
           if (reachableResults.length > 0) {
             if (step.type == "result") {
               for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
@@ -587,7 +586,11 @@ window.vObj = new Vue({
                 backgroundColor: []
               }]
             }
-            step.rules = [];
+            step.rules.forEach(rule => {
+              if (this.checkRuleUsingResult(rule.condition)) {
+                rule.action = "destroy";
+              }
+            })
             showNotification = true;
             notificationType = "all";
           }
@@ -645,6 +648,23 @@ window.vObj = new Vue({
         });
       }
       return showNotification;
+    },
+
+    /**
+     * Checks if a rule is using results (true) or is a 'no condition' rule (false)
+     * @param {Object} rule
+     */
+    checkRuleUsingResult(rule) {
+      if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
+        return true;
+      } else if (rule.hasOwnProperty("any")) {
+        for (let index = rule.any.length - 1; index >= 0; index--)
+          if (this.checkRuleUsingResult(rule.any[index])) return true;
+      } else if (rule.hasOwnProperty("all")) {
+        for (let index = rule.all.length - 1; index >= 0; index--)
+          if (this.checkRuleUsingResult(rule.all[index])) return true;
+      }
+      return false;
     },
 
     /**
