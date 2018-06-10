@@ -39,17 +39,22 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
         $result = $result . "," . $res["result"];
       $result = substr($result, 1);
   }
-  if($friendly[0]["chartType"] == 0){
-    $chartType = "pie";
+  if(empty($bgColor)){
+    $bgColor = "'#ff0000', '#00ffff'";
   }
-  else if($friendly[0]["chartType"] == 1){
-    $chartType = "bar";
-  }
-  else if($friendly[0]["chartType"] == 2){
-    $chartType = "doughnut";
-  }
-  else if($friendly[0]["chartType"] == 3){
-    $chartType = "polarArea";
+  if(!empty($friendly[0]["chartType"])){
+    if($friendly[0]["chartType"] == 0){
+      $chartType = "pie";
+    }
+    else if($friendly[0]["chartType"]  == 1){
+      $chartType = "bar";
+    }
+    else if($friendly[0]["chartType"] == 2){
+      $chartType = "doughnut";
+    }
+    else if($friendly[0]["chartType"] == 3){
+      $chartType = "polarArea";
+    }
   }
 }
 ?>
@@ -118,7 +123,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       <br />
       <h5>Model results show that among 100 patients with/require <?php echo $decodeRes["title"] ?>, <kbd><?php echo $result?></kbd> have similar response like yours. </h5>
       @endif
-      <p><?php echo $friendly[0]['desc'] ?></p>
+      <p><?php  if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?></p>
     </div>
 </div>
 {{--Javascript for the creating the chat using Chartjs--}}
@@ -191,7 +196,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
     {{ csrf_field() }}
     <input type="hidden" name="model" value="<?php echo $_POST['model']?>"/>
     <input type="hidden" name="model_name" value="<?php echo $decodeRes['title'] ?>"/>
-    <input type="hidden" name="friendlyRes" value="<?php echo $friendly[0]['desc'] ?> "/>
+    <input type="hidden" name="friendlyRes" value="<?php if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?> "/>
     <input type="hidden" id="chartdata" name="chartIMG"/>
     <?php
     if(!empty($decodeRes["resultSet"])){
