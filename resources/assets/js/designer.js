@@ -954,6 +954,7 @@ window.vObj = new Vue({
       changedStep.step.rules.map(rule => {
         if (rule.action == "none") rule.action = "change";
       });
+      this.checkStepType(changedStep);
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
       // Set new backgroundcolor
@@ -964,6 +965,39 @@ window.vObj = new Vue({
       this.checkPossibleVariableMappingFailures();
       this.checkPossibleLogicOrResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
+    },
+
+    /**
+     * Removes unnecessary information from step-object based on the step type, meaning:
+     * - Variables, api-calls, and rules are removed from a result-step
+     * - Result-items (/labels) are removed from an input-step
+     * This is done since the information is not required and could potentially break the workflow upon saving/loading
+     * @param {Object} changedStep 
+     */
+    checkStepType(changedStep) {
+      if (changedStep.step.type == "input") {
+        changedStep.step.chartItemReference = [];
+        changedStep.step.chartRenderingData = {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: []
+          }]
+        }
+      } else {
+        changedStep.step.apiCalls = [];
+        if (changedStep.step.hasOwnProperty("rules")) {
+          changedStep.step.rules.forEach(rule => {
+            rule.action = "destroy";
+          });
+        }
+        if (changedStep.step.hasOwnProperty("variables")) {
+          changedStep.step.variables.forEach(variable => {
+            delete changedStep.usedVars[variable];
+          });
+        }
+        changedStep.step.variables = [];
+      }
     },
 
     /**
