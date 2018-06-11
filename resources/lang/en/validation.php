@@ -117,6 +117,13 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'first_name' => 'first name',
+        'last_name' => 'last name',
+        'email' => 'e-mail address',
+        'academic_degree' => 'academic degree',
+        'big_code' => 'BIG code',
+        'file.*' => "document",
+    ],
 
 ];

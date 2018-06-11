@@ -4,13 +4,9 @@
 
 @include('partials.sidebar')
 
-<style>
-    .table-usersverification tbody tr:nth-of-type(4n),
-    .table-usersverification tbody tr:nth-of-type(1)
-    {
-        background-color: rgba(0,0,0,0.05);
-    }
-</style>
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 
 <div class="container-fluid justify-content-center">
 
@@ -63,6 +59,14 @@
                                 <dl class="row my-4">
                                     <dt class="col-sm-3">{{_("Email")}}</dt>
                                     <dd class="col-sm-9">{{ $user->email }}</dd>
+                                    <dt class="col-sm-3">{{_("BIG Code")}}</dt>
+                                    <dd class="col-sm-9">
+                                        @if($user->big_code)
+                                        {{$user->big_code}}
+                                        @else
+                                        {{_("Not provided")}}
+                                        @endif
+                                    </dd>
                                     <dt class="col-sm-3">{{_("Bio")}}</dt>
                                     <dd class="col-sm-9">
                                         @if($user->bio)
@@ -71,6 +75,10 @@
                                         {{_("Not provided")}}
                                         @endif
                                     </dd>
+                                    @foreach($user->registrationDocuments as $document)
+                                    <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
+                                    <dd class="col-sm-9">{{ $document->name }} <a class="btn btn-primary btn-sm" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
+                                    @endforeach
                                 </dl>
                             </div>
                         </td>

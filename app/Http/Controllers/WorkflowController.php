@@ -9,6 +9,7 @@ use App\LoadedEvidencioModel;
 use App\Step;
 use App\Field;
 use App\Option;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * WorkflowController class, handles database- and API-calls for Workflowpage.
@@ -33,7 +34,7 @@ class WorkflowController extends Controller
         $retObj = [];
         $usedVariables = [];
         $workflow = Workflow::find($workflowId);
-        if ($workflow == null) {
+        if ($workflow == null || !$workflow->is_verified) {
             $retObj['success'] = false;
             return $retObj;
         }

@@ -11,14 +11,9 @@ A more detailed description is available in the Requirements Document under the 
 
 Follow the instructions in the [Laravel documentation](https://laravel.com/docs/5.6/installation) to install required dependencies and the Laravel package itself.
 
-Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Please provide Evidencio API key here as well. Then run these commands inside the repository:
+Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Please provide Evidencio API key here as well and ensure that you have your database set up correctly. Then run this command inside the repository:
 
-    composer install
-    php artisan key:generate
-
-To create the database structure please run the following command:
-
-    php artisan migrate
+    ./install.sh
 
 You will also need to run it every time there is a new database migration available.
 

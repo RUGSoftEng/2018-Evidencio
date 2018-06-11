@@ -14,6 +14,12 @@ use App\Field;
 
 class MyWorkflowsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:view-designer');
+    }
+
     public function index()
     {
 
@@ -26,10 +32,10 @@ class MyWorkflowsController extends Controller
     public function deleteWorkflow($id)
     {
         /*****delete the verification comments and comment replies*****/
-        
+
         //get the id's of verification comments of given workflow
-        $verificationComments = VerificationComment::where('workflow_id', '=', $id)->get(); 
-        
+        $verificationComments = VerificationComment::where('workflow_id', '=', $id)->get();
+
         //delete comment replies of those comments
         foreach ($verificationComments as $verificationComment) {
             CommentReply::where('verification_comment_id', $verificationComment->id)->delete();

@@ -18,9 +18,19 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/emailverify/{token}','Auth\RegisterController@verifyUser')->name('emailverification');
+
 Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
-Route::post('/usersverification/accept', 'UsersVerificationController@accept')->name('usersverification.accept');
-Route::post('/usersverification/reject', 'UsersVerificationController@reject')->name('usersverification.reject');
+
+Route::get('/usersverification/download/{id}', 'UsersVerificationController@download')->name('usersverification.download');
+Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
+Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
+
+Route::get('/notverified', function() {
+  return view('notverified');
+})->name('notverified')
+->middleware('auth')
+->middleware('can:not-view-designer');
 
 Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
@@ -35,17 +45,17 @@ Route::post('/PDF', function () {
   return view('PDF');
 });
 
-Route::post('/designer/fetch', 'DesignerController@fetchVariables')->middleware('auth');
-Route::post('/designer/runmodel', 'DesignerController@runModel')->middleware('auth');
-Route::post('/designer/search', 'DesignerController@fetchSearch')->middleware('auth');
+Route::post('/designer/fetch', 'DesignerController@fetchVariables');
+Route::post('/designer/runmodel', 'DesignerController@runModel');
+Route::post('/designer/search', 'DesignerController@fetchSearch');
 
 
-Route::post('/designer/save', 'DesignerSaveController@saveWorkflow')->middleware('auth');
-Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow')->middleware('auth');
-Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow')->middleware('auth');
+Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
+Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');
 
-Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows')->middleware('auth');
-Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow')->middleware('auth');
+Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows');
+Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow');
 
 //Testing of rules engine
 Route::get('/test-rules-engine', function () {

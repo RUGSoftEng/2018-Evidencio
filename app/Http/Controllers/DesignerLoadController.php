@@ -18,6 +18,11 @@ use App\Result;
  */
 class DesignerLoadController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:view-designer');
+    }
 
     /**
      * Loads a workflow from the database based on the workflowId
@@ -29,8 +34,8 @@ class DesignerLoadController extends Controller
     {
         $retObj = [];
         $usedVariables = [];
-        $workflow = Auth::user()->createdWorkflows()->where("id", "=", $workflowId)->first();
-        if ($workflow == null) {
+        $workflow = Workflow::find($workflowId);
+        if ($workflow == null || Auth::user()->cant('viewDesigner', $workflow)) {
             $retObj["success"] = false;
             return $retObj;
         }
