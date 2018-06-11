@@ -69,7 +69,7 @@ class DesignerSaveController extends Controller
     {
         if ($workflowId != null) {
             $workflow = Workflow::find($workflowId);
-            if ($workflow == null || $user->cant('save',$workflow)) {
+            if ($workflow == null || $user->cant('save', $workflow)) {
                 $workflow = new Workflow;
             }
         } else {
@@ -146,6 +146,10 @@ class DesignerSaveController extends Controller
             $mappings = $value->modelRunFields()->get();
             foreach ($mappings as $mapping) {
                 $value->modelRunFields()->detach($mapping);
+            }
+            $resultLabels = $value->resultStepChartItems()->get();
+            foreach ($resultLabels as $resultLabel) {
+                $value->resultStepChartItems()->detach($resultLabel);
             }
             $results = $value->modelRunResults()->get();
             foreach ($results as $result) {

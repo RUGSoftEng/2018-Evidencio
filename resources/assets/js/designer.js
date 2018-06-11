@@ -215,7 +215,8 @@ window.vObj = new Vue({
             self.$notify({
               title: "Failed to grab Evidencio model",
               text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-              type: "error"
+              type: "error",
+              duration: 6000
             });
           }
         });
@@ -270,7 +271,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Failed to run Evidencio model",
             text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
         }
       });
@@ -362,7 +364,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Saving failed",
             text: "Your workflow failed to save. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
         }
@@ -429,7 +432,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Loading failed",
             text: "Your workflow failed to load. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
           window.setTimeout(() => {
@@ -465,7 +469,8 @@ window.vObj = new Vue({
         self.$notify({
           title: "Loading workflow failed",
           text: "Some requested information from Evidencio failed to arrive, loading failed.",
-          type: "error"
+          type: "error",
+          duration: 6000
         });
         console.log("At least one of the requests failed.");
         console.log(e);
@@ -537,7 +542,8 @@ window.vObj = new Vue({
         this.$notify({
           title: "Variable removed",
           text: "You have removed one or more variables that were used in a model-calculation, it is now replaced with another.",
-          type: "warn"
+          type: "warn",
+          duration: 6000
         });
     },
 
@@ -554,8 +560,9 @@ window.vObj = new Vue({
             reachableResults = reachableResults.concat(apiCall.results.map(result => {
               return result.name;
             }));
-          })
+          });
           if (reachableResults.length > 0) {
+            // Results can be used in the step
             if (step.type == "result") {
               for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
                 if (this.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
@@ -578,21 +585,24 @@ window.vObj = new Vue({
               });
             }
           } else {
-            step.chartItemReference = [];
-            step.chartRenderingData = {
-              labels: [],
-              datasets: [{
-                data: [],
-                backgroundColor: []
-              }]
-            }
-            step.rules.forEach(rule => {
-              if (this.checkRuleUsingResult(rule.condition)) {
-                rule.action = "destroy";
+            // No results available for use in the step
+            if (step.chartItemReference.length > 0 || step.rules.length > 0) {
+              step.chartItemReference = [];
+              step.chartRenderingData = {
+                labels: [],
+                datasets: [{
+                  data: [],
+                  backgroundColor: []
+                }]
               }
-            })
-            showNotification = true;
-            notificationType = "all";
+              step.rules.forEach(rule => {
+                if (this.checkRuleUsingResult(rule.condition)) {
+                  rule.action = "destroy";
+                }
+              })
+              showNotification = true;
+              notificationType = "all";
+            }
           }
         }
       });
@@ -602,21 +612,24 @@ window.vObj = new Vue({
             this.$notify({
               title: "Result-item removed",
               text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
           case "rule":
             this.$notify({
               title: "Rule changed",
               text: "You have removed one or more model-calculations that were used in a result-step, please check your current rules.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
           case "all":
             this.$notify({
               title: "Result-items or logical rules removed",
               text: "You have removed (access to) all model-calculations that were used in a step, the components using these (rules or result-items) have been removed.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
         }
@@ -913,6 +926,8 @@ window.vObj = new Vue({
         case "removeStep":
           this.confirmDialog.approvalFunction = () => {
             this.removeStep(this.confirmDialog.data);
+            this.checkPossibleVariableMappingFailures();
+            this.checkPossibleLogicOrResultLabelFailures();
           }
           break;
         case "addLevelRuleDeletion":
@@ -925,6 +940,8 @@ window.vObj = new Vue({
             }
             this.connectionsChanged = !this.connectionsChanged;
             this.addLevel(this.confirmDialog.data);
+            this.checkPossibleVariableMappingFailures();
+            this.checkPossibleLogicOrResultLabelFailures();
           }
           break;
       }
@@ -1096,10 +1113,12 @@ window.vObj = new Vue({
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
-        this.steps[stId].rules.forEach(rule => {
-          if (rule.action != "destroy" && rule.target.stepId == stepId)
-            list = list.concat(this.getAncestorStepListHelper(stId));
-        });
+        if (this.steps[stId].action != "destroy") {
+          this.steps[stId].rules.forEach(rule => {
+            if (rule.action != "destroy" && rule.target.stepId == stepId)
+              list = list.concat(this.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return this.arrayUnique(list);
     },
@@ -1110,10 +1129,12 @@ window.vObj = new Vue({
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
-        this.steps[stId].rules.forEach(rule => {
-          if (rule.target.stepId == stepId)
-            list = list.concat(this.getAncestorStepListHelper(stId));
-        });
+        if (this.steps[stId].action != "destroy") {
+          this.steps[stId].rules.forEach(rule => {
+            if (rule.action != "destroy" && rule.target.stepId == stepId)
+              list = list.concat(this.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return list;
     },
