@@ -35,7 +35,7 @@ class DesignerLoadController extends Controller
         $retObj = [];
         $usedVariables = [];
         $workflow = Workflow::find($workflowId);
-        if ($workflow == null || Auth::user()->cant('viewDesigner', $workflow)) {
+        if ($workflow == null || Auth::user()->cant('view-designer', $workflow)) {
             $retObj["success"] = false;
             return $retObj;
         }

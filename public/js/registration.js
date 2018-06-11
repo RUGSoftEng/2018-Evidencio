@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 341);
+/******/ 	return __webpack_require__(__webpack_require__.s = 346);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -175,20 +175,20 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 
-/***/ 341:
+/***/ 346:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(342);
+module.exports = __webpack_require__(347);
 
 
 /***/ }),
 
-/***/ 342:
+/***/ 347:
 /***/ (function(module, exports, __webpack_require__) {
 
 var appRegistration;
 
-Vue.component("documentInput", __webpack_require__(343));
+Vue.component("documentInput", __webpack_require__(348));
 
 window.appRegistration = new Vue({
   el: '#files',
@@ -211,15 +211,15 @@ window.appRegistration = new Vue({
 
 /***/ }),
 
-/***/ 343:
+/***/ 348:
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(344)
+var __vue_script__ = __webpack_require__(349)
 /* template */
-var __vue_template__ = __webpack_require__(345)
+var __vue_template__ = __webpack_require__(350)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -259,7 +259,7 @@ module.exports = Component.exports
 
 /***/ }),
 
-/***/ 344:
+/***/ 349:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -300,7 +300,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 
-/***/ 345:
+/***/ 350:
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
