@@ -25,7 +25,7 @@
                     <li><a href="#">User Requests</a></li>
                 </ul>
                 @endcan
-                <a href="#">Edit Account Details</a>
+                <a href="{{ route('editaccount.index') }}">Edit Account Details</a>
             </li>
                 <p class="paragraphInSideMenu" >Help</p>
             <li>
