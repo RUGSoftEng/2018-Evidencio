@@ -16,12 +16,6 @@ Route::get('/', function () {
 });
 
 
-Route::get('/myworkflows', function () {
-    return view('myworkflows');
-})->name('myworkflows')
-->middleware('auth')
-->middleware('can:view-designer');
-
 Auth::routes();
 
 Route::get('/emailverify/{token}','Auth\RegisterController@verifyUser')->name('emailverification');
@@ -38,7 +32,7 @@ Route::get('/notverified', function() {
 ->middleware('auth')
 ->middleware('can:not-view-designer');
 
-Route::get('/designer', 'DesignerController@index')->name('designer');
+Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
 Route::post('/graph', 'GraphController@index');
 
@@ -59,3 +53,11 @@ Route::post('/designer/search', 'DesignerController@fetchSearch');
 Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');
+
+Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows');
+Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow');
+
+//Testing of rules engine
+Route::get('/test-rules-engine', function () {
+  return view('json-rules-engine-test');
+});

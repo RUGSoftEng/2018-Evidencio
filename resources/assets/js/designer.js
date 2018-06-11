@@ -1,8 +1,13 @@
-Vue.component("vueMultiselect", window.VueMultiselect.default);
 Vue.component("detailsEditable", require("./components/DetailsEditable.vue"));
 Vue.component("variableViewList", require("./components/VariableViewList.vue"));
 Vue.component("modalStep", require("./components/ModalStep.vue"));
 Vue.component("modalConfirm", require("./components/ModalConfirm.vue"));
+Vue.component("vueLoading", require("vue-loading-overlay"));
+import 'vue-loading-overlay/dist/vue-loading.min.css';
+import Multiselect from "vue-multiselect";
+Vue.component("multiselect", Multiselect);
+import Notifications from 'vue-notification';
+Vue.use(Notifications);
 
 // ============================================================================================= //
 
@@ -66,6 +71,7 @@ window.vObj = new Vue({
     },
 
     workflowId: null,
+    isLoading: true,
 
     debug: {}
   },
@@ -87,6 +93,7 @@ window.vObj = new Vue({
         0
       );
       this.panView();
+      this.isLoading = false;
     });
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
@@ -114,6 +121,7 @@ window.vObj = new Vue({
         });
       });
       this.connectionsChanged = !this.connectionsChanged;
+      this.isLoading = false;
     })
     // Event called when the user tries to remove a step
     Event.listen("confirmDialog", confirmInfo => {
@@ -133,38 +141,36 @@ window.vObj = new Vue({
       } else return [];
     },
 
-    // Deep-copy of the models and variables, used for MultiSelect
-    possibleVariables: function () {
-      if (this.modelLoaded) {
-        deepCopy = JSON.parse(JSON.stringify(this.models));
-        return deepCopy;
-      }
-      return [];
-    },
-
     // Array containing children of currently selected step
-    childrenNodes: function () {
+    childrenSteps: function () {
       if (this.selectedStepId == -1) return [];
       let levelIndex = this.getStepLevel(this.selectedStepId);
       if (levelIndex == -1 || levelIndex == this.levels.length - 1) return [];
-      let options = [];
-      this.levels[levelIndex + 1].steps.forEach(element => {
-        options.push({
-          stepId: element,
-          title: this.steps[element].title,
-          id: this.steps[element].id,
-          colour: this.steps[element].colour
-        });
-      });
-      return options;
+      return this.levels[levelIndex + 1].steps;
+    },
+
+    ancestors: function () {
+      return this.getAncestorStepList(this.selectedStepId);
     },
 
     variablesUpToStep: function () {
-      let vars = [], stepIds = this.getAncestorStepList(this.selectedStepId);
-      stepIds.forEach(stepId => {
+      let vars = [];
+      this.ancestors.forEach(stepId => {
         vars = vars.concat(this.steps[stepId].variables);
       });
       return vars;
+    },
+
+    resultsUpToStep: function () {
+      let results = [];
+      this.ancestors.forEach(stepId => {
+        this.steps[stepId].apiCalls.map(apiCall => {
+          apiCall.results.map(result => {
+            results.push(result.name);
+          });
+        });
+      });
+      return results;
     }
   },
 
@@ -191,7 +197,7 @@ window.vObj = new Vue({
             self.models.push(result);
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
-            self.models[self.models.length -1]["resultVars"] = [];
+            self.models[self.models.length - 1]["resultVars"] = [];
             self.models[self.models.length - 1].variables.map(x => {
               x["databaseId"] = -1;
               if (x["type"] == "categorical") {
@@ -246,10 +252,10 @@ window.vObj = new Vue({
         },
         success: function (result) {
           if (result.hasOwnProperty("result")) {
-            self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_0");
+            self.models[localModelId].resultVars.push("result_" + self.models[localModelId].id.toString() + "_0");
           } else {
             for (let index = 0; index < result.resultSet.length; index++) {
-              self.models[localModelId].resultVars.push(self.models[localModelId].id.toString() + "_" + index); 
+              self.models[localModelId].resultVars.push("result_" + self.models[localModelId].id.toString() + "_" + index);
             }
           }
         }
@@ -263,24 +269,48 @@ window.vObj = new Vue({
       var self = this;
       let url = "/designer/save";
       if (this.workflowId != null) url = url + "/" + this.workflowId;
-      this.steps.map((x, index) => {
-          x["level"] = this.getStepLevel(index);
-        }),
-        $.ajax({
-          headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-          },
-          url: url,
-          type: "POST",
-          data: {
-            title: self.title,
-            description: self.description,
-            languageCode: self.languageCode,
-            steps: self.steps,
-            variables: self.usedVariables,
-            modelIds: self.modelIds
-          },
-          success: function (result) {
+      let localSteps = JSON.parse(JSON.stringify(this.steps));
+      localSteps.map(step => {
+        step.rules.forEach((rule, index) => {
+          let newRule = {};
+          newRule.jsonRule = {
+            conditions: rule.condition,
+            event: {
+              type: "goToNextStep",
+              params: {
+                stepId: rule.target.stepId
+              }
+            }
+          }
+          newRule.title = rule.title;
+          newRule.description = rule.description;
+          step.rules[index] = newRule;
+        });
+      });
+      localSteps.map((x, index) => {
+        x["level"] = this.getStepLevel(index);
+      });
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: url,
+        type: "POST",
+        data: {
+          title: self.title,
+          description: self.description,
+          languageCode: self.languageCode,
+          steps: localSteps,
+          variables: self.usedVariables,
+          modelIds: self.modelIds
+        },
+        success: function (result) {
+          if (result.hasOwnProperty("workflowId")) {
+            self.$notify({
+              title: "Save successful",
+              text: "Your workflow has been successfully saved.",
+              type: "success"
+            })
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
             window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
@@ -293,7 +323,7 @@ window.vObj = new Vue({
               for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
                 let apiCall = result.resultIds[stepIndex][apiIndex];
                 for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];                   
+                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
                 }
               }
             }
@@ -311,8 +341,15 @@ window.vObj = new Vue({
                 });
               }
             }
+          } else {
+            self.$notify({
+              title: "Saving failed",
+              text: "Your workflow failed to save.",
+              type: "error"
+            })
           }
-        });
+        }
+      });
     },
 
     /**
@@ -321,6 +358,7 @@ window.vObj = new Vue({
      */
     loadWorkflow(workflowId) {
       var self = this;
+      this.isLoading = true;
       $.ajax({
         headers: {
           "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -346,7 +384,10 @@ window.vObj = new Vue({
               localStep.colour = element.colour;
               localStep.variables = element.variables;
               localStep.varCounter = element.variables.length;
-              localStep.rules = element.rules;
+              localStep.rules = [];
+              element.rules.map(rule => {
+                localStep.rules.push(self.prepareSingleRule(rule));
+              });
               localStep.apiCalls = element.apiCalls;
             });
             if (result.usedVariables.constructor !== Array)
@@ -364,6 +405,23 @@ window.vObj = new Vue({
       });
     },
 
+    /**
+     * Prepares a rule loaded from the database for use in the designer
+     * @param {Object} databaseRule 
+     */
+    prepareSingleRule(databaseRule) {
+      return {
+        title: databaseRule.title,
+        description: databaseRule.description,
+        target: databaseRule.target,
+        condition: JSON.parse(databaseRule.jsonRule).conditions
+      };
+    },
+
+    /**
+     * Can be used to load an array of models to the workflow, will fire an event as soon as all the models are loaded.
+     * @param {Array} models to load to the workflow
+     */
     LoadWorkflowLoadModels(models) {
       $.when.apply($, models.map(element => {
         return this.loadModelEvidencio(element);
@@ -408,7 +466,6 @@ window.vObj = new Vue({
       return -1;
     },
 
-
     /**
      * Adds level to workflow. Levels contain one or more steps. The first level can contain at most one step.
      * @param {Number} index of position level should be added
@@ -425,7 +482,7 @@ window.vObj = new Vue({
      * @param {Number} levelIndex is the location at which to add the level
      */
     addLevelConditional(levelIndex) {
-      if (this.levelHasRule(levelIndex-1)) {
+      if (this.levelHasRule(levelIndex - 1)) {
         this.prepareConfirmDialog({
           title: "Add a level",
           message: "Adding a level at this height will remove some exising rules. Are you sure you wish to continue?\r\n Only the direct children of steps can be targets for a rule.",
@@ -474,14 +531,12 @@ window.vObj = new Vue({
         chartData: [],
         chartRenderingData: {
           labels: ['January', 'February'],
-          datasets: [
-            {
-              // label: 'A simple label',
-              label: "Edit Label",
-              backgroundColor: ['#0000ff', '#ff0000'],
-              data: [40, 20]
-            }
-          ]
+          datasets: [{
+            // label: 'A simple label',
+            label: "Edit Label",
+            backgroundColor: ['#0000ff', '#ff0000'],
+            data: [40, 20]
+          }]
         }
       });
       this.stepsChanged = !this.stepsChanged;
@@ -511,8 +566,8 @@ window.vObj = new Vue({
      */
     panView() {
       cy.pan({
-        x: cy.width()/2,
-        y: cy.height()/4
+        x: cy.width() / 2,
+        y: cy.height() / 4
       });
     },
 
@@ -607,11 +662,11 @@ window.vObj = new Vue({
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = () => {
-            let stepIds = this.levels[this.confirmDialog.data-1].steps;
+            let stepIds = this.levels[this.confirmDialog.data - 1].steps;
             for (let indexStep = 0; indexStep < stepIds.length; indexStep++) {
               this.steps[stepIds[indexStep]].rules.map(x => {
                 x.destroy = true;
-              });              
+              });
             }
             this.connectionsChanged = !this.connectionsChanged;
             this.addLevel(this.confirmDialog.data);
@@ -641,7 +696,9 @@ window.vObj = new Vue({
      * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
     applyChanges(changedStep) {
-      changedStep.step.rules.map(x => { if (x.create == false) x.change = true; });
+      changedStep.step.rules.map(x => {
+        if (x.create == false) x.change = true;
+      });
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
       this.connectionsChanged = !this.connectionsChanged;
@@ -732,7 +789,7 @@ window.vObj = new Vue({
           let currentRules = this.steps[levelIndex].rules;
           for (let ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId)
-              currentRules.splice(ruleIndex, 1);        
+              currentRules.splice(ruleIndex, 1);
           }
         });
       }
@@ -744,7 +801,7 @@ window.vObj = new Vue({
      */
     getAncestorStepList(stepId) {
       let list = [];
-      let previousLevel = this.getStepLevel(stepId)-1;
+      let previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
@@ -758,7 +815,7 @@ window.vObj = new Vue({
 
     getAncestorStepListHelper(stepId) {
       let list = [stepId];
-      let previousLevel = this.getStepLevel(stepId)-1;
+      let previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
@@ -769,18 +826,18 @@ window.vObj = new Vue({
       });
       return list;
     },
-    
+
     /**
      * Removes duplicate items from an array.
      * @param {Array} array 
      */
     arrayUnique(array) {
       var a = array.concat();
-      for(var i=0; i<a.length; ++i) {
-          for(var j=i+1; j<a.length; ++j) {
-              if(a[i] === a[j])
-                  a.splice(j--, 1);
-          }
+      for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+          if (a[i] === a[j])
+            a.splice(j--, 1);
+        }
       }
       return a;
     },
@@ -890,6 +947,9 @@ window.vObj = new Vue({
       this.positionSteps();
     },
 
+    /**
+     * Adds/removes/changes rules in required
+     */
     connectionsChanged: function () {
       this.steps.forEach((element, index) => {
         for (let index = element.rules.length - 1; index >= 0; index--) {
@@ -921,6 +981,9 @@ window.vObj = new Vue({
       });
     },
 
+    /**
+     * Should extra variables be selected, recount the variableuses.
+     */
     selectedVariables: function () {
       this.recountVariableUses();
     }

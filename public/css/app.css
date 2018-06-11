@@ -10413,8 +10413,8 @@ a.text-dark:focus {
 
 @font-face {
   font-family: 'fontello';
-  src: url(/fonts/fontello.eot?8ee4710dd236bbac8c2a7b3f6f5b70dc);
-  src: url(/fonts/fontello.eot?8ee4710dd236bbac8c2a7b3f6f5b70dc) format("embedded-opentype"), url(/fonts/fontello.woff?baeaf7e7dd8953db543556cb631137ad) format("woff"), url(/fonts/fontello.ttf?91b756be501cd2faab93de8e0e28cff4) format("truetype"), url(/fonts/fontello.svg?04a6180b3333a9d3a1a2e2daa3d039e7) format("svg");
+  src: url(/fonts/fontello.eot?bc777a8855a906f91400b0b23bfbb7e0);
+  src: url(/fonts/fontello.eot?bc777a8855a906f91400b0b23bfbb7e0) format("embedded-opentype"), url(/fonts/fontello.woff?d52411abda13fdf10a0922d9d692336f) format("woff"), url(/fonts/fontello.ttf?d531208088af52453296fa0601841645) format("truetype"), url(/fonts/fontello.svg?f1be6b599ee3dd27589c6cc1cbccedd5) format("svg");
   font-weight: normal;
   font-style: normal;
 }

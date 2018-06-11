@@ -4,9 +4,8 @@
             aria-expanded="true" :aria-controls="'varViewCollapse_' + variable.ind" data-parent="#accVariablesView">
             <h6 class="mb-0">
                 {{ variable.title }}
-                <span class="badge badge-pill" :class="{'badge-danger': timesUsed==0, 'badge-success': timesUsed>0}">{{ timesUsed }}</span>
-
             </h6>
+            <h6><span class="badge badge-pill float-right" :class="{'badge-danger': timesUsed==0, 'badge-success': timesUsed>0}">{{ timesUsed }}</span></h6>
         </div>
 
         <div :id="'varViewCollapse_' + indexItem" class="collapse" :aria-labelledby="'#varViewCollapseHeader_' + indexItem">

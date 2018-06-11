@@ -1,8 +1,3 @@
-<!--
- - Color changing
- - Gray functions
-    -->
-
 <template>
     <!-- Modal -->
     <div class="modal fade" id="modalStep" tabindex="-1" role="dialog" aria-labelledby="modalStepOptions" aria-hidden="true">
@@ -50,8 +45,7 @@
                                             <div class="nav nav-tabs card-header-tabs nav-scroll" id="nav-tab-modal" role="tablist">
                                                 <a class="nav-item nav-link active" id="nav-variables-tab" data-toggle="tab" href="#nav-variables" role="tab" aria-controls="nav-variables"
                                                     aria-selected="true">Variables</a>
-                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api"
-                                                 aria-selected="false">Model calculation</a>
+                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api" aria-selected="false">Model calculation</a>
                                                 <a class="nav-item nav-link" id="nav-logic-tab" data-toggle="tab" href="#nav-logic" role="tab" aria-controls="nav-logic"
                                                     aria-selected="false">Logic</a>
                                             </div>
@@ -61,28 +55,27 @@
                                         <div class="tab-content" id="nav-tabContent-modal">
 
                                             <div class="tab-pane fade show active" id="nav-variables" role="tabpanel" aria-labelledby="nav-variables-tab">
-                                                <vue-multiselect v-model="multiSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables"
-                                                    group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false"
-                                                    label="title" track-by="id" :limit=3 :limit-text="multiselectVariablesText"
-                                                    :preserve-search="true" placeholder="Choose variables" @remove="multiRemoveVariables"
-                                                    @select="multiSelectVariables">
+                                                <multiselect v-model="multiSelectedVariables" :options="models" :multiple="true" group-values="variables" group-label="title"
+                                                    :group-select="true" :close-on-select="false" :clear-on-select="false" label="title"
+                                                    track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
+                                                    placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
                                                     <template slot="tag" slot-scope="props">
                                                         <span class="badge badge-info badge-larger">
                                                             <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
                                                             <span class="custom__remove" @click="props.remove(props.option)">❌</span>
                                                         </span>
                                                     </template>
-                                                </vue-multiselect>
-                                                <label for="accVariablesEdit" class="variable-label mb-2">Selected variables</label>
-                                                <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables"></variable-edit-list>
+                                                </multiselect>
+                                                <label for="variableEditList" class="variable-label mb-2">Selected variables</label>
+                                                <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables" @sort="updateOrder($event)"></variable-edit-list>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <div class="container-fluid">
+                                                <div class="container-fluid" v-if="variablesUpToStep.length != 0">
                                                     <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <vue-multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Cannot be done without a model"
+                                                    <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
                                                         track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
-                                                        :searchable="true" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                        :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
                                                         @select="modelSelectAPI" @remove="modelRemoveApi">
                                                         <template slot="tag" slot-scope="props">
                                                             <span class="badge badge-info badge-larger">
@@ -90,47 +83,21 @@
                                                                 <span class="custom__remove" @click="props.remove(props.option)">❌</span>
                                                             </span>
                                                         </template>
-                                                    </vue-multiselect>
-                                                    <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :model="apiCall" :used-variables="localUsedVariables"
-                                                        :reachable-variables="variablesUpToStep"> </variable-mapping-api>
-                                                    <!-- <small class="form-text text-muted">Model used for calculation</small>
-                                                    <h6>Set variables used in calculation:</h6>
-                                                    <div class="form-group" v-for="apiVariable in modalApiCall.variables">
-                                                        <label :for="'var_' + apiVariable.originalID">@{{ apiVariable.originalTitle }}</label>
-                                                        <select class="custom-select" :name="apiVariable.title" :id="'var_' + apiVariable.originalID" v-model="apiVariable.targetID">
-                                                            <option v-for="usedVariable in modalUsedVariables" :key="usedVariable.id">@{{ usedVariable.title }}</option>
-                                                        </select>
-                                                    </div> -->
+                                                    </multiselect>
+                                                    <div class="list-group">
+                                                        <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :index="index" :model="apiCall" :used-variables="localUsedVariables"
+                                                            :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                    </div>
+                                                </div>
+                                                <div class="container-fluid" v-else>
+                                                    <h6>A model calculation cannot be done without variables. Either add fields
+                                                        to the current step or link it to a precious step to use the fields
+                                                        of that step.</h6>
                                                 </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childNodes"></rule-edit-list>
-                                                <!--<div class="container-fluid">
-                                                    <button type="button" class="btn btn-primary" @click="addRule()">Add rule</button>
-                                                    <table class="table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Condition</th>
-                                                                <th>Target</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(rule, index) in modalRules">
-                                                                <td data-label="Name">
-                                                                    <div class="form-group">
-                                                                        <input type="text" class="form-control" name="Name" :id="'ruleName_' + index" :aria-describedby="'helpId_' + index" placeholder="Rule name"
-                                                                            v-model="rule.name">
-                                                                        <small :id="'helpId_' + index" class="form-text text-muted">Name of the rule</small>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-label="Condition">Wayne</td>
-                                                                <td data-label="Target">Batman</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>-->
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -208,23 +175,23 @@ export default {
       type: Array,
       required: true
     },
-    step: {
-      type: Object,
-      default: () => {}
+    steps: {
+      type: Array,
+      required: true
     },
     usedVariables: {
       type: Object,
-      required: true
-    },
-    possibleVariables: {
-      type: Array,
       required: true
     },
     ancestorVariables: {
       type: Array,
       required: true
     },
-    childNodes: {
+    ancestorResults: {
+      type: Array,
+      required: true
+    },
+    childrenSteps: {
       type: Array,
       required: true
     },
@@ -241,6 +208,16 @@ export default {
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
+    // Array containing all results calculated up to and including the current step
+    resultsUpToStep: function() {
+      let results = this.ancestorResults;
+      this.localStep.apiCalls.forEach(apiCall => {
+        apiCall.results.map(result => {
+          results.push(result.name);
+        });
+      });
+      return results;
+    },
     // Array of model-representations for API-call
     modelChoiceRepresentation: function() {
       let representation = [];
@@ -252,6 +229,21 @@ export default {
         });
       });
       return representation;
+    },
+    // Array containing all children of the current step
+    childrenStepsExtended: function() {
+      let children = [];
+      this.childrenSteps.forEach((childId, index) => {
+        let step = this.steps[childId];
+        children.push({
+          stepId: childId,
+          colour: step.colour,
+          id: step.id,
+          ind: index,
+          title: step.title
+        });
+      });
+      return children;
     }
   },
 
@@ -271,11 +263,15 @@ export default {
   },
 
   methods: {
+    /**
+     * Called whenever the modal is opened again.
+     */
     reload() {
-      this.localStep = JSON.parse(JSON.stringify(this.step));
+      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));
       this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
       this.setSelectedVariables();
       this.setSelectedModels();
+      this.updateRuleTargetDetails();
     },
 
     /**
@@ -288,6 +284,9 @@ export default {
       });
     },
 
+    /**
+     * Start the process of removing a step
+     */
     remove() {
       Event.fire("confirmDialog", {
         title: "Removal of Step",
@@ -297,15 +296,28 @@ export default {
       });
     },
 
+    /**
+     * Update the order of the fields/variables
+     * @param {Array} newOrderVariables has the new order of the variables
+     */
+    updateOrder(newOrderVariables) {
+      this.selectedVariables = newOrderVariables;
+      this.localStep.variables = newOrderVariables;
+    },
+
+    /**
+     * Add a model to the API field mapping list
+     * @param {Object} model to be added
+     */
     modelSelectAPI(model) {
       this.localStep.apiCalls.push({
         evidencioModelId: model.id,
         title: model.title,
         results: this.models[model.localId].resultVars.map(result => {
-            return {
-                name: result,
-                databaseId: -1
-            }
+          return {
+            name: result,
+            databaseId: -1
+          };
         }),
         variables: this.models[model.localId].variables.map(variable => {
           return {
@@ -317,32 +329,42 @@ export default {
       });
     },
 
+    /**
+     * Remove a model from the API field mapping list
+     * @param {Object} model to be removed
+     */
     modelRemoveApi(model) {
-        for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {
-            if (this.localStep.apiCalls[index].evidencioModelId == model.id) {
-                this.localStep.apiCalls.splice(index, 1);
-                return;
-            }
+      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {
+        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {
+          this.localStep.apiCalls.splice(index, 1);
+          return;
         }
+      }
     },
 
+    /**
+     * Set the selected models for the API field mapping, to be called on reload()
+     */
     setSelectedModels() {
       this.multiSelectedModels = [];
       this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {
-          return {
-              localId: this.findModel(apiCall.evidencioModelId),
-              title: apiCall.title,
-              id: apiCall.evidencioModelId
-          }
+        return {
+          localId: this.findModel(apiCall.evidencioModelId),
+          title: apiCall.title,
+          id: apiCall.evidencioModelId
+        };
       });
     },
 
+    /**
+     * Find a model locally based on the Evidencio Model Id
+     * @param {Number} evidencioModelId
+     */
     findModel(evidencioModelId) {
-        for (let index = 0; index < this.models.length; index++) {
-            if (this.models[index].id == evidencioModelId)
-                return index;
-        }
-        return -1;
+      for (let index = 0; index < this.models.length; index++) {
+        if (this.models[index].id == evidencioModelId) return index;
+      }
+      return -1;
     },
 
     /**
@@ -352,19 +374,10 @@ export default {
     setSelectedVariables() {
       this.multiSelectedVariables = [];
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        let origID = this.localUsedVariables[this.localStep.variables[index]]
-          .id;
-        findVariable: for (
-          let indexOfMod = 0;
-          indexOfMod < this.possibleVariables.length;
-          indexOfMod++
-        ) {
-          const element = this.possibleVariables[indexOfMod];
-          for (
-            let indexInMod = 0;
-            indexInMod < element.variables.length;
-            indexInMod++
-          ) {
+        let origID = this.localUsedVariables[this.localStep.variables[index]].id;
+        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {
+          const element = this.models[indexOfMod];
+          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
             if (element.variables[indexInMod].id == origID) {
               this.multiSelectedVariables.push(element.variables[indexInMod]);
               break findVariable;
@@ -372,6 +385,17 @@ export default {
           }
         }
       }
+    },
+
+    /**
+     * Everytime the modal is opened, the details for the rule-targets should be updated.
+     */
+    updateRuleTargetDetails() {
+      this.localStep.rules.forEach(rule => {
+        let next = rule.target,
+          nextStep = this.steps[next.stepId];
+        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);
+      });
     },
 
     /**
@@ -402,10 +426,7 @@ export default {
      */
     multiRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.localStep.variables.length; index++) {
-        if (
-          this.localUsedVariables[this.localStep.variables[index]].id ==
-          removedVariable.id
-        ) {
+        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {
           delete this.localUsedVariables[this.localStep.variables[index]];
           this.localStep.variables.splice(index, 1);
           return;
@@ -434,9 +455,7 @@ export default {
     multiSelectSingleVariable(selectedVariable) {
       let varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
-      this.localUsedVariables[varName] = JSON.parse(
-        JSON.stringify(selectedVariable)
-      );
+      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
     },
 
     /**
@@ -464,72 +483,12 @@ export default {
      * @param {String} color
      */
     addNewField(label, color) {
-      let object = {label, color};
+      let object = {
+        label,
+        color
+      };
       this.localStep.chartData.push(object);
     }
-
-
-
-    // /**
-    //  * Adds a rule to the list of rules
-    //  */
-    // addRule() {
-    //   this.modalRules.push({
-    //     name: "Go to target",
-    //     rule: [],
-    //     target: -1
-    //   });
-    //   this.modalEditRuleFlags.push(false);
-    // },
-
-    // /**
-    //  * Removes the rule with the given index from the list
-    //  * @param {integer} [ruleIndex] of rule to be removed
-    //  */
-    // removeRule(ruleIndex) {
-    //   this.modalRules.splice(ruleIndex, 1);
-    //   this.modalEditRuleFlags.splice(ruleIndex, 1);
-    // },
-
-    // /**
-    //  * Allows for a rule to be edited.
-    //  * @param {integer} [index] of the rule to be edited
-    //  */
-    // editRule(index) {
-    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
-    // },
-
-    // /**
-    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-    //  * @param {integer} [modelID] is the Evidencio model ID.
-    //  */
-    // getModelIndex(modelID) {
-    //   for (let index = 0; index < this.models.length; index++) {
-    //     if (this.models[index].id == modelID) return index;
-    //   }
-    //   return -1;
-    // },
-
-    // /**
-    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-    //  * @param {object} [selectedModel] is the newly selected model
-    //  */
-    // apiCallModelChangeAction(selectedModel) {
-    //   let modID = this.getModelIndex(selectedModel.id);
-    //   if (modID == -1) {
-    //     this.modalApiCall.variables = [];
-    //     return;
-    //   }
-    //   let modVars = [];
-    //   this.models[modID].variables.forEach(element => {
-    //     modVars.push({
-    //       originalTitle: element.title,
-    //       originalID: element.id,
-    //       targetID: null
-    //     });
-    //   });
-    //   this.modalApiCall.variables = modVars;
-    // }
   },
 
   data() {
@@ -541,6 +500,8 @@ export default {
   }
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style lang="css" scoped>
 .variable-label {
