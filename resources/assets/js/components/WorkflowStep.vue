@@ -136,31 +136,45 @@ export default {
     //// TODO: fix api call
     runStep() {
       var self = this;
-
-      this.step.evidencioModelIds.forEach((modelId, index) => {
-        $.ajax({
-          headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-          },
-          url: "/workflow/run",
-          type: "POST",
-          data: {
-            modelId: modelId,
-            values: self.answers[index]
-          },
-          success: function(result) {
-            self.result = result;
-            if (result.hasOwnProperty("result")) {
-              self.facts["result_" + modelId + "_0"] = result.result;
-            } else {
-              result.resultSet.forEach((res, ind) => {
-                self.facts["result_" + modelId + "_" + ind] = res.result;
-              });
-            }
-            console.log(self.result);
-          }
+      let calculations = [];
+      let models = this.step.evidencioModelIds;
+      $.when
+        .apply(
+          $,
+          models.map((modelId, index) => {
+            return $.ajax({
+              headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+              },
+              url: "/workflow/run",
+              type: "POST",
+              data: {
+                modelId: modelId,
+                values: self.answers[index]
+              },
+              success: function(result) {
+                self.result = result;
+                if (result.hasOwnProperty("result")) {
+                  self.facts["result_" + modelId + "_0"] = result.result;
+                } else {
+                  result.resultSet.forEach((res, ind) => {
+                    self.facts["result_" + modelId + "_" + ind] = res.result;
+                  });
+                }
+                console.log(self.result);
+              }
+            });
+          })
+        )
+        .then(function(x) {
+          self.engine.run(self.facts).then(events => {
+            events.map(event => {
+              if (event.type == "goToNextStep") {
+                console.log(event.params.stepId);
+              }
+            });
+          });
         });
-      });
     }
   }
 };

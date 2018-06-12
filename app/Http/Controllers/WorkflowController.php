@@ -41,8 +41,7 @@ class WorkflowController extends Controller
         $usedVariables = [];
         $workflow = Workflow::find($workflowId);
 
-        if(!$workflow->is_verified || !$workflow->is_published)
-        {
+        if (!$workflow->is_verified || !$workflow->is_published) {
             throw new UnauthorizedException(_("This action is unauthorized."));
         }
 
@@ -99,6 +98,9 @@ class WorkflowController extends Controller
         $retObj['evidencioModelIds'] = $dbStep->modelRuns();
         $retObj['apiMapping'] = $this->loadApiVariableMapping($dbStep);
         $retObj['nextSteps'] = $dbStep->nextSteps()->get();
+        foreach ($retObj['nextSteps'] as $nextStep) {
+            $nextStep['pivot']['condition'] = str_replace('"true"', 'true', $nextStep['pivot']['condition']);
+        }
         $retObj['title'] = $dbStep->title;
         $retObj['description'] = $dbStep->description;
         $retObj['colour'] = $dbStep->colour;

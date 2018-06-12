@@ -5485,9 +5485,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     //// TODO: fix api call
     runStep: function runStep() {
       var self = this;
-
-      this.step.evidencioModelIds.forEach(function (modelId, index) {
-        $.ajax({
+      var calculations = [];
+      var models = this.step.evidencioModelIds;
+      $.when.apply($, models.map(function (modelId, index) {
+        return $.ajax({
           headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
           },
@@ -5508,6 +5509,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             console.log(self.result);
           }
+        });
+      })).then(function (x) {
+        self.engine.run(self.facts).then(function (events) {
+          events.map(function (event) {
+            if (event.type == "goToNextStep") {
+              console.log(event.params.stepId);
+            }
+          });
         });
       });
     }
