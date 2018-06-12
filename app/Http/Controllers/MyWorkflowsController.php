@@ -99,7 +99,7 @@ class MyWorkflowsController extends Controller
     {
         $workflow = Workflow::find($workflowId);
         $user = Auth::user();
-        if ($workflow != null && $user->can("save", $workflow) && !$workflow->is_verified) {
+        if ($workflow != null && $user->can("save", $workflow) && !$workflow->is_published) {
             $workflow->publish();
             return ["success" => true];
         }

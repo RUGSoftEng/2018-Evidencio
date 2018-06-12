@@ -10,18 +10,13 @@ use App\Step;
 use App\Field;
 use App\Option;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\UnauthorizedException;
 
 /**
  * WorkflowController class, handles database- and API-calls for Workflowpage.
  */
 class WorkflowController extends Controller
 {
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     /**
      * Loads a workflow from the database based on the workflowId
@@ -34,7 +29,13 @@ class WorkflowController extends Controller
         $retObj = [];
         $usedVariables = [];
         $workflow = Workflow::find($workflowId);
-        if ($workflow == null || !$workflow->is_verified) {
+
+        if(!$workflow->is_verified || !$workflow->is_published)
+        {
+            throw new UnauthorizedException(_("This action is unauthorized."));
+        }
+
+        if ($workflow == null) {
             $retObj['success'] = false;
             return $retObj;
         }
@@ -144,6 +145,8 @@ class WorkflowController extends Controller
 
     public function runModel(Request $request)
     {
+        // TODO Check if the model is connected to a published workflow to avoid
+        // misuse of the API
         $data = EvidencioAPI::run($request->modelId, $request->values);
         return $data;
     }
