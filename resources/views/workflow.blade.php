@@ -12,6 +12,13 @@ or radio buttons for categorical values.--}}
 @extends('layouts.app')
 
 @section('content')
+<?php echo json_encode($result); ?>
+{{--vue stuff--}}
+<div id="workflow">
+<workflow-step :workflow-data="{{json_encode($result)}}"></workflow-step>
+
+</div>
+
 {{--makes inputs for all the required variables--}}
 
 @if (!empty($result))
@@ -88,4 +95,9 @@ or radio buttons for categorical values.--}}
 </div>
 
 @endif
+
+<script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
+<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
+<script src="{{ asset('js/designer.js') }}"></script>
+<script src="{{ asset('js/WorkflowStep.js') }}"></script>
 @endsection

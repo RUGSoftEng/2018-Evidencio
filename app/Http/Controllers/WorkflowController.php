@@ -84,6 +84,8 @@ class WorkflowController extends Controller
     {
         $retObj = [];
         $retObj['id'] = $dbStep->id;
+        $retObj['evidencioModelID'] =$dbStep->modelRunResults()->get();
+        $retObj['nextSteps'] =$dbStep->nextSteps()->get();
         $retObj['title'] = $dbStep->title;
         $retObj['description'] = $dbStep->description;
         $retObj['colour'] = $dbStep->colour;
@@ -140,6 +142,11 @@ class WorkflowController extends Controller
         return view('workflow')->with('result',$result);
     }
 
+    public function runModel(Request $request)
+    {
+        $data = EvidencioAPI::run($request->modelId, $request->values);
+        return json_encode($data);
+    }
 
 
 }

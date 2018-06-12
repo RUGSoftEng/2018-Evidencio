@@ -40,6 +40,7 @@ Route::get('/search', function () {
   return view('search');
 });
 Route::get('/workflow/{workflowId}', 'WorkflowController@index');
+Route::post('/workflow/run', 'WorkflowController@runModel');
 
 Route::post('/PDF', function () {
   return view('PDF');
