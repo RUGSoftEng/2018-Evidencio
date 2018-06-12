@@ -145,7 +145,7 @@ class WorkflowController extends Controller
     public function runModel(Request $request)
     {
         $data = EvidencioAPI::run($request->modelId, $request->values);
-        return json_encode($data);
+        return $data;
     }
 
 

@@ -28,7 +28,7 @@
       </ul>
       <br>
       <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
-
+      {{this.result}}
 
 
 </div>
@@ -50,6 +50,7 @@ export default {
 
     },
     data() {
+
       return {
         model:0,
         stepLevel:0,
@@ -57,7 +58,7 @@ export default {
         step:{},
         stepEvidencioId:0,
         answers:{},
-        result:{}
+        result:0
       };
     },
     methods:{
@@ -68,9 +69,28 @@ export default {
       // TODO: fix next step
       nextStep(){
         var nextStepID;
-        runStep();
+        let engine = new Engine();
+        //save rules in rule engine
+        for(var key in this.step.nextSteps){
+          let condition=this.step.nextSteps[key].pivot.condition;
+          let rule = new Rule(condition);
+          engine.addRule(rule);
+        }
+        var key = "result" + "_" + this.stepEvidencioId + "_" + 0;
+        let resultFact= this.result;
+        let facts;
+        facts[key]=this.result;
+        //run rule engine and get next step ID
+        engine.run(facts).then(events => {
+          events.map(event => {
+            if (event.type == "goToNextStep") {
+              nextStepID = event.params.stepId;
+            }
+          });
+        });
         //// TODO: add rule engine Here
         //nextStepID=Result of rule Engine
+        //get new step
         for(var key in this.workflowData.steps){
           if(this.workflowData.steps[key].id==nextStepID){
             this.step=this.workflowData.steps[key];
@@ -79,7 +99,6 @@ export default {
         }
 
       },
-      //// TODO: fix api call
       runStep() {
         var self = this;
 
@@ -95,16 +114,10 @@ export default {
           },
           success: function(result) {
             self.debug = result;
-            this.result= result;
+            self.result= result.result;
           }
         });
-
-        console.log(this.result);
       },
-
     }
-
-
-
 }
 </script>
