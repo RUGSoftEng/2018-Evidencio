@@ -85,6 +85,7 @@ window.vObj = new Vue({
         Event.fire("normalStart");
       } else this.loadWorkflow(this.workflowId);
     });
+
     // Event called when a normal (empty) start should occur.
     Event.listen("normalStart", () => {
       this.addLevel(0);
@@ -96,10 +97,12 @@ window.vObj = new Vue({
       this.panView();
       this.isLoading = false;
     });
+
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
+
     // Event called when all the evidencio models for a workflow are (hopefully) loaded
     Event.listen("loadWorkflowAllModelsLoaded", () => {
       this.steps.forEach(localStep => {
@@ -122,7 +125,8 @@ window.vObj = new Vue({
       this.connectionsChanged = !this.connectionsChanged;
       this.isLoading = false;
     })
-    // Event called when the user tries to remove a step
+
+    // Event called when the user tries to remove a step/add a level where it would remove a rule
     Event.listen("confirmDialog", confirmInfo => {
       this.prepareConfirmDialog(confirmInfo);
     });
@@ -148,10 +152,12 @@ window.vObj = new Vue({
       return this.levels[levelIndex + 1].steps;
     },
 
+    // Array containing the ancestors of the currently selected step
     ancestors: function () {
       return this.getAncestorStepList(this.selectedStepId);
     },
 
+    // Array containing the variables known up to (but not including) the currently selected step
     variablesUpToStep: function () {
       let vars = [];
       this.ancestors.forEach(stepId => {
@@ -160,6 +166,7 @@ window.vObj = new Vue({
       return vars;
     },
 
+    // Array containing the results known up to (but not including) the currently selected step
     resultsUpToStep: function () {
       let results = [];
       this.ancestors.forEach(stepId => {
@@ -198,12 +205,12 @@ window.vObj = new Vue({
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
             self.models[self.models.length - 1]["resultVars"] = [];
-            self.models[self.models.length - 1].variables.map(x => {
-              x["databaseId"] = -1;
-              if (x["type"] == "categorical") {
-                x.options.map(y => {
-                  y["databaseId"] = -1;
-                  y["friendlyTitle"] = y.title;
+            self.models[self.models.length - 1].variables.map(variable => {
+              variable["databaseId"] = -1;
+              if (variable["type"] == "categorical") {
+                variable.options.map(option => {
+                  option["databaseId"] = -1;
+                  option["friendlyTitle"] = option.title;
                 });
               }
             });
@@ -225,7 +232,7 @@ window.vObj = new Vue({
     },
 
     /**
-     * Performs a dummy api call of an ALREADY LOADED Evidencio model
+     * Performs a dummy api call of an ALREADY LOADED Evidencio model, uses the minimum value or first option
      * @param {Number} localModelId : index of model in this.models array
      */
     runDummyModelEvidencio(localModelId) {
@@ -238,7 +245,7 @@ window.vObj = new Vue({
           values[variable.id.toString()] = variable.options[0].title;
       });
 
-      //The code below is a start to working with sequential models, but I ignore them for now
+      //The code below is a start to working with sequential models, but I ignore them for now due to time constraints
       let steps = [];
       if (this.models[localModelId].hasOwnProperty("steps")) {
         return;
@@ -281,6 +288,7 @@ window.vObj = new Vue({
 
     /**
      * Save Workflow in database, IDs of saved data are set after saving.
+     * Url is changed as well, to allow for the user to still see the workflow upon refresh.
      */
     saveWorkflow() {
       var self = this;
@@ -331,35 +339,9 @@ window.vObj = new Vue({
               duration: 6000
             });
             self.workflowId = Number(result.workflowId);
-            var pathArray = location.href.split("/");
-            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
-            let numberOfSteps = self.steps.length;
-            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
-              self.steps[stepIndex].id = result.stepIds[stepIndex];
-              cy.getElementById(self.steps[stepIndex].nodeId).style({
-                label: self.steps[stepIndex].id
-              });
-              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
-                let apiCall = result.resultIds[stepIndex][apiIndex];
-                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
-                }
-              }
-            }
-            let varIds = result.variableIds;
-            for (var key in varIds) {
-              if (varIds.hasOwnProperty(key)) {
-                self.usedVariables[key].databaseId = Number(varIds[key]);
-              }
-            }
-            let optIds = result.optionIds;
-            for (var key in optIds) {
-              if (optIds.hasOwnProperty(key)) {
-                optIds[key].forEach((element, index) => {
-                  self.usedVariables[key].options[index].databaseId = Number(element);
-                });
-              }
-            }
+            self.setURL();
+            self.setStepIds(result);
+            self.setVariableIds(result);
             return true;
           }
         },
@@ -377,7 +359,9 @@ window.vObj = new Vue({
     },
 
     /**
-     * Load a Workflow from the database, as of now does nothing with the workflow
+     * Load a Workflow from the database
+     * 
+     * Should be split, cannot be done due to time-constraints.
      * @param {Number} workflowId 
      */
     loadWorkflow(workflowId) {
@@ -493,6 +477,63 @@ window.vObj = new Vue({
       }
     },
 
+    /**
+     * Change the url to allow for page-refresh
+     */
+    setURL() {
+      var pathArray = location.href.split("/");
+      let newURL = pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + this.workflowId;
+      window.history.pushState(window.history.state, "", newURL);
+    },
+
+    /**
+     * Set the databaseId's in the steps to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setStepIds(result) {
+      let numberOfSteps = this.steps.length;
+      for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+        this.steps[stepIndex].id = result.stepIds[stepIndex];
+        cy.getElementById(this.steps[stepIndex].nodeId).style({
+          label: this.steps[stepIndex].id
+        });
+        for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+          let apiCall = result.resultIds[stepIndex][apiIndex];
+          for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+            this.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+          }
+        }
+      }
+    },
+
+    /**
+     * Set the databaseId 's in the variables to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setVariableIds(result) {
+      let varIds = result.variableIds;
+      for (var key in varIds) {
+        if (varIds.hasOwnProperty(key)) {
+          this.usedVariables[key].databaseId = Number(varIds[key]);
+        }
+      }
+      let optIds = result.optionIds;
+      for (var key in optIds) {
+        if (optIds.hasOwnProperty(key)) {
+          optIds[key].forEach((element, index) => {
+            this.usedVariables[key].options[index].databaseId = Number(element);
+          });
+        }
+      }
+    },
+
+    /**
+     * Check the workflow for common mistakes:
+     *  - Floating steps
+     *  - Non-result step leafs
+     *  - Duplicate rules in one step
+     *  - Graph instead of tree
+     */
     checkWorkflowFormat() {
       let areStepsReachable = new Array(this.steps.length).fill(false);
       let deadEnd = false;
@@ -543,6 +584,10 @@ window.vObj = new Vue({
       return false;
     },
 
+    /**
+     * Performs an AND operation on an array of Booleans
+     * @param {Array} arr 
+     */
     arrayAnd(arr) {
       for (let index = 0; index < arr.length; index++) {
         if (!arr[index]) return false;
@@ -657,6 +702,8 @@ window.vObj = new Vue({
 
     /**
      * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     * 
+     * Should be split in some way, cannot be done due to time constraints.
      */
     checkPossibleLogicOrResultLabelFailures() {
       let showNotification = false;
