@@ -41,7 +41,6 @@ class DesignerSaveController extends Controller
         $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
-        $workflow->is_verified = true; //TODO: remove that line after implementing reviewing of the workflows
         $workflow->save();
         $workflow->touch();
         if ($request->modelIds != null) {
@@ -69,7 +68,7 @@ class DesignerSaveController extends Controller
     {
         if ($workflowId != null) {
             $workflow = Workflow::find($workflowId);
-            if ($workflow == null || $user->cant('save',$workflow)) {
+            if ($workflow == null || $user->cant('save', $workflow)) {
                 $workflow = new Workflow;
             }
         } else {
@@ -146,6 +145,10 @@ class DesignerSaveController extends Controller
             $mappings = $value->modelRunFields()->get();
             foreach ($mappings as $mapping) {
                 $value->modelRunFields()->detach($mapping);
+            }
+            $resultLabels = $value->resultStepChartItems()->get();
+            foreach ($resultLabels as $resultLabel) {
+                $value->resultStepChartItems()->detach($resultLabel);
             }
             $results = $value->modelRunResults()->get();
             foreach ($results as $result) {
@@ -279,7 +282,6 @@ class DesignerSaveController extends Controller
                             "condition" => json_encode($rule["jsonRule"])
                         ]);
                     }
-
                     $savedRules = $savedRules->reject(function ($value) use ($nextStepId) {
                         return $value->id == $nextStepId;
                     });

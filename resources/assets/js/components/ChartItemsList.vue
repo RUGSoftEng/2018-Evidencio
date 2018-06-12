@@ -1,7 +1,7 @@
 <template>
     <div v-if="currentStepData !== undefined">
-        <div class="row">
-            <button type="button" class="btn btn-primary ml-2" @click="addChartItem" :disabled="availableResultsUpper.length == 0" :title="addLabelButtonTitle">Add item</button>
+        <div class="row" style="margin: 0px;">
+            <button type="button" class="btn btn-primary ml-2" @click="addChartItem" :disabled="availableResultsUpper.length == 0" :title="addLabelButtonTitle" style="margin-left: 0px; margin-top: 10px;">Add item</button>
         </div>
         <div class="row list-group" id="chartItemAdder">
             <div class="col">
@@ -81,11 +81,6 @@ export default {
       this.$emit("refresh-chart-data-after-deletion", helpData);
       this.$emit("refresh-reference-data-after-deletion", helpRef);
     }
-  },
-  data() {
-    return {
-      // localChartItems: []
-    };
   }
 };
 </script>

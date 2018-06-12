@@ -59,10 +59,17 @@ class Workflow extends Model
         return $this->hasMany('App\VerificationComment', 'workflow_id');
     }
 
-    public function search($title)
+    public static function search($title)
     {
-        return Workflow::join('users', 'users.id', '=', 'author_id')->where('title', 'LIKE', '%' . $title . '%')->orWhere('description', 'LIKE', '%' . $title . '%')->select('users.id', 'users.first_name', 'users.last_name', 'workflows.*')->get();
-//        return Workflow::join('users', 'author_id', '=', 'users.id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->get();
+        return Workflow::join('users', 'users.id', '=', 'author_id')
+        ->where(function ($query) use ($title) {
+            $query->where('title', 'LIKE', '%' . $title . '%')
+                  ->orWhere('description', 'LIKE', '%' . $title . '%');
+        })
+        ->where('workflows.is_verified',true)
+        ->where('is_published',true)
+        ->select('users.id', 'users.first_name', 'users.last_name', 'workflows.*')
+        ->get();
     }
 
     /**
@@ -76,5 +83,21 @@ class Workflow extends Model
             $results = $results->merge($step->modelRunResults()->get());
         }
         return $results;
+    }
+
+    /**
+     * Publishes the workflow. The designer can publish a workflow to indicate that it should appear on the website.
+     * Right now it is automatically marked verified, but this should be done by another user/administrator, who
+     * should be notified of the published workflow in some way. However, we have not been able to implement workflow
+     * verification.
+     *
+     * @return void
+     */
+    public function publish()
+    {
+        $this->is_draft = false;
+        $this->is_published = true;
+        $this->is_verified = true; //TODO: remove this after implementing reviewing of the workflows
+        $this->save();
     }
 }

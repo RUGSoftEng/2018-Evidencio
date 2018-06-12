@@ -7,7 +7,8 @@ use App\EvidencioAPI;
 use App\Workflow;
 $numResult = 0;
 if (!empty($_GET['search'])) {
-  $result = (new Workflow)->search($_GET['search']);
+  //$decodeRes = EvidencioAPI::search($_GET['search']);
+  $result = Workflow::search($_GET['search']);
   $numResult = count($result);
 }
 ?>

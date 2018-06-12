@@ -46,6 +46,7 @@ window.vObj = new Vue({
     title: "Default title",
     description: "Default description",
     languageCode: "EN",
+    isDraft: true,
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
@@ -84,6 +85,7 @@ window.vObj = new Vue({
         Event.fire("normalStart");
       } else this.loadWorkflow(this.workflowId);
     });
+
     // Event called when a normal (empty) start should occur.
     Event.listen("normalStart", () => {
       this.addLevel(0);
@@ -95,10 +97,12 @@ window.vObj = new Vue({
       this.panView();
       this.isLoading = false;
     });
+
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", modelId => {
       this.loadModelEvidencio(modelId);
     });
+
     // Event called when all the evidencio models for a workflow are (hopefully) loaded
     Event.listen("loadWorkflowAllModelsLoaded", () => {
       this.steps.forEach(localStep => {
@@ -121,7 +125,8 @@ window.vObj = new Vue({
       this.connectionsChanged = !this.connectionsChanged;
       this.isLoading = false;
     })
-    // Event called when the user tries to remove a step
+
+    // Event called when the user tries to remove a step/add a level where it would remove a rule
     Event.listen("confirmDialog", confirmInfo => {
       this.prepareConfirmDialog(confirmInfo);
     });
@@ -147,10 +152,12 @@ window.vObj = new Vue({
       return this.levels[levelIndex + 1].steps;
     },
 
+    // Array containing the ancestors of the currently selected step
     ancestors: function () {
       return this.getAncestorStepList(this.selectedStepId);
     },
 
+    // Array containing the variables known up to (but not including) the currently selected step
     variablesUpToStep: function () {
       let vars = [];
       this.ancestors.forEach(stepId => {
@@ -159,6 +166,7 @@ window.vObj = new Vue({
       return vars;
     },
 
+    // Array containing the results known up to (but not including) the currently selected step
     resultsUpToStep: function () {
       let results = [];
       this.ancestors.forEach(stepId => {
@@ -197,12 +205,12 @@ window.vObj = new Vue({
             let newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
             self.models[self.models.length - 1]["resultVars"] = [];
-            self.models[self.models.length - 1].variables.map(x => {
-              x["databaseId"] = -1;
-              if (x["type"] == "categorical") {
-                x.options.map(y => {
-                  y["databaseId"] = -1;
-                  y["friendlyTitle"] = y.title;
+            self.models[self.models.length - 1].variables.map(variable => {
+              variable["databaseId"] = -1;
+              if (variable["type"] == "categorical") {
+                variable.options.map(option => {
+                  option["databaseId"] = -1;
+                  option["friendlyTitle"] = option.title;
                 });
               }
             });
@@ -215,7 +223,8 @@ window.vObj = new Vue({
             self.$notify({
               title: "Failed to grab Evidencio model",
               text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-              type: "error"
+              type: "error",
+              duration: 6000
             });
           }
         });
@@ -223,7 +232,7 @@ window.vObj = new Vue({
     },
 
     /**
-     * Performs a dummy api call of an ALREADY LOADED Evidencio model
+     * Performs a dummy api call of an ALREADY LOADED Evidencio model, uses the minimum value or first option
      * @param {Number} localModelId : index of model in this.models array
      */
     runDummyModelEvidencio(localModelId) {
@@ -236,7 +245,7 @@ window.vObj = new Vue({
           values[variable.id.toString()] = variable.options[0].title;
       });
 
-      //The code below is a start to working with sequential models, but I ignore them for now
+      //The code below is a start to working with sequential models, but I ignore them for now due to time constraints
       let steps = [];
       if (this.models[localModelId].hasOwnProperty("steps")) {
         return;
@@ -270,7 +279,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Failed to run Evidencio model",
             text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
         }
       });
@@ -278,6 +288,7 @@ window.vObj = new Vue({
 
     /**
      * Save Workflow in database, IDs of saved data are set after saving.
+     * Url is changed as well, to allow for the user to still see the workflow upon refresh.
      */
     saveWorkflow() {
       var self = this;
@@ -324,53 +335,33 @@ window.vObj = new Vue({
             self.$notify({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
-              type: "success"
+              type: "success",
+              duration: 6000
             });
             self.workflowId = Number(result.workflowId);
-            var pathArray = location.href.split("/");
-            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
-            let numberOfSteps = self.steps.length;
-            for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
-              self.steps[stepIndex].id = result.stepIds[stepIndex];
-              cy.getElementById(self.steps[stepIndex].nodeId).style({
-                label: self.steps[stepIndex].id
-              });
-              for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
-                let apiCall = result.resultIds[stepIndex][apiIndex];
-                for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
-                }
-              }
-            }
-            let varIds = result.variableIds;
-            for (var key in varIds) {
-              if (varIds.hasOwnProperty(key)) {
-                self.usedVariables[key].databaseId = Number(varIds[key]);
-              }
-            }
-            let optIds = result.optionIds;
-            for (var key in optIds) {
-              if (optIds.hasOwnProperty(key)) {
-                optIds[key].forEach((element, index) => {
-                  self.usedVariables[key].options[index].databaseId = Number(element);
-                });
-              }
-            }
+            self.setURL();
+            self.setStepIds(result);
+            self.setVariableIds(result);
+            return true;
           }
         },
         error: function (xhr, textStatus, errorThrown) {
           self.$notify({
             title: "Saving failed",
             text: "Your workflow failed to save. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
+          return false;
         }
       });
     },
 
     /**
-     * Load a Workflow from the database, as of now does nothing with the workflow
+     * Load a Workflow from the database
+     * 
+     * Should be split, cannot be done due to time-constraints.
      * @param {Number} workflowId 
      */
     loadWorkflow(workflowId) {
@@ -386,21 +377,25 @@ window.vObj = new Vue({
         success: function (result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
+            // First save the change-indicators
             let currentSteps = self.stepsChanged;
             let currentLevels = self.levelsChanged;
+            // Set the general workflow-information
             self.title = result.title;
             self.description = result.description;
             self.languageCode = result.languageCode;
+            self.isDraft = result.isDraft;
+            // Add each step, then set the information
             result.steps.forEach((element, index) => {
               while (self.levels.length <= element.level)
                 self.addLevel(self.levels.length);
-              console.log("Index: " + index + ", #steps: " + self.steps.length);
               self.addStep(element.title, element.description, element.level);
               let localStep = self.steps[index];
               localStep.id = element.id;
               localStep.type = element.type;
               localStep.colour = element.colour;
               if (localStep.type == "input") {
+                // Input step: set variables, rules, apiCalls
                 localStep.variables = element.variables;
                 localStep.varCounter = element.variables.length;
                 element.rules.map(rule => {
@@ -408,16 +403,20 @@ window.vObj = new Vue({
                 });
                 localStep.apiCalls = element.apiCalls;
               } else {
+                // Result step: set chart-information and items
                 localStep.chartTypeNumber = Number(element.chartTypeNumber);
                 localStep.chartItemReference = element.chartItemReference;
                 localStep.chartRenderingData = element.chartRenderingData;
               }
             });
+            // Set usedVariables, if it is not empty
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
+            // Make sure that the view is updated correctly
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            // Load the necessary information from Evidencio
             self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
@@ -429,7 +428,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Loading failed",
             text: "Your workflow failed to load. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
           window.setTimeout(() => {
@@ -438,6 +438,163 @@ window.vObj = new Vue({
         }
       });
     },
+
+    publishWorkflow() {
+      this.saveWorkflow()
+      if (this.checkWorkflowFormat()) {
+        const self = this;
+        $.ajax({
+          url: '/myworkflows/publish/' + self.workflowId,
+          type: 'GET',
+          success: function (result) {
+            if (result.success) {
+              self.$notify({
+                title: "Worklfow is published successfully",
+                text: "Your workflow has been successfully publised. As soon as it has been verified by the Evidencio-team it will be available for the patients.",
+                type: "success",
+                duration: 6000
+              });
+              self.isDraft = false;
+            } else {
+              self.$notify({
+                title: "Worklfow failed to publish",
+                text: "This workflow failed to be published. Either it could not be found, or you are not the owner of the workflow. Please contact the Evidencio-team for help.",
+                type: "error",
+                duration: 6000
+              });
+            }
+          },
+          error: function (error) {
+            self.$notify({
+              title: "Something went wrong.",
+              text: "This workflow failed to be published. Something went wrong with your request. Please contact the Evidencio-team for help.",
+              type: "error",
+              duration: 6000
+            });
+            console.log(error);
+          }
+        })
+      }
+    },
+
+    /**
+     * Change the url to allow for page-refresh
+     */
+    setURL() {
+      var pathArray = location.href.split("/");
+      let newURL = pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + this.workflowId;
+      window.history.pushState(window.history.state, "", newURL);
+    },
+
+    /**
+     * Set the databaseId's in the steps to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setStepIds(result) {
+      let numberOfSteps = this.steps.length;
+      for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+        this.steps[stepIndex].id = result.stepIds[stepIndex];
+        cy.getElementById(this.steps[stepIndex].nodeId).style({
+          label: this.steps[stepIndex].id
+        });
+        for (let apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+          let apiCall = result.resultIds[stepIndex][apiIndex];
+          for (let resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+            this.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+          }
+        }
+      }
+    },
+
+    /**
+     * Set the databaseId 's in the variables to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setVariableIds(result) {
+      let varIds = result.variableIds;
+      for (var key in varIds) {
+        if (varIds.hasOwnProperty(key)) {
+          this.usedVariables[key].databaseId = Number(varIds[key]);
+        }
+      }
+      let optIds = result.optionIds;
+      for (var key in optIds) {
+        if (optIds.hasOwnProperty(key)) {
+          optIds[key].forEach((element, index) => {
+            this.usedVariables[key].options[index].databaseId = Number(element);
+          });
+        }
+      }
+    },
+
+    /**
+     * Check the workflow for common mistakes:
+     *  - Floating steps
+     *  - Non-result step leafs
+     *  - Duplicate rules in one step
+     *  - Graph instead of tree
+     */
+    checkWorkflowFormat() {
+      let areStepsReachable = new Array(this.steps.length).fill(false);
+      let deadEnd = false;
+      let duplicateRules = false;
+      let isGraph = false;
+      let stack = [0];
+      while (stack.length > 0) {
+        let currentStepId = stack.pop();
+        if (areStepsReachable[currentStepId])
+          isGraph = true;
+        areStepsReachable[currentStepId] = true;
+        let currentStep = this.steps[currentStepId];
+        if (currentStep.type == "input") {
+          if (currentStep.rules.length > 0) {
+            for (let index = currentStep.rules.length - 1; index >= 0; index--) {
+              let currentRule = currentStep.rules[index];
+              stack.push(currentRule.target.stepId);
+              for (let secondIndex = index - 1; secondIndex >= 0; secondIndex--) {
+                if (JSON.stringify(currentRule.condition) == JSON.stringify(currentStep.rules[secondIndex].condition))
+                  duplicateRules = true;
+              }
+            }
+          } else {
+            deadEnd = true;
+          }
+        }
+      }
+      let allStepsReachable = this.arrayAnd(areStepsReachable);
+      if (allStepsReachable && !deadEnd && !duplicateRules && !isGraph) {
+        return true
+      }
+      let message = "There are some problems with your workflow, namely:<ul>";
+      if (!allStepsReachable)
+        message += "<li>Not all steps are currently reachable. Either remove the unreachable steps or add rules to connect them.</li>";
+      if (deadEnd)
+        message += "<li>Some of the leaf-steps are Input-steps, all leaf-steps should be Result-steps.</li>";
+      if (duplicateRules)
+        message += "<li>Some rules in a step have the same condition. Please remove rules with the same condition.</li>";
+      if (isGraph)
+        message += "<li>Two or more rules have the same target, please make sure the workflow is a tree and not a graph.</li>";
+      message += "</ul>";
+      this.$notify({
+        title: "Cannot be published",
+        text: message,
+        duration: 10000,
+        type: 'error'
+      })
+      return false;
+    },
+
+    /**
+     * Performs an AND operation on an array of Booleans
+     * @param {Array} arr 
+     */
+    arrayAnd(arr) {
+      for (let index = 0; index < arr.length; index++) {
+        if (!arr[index]) return false;
+      }
+      return true;
+    },
+
 
     /**
      * Prepares a rule loaded from the database for use in the designer
@@ -448,7 +605,7 @@ window.vObj = new Vue({
         title: databaseRule.title,
         description: databaseRule.description,
         target: databaseRule.target,
-        condition: JSON.parse(databaseRule.jsonRule).conditions
+        condition: databaseRule.jsonRule.conditions
       };
     },
 
@@ -465,7 +622,8 @@ window.vObj = new Vue({
         self.$notify({
           title: "Loading workflow failed",
           text: "Some requested information from Evidencio failed to arrive, loading failed.",
-          type: "error"
+          type: "error",
+          duration: 6000
         });
         console.log("At least one of the requests failed.");
         console.log(e);
@@ -537,12 +695,15 @@ window.vObj = new Vue({
         this.$notify({
           title: "Variable removed",
           text: "You have removed one or more variables that were used in a model-calculation, it is now replaced with another.",
-          type: "warn"
+          type: "warn",
+          duration: 6000
         });
     },
 
     /**
      * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     * 
+     * Should be split in some way, cannot be done due to time constraints.
      */
     checkPossibleLogicOrResultLabelFailures() {
       let showNotification = false;
@@ -554,8 +715,9 @@ window.vObj = new Vue({
             reachableResults = reachableResults.concat(apiCall.results.map(result => {
               return result.name;
             }));
-          })
+          });
           if (reachableResults.length > 0) {
+            // Results can be used in the step
             if (step.type == "result") {
               for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
                 if (this.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
@@ -578,21 +740,26 @@ window.vObj = new Vue({
               });
             }
           } else {
-            step.chartItemReference = [];
-            step.chartRenderingData = {
-              labels: [],
-              datasets: [{
-                data: [],
-                backgroundColor: []
-              }]
-            }
-            step.rules.forEach(rule => {
-              if (this.checkRuleUsingResult(rule.condition)) {
-                rule.action = "destroy";
+            // No results available for use in the step
+            if (step.chartItemReference.length > 0) {
+              step.chartItemReference = [];
+              step.chartRenderingData = {
+                labels: [],
+                datasets: [{
+                  data: [],
+                  backgroundColor: []
+                }]
               }
-            })
-            showNotification = true;
-            notificationType = "all";
+              if (step.rules.length > 0) {
+                step.rules.forEach(rule => {
+                  if (this.checkRuleUsingResult(rule.condition)) {
+                    rule.action = "destroy";
+                  }
+                })
+              }
+              showNotification = true;
+              notificationType = "all";
+            }
           }
         }
       });
@@ -602,21 +769,24 @@ window.vObj = new Vue({
             this.$notify({
               title: "Result-item removed",
               text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
           case "rule":
             this.$notify({
               title: "Rule changed",
               text: "You have removed one or more model-calculations that were used in a result-step, please check your current rules.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
           case "all":
             this.$notify({
               title: "Result-items or logical rules removed",
               text: "You have removed (access to) all model-calculations that were used in a step, the components using these (rules or result-items) have been removed.",
-              type: "warn"
+              type: "warn",
+              duration: 6000
             });
             break;
         }
@@ -913,6 +1083,8 @@ window.vObj = new Vue({
         case "removeStep":
           this.confirmDialog.approvalFunction = () => {
             this.removeStep(this.confirmDialog.data);
+            this.checkPossibleVariableMappingFailures();
+            this.checkPossibleLogicOrResultLabelFailures();
           }
           break;
         case "addLevelRuleDeletion":
@@ -925,6 +1097,8 @@ window.vObj = new Vue({
             }
             this.connectionsChanged = !this.connectionsChanged;
             this.addLevel(this.confirmDialog.data);
+            this.checkPossibleVariableMappingFailures();
+            this.checkPossibleLogicOrResultLabelFailures();
           }
           break;
       }
@@ -954,6 +1128,7 @@ window.vObj = new Vue({
       changedStep.step.rules.map(rule => {
         if (rule.action == "none") rule.action = "change";
       });
+      this.checkStepType(changedStep);
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
       // Set new backgroundcolor
@@ -964,6 +1139,39 @@ window.vObj = new Vue({
       this.checkPossibleVariableMappingFailures();
       this.checkPossibleLogicOrResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
+    },
+
+    /**
+     * Removes unnecessary information from step-object based on the step type, meaning:
+     * - Variables, api-calls, and rules are removed from a result-step
+     * - Result-items (/labels) are removed from an input-step
+     * This is done since the information is not required and could potentially break the workflow upon saving/loading
+     * @param {Object} changedStep 
+     */
+    checkStepType(changedStep) {
+      if (changedStep.step.type == "input") {
+        changedStep.step.chartItemReference = [];
+        changedStep.step.chartRenderingData = {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: []
+          }]
+        }
+      } else {
+        changedStep.step.apiCalls = [];
+        if (changedStep.step.hasOwnProperty("rules")) {
+          changedStep.step.rules.forEach(rule => {
+            rule.action = "destroy";
+          });
+        }
+        if (changedStep.step.hasOwnProperty("variables")) {
+          changedStep.step.variables.forEach(variable => {
+            delete changedStep.usedVars[variable];
+          });
+        }
+        changedStep.step.variables = [];
+      }
     },
 
     /**
@@ -1062,10 +1270,12 @@ window.vObj = new Vue({
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
-        this.steps[stId].rules.forEach(rule => {
-          if (rule.action != "destroy" && rule.target.stepId == stepId)
-            list = list.concat(this.getAncestorStepListHelper(stId));
-        });
+        if (this.steps[stId].action != "destroy") {
+          this.steps[stId].rules.forEach(rule => {
+            if (rule.action != "destroy" && rule.target.stepId == stepId)
+              list = list.concat(this.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return this.arrayUnique(list);
     },
@@ -1076,10 +1286,12 @@ window.vObj = new Vue({
       if (previousLevel < 0)
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
-        this.steps[stId].rules.forEach(rule => {
-          if (rule.target.stepId == stepId)
-            list = list.concat(this.getAncestorStepListHelper(stId));
-        });
+        if (this.steps[stId].action != "destroy") {
+          this.steps[stId].rules.forEach(rule => {
+            if (rule.action != "destroy" && rule.target.stepId == stepId)
+              list = list.concat(this.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return list;
     },

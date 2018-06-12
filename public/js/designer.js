@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 246);
+/******/ 	return __webpack_require__(__webpack_require__.s = 275);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1902,7 +1902,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(178)("./" + name);
+                __webpack_require__(184)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4574,7 +4574,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(145)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(151)(module)))
 
 /***/ }),
 /* 1 */
@@ -4583,10 +4583,10 @@
 "use strict";
 
 
-module.exports = __webpack_require__(13);
-module.exports.easing = __webpack_require__(152);
-module.exports.canvas = __webpack_require__(153);
-module.exports.options = __webpack_require__(154);
+module.exports = __webpack_require__(14);
+module.exports.easing = __webpack_require__(158);
+module.exports.canvas = __webpack_require__(159);
+module.exports.options = __webpack_require__(160);
 
 
 /***/ }),
@@ -4724,7 +4724,7 @@ module.exports = function normalizeComponent (
 "use strict";
 
 
-var color = __webpack_require__(18);
+var color = __webpack_require__(20);
 var helpers = __webpack_require__(1);
 
 function interpolate(start, view, model, ease) {
@@ -4841,20 +4841,6 @@ module.exports = Element;
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {};
-module.exports.Arc = __webpack_require__(160);
-module.exports.Line = __webpack_require__(161);
-module.exports.Point = __webpack_require__(162);
-module.exports.Rectangle = __webpack_require__(163);
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports) {
 
 var g;
@@ -4881,8 +4867,295 @@ module.exports = g;
 
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {};
+module.exports.Arc = __webpack_require__(166);
+module.exports.Line = __webpack_require__(167);
+module.exports.Point = __webpack_require__(168);
+module.exports.Rectangle = __webpack_require__(169);
+
+
+/***/ }),
 /* 7 */,
-/* 8 */
+/* 8 */,
+/* 9 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5308,7 +5581,7 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5385,89 +5658,7 @@ module.exports = {
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function(useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if(item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-
-/***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -5486,7 +5677,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(250)
+var listToStyles = __webpack_require__(279)
 
 /*
 type StyleObject = {
@@ -5695,197 +5886,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6231,15 +6232,16 @@ helpers.getValueAtIndexOrDefault = helpers.valueAtIndexOrDefault;
 
 
 /***/ }),
-/* 14 */,
-/* 15 */
+/* 15 */,
+/* 16 */,
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VueCharts", function() { return VueCharts; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__ = __webpack_require__(148);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__BaseCharts__ = __webpack_require__(149);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_index_js__ = __webpack_require__(154);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__BaseCharts__ = __webpack_require__(155);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Bar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "HorizontalBar", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["d"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Doughnut", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["c"]; });
@@ -6270,7 +6272,7 @@ var VueCharts = {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -6323,7 +6325,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(17);
+__webpack_require__(19);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -6334,10 +6336,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -6527,15 +6529,15 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(9)))
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var convert = __webpack_require__(156);
-var string = __webpack_require__(158);
+var convert = __webpack_require__(162);
+var string = __webpack_require__(164);
 
 var Color = function (obj) {
 	if (obj instanceof Color) {
@@ -7021,7 +7023,7 @@ module.exports = Color;
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7358,15 +7360,15 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var helpers = __webpack_require__(1);
-var basic = __webpack_require__(164);
-var dom = __webpack_require__(165);
+var basic = __webpack_require__(170);
+var dom = __webpack_require__(171);
 
 // @TODO Make possible to select another platform at build time.
 var implementation = dom._enabled ? dom : basic;
@@ -7439,7 +7441,7 @@ module.exports = helpers.extend({
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7828,7 +7830,7 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7905,7 +7907,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8044,7 +8046,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8107,7 +8109,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8170,7 +8172,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8296,7 +8298,7 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8359,7 +8361,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8467,7 +8469,7 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8530,7 +8532,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8639,7 +8641,7 @@ module.exports = {
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8775,7 +8777,7 @@ module.exports = {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8869,7 +8871,7 @@ module.exports = {
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8931,7 +8933,7 @@ module.exports = {
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9054,7 +9056,7 @@ module.exports = {
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9177,7 +9179,7 @@ module.exports = {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9289,7 +9291,7 @@ module.exports = {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9444,7 +9446,7 @@ module.exports = {
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9536,7 +9538,7 @@ module.exports = {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9719,7 +9721,7 @@ module.exports = {
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9786,7 +9788,7 @@ module.exports = {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9870,7 +9872,7 @@ module.exports = {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9934,7 +9936,7 @@ module.exports = {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10014,7 +10016,7 @@ module.exports = {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10094,7 +10096,7 @@ module.exports = {
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10174,7 +10176,7 @@ module.exports = {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10277,7 +10279,7 @@ module.exports = {
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10381,7 +10383,7 @@ module.exports = {
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10452,7 +10454,7 @@ module.exports = {
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10519,7 +10521,7 @@ module.exports = {
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10590,7 +10592,7 @@ module.exports = {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10661,7 +10663,7 @@ module.exports = {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10727,7 +10729,7 @@ module.exports = {
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10798,7 +10800,7 @@ module.exports = {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10873,7 +10875,7 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10969,7 +10971,7 @@ module.exports = {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11065,7 +11067,7 @@ module.exports = {
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11152,7 +11154,7 @@ module.exports = {
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11236,7 +11238,7 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11306,7 +11308,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11416,7 +11418,7 @@ module.exports = {
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11529,7 +11531,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11593,7 +11595,7 @@ module.exports = {
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11680,7 +11682,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11758,7 +11760,7 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11840,7 +11842,7 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11919,7 +11921,7 @@ module.exports = {
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11999,7 +12001,7 @@ module.exports = {
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12080,7 +12082,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12207,7 +12209,7 @@ module.exports = {
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12335,7 +12337,7 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12436,7 +12438,7 @@ module.exports = {
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12564,7 +12566,7 @@ module.exports = {
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12722,7 +12724,7 @@ module.exports = {
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12836,7 +12838,7 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12935,7 +12937,7 @@ module.exports = {
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13021,7 +13023,7 @@ module.exports = {
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13157,7 +13159,7 @@ module.exports = {
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13230,7 +13232,7 @@ module.exports = {
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13326,7 +13328,7 @@ module.exports = {
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13412,7 +13414,7 @@ module.exports = {
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13505,7 +13507,7 @@ module.exports = {
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13596,7 +13598,7 @@ module.exports = {
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13710,7 +13712,7 @@ module.exports = {
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13840,7 +13842,7 @@ module.exports = {
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13925,7 +13927,7 @@ module.exports = {
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14016,7 +14018,7 @@ module.exports = {
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14156,7 +14158,7 @@ module.exports = {
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14230,7 +14232,7 @@ module.exports = {
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14352,7 +14354,7 @@ module.exports = {
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14453,7 +14455,7 @@ module.exports = {
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14569,7 +14571,7 @@ module.exports = {
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14637,7 +14639,7 @@ module.exports = {
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14731,7 +14733,7 @@ module.exports = {
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14816,7 +14818,7 @@ module.exports = {
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14924,7 +14926,7 @@ module.exports = {
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15088,7 +15090,7 @@ module.exports = {
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15174,7 +15176,7 @@ module.exports = {
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15260,7 +15262,7 @@ module.exports = {
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15324,7 +15326,7 @@ module.exports = {
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15421,7 +15423,7 @@ module.exports = {
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15487,7 +15489,7 @@ module.exports = {
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15614,7 +15616,7 @@ module.exports = {
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15705,7 +15707,7 @@ module.exports = {
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15796,7 +15798,7 @@ module.exports = {
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15860,7 +15862,7 @@ module.exports = {
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15988,7 +15990,7 @@ module.exports = {
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16118,7 +16120,7 @@ module.exports = {
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16187,7 +16189,7 @@ module.exports = {
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16252,7 +16254,7 @@ module.exports = {
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16331,7 +16333,7 @@ module.exports = {
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16517,7 +16519,7 @@ module.exports = {
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16619,7 +16621,7 @@ module.exports = {
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16683,7 +16685,7 @@ module.exports = {
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16758,7 +16760,7 @@ module.exports = {
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16918,7 +16920,7 @@ module.exports = {
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17095,7 +17097,7 @@ module.exports = {
 
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17167,7 +17169,7 @@ module.exports = {
 
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17282,7 +17284,7 @@ module.exports = {
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17397,7 +17399,7 @@ module.exports = {
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17489,7 +17491,7 @@ module.exports = {
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17562,7 +17564,7 @@ module.exports = {
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17625,7 +17627,7 @@ module.exports = {
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17758,7 +17760,7 @@ module.exports = {
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17851,7 +17853,7 @@ module.exports = {
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17922,7 +17924,7 @@ module.exports = {
 
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18042,7 +18044,7 @@ module.exports = {
 
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18113,7 +18115,7 @@ module.exports = {
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18179,7 +18181,7 @@ module.exports = {
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18305,7 +18307,7 @@ module.exports = {
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -18403,7 +18405,7 @@ module.exports = {
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18498,7 +18500,7 @@ module.exports = {
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18560,7 +18562,7 @@ module.exports = {
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18622,7 +18624,7 @@ module.exports = {
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -18745,7 +18747,7 @@ module.exports = {
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18900,7 +18902,7 @@ module.exports = {
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19002,7 +19004,7 @@ module.exports = {
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19064,7 +19066,7 @@ module.exports = {
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19126,7 +19128,7 @@ module.exports = {
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19209,7 +19211,7 @@ module.exports = {
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19281,7 +19283,7 @@ module.exports = {
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19345,7 +19347,7 @@ module.exports = {
 
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19459,7 +19461,7 @@ module.exports = {
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19566,7 +19568,7 @@ module.exports = {
 
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19673,7 +19675,11 @@ module.exports = {
 
 
 /***/ }),
-/* 145 */
+/* 147 */,
+/* 148 */,
+/* 149 */,
+/* 150 */,
+/* 151 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -19701,7 +19707,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 146 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30664,11 +30670,11 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(16).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(18).setImmediate))
 
 /***/ }),
-/* 147 */,
-/* 148 */
+/* 153 */,
+/* 154 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -30756,7 +30762,7 @@ var reactiveProp = {
 });
 
 /***/ }),
-/* 149 */
+/* 155 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -30770,7 +30776,7 @@ var reactiveProp = {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return Radar; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Bubble; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return Scatter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_chart_js__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_chart_js__ = __webpack_require__(156);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_chart_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_chart_js__);
 
 function generateChart(chartId, chartType) {
@@ -30863,34 +30869,27 @@ var Scatter = generateChart('scatter-chart', 'scatter');
 });
 
 /***/ }),
-/* 150 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * @namespace Chart
  */
-var Chart = __webpack_require__(151)();
+var Chart = __webpack_require__(157)();
 
 Chart.helpers = __webpack_require__(1);
 
 // @todo dispatch these helpers into appropriated helpers/helpers.* file and write unit tests!
-__webpack_require__(155)(Chart);
+__webpack_require__(161)(Chart);
 
 Chart.defaults = __webpack_require__(2);
 Chart.Element = __webpack_require__(4);
-Chart.elements = __webpack_require__(5);
-Chart.Interaction = __webpack_require__(19);
-Chart.layouts = __webpack_require__(8);
-Chart.platform = __webpack_require__(20);
-Chart.plugins = __webpack_require__(21);
-Chart.Ticks = __webpack_require__(9);
-
-__webpack_require__(166)(Chart);
-__webpack_require__(167)(Chart);
-__webpack_require__(168)(Chart);
-__webpack_require__(169)(Chart);
-__webpack_require__(170)(Chart);
-__webpack_require__(171)(Chart);
+Chart.elements = __webpack_require__(6);
+Chart.Interaction = __webpack_require__(21);
+Chart.layouts = __webpack_require__(11);
+Chart.platform = __webpack_require__(22);
+Chart.plugins = __webpack_require__(23);
+Chart.Ticks = __webpack_require__(12);
 
 __webpack_require__(172)(Chart);
 __webpack_require__(173)(Chart);
@@ -30899,26 +30898,33 @@ __webpack_require__(175)(Chart);
 __webpack_require__(176)(Chart);
 __webpack_require__(177)(Chart);
 
-// Controllers must be loaded after elements
-// See Chart.core.datasetController.dataElementType
+__webpack_require__(178)(Chart);
 __webpack_require__(179)(Chart);
 __webpack_require__(180)(Chart);
 __webpack_require__(181)(Chart);
 __webpack_require__(182)(Chart);
 __webpack_require__(183)(Chart);
-__webpack_require__(184)(Chart);
-__webpack_require__(185)(Chart);
 
+// Controllers must be loaded after elements
+// See Chart.core.datasetController.dataElementType
+__webpack_require__(185)(Chart);
 __webpack_require__(186)(Chart);
 __webpack_require__(187)(Chart);
 __webpack_require__(188)(Chart);
 __webpack_require__(189)(Chart);
 __webpack_require__(190)(Chart);
 __webpack_require__(191)(Chart);
+
 __webpack_require__(192)(Chart);
+__webpack_require__(193)(Chart);
+__webpack_require__(194)(Chart);
+__webpack_require__(195)(Chart);
+__webpack_require__(196)(Chart);
+__webpack_require__(197)(Chart);
+__webpack_require__(198)(Chart);
 
 // Loading built-it plugins
-var plugins = __webpack_require__(193);
+var plugins = __webpack_require__(199);
 for (var k in plugins) {
 	if (plugins.hasOwnProperty(k)) {
 		Chart.plugins.register(plugins[k]);
@@ -30991,7 +30997,7 @@ Chart.layoutService = Chart.layouts;
 
 
 /***/ }),
-/* 151 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31047,13 +31053,13 @@ module.exports = function() {
 
 
 /***/ }),
-/* 152 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var helpers = __webpack_require__(13);
+var helpers = __webpack_require__(14);
 
 /**
  * Easing functions adapted from Robert Penner's easing equations.
@@ -31304,13 +31310,13 @@ helpers.easingEffects = effects;
 
 
 /***/ }),
-/* 153 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var helpers = __webpack_require__(13);
+var helpers = __webpack_require__(14);
 
 /**
  * @namespace Chart.helpers.canvas
@@ -31525,13 +31531,13 @@ helpers.drawRoundedRectangle = function(ctx) {
 
 
 /***/ }),
-/* 154 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var helpers = __webpack_require__(13);
+var helpers = __webpack_require__(14);
 
 /**
  * @alias Chart.helpers.options
@@ -31628,7 +31634,7 @@ module.exports = {
 
 
 /***/ }),
-/* 155 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31636,7 +31642,7 @@ module.exports = {
 /* global document: false */
 
 
-var color = __webpack_require__(18);
+var color = __webpack_require__(20);
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 
@@ -32246,10 +32252,10 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 156 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var conversions = __webpack_require__(157);
+var conversions = __webpack_require__(163);
 
 var convert = function() {
    return new Converter();
@@ -32343,7 +32349,7 @@ Converter.prototype.getValues = function(space) {
 module.exports = convert;
 
 /***/ }),
-/* 157 */
+/* 163 */
 /***/ (function(module, exports) {
 
 /* MIT license */
@@ -33047,11 +33053,11 @@ for (var key in cssKeywords) {
 
 
 /***/ }),
-/* 158 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var colorNames = __webpack_require__(159);
+var colorNames = __webpack_require__(165);
 
 module.exports = {
    getRgba: getRgba,
@@ -33274,7 +33280,7 @@ for (var name in colorNames) {
 
 
 /***/ }),
-/* 159 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33433,7 +33439,7 @@ module.exports = {
 
 
 /***/ }),
-/* 160 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33547,7 +33553,7 @@ module.exports = Element.extend({
 
 
 /***/ }),
-/* 161 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33645,7 +33651,7 @@ module.exports = Element.extend({
 
 
 /***/ }),
-/* 162 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33758,7 +33764,7 @@ module.exports = Element.extend({
 
 
 /***/ }),
-/* 163 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33982,7 +33988,7 @@ module.exports = Element.extend({
 
 
 /***/ }),
-/* 164 */
+/* 170 */
 /***/ (function(module, exports) {
 
 /**
@@ -34003,7 +34009,7 @@ module.exports = {
 
 
 /***/ }),
-/* 165 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34467,7 +34473,7 @@ helpers.removeEvent = removeEventListener;
 
 
 /***/ }),
-/* 166 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34646,7 +34652,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 167 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34654,10 +34660,10 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Interaction = __webpack_require__(19);
-var layouts = __webpack_require__(8);
-var platform = __webpack_require__(20);
-var plugins = __webpack_require__(21);
+var Interaction = __webpack_require__(21);
+var layouts = __webpack_require__(11);
+var platform = __webpack_require__(22);
+var plugins = __webpack_require__(23);
 
 module.exports = function(Chart) {
 
@@ -35600,7 +35606,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 168 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35937,7 +35943,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 169 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35945,7 +35951,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(8);
+var layouts = __webpack_require__(11);
 
 module.exports = function(Chart) {
 
@@ -35990,7 +35996,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 170 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35999,7 +36005,7 @@ module.exports = function(Chart) {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(9);
+var Ticks = __webpack_require__(12);
 
 defaults._set('scale', {
 	display: true,
@@ -36933,7 +36939,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 171 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37888,7 +37894,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 172 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38081,7 +38087,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 173 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38221,7 +38227,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 174 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38229,7 +38235,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(9);
+var Ticks = __webpack_require__(12);
 
 module.exports = function(Chart) {
 
@@ -38419,14 +38425,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 175 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(9);
+var Ticks = __webpack_require__(12);
 
 /**
  * Generate a set of logarithmic ticks
@@ -38773,7 +38779,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 176 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38781,7 +38787,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(9);
+var Ticks = __webpack_require__(12);
 
 module.exports = function(Chart) {
 
@@ -39309,7 +39315,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 177 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40099,256 +40105,256 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 178 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 22,
-	"./af.js": 22,
-	"./ar": 23,
-	"./ar-dz": 24,
-	"./ar-dz.js": 24,
-	"./ar-kw": 25,
-	"./ar-kw.js": 25,
-	"./ar-ly": 26,
-	"./ar-ly.js": 26,
-	"./ar-ma": 27,
-	"./ar-ma.js": 27,
-	"./ar-sa": 28,
-	"./ar-sa.js": 28,
-	"./ar-tn": 29,
-	"./ar-tn.js": 29,
-	"./ar.js": 23,
-	"./az": 30,
-	"./az.js": 30,
-	"./be": 31,
-	"./be.js": 31,
-	"./bg": 32,
-	"./bg.js": 32,
-	"./bm": 33,
-	"./bm.js": 33,
-	"./bn": 34,
-	"./bn.js": 34,
-	"./bo": 35,
-	"./bo.js": 35,
-	"./br": 36,
-	"./br.js": 36,
-	"./bs": 37,
-	"./bs.js": 37,
-	"./ca": 38,
-	"./ca.js": 38,
-	"./cs": 39,
-	"./cs.js": 39,
-	"./cv": 40,
-	"./cv.js": 40,
-	"./cy": 41,
-	"./cy.js": 41,
-	"./da": 42,
-	"./da.js": 42,
-	"./de": 43,
-	"./de-at": 44,
-	"./de-at.js": 44,
-	"./de-ch": 45,
-	"./de-ch.js": 45,
-	"./de.js": 43,
-	"./dv": 46,
-	"./dv.js": 46,
-	"./el": 47,
-	"./el.js": 47,
-	"./en-au": 48,
-	"./en-au.js": 48,
-	"./en-ca": 49,
-	"./en-ca.js": 49,
-	"./en-gb": 50,
-	"./en-gb.js": 50,
-	"./en-ie": 51,
-	"./en-ie.js": 51,
-	"./en-il": 52,
-	"./en-il.js": 52,
-	"./en-nz": 53,
-	"./en-nz.js": 53,
-	"./eo": 54,
-	"./eo.js": 54,
-	"./es": 55,
-	"./es-do": 56,
-	"./es-do.js": 56,
-	"./es-us": 57,
-	"./es-us.js": 57,
-	"./es.js": 55,
-	"./et": 58,
-	"./et.js": 58,
-	"./eu": 59,
-	"./eu.js": 59,
-	"./fa": 60,
-	"./fa.js": 60,
-	"./fi": 61,
-	"./fi.js": 61,
-	"./fo": 62,
-	"./fo.js": 62,
-	"./fr": 63,
-	"./fr-ca": 64,
-	"./fr-ca.js": 64,
-	"./fr-ch": 65,
-	"./fr-ch.js": 65,
-	"./fr.js": 63,
-	"./fy": 66,
-	"./fy.js": 66,
-	"./gd": 67,
-	"./gd.js": 67,
-	"./gl": 68,
-	"./gl.js": 68,
-	"./gom-latn": 69,
-	"./gom-latn.js": 69,
-	"./gu": 70,
-	"./gu.js": 70,
-	"./he": 71,
-	"./he.js": 71,
-	"./hi": 72,
-	"./hi.js": 72,
-	"./hr": 73,
-	"./hr.js": 73,
-	"./hu": 74,
-	"./hu.js": 74,
-	"./hy-am": 75,
-	"./hy-am.js": 75,
-	"./id": 76,
-	"./id.js": 76,
-	"./is": 77,
-	"./is.js": 77,
-	"./it": 78,
-	"./it.js": 78,
-	"./ja": 79,
-	"./ja.js": 79,
-	"./jv": 80,
-	"./jv.js": 80,
-	"./ka": 81,
-	"./ka.js": 81,
-	"./kk": 82,
-	"./kk.js": 82,
-	"./km": 83,
-	"./km.js": 83,
-	"./kn": 84,
-	"./kn.js": 84,
-	"./ko": 85,
-	"./ko.js": 85,
-	"./ky": 86,
-	"./ky.js": 86,
-	"./lb": 87,
-	"./lb.js": 87,
-	"./lo": 88,
-	"./lo.js": 88,
-	"./lt": 89,
-	"./lt.js": 89,
-	"./lv": 90,
-	"./lv.js": 90,
-	"./me": 91,
-	"./me.js": 91,
-	"./mi": 92,
-	"./mi.js": 92,
-	"./mk": 93,
-	"./mk.js": 93,
-	"./ml": 94,
-	"./ml.js": 94,
-	"./mn": 95,
-	"./mn.js": 95,
-	"./mr": 96,
-	"./mr.js": 96,
-	"./ms": 97,
-	"./ms-my": 98,
-	"./ms-my.js": 98,
-	"./ms.js": 97,
-	"./mt": 99,
-	"./mt.js": 99,
-	"./my": 100,
-	"./my.js": 100,
-	"./nb": 101,
-	"./nb.js": 101,
-	"./ne": 102,
-	"./ne.js": 102,
-	"./nl": 103,
-	"./nl-be": 104,
-	"./nl-be.js": 104,
-	"./nl.js": 103,
-	"./nn": 105,
-	"./nn.js": 105,
-	"./pa-in": 106,
-	"./pa-in.js": 106,
-	"./pl": 107,
-	"./pl.js": 107,
-	"./pt": 108,
-	"./pt-br": 109,
-	"./pt-br.js": 109,
-	"./pt.js": 108,
-	"./ro": 110,
-	"./ro.js": 110,
-	"./ru": 111,
-	"./ru.js": 111,
-	"./sd": 112,
-	"./sd.js": 112,
-	"./se": 113,
-	"./se.js": 113,
-	"./si": 114,
-	"./si.js": 114,
-	"./sk": 115,
-	"./sk.js": 115,
-	"./sl": 116,
-	"./sl.js": 116,
-	"./sq": 117,
-	"./sq.js": 117,
-	"./sr": 118,
-	"./sr-cyrl": 119,
-	"./sr-cyrl.js": 119,
-	"./sr.js": 118,
-	"./ss": 120,
-	"./ss.js": 120,
-	"./sv": 121,
-	"./sv.js": 121,
-	"./sw": 122,
-	"./sw.js": 122,
-	"./ta": 123,
-	"./ta.js": 123,
-	"./te": 124,
-	"./te.js": 124,
-	"./tet": 125,
-	"./tet.js": 125,
-	"./tg": 126,
-	"./tg.js": 126,
-	"./th": 127,
-	"./th.js": 127,
-	"./tl-ph": 128,
-	"./tl-ph.js": 128,
-	"./tlh": 129,
-	"./tlh.js": 129,
-	"./tr": 130,
-	"./tr.js": 130,
-	"./tzl": 131,
-	"./tzl.js": 131,
-	"./tzm": 132,
-	"./tzm-latn": 133,
-	"./tzm-latn.js": 133,
-	"./tzm.js": 132,
-	"./ug-cn": 134,
-	"./ug-cn.js": 134,
-	"./uk": 135,
-	"./uk.js": 135,
-	"./ur": 136,
-	"./ur.js": 136,
-	"./uz": 137,
-	"./uz-latn": 138,
-	"./uz-latn.js": 138,
-	"./uz.js": 137,
-	"./vi": 139,
-	"./vi.js": 139,
-	"./x-pseudo": 140,
-	"./x-pseudo.js": 140,
-	"./yo": 141,
-	"./yo.js": 141,
-	"./zh-cn": 142,
-	"./zh-cn.js": 142,
-	"./zh-hk": 143,
-	"./zh-hk.js": 143,
-	"./zh-tw": 144,
-	"./zh-tw.js": 144
+	"./af": 24,
+	"./af.js": 24,
+	"./ar": 25,
+	"./ar-dz": 26,
+	"./ar-dz.js": 26,
+	"./ar-kw": 27,
+	"./ar-kw.js": 27,
+	"./ar-ly": 28,
+	"./ar-ly.js": 28,
+	"./ar-ma": 29,
+	"./ar-ma.js": 29,
+	"./ar-sa": 30,
+	"./ar-sa.js": 30,
+	"./ar-tn": 31,
+	"./ar-tn.js": 31,
+	"./ar.js": 25,
+	"./az": 32,
+	"./az.js": 32,
+	"./be": 33,
+	"./be.js": 33,
+	"./bg": 34,
+	"./bg.js": 34,
+	"./bm": 35,
+	"./bm.js": 35,
+	"./bn": 36,
+	"./bn.js": 36,
+	"./bo": 37,
+	"./bo.js": 37,
+	"./br": 38,
+	"./br.js": 38,
+	"./bs": 39,
+	"./bs.js": 39,
+	"./ca": 40,
+	"./ca.js": 40,
+	"./cs": 41,
+	"./cs.js": 41,
+	"./cv": 42,
+	"./cv.js": 42,
+	"./cy": 43,
+	"./cy.js": 43,
+	"./da": 44,
+	"./da.js": 44,
+	"./de": 45,
+	"./de-at": 46,
+	"./de-at.js": 46,
+	"./de-ch": 47,
+	"./de-ch.js": 47,
+	"./de.js": 45,
+	"./dv": 48,
+	"./dv.js": 48,
+	"./el": 49,
+	"./el.js": 49,
+	"./en-au": 50,
+	"./en-au.js": 50,
+	"./en-ca": 51,
+	"./en-ca.js": 51,
+	"./en-gb": 52,
+	"./en-gb.js": 52,
+	"./en-ie": 53,
+	"./en-ie.js": 53,
+	"./en-il": 54,
+	"./en-il.js": 54,
+	"./en-nz": 55,
+	"./en-nz.js": 55,
+	"./eo": 56,
+	"./eo.js": 56,
+	"./es": 57,
+	"./es-do": 58,
+	"./es-do.js": 58,
+	"./es-us": 59,
+	"./es-us.js": 59,
+	"./es.js": 57,
+	"./et": 60,
+	"./et.js": 60,
+	"./eu": 61,
+	"./eu.js": 61,
+	"./fa": 62,
+	"./fa.js": 62,
+	"./fi": 63,
+	"./fi.js": 63,
+	"./fo": 64,
+	"./fo.js": 64,
+	"./fr": 65,
+	"./fr-ca": 66,
+	"./fr-ca.js": 66,
+	"./fr-ch": 67,
+	"./fr-ch.js": 67,
+	"./fr.js": 65,
+	"./fy": 68,
+	"./fy.js": 68,
+	"./gd": 69,
+	"./gd.js": 69,
+	"./gl": 70,
+	"./gl.js": 70,
+	"./gom-latn": 71,
+	"./gom-latn.js": 71,
+	"./gu": 72,
+	"./gu.js": 72,
+	"./he": 73,
+	"./he.js": 73,
+	"./hi": 74,
+	"./hi.js": 74,
+	"./hr": 75,
+	"./hr.js": 75,
+	"./hu": 76,
+	"./hu.js": 76,
+	"./hy-am": 77,
+	"./hy-am.js": 77,
+	"./id": 78,
+	"./id.js": 78,
+	"./is": 79,
+	"./is.js": 79,
+	"./it": 80,
+	"./it.js": 80,
+	"./ja": 81,
+	"./ja.js": 81,
+	"./jv": 82,
+	"./jv.js": 82,
+	"./ka": 83,
+	"./ka.js": 83,
+	"./kk": 84,
+	"./kk.js": 84,
+	"./km": 85,
+	"./km.js": 85,
+	"./kn": 86,
+	"./kn.js": 86,
+	"./ko": 87,
+	"./ko.js": 87,
+	"./ky": 88,
+	"./ky.js": 88,
+	"./lb": 89,
+	"./lb.js": 89,
+	"./lo": 90,
+	"./lo.js": 90,
+	"./lt": 91,
+	"./lt.js": 91,
+	"./lv": 92,
+	"./lv.js": 92,
+	"./me": 93,
+	"./me.js": 93,
+	"./mi": 94,
+	"./mi.js": 94,
+	"./mk": 95,
+	"./mk.js": 95,
+	"./ml": 96,
+	"./ml.js": 96,
+	"./mn": 97,
+	"./mn.js": 97,
+	"./mr": 98,
+	"./mr.js": 98,
+	"./ms": 99,
+	"./ms-my": 100,
+	"./ms-my.js": 100,
+	"./ms.js": 99,
+	"./mt": 101,
+	"./mt.js": 101,
+	"./my": 102,
+	"./my.js": 102,
+	"./nb": 103,
+	"./nb.js": 103,
+	"./ne": 104,
+	"./ne.js": 104,
+	"./nl": 105,
+	"./nl-be": 106,
+	"./nl-be.js": 106,
+	"./nl.js": 105,
+	"./nn": 107,
+	"./nn.js": 107,
+	"./pa-in": 108,
+	"./pa-in.js": 108,
+	"./pl": 109,
+	"./pl.js": 109,
+	"./pt": 110,
+	"./pt-br": 111,
+	"./pt-br.js": 111,
+	"./pt.js": 110,
+	"./ro": 112,
+	"./ro.js": 112,
+	"./ru": 113,
+	"./ru.js": 113,
+	"./sd": 114,
+	"./sd.js": 114,
+	"./se": 115,
+	"./se.js": 115,
+	"./si": 116,
+	"./si.js": 116,
+	"./sk": 117,
+	"./sk.js": 117,
+	"./sl": 118,
+	"./sl.js": 118,
+	"./sq": 119,
+	"./sq.js": 119,
+	"./sr": 120,
+	"./sr-cyrl": 121,
+	"./sr-cyrl.js": 121,
+	"./sr.js": 120,
+	"./ss": 122,
+	"./ss.js": 122,
+	"./sv": 123,
+	"./sv.js": 123,
+	"./sw": 124,
+	"./sw.js": 124,
+	"./ta": 125,
+	"./ta.js": 125,
+	"./te": 126,
+	"./te.js": 126,
+	"./tet": 127,
+	"./tet.js": 127,
+	"./tg": 128,
+	"./tg.js": 128,
+	"./th": 129,
+	"./th.js": 129,
+	"./tl-ph": 130,
+	"./tl-ph.js": 130,
+	"./tlh": 131,
+	"./tlh.js": 131,
+	"./tr": 132,
+	"./tr.js": 132,
+	"./tzl": 133,
+	"./tzl.js": 133,
+	"./tzm": 134,
+	"./tzm-latn": 135,
+	"./tzm-latn.js": 135,
+	"./tzm.js": 134,
+	"./ug-cn": 136,
+	"./ug-cn.js": 136,
+	"./uk": 137,
+	"./uk.js": 137,
+	"./ur": 138,
+	"./ur.js": 138,
+	"./uz": 139,
+	"./uz-latn": 140,
+	"./uz-latn.js": 140,
+	"./uz.js": 139,
+	"./vi": 141,
+	"./vi.js": 141,
+	"./x-pseudo": 142,
+	"./x-pseudo.js": 142,
+	"./yo": 143,
+	"./yo.js": 143,
+	"./zh-cn": 144,
+	"./zh-cn.js": 144,
+	"./zh-hk": 145,
+	"./zh-hk.js": 145,
+	"./zh-tw": 146,
+	"./zh-tw.js": 146
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -40364,17 +40370,17 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 178;
+webpackContext.id = 184;
 
 /***/ }),
-/* 179 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('bar', {
@@ -40878,14 +40884,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 180 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('bubble', {
@@ -41065,14 +41071,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 181 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('doughnut', {
@@ -41371,14 +41377,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 182 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('line', {
@@ -41711,14 +41717,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 183 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('polarArea', {
@@ -41940,14 +41946,14 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 184 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('radar', {
@@ -42115,7 +42121,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 185 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42164,7 +42170,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 186 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42182,7 +42188,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 187 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42199,7 +42205,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 188 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42217,7 +42223,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 189 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42235,7 +42241,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 190 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42253,7 +42259,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 191 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42271,7 +42277,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 192 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42286,20 +42292,20 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 193 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 module.exports = {};
-module.exports.filler = __webpack_require__(194);
-module.exports.legend = __webpack_require__(195);
-module.exports.title = __webpack_require__(196);
+module.exports.filler = __webpack_require__(200);
+module.exports.legend = __webpack_require__(201);
+module.exports.title = __webpack_require__(202);
 
 
 /***/ }),
-/* 194 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42312,7 +42318,7 @@ module.exports.title = __webpack_require__(196);
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(5);
+var elements = __webpack_require__(6);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -42624,7 +42630,7 @@ module.exports = {
 
 
 /***/ }),
-/* 195 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42633,7 +42639,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(8);
+var layouts = __webpack_require__(11);
 
 var noop = helpers.noop;
 
@@ -43207,7 +43213,7 @@ module.exports = {
 
 
 /***/ }),
-/* 196 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43216,7 +43222,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(8);
+var layouts = __webpack_require__(11);
 
 var noop = helpers.noop;
 
@@ -43466,28 +43472,49 @@ module.exports = {
 
 
 /***/ }),
-/* 197 */,
-/* 198 */,
-/* 199 */,
-/* 200 */,
-/* 201 */,
-/* 202 */,
 /* 203 */,
 /* 204 */,
 /* 205 */,
-/* 206 */
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(248)
+  __webpack_require__(277)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(251)
+var __vue_script__ = __webpack_require__(280)
 /* template */
-var __vue_template__ = __webpack_require__(252)
+var __vue_template__ = __webpack_require__(281)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -43526,38 +43553,34 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 207 */,
-/* 208 */,
-/* 209 */,
-/* 210 */,
-/* 211 */,
-/* 212 */,
-/* 213 */,
-/* 214 */,
-/* 215 */,
-/* 216 */,
-/* 217 */,
-/* 218 */,
-/* 219 */,
-/* 220 */,
-/* 221 */,
-/* 222 */,
-/* 223 */,
-/* 224 */,
-/* 225 */,
-/* 226 */,
-/* 227 */,
-/* 228 */,
-/* 229 */,
-/* 230 */,
-/* 231 */,
-/* 232 */,
-/* 233 */,
 /* 234 */,
 /* 235 */,
 /* 236 */,
 /* 237 */,
-/* 238 */
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -43603,7 +43626,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(239);
+var	fixUrls = __webpack_require__(262);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -43916,7 +43939,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 239 */
+/* 262 */
 /***/ (function(module, exports) {
 
 
@@ -44011,35 +44034,41 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 240 */,
-/* 241 */,
-/* 242 */,
-/* 243 */,
-/* 244 */,
-/* 245 */,
-/* 246 */
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(247);
+module.exports = __webpack_require__(276);
 
 
 /***/ }),
-/* 247 */
+/* 276 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__ = __webpack_require__(333);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__ = __webpack_require__(364);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_loading_overlay_dist_vue_loading_min_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect__ = __webpack_require__(335);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect__ = __webpack_require__(366);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_multiselect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue_multiselect__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification__ = __webpack_require__(336);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification__ = __webpack_require__(367);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_notification___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vue_notification__);
-Vue.component("detailsEditable", __webpack_require__(206));
-Vue.component("variableViewList", __webpack_require__(253));
-Vue.component("modalStep", __webpack_require__(272));
-Vue.component("modalConfirm", __webpack_require__(329));
-Vue.component("vueLoading", __webpack_require__(332));
+Vue.component("detailsEditable", __webpack_require__(233));
+Vue.component("variableViewList", __webpack_require__(282));
+Vue.component("modalStep", __webpack_require__(301));
+Vue.component("modalConfirm", __webpack_require__(360));
+Vue.component("vueLoading", __webpack_require__(363));
 
 
 Vue.component("multiselect", __WEBPACK_IMPORTED_MODULE_1_vue_multiselect___default.a);
@@ -44083,6 +44112,7 @@ window.vObj = new Vue({
     title: "Default title",
     description: "Default description",
     languageCode: "EN",
+    isDraft: true,
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
@@ -44123,6 +44153,7 @@ window.vObj = new Vue({
         Event.fire("normalStart");
       } else _this.loadWorkflow(_this.workflowId);
     });
+
     // Event called when a normal (empty) start should occur.
     Event.listen("normalStart", function () {
       _this.addLevel(0);
@@ -44130,10 +44161,12 @@ window.vObj = new Vue({
       _this.panView();
       _this.isLoading = false;
     });
+
     // Event called when the user tries to load an Evidencio model
     Event.listen("modelLoad", function (modelId) {
       _this.loadModelEvidencio(modelId);
     });
+
     // Event called when all the evidencio models for a workflow are (hopefully) loaded
     Event.listen("loadWorkflowAllModelsLoaded", function () {
       _this.steps.forEach(function (localStep) {
@@ -44156,7 +44189,8 @@ window.vObj = new Vue({
       _this.connectionsChanged = !_this.connectionsChanged;
       _this.isLoading = false;
     });
-    // Event called when the user tries to remove a step
+
+    // Event called when the user tries to remove a step/add a level where it would remove a rule
     Event.listen("confirmDialog", function (confirmInfo) {
       _this.prepareConfirmDialog(confirmInfo);
     });
@@ -44183,10 +44217,12 @@ window.vObj = new Vue({
       return this.levels[levelIndex + 1].steps;
     },
 
+    // Array containing the ancestors of the currently selected step
     ancestors: function ancestors() {
       return this.getAncestorStepList(this.selectedStepId);
     },
 
+    // Array containing the variables known up to (but not including) the currently selected step
     variablesUpToStep: function variablesUpToStep() {
       var _this2 = this;
 
@@ -44197,6 +44233,7 @@ window.vObj = new Vue({
       return vars;
     },
 
+    // Array containing the results known up to (but not including) the currently selected step
     resultsUpToStep: function resultsUpToStep() {
       var _this3 = this;
 
@@ -44237,12 +44274,12 @@ window.vObj = new Vue({
             var newVars = self.models[self.models.length - 1].variables.length;
             self.numVariables += newVars;
             self.models[self.models.length - 1]["resultVars"] = [];
-            self.models[self.models.length - 1].variables.map(function (x) {
-              x["databaseId"] = -1;
-              if (x["type"] == "categorical") {
-                x.options.map(function (y) {
-                  y["databaseId"] = -1;
-                  y["friendlyTitle"] = y.title;
+            self.models[self.models.length - 1].variables.map(function (variable) {
+              variable["databaseId"] = -1;
+              if (variable["type"] == "categorical") {
+                variable.options.map(function (option) {
+                  option["databaseId"] = -1;
+                  option["friendlyTitle"] = option.title;
                 });
               }
             });
@@ -44255,7 +44292,8 @@ window.vObj = new Vue({
             self.$notify({
               title: "Failed to grab Evidencio model",
               text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-              type: "error"
+              type: "error",
+              duration: 6000
             });
           }
         });
@@ -44264,7 +44302,7 @@ window.vObj = new Vue({
 
 
     /**
-     * Performs a dummy api call of an ALREADY LOADED Evidencio model
+     * Performs a dummy api call of an ALREADY LOADED Evidencio model, uses the minimum value or first option
      * @param {Number} localModelId : index of model in this.models array
      */
     runDummyModelEvidencio: function runDummyModelEvidencio(localModelId) {
@@ -44274,7 +44312,7 @@ window.vObj = new Vue({
         if (variable.type == "continuous") values[variable.id.toString()] = variable.options.min;else values[variable.id.toString()] = variable.options[0].title;
       });
 
-      //The code below is a start to working with sequential models, but I ignore them for now
+      //The code below is a start to working with sequential models, but I ignore them for now due to time constraints
       var steps = [];
       if (this.models[localModelId].hasOwnProperty("steps")) {
         return;
@@ -44308,7 +44346,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Failed to run Evidencio model",
             text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
         }
       });
@@ -44317,6 +44356,7 @@ window.vObj = new Vue({
 
     /**
      * Save Workflow in database, IDs of saved data are set after saving.
+     * Url is changed as well, to allow for the user to still see the workflow upon refresh.
      */
     saveWorkflow: function saveWorkflow() {
       var _this4 = this;
@@ -44365,54 +44405,34 @@ window.vObj = new Vue({
             self.$notify({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
-              type: "success"
+              type: "success",
+              duration: 6000
             });
             self.workflowId = Number(result.workflowId);
-            var pathArray = location.href.split("/");
-            window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
-            var numberOfSteps = self.steps.length;
-            for (var stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
-              self.steps[stepIndex].id = result.stepIds[stepIndex];
-              cy.getElementById(self.steps[stepIndex].nodeId).style({
-                label: self.steps[stepIndex].id
-              });
-              for (var apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
-                var apiCall = result.resultIds[stepIndex][apiIndex];
-                for (var resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
-                  self.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
-                }
-              }
-            }
-            var varIds = result.variableIds;
-            for (var key in varIds) {
-              if (varIds.hasOwnProperty(key)) {
-                self.usedVariables[key].databaseId = Number(varIds[key]);
-              }
-            }
-            var optIds = result.optionIds;
-            for (var key in optIds) {
-              if (optIds.hasOwnProperty(key)) {
-                optIds[key].forEach(function (element, index) {
-                  self.usedVariables[key].options[index].databaseId = Number(element);
-                });
-              }
-            }
+            self.setURL();
+            self.setStepIds(result);
+            self.setVariableIds(result);
+            return true;
           }
         },
         error: function error(xhr, textStatus, errorThrown) {
           self.$notify({
             title: "Saving failed",
             text: "Your workflow failed to save. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
+          return false;
         }
       });
     },
 
 
     /**
-     * Load a Workflow from the database, as of now does nothing with the workflow
+     * Load a Workflow from the database
+     * 
+     * Should be split, cannot be done due to time-constraints.
      * @param {Number} workflowId 
      */
     loadWorkflow: function loadWorkflow(workflowId) {
@@ -44428,21 +44448,25 @@ window.vObj = new Vue({
         success: function success(result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
+            // First save the change-indicators
             var currentSteps = self.stepsChanged;
             var currentLevels = self.levelsChanged;
+            // Set the general workflow-information
             self.title = result.title;
             self.description = result.description;
             self.languageCode = result.languageCode;
+            self.isDraft = result.isDraft;
+            // Add each step, then set the information
             result.steps.forEach(function (element, index) {
               while (self.levels.length <= element.level) {
                 self.addLevel(self.levels.length);
-              }console.log("Index: " + index + ", #steps: " + self.steps.length);
-              self.addStep(element.title, element.description, element.level);
+              }self.addStep(element.title, element.description, element.level);
               var localStep = self.steps[index];
               localStep.id = element.id;
               localStep.type = element.type;
               localStep.colour = element.colour;
               if (localStep.type == "input") {
+                // Input step: set variables, rules, apiCalls
                 localStep.variables = element.variables;
                 localStep.varCounter = element.variables.length;
                 element.rules.map(function (rule) {
@@ -44450,15 +44474,19 @@ window.vObj = new Vue({
                 });
                 localStep.apiCalls = element.apiCalls;
               } else {
+                // Result step: set chart-information and items
                 localStep.chartTypeNumber = Number(element.chartTypeNumber);
                 localStep.chartItemReference = element.chartItemReference;
                 localStep.chartRenderingData = element.chartRenderingData;
               }
             });
+            // Set usedVariables, if it is not empty
             if (result.usedVariables.constructor !== Array) self.usedVariables = result.usedVariables;
+            // Make sure that the view is updated correctly
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            // Load the necessary information from Evidencio
             self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
@@ -44470,7 +44498,8 @@ window.vObj = new Vue({
           self.$notify({
             title: "Loading failed",
             text: "Your workflow failed to load. Please try again later.",
-            type: "error"
+            type: "error",
+            duration: 6000
           });
           console.log(errorThrown);
           window.setTimeout(function () {
@@ -44478,6 +44507,162 @@ window.vObj = new Vue({
           }, 2000);
         }
       });
+    },
+    publishWorkflow: function publishWorkflow() {
+      this.saveWorkflow();
+      if (this.checkWorkflowFormat()) {
+        var _self = this;
+        $.ajax({
+          url: '/myworkflows/publish/' + _self.workflowId,
+          type: 'GET',
+          success: function success(result) {
+            if (result.success) {
+              _self.$notify({
+                title: "Worklfow is published successfully",
+                text: "Your workflow has been successfully publised. As soon as it has been verified by the Evidencio-team it will be available for the patients.",
+                type: "success",
+                duration: 6000
+              });
+              _self.isDraft = false;
+            } else {
+              _self.$notify({
+                title: "Worklfow failed to publish",
+                text: "This workflow failed to be published. Either it could not be found, or you are not the owner of the workflow. Please contact the Evidencio-team for help.",
+                type: "error",
+                duration: 6000
+              });
+            }
+          },
+          error: function error(_error) {
+            _self.$notify({
+              title: "Something went wrong.",
+              text: "This workflow failed to be published. Something went wrong with your request. Please contact the Evidencio-team for help.",
+              type: "error",
+              duration: 6000
+            });
+            console.log(_error);
+          }
+        });
+      }
+    },
+
+
+    /**
+     * Change the url to allow for page-refresh
+     */
+    setURL: function setURL() {
+      var pathArray = location.href.split("/");
+      var newURL = pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + this.workflowId;
+      window.history.pushState(window.history.state, "", newURL);
+    },
+
+
+    /**
+     * Set the databaseId's in the steps to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setStepIds: function setStepIds(result) {
+      var numberOfSteps = this.steps.length;
+      for (var stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+        this.steps[stepIndex].id = result.stepIds[stepIndex];
+        cy.getElementById(this.steps[stepIndex].nodeId).style({
+          label: this.steps[stepIndex].id
+        });
+        for (var apiIndex = 0; apiIndex < result.resultIds[stepIndex].length; apiIndex++) {
+          var apiCall = result.resultIds[stepIndex][apiIndex];
+          for (var resultIndex = 0; resultIndex < apiCall.length; resultIndex++) {
+            this.steps[stepIndex].apiCalls[apiIndex].results[resultIndex].databaseId = apiCall[resultIndex];
+          }
+        }
+      }
+    },
+
+
+    /**
+     * Set the databaseId 's in the variables to the newly gained values from the api-call
+     * @param {Object} result 
+     */
+    setVariableIds: function setVariableIds(result) {
+      var _this5 = this;
+
+      var varIds = result.variableIds;
+      for (var key in varIds) {
+        if (varIds.hasOwnProperty(key)) {
+          this.usedVariables[key].databaseId = Number(varIds[key]);
+        }
+      }
+      var optIds = result.optionIds;
+      for (var key in optIds) {
+        if (optIds.hasOwnProperty(key)) {
+          optIds[key].forEach(function (element, index) {
+            _this5.usedVariables[key].options[index].databaseId = Number(element);
+          });
+        }
+      }
+    },
+
+
+    /**
+     * Check the workflow for common mistakes:
+     *  - Floating steps
+     *  - Non-result step leafs
+     *  - Duplicate rules in one step
+     *  - Graph instead of tree
+     */
+    checkWorkflowFormat: function checkWorkflowFormat() {
+      var areStepsReachable = new Array(this.steps.length).fill(false);
+      var deadEnd = false;
+      var duplicateRules = false;
+      var isGraph = false;
+      var stack = [0];
+      while (stack.length > 0) {
+        var currentStepId = stack.pop();
+        if (areStepsReachable[currentStepId]) isGraph = true;
+        areStepsReachable[currentStepId] = true;
+        var currentStep = this.steps[currentStepId];
+        if (currentStep.type == "input") {
+          if (currentStep.rules.length > 0) {
+            for (var index = currentStep.rules.length - 1; index >= 0; index--) {
+              var currentRule = currentStep.rules[index];
+              stack.push(currentRule.target.stepId);
+              for (var secondIndex = index - 1; secondIndex >= 0; secondIndex--) {
+                if (JSON.stringify(currentRule.condition) == JSON.stringify(currentStep.rules[secondIndex].condition)) duplicateRules = true;
+              }
+            }
+          } else {
+            deadEnd = true;
+          }
+        }
+      }
+      var allStepsReachable = this.arrayAnd(areStepsReachable);
+      if (allStepsReachable && !deadEnd && !duplicateRules && !isGraph) {
+        return true;
+      }
+      var message = "There are some problems with your workflow, namely:<ul>";
+      if (!allStepsReachable) message += "<li>Not all steps are currently reachable. Either remove the unreachable steps or add rules to connect them.</li>";
+      if (deadEnd) message += "<li>Some of the leaf-steps are Input-steps, all leaf-steps should be Result-steps.</li>";
+      if (duplicateRules) message += "<li>Some rules in a step have the same condition. Please remove rules with the same condition.</li>";
+      if (isGraph) message += "<li>Two or more rules have the same target, please make sure the workflow is a tree and not a graph.</li>";
+      message += "</ul>";
+      this.$notify({
+        title: "Cannot be published",
+        text: message,
+        duration: 10000,
+        type: 'error'
+      });
+      return false;
+    },
+
+
+    /**
+     * Performs an AND operation on an array of Booleans
+     * @param {Array} arr 
+     */
+    arrayAnd: function arrayAnd(arr) {
+      for (var index = 0; index < arr.length; index++) {
+        if (!arr[index]) return false;
+      }
+      return true;
     },
 
 
@@ -44490,7 +44675,7 @@ window.vObj = new Vue({
         title: databaseRule.title,
         description: databaseRule.description,
         target: databaseRule.target,
-        condition: JSON.parse(databaseRule.jsonRule).conditions
+        condition: databaseRule.jsonRule.conditions
       };
     },
 
@@ -44500,17 +44685,18 @@ window.vObj = new Vue({
      * @param {Array} models to load to the workflow
      */
     LoadWorkflowLoadModels: function LoadWorkflowLoadModels(models) {
-      var _this5 = this;
+      var _this6 = this;
 
       $.when.apply($, models.map(function (element) {
-        return _this5.loadModelEvidencio(element);
+        return _this6.loadModelEvidencio(element);
       })).then(function (x) {
         Event.fire("loadWorkflowAllModelsLoaded");
       }, function (e) {
         self.$notify({
           title: "Loading workflow failed",
           text: "Some requested information from Evidencio failed to arrive, loading failed.",
-          type: "error"
+          type: "error",
+          duration: 6000
         });
         console.log("At least one of the requests failed.");
         console.log(e);
@@ -44562,17 +44748,17 @@ window.vObj = new Vue({
      * Checks if variables used in a VariableMapping for the API call is not available anymore. If so, replace it with an available variable.
      */
     checkPossibleVariableMappingFailures: function checkPossibleVariableMappingFailures() {
-      var _this6 = this;
+      var _this7 = this;
 
       var showNotification = false;
       this.steps.forEach(function (step, index) {
         if (step.apiCalls.length > 0) {
-          var reachableVars = _this6.getVariablesUpToStep(index).concat(step.variables);;
+          var reachableVars = _this7.getVariablesUpToStep(index).concat(step.variables);;
           if (reachableVars.length > 0) {
             var ifNotFound = reachableVars[0];
             step.apiCalls.forEach(function (apiCall) {
               apiCall.variables.forEach(function (variable) {
-                if (_this6.getArrayIndex(variable.localVariable, reachableVars) == -1) {
+                if (_this7.getArrayIndex(variable.localVariable, reachableVars) == -1) {
                   variable.localVariable = ifNotFound;
                   showNotification = true;
                 }
@@ -44587,31 +44773,35 @@ window.vObj = new Vue({
       if (showNotification) this.$notify({
         title: "Variable removed",
         text: "You have removed one or more variables that were used in a model-calculation, it is now replaced with another.",
-        type: "warn"
+        type: "warn",
+        duration: 6000
       });
     },
 
 
     /**
      * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     * 
+     * Should be split in some way, cannot be done due to time constraints.
      */
     checkPossibleLogicOrResultLabelFailures: function checkPossibleLogicOrResultLabelFailures() {
-      var _this7 = this;
+      var _this8 = this;
 
       var showNotification = false;
       var notificationType = "all";
       this.steps.forEach(function (step, index) {
         if (step.type == "result" || step.rules.length > 0) {
-          var reachableResults = _this7.getResultsUpToStep(index);
+          var reachableResults = _this8.getResultsUpToStep(index);
           step.apiCalls.forEach(function (apiCall) {
             reachableResults = reachableResults.concat(apiCall.results.map(function (result) {
               return result.name;
             }));
           });
           if (reachableResults.length > 0) {
+            // Results can be used in the step
             if (step.type == "result") {
               for (var resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
-                if (_this7.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
+                if (_this8.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
                   step.chartItemReference.splice(resultIndex, 1);
                   step.chartRenderingData.labels.splice(resultIndex, 1);
                   step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
@@ -44624,28 +44814,33 @@ window.vObj = new Vue({
             if (step.rules.length > 0) {
               var baseFact = reachableResults[0];
               step.rules.forEach(function (rule) {
-                if (_this7.checkRuleReachability(rule.condition, reachableResults, baseFact)) {
+                if (_this8.checkRuleReachability(rule.condition, reachableResults, baseFact)) {
                   showNotification = true;
                   notificationType = "rule";
                 }
               });
             }
           } else {
-            step.chartItemReference = [];
-            step.chartRenderingData = {
-              labels: [],
-              datasets: [{
-                data: [],
-                backgroundColor: []
-              }]
-            };
-            step.rules.forEach(function (rule) {
-              if (_this7.checkRuleUsingResult(rule.condition)) {
-                rule.action = "destroy";
+            // No results available for use in the step
+            if (step.chartItemReference.length > 0) {
+              step.chartItemReference = [];
+              step.chartRenderingData = {
+                labels: [],
+                datasets: [{
+                  data: [],
+                  backgroundColor: []
+                }]
+              };
+              if (step.rules.length > 0) {
+                step.rules.forEach(function (rule) {
+                  if (_this8.checkRuleUsingResult(rule.condition)) {
+                    rule.action = "destroy";
+                  }
+                });
               }
-            });
-            showNotification = true;
-            notificationType = "all";
+              showNotification = true;
+              notificationType = "all";
+            }
           }
         }
       });
@@ -44654,21 +44849,24 @@ window.vObj = new Vue({
           this.$notify({
             title: "Result-item removed",
             text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
-            type: "warn"
+            type: "warn",
+            duration: 6000
           });
           break;
         case "rule":
           this.$notify({
             title: "Rule changed",
             text: "You have removed one or more model-calculations that were used in a result-step, please check your current rules.",
-            type: "warn"
+            type: "warn",
+            duration: 6000
           });
           break;
         case "all":
           this.$notify({
             title: "Result-items or logical rules removed",
             text: "You have removed (access to) all model-calculations that were used in a step, the components using these (rules or result-items) have been removed.",
-            type: "warn"
+            type: "warn",
+            duration: 6000
           });
           break;
       }
@@ -44684,7 +44882,7 @@ window.vObj = new Vue({
      * @param {String} baseFact 
      */
     checkRuleReachability: function checkRuleReachability(rule, reachableResults, baseFact) {
-      var _this8 = this;
+      var _this9 = this;
 
       var showNotification = false;
       if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
@@ -44694,11 +44892,11 @@ window.vObj = new Vue({
         }
       } else if (rule.hasOwnProperty("any")) {
         rule.any.forEach(function (part) {
-          if (_this8.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+          if (_this9.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
         });
       } else if (rule.hasOwnProperty("all")) {
         rule.all.forEach(function (part) {
-          if (_this8.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+          if (_this9.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
         });
       }
       return showNotification;
@@ -44730,11 +44928,11 @@ window.vObj = new Vue({
      * @param {Number} localStepId 
      */
     getVariablesUpToStep: function getVariablesUpToStep(localStepId) {
-      var _this9 = this;
+      var _this10 = this;
 
       var variables = [];
       this.getAncestorStepList(localStepId).forEach(function (stepId) {
-        variables = variables.concat(_this9.steps[stepId].variables);
+        variables = variables.concat(_this10.steps[stepId].variables);
       });
       return variables;
     },
@@ -44745,11 +44943,11 @@ window.vObj = new Vue({
      * @param {Number} localStepId 
      */
     getResultsUpToStep: function getResultsUpToStep(localStepId) {
-      var _this10 = this;
+      var _this11 = this;
 
       var results = [];
       this.getAncestorStepList(localStepId).forEach(function (stepId) {
-        _this10.steps[stepId].apiCalls.forEach(function (apiCall) {
+        _this11.steps[stepId].apiCalls.forEach(function (apiCall) {
           results = results.concat(apiCall.results.map(function (result) {
             return result.name;
           }));
@@ -44981,7 +45179,7 @@ window.vObj = new Vue({
      * @param {Object} confirmInfo contains the title, message, data and type of the dialog
      */
     prepareConfirmDialog: function prepareConfirmDialog(confirmInfo) {
-      var _this11 = this;
+      var _this12 = this;
 
       this.confirmDialog.title = confirmInfo.title;
       this.confirmDialog.message = confirmInfo.message;
@@ -44989,19 +45187,23 @@ window.vObj = new Vue({
       switch (confirmInfo.type) {
         case "removeStep":
           this.confirmDialog.approvalFunction = function () {
-            _this11.removeStep(_this11.confirmDialog.data);
+            _this12.removeStep(_this12.confirmDialog.data);
+            _this12.checkPossibleVariableMappingFailures();
+            _this12.checkPossibleLogicOrResultLabelFailures();
           };
           break;
         case "addLevelRuleDeletion":
           this.confirmDialog.approvalFunction = function () {
-            var stepIds = _this11.levels[_this11.confirmDialog.data - 1].steps;
+            var stepIds = _this12.levels[_this12.confirmDialog.data - 1].steps;
             for (var indexStep = 0; indexStep < stepIds.length; indexStep++) {
-              _this11.steps[stepIds[indexStep]].rules.map(function (rule) {
+              _this12.steps[stepIds[indexStep]].rules.map(function (rule) {
                 rule.action = "destroy";
               });
             }
-            _this11.connectionsChanged = !_this11.connectionsChanged;
-            _this11.addLevel(_this11.confirmDialog.data);
+            _this12.connectionsChanged = !_this12.connectionsChanged;
+            _this12.addLevel(_this12.confirmDialog.data);
+            _this12.checkPossibleVariableMappingFailures();
+            _this12.checkPossibleLogicOrResultLabelFailures();
           };
           break;
       }
@@ -45034,6 +45236,7 @@ window.vObj = new Vue({
       changedStep.step.rules.map(function (rule) {
         if (rule.action == "none") rule.action = "change";
       });
+      this.checkStepType(changedStep);
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
       // Set new backgroundcolor
@@ -45044,6 +45247,40 @@ window.vObj = new Vue({
       this.checkPossibleVariableMappingFailures();
       this.checkPossibleLogicOrResultLabelFailures();
       this.connectionsChanged = !this.connectionsChanged;
+    },
+
+
+    /**
+     * Removes unnecessary information from step-object based on the step type, meaning:
+     * - Variables, api-calls, and rules are removed from a result-step
+     * - Result-items (/labels) are removed from an input-step
+     * This is done since the information is not required and could potentially break the workflow upon saving/loading
+     * @param {Object} changedStep 
+     */
+    checkStepType: function checkStepType(changedStep) {
+      if (changedStep.step.type == "input") {
+        changedStep.step.chartItemReference = [];
+        changedStep.step.chartRenderingData = {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: []
+          }]
+        };
+      } else {
+        changedStep.step.apiCalls = [];
+        if (changedStep.step.hasOwnProperty("rules")) {
+          changedStep.step.rules.forEach(function (rule) {
+            rule.action = "destroy";
+          });
+        }
+        if (changedStep.step.hasOwnProperty("variables")) {
+          changedStep.step.variables.forEach(function (variable) {
+            delete changedStep.usedVars[variable];
+          });
+        }
+        changedStep.step.variables = [];
+      }
     },
 
 
@@ -45126,12 +45363,12 @@ window.vObj = new Vue({
      * @param {Number} stepId of the target step of an edge/rule
      */
     removeRulesByTarget: function removeRulesByTarget(stepId) {
-      var _this12 = this;
+      var _this13 = this;
 
       var levelIndex = this.getStepLevel(stepId) - 1;
       if (levelIndex >= 0) {
         this.levels[levelIndex].steps.forEach(function (stepIndex) {
-          var currentRules = _this12.steps[levelIndex].rules;
+          var currentRules = _this13.steps[levelIndex].rules;
           for (var ruleIndex = currentRules.length - 1; ruleIndex >= 0; ruleIndex--) {
             if (currentRules[ruleIndex].target.stepId == stepId) currentRules.splice(ruleIndex, 1);
           }
@@ -45145,28 +45382,32 @@ window.vObj = new Vue({
      * @param {Number} stepId of the child to find ancestors of
      */
     getAncestorStepList: function getAncestorStepList(stepId) {
-      var _this13 = this;
+      var _this14 = this;
 
       var list = [];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this13.steps[stId].rules.forEach(function (rule) {
-          if (rule.action != "destroy" && rule.target.stepId == stepId) list = list.concat(_this13.getAncestorStepListHelper(stId));
-        });
+        if (_this14.steps[stId].action != "destroy") {
+          _this14.steps[stId].rules.forEach(function (rule) {
+            if (rule.action != "destroy" && rule.target.stepId == stepId) list = list.concat(_this14.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return this.arrayUnique(list);
     },
     getAncestorStepListHelper: function getAncestorStepListHelper(stepId) {
-      var _this14 = this;
+      var _this15 = this;
 
       var list = [stepId];
       var previousLevel = this.getStepLevel(stepId) - 1;
       if (previousLevel < 0) return list;
       this.levels[previousLevel].steps.forEach(function (stId) {
-        _this14.steps[stId].rules.forEach(function (rule) {
-          if (rule.target.stepId == stepId) list = list.concat(_this14.getAncestorStepListHelper(stId));
-        });
+        if (_this15.steps[stId].action != "destroy") {
+          _this15.steps[stId].rules.forEach(function (rule) {
+            if (rule.action != "destroy" && rule.target.stepId == stepId) list = list.concat(_this15.getAncestorStepListHelper(stId));
+          });
+        }
       });
       return list;
     },
@@ -45191,11 +45432,11 @@ window.vObj = new Vue({
      * Calculates the maximum number of steps per level.
      */
     calculateMaxStepsPerLevel: function calculateMaxStepsPerLevel() {
-      var _this15 = this;
+      var _this16 = this;
 
       this.maxStepsPerLevel = 0;
       this.levels.forEach(function (element) {
-        if (element.steps.length > _this15.maxStepsPerLevel) _this15.maxStepsPerLevel = element.steps.length;
+        if (element.steps.length > _this16.maxStepsPerLevel) _this16.maxStepsPerLevel = element.steps.length;
       });
     },
 
@@ -45204,12 +45445,12 @@ window.vObj = new Vue({
      * Recounts the number of times a variable is used, to be used whenever this changes.
      */
     recountVariableUses: function recountVariableUses() {
-      var _this16 = this;
+      var _this17 = this;
 
       this.timesUsedVariables = {};
       this.models.forEach(function (element) {
         element.variables.forEach(function (variable) {
-          _this16.timesUsedVariables[variable.id.toString()] = 0;
+          _this17.timesUsedVariables[variable.id.toString()] = 0;
         });
       });
 
@@ -45305,7 +45546,7 @@ window.vObj = new Vue({
      * Adds/removes/changes rules in required
      */
     connectionsChanged: function connectionsChanged() {
-      var _this17 = this;
+      var _this18 = this;
 
       this.steps.forEach(function (step, index) {
         for (var _index3 = step.rules.length - 1; _index3 >= 0; _index3--) {
@@ -45313,20 +45554,20 @@ window.vObj = new Vue({
           switch (currentRule.action) {
             case "create":
               var source = step.nodeId;
-              var target = _this17.steps[currentRule.target.stepId].nodeId;
+              var target = _this18.steps[currentRule.target.stepId].nodeId;
               currentRule.edgeId = cy.add({
                 classes: "edge",
                 data: {
-                  id: "edge_" + _this17.edgeCounter,
+                  id: "edge_" + _this18.edgeCounter,
                   source: source,
                   target: target
                 }
               }).id();
-              _this17.edgeCounter++;
+              _this18.edgeCounter++;
               currentRule.action = "none";
               break;
             case "change":
-              var newTarget = _this17.steps[currentRule.target.stepId].nodeId;
+              var newTarget = _this18.steps[currentRule.target.stepId].nodeId;
               cy.getElementById(currentRule.edgeId).move({
                 target: newTarget
               });
@@ -45344,17 +45585,17 @@ window.vObj = new Vue({
 });
 
 /***/ }),
-/* 248 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(249);
+var content = __webpack_require__(278);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("3eb6b234", content, false, {});
+var update = __webpack_require__(13)("3eb6b234", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -45370,7 +45611,7 @@ if(false) {
 }
 
 /***/ }),
-/* 249 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -45384,7 +45625,7 @@ exports.push([module.i, "\n.right[data-v-2641ca42] {\n  float: right;\n}\ntextar
 
 
 /***/ }),
-/* 250 */
+/* 279 */
 /***/ (function(module, exports) {
 
 /**
@@ -45417,7 +45658,7 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 251 */
+/* 280 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45505,7 +45746,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 252 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -45613,19 +45854,19 @@ if (false) {
 }
 
 /***/ }),
-/* 253 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(254)
+  __webpack_require__(283)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(256)
+var __vue_script__ = __webpack_require__(285)
 /* template */
-var __vue_template__ = __webpack_require__(271)
+var __vue_template__ = __webpack_require__(300)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -45664,17 +45905,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 254 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(255);
+var content = __webpack_require__(284);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("9a50abe2", content, false, {});
+var update = __webpack_require__(13)("9a50abe2", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -45690,7 +45931,7 @@ if(false) {
 }
 
 /***/ }),
-/* 255 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -45698,20 +45939,20 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.sizing[data-v-63841236] {\n    position: relative;\n    min-height: 300px;\n}\n.scrollbar[data-v-63841236] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,kBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\n    <div class=\"card height-100\">\n        <div class=\"card-header\">\n            Variables\n            <model-load></model-load>\n        </div>\n\n        <div class=\"card-body height-100 sizing\">\n            <div class=\"scrollbar\">\n                <div id=\"accVariablesView\">\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\n                        <div class=\"card-header\" id=\"headingOne\">\n                            <h5 class=\"mb-0\">\n                                No variables added yet...\n                            </h5>\n                        </div>\n                    </div>\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\n                        @toggle=\"selectCard($event)\"></variable-view-item>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport ModelLoad from \"./ModelLoad.vue\";\nimport VariableViewItem from \"./VariableViewItem.vue\";\n\nexport default {\n  components: {\n    ModelLoad,\n    VariableViewItem\n  },\n  props: {\n    allVariables: {\n      type: Array,\n      required: true\n    },\n    allVariablesUsed: {\n      type: Object,\n      required: true\n    }\n  },\n\n  methods: {\n    selectCard(index) {\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\n      }\n    }\n  }\n};\n</script>\n\n<style scoped>\n.sizing {\n    position: relative;\n    min-height: 300px;\n}\n\n.scrollbar {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.sizing[data-v-63841236] {\n    position: relative;\n    /*Next line is commented out because the list of variables in the 'Variables' box was going over it, and a scrollbar was appearing on the entire page*/\n    /*min-height: 300px;*/\n}\n.scrollbar[data-v-63841236] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/VariableViewList.vue"],"names":[],"mappings":";AA2DA;IACA,mBAAA;IACA,uJAAA;IACA,sBAAA;CACA;AAEA;IACA,mBAAA;IACA,QAAA;IACA,SAAA;IACA,OAAA;IACA,UAAA;IACA,iBAAA;IACA,gBAAA;CACA","file":"VariableViewList.vue","sourcesContent":["<template>\n    <div class=\"card height-100\">\n        <div class=\"card-header\">\n            Variables\n            <model-load></model-load>\n        </div>\n\n        <div class=\"card-body height-100 sizing\">\n            <div class=\"scrollbar\">\n                <div id=\"accVariablesView\">\n                    <div class=\"card\" v-if=\"allVariables.length == 0\">\n                        <div class=\"card-header\" id=\"headingOne\">\n                            <h5 class=\"mb-0\">\n                                No variables added yet...\n                            </h5>\n                        </div>\n                    </div>\n                    <variable-view-item v-for=\"(variable, index) in allVariables\" :key=\"index\" :index-item=\"index\" :variable=\"variable\" :times-used=\"allVariablesUsed[variable.id.toString()]\"\n                        @toggle=\"selectCard($event)\"></variable-view-item>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport ModelLoad from \"./ModelLoad.vue\";\nimport VariableViewItem from \"./VariableViewItem.vue\";\n\nexport default {\n  components: {\n    ModelLoad,\n    VariableViewItem\n  },\n  props: {\n    allVariables: {\n      type: Array,\n      required: true\n    },\n    allVariablesUsed: {\n      type: Object,\n      required: true\n    }\n  },\n\n  methods: {\n    selectCard(index) {\n      let numberOfUsedVariables = Object.keys(this.allVariablesUsed).length;\n      for (let ind = 0; ind < numberOfUsedVariables; ind++) {\n        if (ind == index) $(\"#varViewCollapse_\" + ind).collapse(\"toggle\");\n        else $(\"#varViewCollapse_\" + ind).collapse(\"hide\");\n      }\n    }\n  }\n};\n</script>\n\n<style scoped>\n.sizing {\n    position: relative;\n    /*Next line is commented out because the list of variables in the 'Variables' box was going over it, and a scrollbar was appearing on the entire page*/\n    /*min-height: 300px;*/\n}\n\n.scrollbar {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    overflow-y: auto;\n    margin: 1.25rem;\n}\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 256 */
+/* 285 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__ = __webpack_require__(257);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__ = __webpack_require__(286);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ModelLoad_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__ = __webpack_require__(262);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__ = __webpack_require__(291);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VariableViewItem_vue__);
 //
 //
@@ -45770,19 +46011,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 257 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(258)
+  __webpack_require__(287)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(260)
+var __vue_script__ = __webpack_require__(289)
 /* template */
-var __vue_template__ = __webpack_require__(261)
+var __vue_template__ = __webpack_require__(290)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -45821,17 +46062,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 258 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(259);
+var content = __webpack_require__(288);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("66c29602", content, false, {});
+var update = __webpack_require__(13)("66c29602", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -45847,7 +46088,7 @@ if(false) {
 }
 
 /***/ }),
-/* 259 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -45861,7 +46102,7 @@ exports.push([module.i, "\n#inputModelID[data-v-94266ff0] {\n  width: 100px;\n}\
 
 
 /***/ }),
-/* 260 */
+/* 289 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45941,7 +46182,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 261 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -46080,15 +46321,15 @@ if (false) {
 }
 
 /***/ }),
-/* 262 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(263)
+var __vue_script__ = __webpack_require__(292)
 /* template */
-var __vue_template__ = __webpack_require__(270)
+var __vue_template__ = __webpack_require__(299)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -46127,14 +46368,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 263 */
+/* 292 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__ = __webpack_require__(264);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__ = __webpack_require__(293);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableViewCategorical_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__ = __webpack_require__(267);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__ = __webpack_require__(296);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VariableViewContinuous_vue__);
 //
 //
@@ -46188,15 +46429,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 264 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(265)
+var __vue_script__ = __webpack_require__(294)
 /* template */
-var __vue_template__ = __webpack_require__(266)
+var __vue_template__ = __webpack_require__(295)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -46235,7 +46476,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 265 */
+/* 294 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46257,7 +46498,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 266 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -46282,15 +46523,15 @@ if (false) {
 }
 
 /***/ }),
-/* 267 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(268)
+var __vue_script__ = __webpack_require__(297)
 /* template */
-var __vue_template__ = __webpack_require__(269)
+var __vue_template__ = __webpack_require__(298)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -46329,7 +46570,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 268 */
+/* 297 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46355,7 +46596,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 269 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -46383,7 +46624,7 @@ if (false) {
 }
 
 /***/ }),
-/* 270 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -46465,7 +46706,7 @@ if (false) {
 }
 
 /***/ }),
-/* 271 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -46540,20 +46781,20 @@ if (false) {
 }
 
 /***/ }),
-/* 272 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(273)
-  __webpack_require__(275)
+  __webpack_require__(302)
+  __webpack_require__(304)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(277)
+var __vue_script__ = __webpack_require__(306)
 /* template */
-var __vue_template__ = __webpack_require__(328)
+var __vue_template__ = __webpack_require__(359)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -46592,17 +46833,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 273 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(274);
+var content = __webpack_require__(303);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("bd502af2", content, false, {});
+var update = __webpack_require__(13)("bd502af2", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -46618,7 +46859,7 @@ if(false) {
 }
 
 /***/ }),
-/* 274 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -46632,17 +46873,17 @@ exports.push([module.i, "\nfieldset[disabled] .multiselect{pointer-events:none\n
 
 
 /***/ }),
-/* 275 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(276);
+var content = __webpack_require__(305);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("58d81c36", content, false, {});
+var update = __webpack_require__(13)("58d81c36", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -46658,7 +46899,7 @@ if(false) {
 }
 
 /***/ }),
-/* 276 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -46666,28 +46907,28 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AA8hBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <div v-if=\"variablesUpToStep.length != 0\">\n                                                        <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                        <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                            track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                            :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                            @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                            <template slot=\"tag\" slot-scope=\"props\">\n                                                                <span class=\"badge badge-info badge-larger\">\n                                                                    <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                    <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                                </span>\n                                                            </template>\n                                                        </multiselect>\n                                                    </div>\n                                                    <div v-else>\n                                                        <h6>A model calculation cannot be done without variables. Either add\n                                                            fields to the current step or link it to a precious step to use\n                                                            the fields of that step.</h6>\n                                                    </div>\n                                                    <label for=\"variableMappingList\" class=\"variable-label mb-2\">Selected models</label>\n                                                    <variable-mapping-api-list :api-calls=\"localStep.apiCalls\" :used-variables=\"localUsedVariables\" :reachable-variables=\"variablesUpToStep\"\n                                                        @remove=\"localStep.apiCalls = []\"></variable-mapping-api-list>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\" :children-changed=\"childrenChanged\" @remove=\"removeResultUsingRules\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :current-step-data=\"localStep.chartRenderingData\"\n                                                                  :item-reference-upper=\"localStep.chartItemReference\"\n                                                                  :available-results-upper=\"resultsUpToStep\"\n                                                                  @refresh-chart-data=\"updateChartData($event)\"\n                                                                  @refresh-chart-data1=\"updateChartData($event)\"\n                                                                  @refresh-chart-data-after-deletion=\"updateChartData($event)\"\n                                                                  @refresh-reference-data=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data1=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data-after-deletion=\"updateReferenceData($event)\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"localStep.chartTypeNumber\" :chart-data-upper=\"localStep.chartRenderingData\" :changed=\"chartChanged\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApiList from \"./VariableMappingApiList.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApiList,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = JSON.parse(JSON.stringify(this.ancestorResults));\n      if (this.localStep.hasOwnProperty(\"apiCalls\")) {\n        this.localStep.apiCalls.forEach(apiCall => {\n          apiCall.results.map(result => {\n            results.push(result.name);\n          });\n        });\n      }\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n      this.chartChanged = !this.chartChanged;\n      this.childrenChanged = !this.childrenChanged;\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Remove all rules in the current step that use results.\n     */\n    removeResultUsingRules() {\n      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {\n        const rule = this.localStep.rules[index].condition;\n        if (!(rule.hasOwnProperty(\"any\") && rule.any[0].fact == \"trueValue\")) {\n          this.localStep.rules.action = \"destroy\";\n        }\n      }\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    },\n\n    updateChartData(chartData) {\n      Vue.set(this.localStep, \"chartRenderingData\", JSON.parse(JSON.stringify(chartData)));\n      this.chartChanged = !this.chartChanged;\n    },\n\n    updateReferenceData(refData) {\n      Vue.set(this.localStep, \"chartItemReference\", JSON.parse(JSON.stringify(refData)));\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      chartChanged: false,\n      childrenChanged: false\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.variable-label[data-v-682a3b1c] {\n  font-weight: bold;\n}\n.spaced[data-v-682a3b1c] {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ModalStep.vue"],"names":[],"mappings":";AA8hBA;EACA,kBAAA;CACA;AAEA;EACA,0BAAA;MAAA,uBAAA;UAAA,+BAAA;CACA","file":"ModalStep.vue","sourcesContent":["<template>\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"modalStep\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalStepOptions\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-lg\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h4 class=\"modal-title\" id=\"modelTitleId\">Step Options</h4>\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                        <span aria-hidden=\"true\">&times;</span>\n                    </button>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"container-fluid\">\n                        <!-- TOP -->\n                        <div class=\"row\">\n                            <div class=\"col-md-4\">\n                                <label for=\"colorPick\">Pick a color:</label>\n                                <button id=\"colorPick\" type=\"button\" class=\"btn btn-colorpick dropdown-toggle outline\" data-toggle=\"dropdown\" :style=\"{'background-color': localStep.colour}\">{{ localStep.id }}</button>\n                                <ul class=\"dropdown-menu\">\n                                    <li>\n                                        <div id=\"colorPalette\"></div>\n                                    </li>\n                                </ul>\n                                <div class=\"form-group\">\n                                    <label for=\"stepType\">Select step-type:</label>\n                                    <select class=\"custom-select\" name=\"stepType\" id=\"stepType\" :disabled=\"stepId==0\" v-model=\"localStep.type\">\n                                        <option value=\"input\">Input</option>\n                                        <option value=\"result\">Result</option>\n                                    </select>\n                                </div>\n                            </div>\n\n                            <div class=\"col-md-8 mb-2\">\n                                <details-editable :title=\"localStep.title\" :description=\"localStep.description\" @change=\"changeStepDetails\" number-of-rows=\"2\"></details-editable>\n                            </div>\n                        </div>\n\n                        <!-- Middle -->\n                        <div class=\"row\">\n                            <div class=\"col\">\n\n                                <div class=\"card\" v-if=\"localStep.type == 'input'\">\n                                    <div class=\"card-header\">\n                                        <nav>\n                                            <div class=\"nav nav-tabs card-header-tabs nav-scroll\" id=\"nav-tab-modal\" role=\"tablist\">\n                                                <a class=\"nav-item nav-link active\" id=\"nav-variables-tab\" data-toggle=\"tab\" href=\"#nav-variables\" role=\"tab\" aria-controls=\"nav-variables\"\n                                                    aria-selected=\"true\">Variables</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-api-tab\" data-toggle=\"tab\" href=\"#nav-api\" role=\"tab\" aria-controls=\"nav-api\" aria-selected=\"false\">Model calculation</a>\n                                                <a class=\"nav-item nav-link\" id=\"nav-logic-tab\" data-toggle=\"tab\" href=\"#nav-logic\" role=\"tab\" aria-controls=\"nav-logic\"\n                                                    aria-selected=\"false\">Logic</a>\n                                            </div>\n                                        </nav>\n                                    </div>\n                                    <div class=\"card-body\" id=\"modalCard\">\n                                        <div class=\"tab-content\" id=\"nav-tabContent-modal\">\n\n                                            <div class=\"tab-pane fade show active\" id=\"nav-variables\" role=\"tabpanel\" aria-labelledby=\"nav-variables-tab\">\n                                                <multiselect v-model=\"multiSelectedVariables\" :options=\"models\" :multiple=\"true\" group-values=\"variables\" group-label=\"title\"\n                                                    :group-select=\"true\" :close-on-select=\"false\" :clear-on-select=\"false\" label=\"title\"\n                                                    track-by=\"id\" :limit=3 :limit-text=\"multiselectVariablesText\" :preserve-search=\"true\"\n                                                    placeholder=\"Choose variables\" @remove=\"multiRemoveVariables\" @select=\"multiSelectVariables\">\n                                                    <template slot=\"tag\" slot-scope=\"props\">\n                                                        <span class=\"badge badge-info badge-larger\">\n                                                            <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                            <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                        </span>\n                                                    </template>\n                                                </multiselect>\n                                                <label for=\"variableEditList\" class=\"variable-label mb-2\">Selected variables</label>\n                                                <variable-edit-list :selected-variables=\"localStep.variables\" :used-variables=\"localUsedVariables\" @sort=\"updateOrder($event)\"></variable-edit-list>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-api\" role=\"tabpanel\" aria-labelledby=\"nav-api-tab\">\n                                                <div class=\"container-fluid\">\n                                                    <div v-if=\"variablesUpToStep.length != 0\">\n                                                        <label for=\"apiCallModelSelect\">Select model for calculation:</label>\n                                                        <multiselect id=\"apiCallModelSelect\" :multiple=\"true\" v-model=\"multiSelectedModels\" deselect-label=\"Remove model calculation\"\n                                                            track-by=\"id\" label=\"title\" placeholder=\"Select a model\" :options=\"modelChoiceRepresentation\"\n                                                            :searchable=\"false\" :allow-empty=\"true\" open-direction=\"bottom\" :close-on-select=\"false\"\n                                                            @select=\"modelSelectAPI\" @remove=\"modelRemoveApi\">\n                                                            <template slot=\"tag\" slot-scope=\"props\">\n                                                                <span class=\"badge badge-info badge-larger\">\n                                                                    <span class=\"badge-maxwidth\">{{ props.option.title }}</span>&nbsp;\n                                                                    <span class=\"custom__remove\" @click=\"props.remove(props.option)\">❌</span>\n                                                                </span>\n                                                            </template>\n                                                        </multiselect>\n                                                    </div>\n                                                    <div v-else>\n                                                        <h6>A model calculation cannot be done without variables. Either add\n                                                            fields to the current step or link it to a precious step to use\n                                                            the fields of that step.</h6>\n                                                    </div>\n                                                    <label for=\"variableMappingList\" class=\"variable-label mb-2\">Selected models</label>\n                                                    <variable-mapping-api-list :api-calls=\"localStep.apiCalls\" :used-variables=\"localUsedVariables\" :reachable-variables=\"variablesUpToStep\"\n                                                        @remove=\"localStep.apiCalls = []\"></variable-mapping-api-list>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"tab-pane fade\" id=\"nav-logic\" role=\"tabpanel\" aria-labelledby=\"nav-logic-tab\">\n                                                <rule-edit-list :rules=\"localStep.rules\" :children=\"childrenStepsExtended\" :reachable-results=\"resultsUpToStep\" :children-changed=\"childrenChanged\" @remove=\"removeResultUsingRules\"></rule-edit-list>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div id=\"outputOptionsMenu\" class=\"card\" v-else>\n                                    <div id=\"outputCategories\" class=\"row vdivide\">\n                                        <div id=\"outputTypeLeft\" class=\"col-sm-6\">\n                                            <div id=\"chartLayoutDesigner\">\n                                                <div class=\"dropdown\">\n                                                    <a class=\"btn btn-secondary dropdown-toggle\" href=\"#\" role=\"button\" id=\"dropdownMenuLink\" data-toggle=\"dropdown\" aria-haspopup=\"true\"\n                                                        aria-expanded=\"false\"  style=\"margin-top: 8px;\">\n                                                        Pick a chart type\n                                                    </a>\n\n                                                    <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\">\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(0)\">Bar Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(1)\">Pie Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(2)\">Polar Area Chart</a>\n                                                        <a class=\"dropdown-item\" v-on:click=\"changeChartType(3)\">Doughnut chart</a>\n                                                    </div>\n                                                </div>\n                                                <chart-items-list :current-step-data=\"localStep.chartRenderingData\"\n                                                                  :item-reference-upper=\"localStep.chartItemReference\"\n                                                                  :available-results-upper=\"resultsUpToStep\"\n                                                                  @refresh-chart-data=\"updateChartData($event)\"\n                                                                  @refresh-chart-data1=\"updateChartData($event)\"\n                                                                  @refresh-chart-data-after-deletion=\"updateChartData($event)\"\n                                                                  @refresh-reference-data=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data1=\"updateReferenceData($event)\"\n                                                                  @refresh-reference-data-after-deletion=\"updateReferenceData($event)\"></chart-items-list>\n                                            </div>\n                                        </div>\n                                        <div id=\"outputTypeRight\" class=\"col-sm-6\">\n                                            <chart-preview :chart-type=\"localStep.chartTypeNumber\" :chart-data-upper=\"localStep.chartRenderingData\" :changed=\"chartChanged\"></chart-preview>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n                <div class=\"modal-footer spaced\">\n                    <div>\n                        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\" data-toggle=\"modal\" data-target=\"#confirmModal\" :disabled=\"this.stepId==0\"\n                            @click=\"remove\">Remove</button>\n                    </div>\n                    <div>\n                        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>\n                        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" @click=\"apply\">Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n</template>\n\n<script>\nimport VariableEditList from \"./VariableEditList.vue\";\nimport RuleEditList from \"./RuleEditList.vue\";\nimport ChartPreview from \"./ChartDisplay.vue\";\nimport DetailsEditable from \"./DetailsEditable.vue\";\nimport VariableMappingApiList from \"./VariableMappingApiList.vue\";\nimport ChartItemsList from \"./ChartItemsList\";\n\nexport default {\n  components: {\n    VariableEditList,\n    RuleEditList,\n    ChartPreview,\n    DetailsEditable,\n    VariableMappingApiList,\n    ChartItemsList\n  },\n  props: {\n    stepId: {\n      type: Number,\n      required: true\n    },\n    models: {\n      type: Array,\n      required: true\n    },\n    steps: {\n      type: Array,\n      required: true\n    },\n    usedVariables: {\n      type: Object,\n      required: true\n    },\n    ancestorVariables: {\n      type: Array,\n      required: true\n    },\n    ancestorResults: {\n      type: Array,\n      required: true\n    },\n    childrenSteps: {\n      type: Array,\n      required: true\n    },\n    changed: {\n      type: Boolean,\n      required: true\n    }\n  },\n\n  computed: {\n    // Array containing all variables assigned up to and including the current step\n    variablesUpToStep: function() {\n      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));\n      vars = vars.concat(this.localStep.variables);\n      return vars;\n    },\n    // Array containing all results calculated up to and including the current step\n    resultsUpToStep: function() {\n      let results = JSON.parse(JSON.stringify(this.ancestorResults));\n      if (this.localStep.hasOwnProperty(\"apiCalls\")) {\n        this.localStep.apiCalls.forEach(apiCall => {\n          apiCall.results.map(result => {\n            results.push(result.name);\n          });\n        });\n      }\n      return results;\n    },\n    // Array of model-representations for API-call\n    modelChoiceRepresentation: function() {\n      let representation = [];\n      this.models.forEach((model, index) => {\n        representation.push({\n          localId: index,\n          title: model.title,\n          id: model.id\n        });\n      });\n      return representation;\n    },\n    // Array containing all children of the current step\n    childrenStepsExtended: function() {\n      let children = [];\n      this.childrenSteps.forEach((childId, index) => {\n        let step = this.steps[childId];\n        children.push({\n          stepId: childId,\n          colour: step.colour,\n          id: step.id,\n          ind: index,\n          title: step.title\n        });\n      });\n      return children;\n    }\n  },\n\n  mounted: function() {\n    let self = this;\n    $(\"#colorPalette\")\n      .colorPalette()\n      .on(\"selectColor\", function(evt) {\n        self.localStep.colour = evt.color;\n      });\n  },\n\n  watch: {\n    changed: function() {\n      this.reload();\n    }\n  },\n\n  methods: {\n    /**\n     * Called whenever the modal is opened again.\n     */\n    reload() {\n      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));\n      this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));\n      this.setSelectedVariables();\n      this.setSelectedModels();\n      this.updateRuleTargetDetails();\n      this.chartChanged = !this.chartChanged;\n      this.childrenChanged = !this.childrenChanged;\n    },\n\n    /**\n     * Apply the changes made to the step (send an Event that does it)\n     */\n    apply() {\n      this.$emit(\"change\", {\n        step: this.localStep,\n        usedVars: this.localUsedVariables\n      });\n    },\n\n    /**\n     * Start the process of removing a step\n     */\n    remove() {\n      Event.fire(\"confirmDialog\", {\n        title: \"Removal of Step\",\n        message: \"Are you sure you want to remove this step?\",\n        type: \"removeStep\",\n        data: this.stepId\n      });\n    },\n\n    /**\n     * Update the order of the fields/variables\n     * @param {Array} newOrderVariables has the new order of the variables\n     */\n    updateOrder(newOrderVariables) {\n      this.selectedVariables = newOrderVariables;\n      this.localStep.variables = newOrderVariables;\n    },\n\n    /**\n     * Remove all rules in the current step that use results.\n     */\n    removeResultUsingRules() {\n      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {\n        const rule = this.localStep.rules[index].condition;\n        if (!(rule.hasOwnProperty(\"any\") && rule.any[0].fact == \"trueValue\")) {\n          this.localStep.rules.action = \"destroy\";\n        }\n      }\n    },\n\n    /**\n     * Add a model to the API field mapping list\n     * @param {Object} model to be added\n     */\n    modelSelectAPI(model) {\n      this.localStep.apiCalls.push({\n        evidencioModelId: model.id,\n        title: model.title,\n        results: this.models[model.localId].resultVars.map(result => {\n          return {\n            name: result,\n            databaseId: -1\n          };\n        }),\n        variables: this.models[model.localId].variables.map(variable => {\n          return {\n            evidencioVariableId: variable.id,\n            evidencioTitle: variable.title,\n            localVariable: \"\"\n          };\n        })\n      });\n    },\n\n    /**\n     * Remove a model from the API field mapping list\n     * @param {Object} model to be removed\n     */\n    modelRemoveApi(model) {\n      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {\n        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {\n          this.localStep.apiCalls.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Set the selected models for the API field mapping, to be called on reload()\n     */\n    setSelectedModels() {\n      this.multiSelectedModels = [];\n      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {\n        return {\n          localId: this.findModel(apiCall.evidencioModelId),\n          title: apiCall.title,\n          id: apiCall.evidencioModelId\n        };\n      });\n    },\n\n    /**\n     * Find a model locally based on the Evidencio Model Id\n     * @param {Number} evidencioModelId\n     */\n    findModel(evidencioModelId) {\n      for (let index = 0; index < this.models.length; index++) {\n        if (this.models[index].id == evidencioModelId) return index;\n      }\n      return -1;\n    },\n\n    /**\n     * Adds the selected variables to the selectedVariable part of the multiselect.\n     * Due to the work-around to remove groups, this is required. It is not nice/pretty/fast, but it works.\n     */\n    setSelectedVariables() {\n      this.multiSelectedVariables = [];\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        let origID = this.localUsedVariables[this.localStep.variables[index]].id;\n        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {\n          const element = this.models[indexOfMod];\n          for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {\n            if (element.variables[indexInMod].id == origID) {\n              this.multiSelectedVariables.push(element.variables[indexInMod]);\n              break findVariable;\n            }\n          }\n        }\n      }\n    },\n\n    /**\n     * Everytime the modal is opened, the details for the rule-targets should be updated.\n     */\n    updateRuleTargetDetails() {\n      this.localStep.rules.forEach(rule => {\n        let next = rule.target,\n          nextStep = this.steps[next.stepId];\n        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);\n      });\n    },\n\n    /**\n     * Returns the text shown when more than the limit of options are selected.\n     * @param {integer} [count] is the number of not-shown options.\n     */\n    multiselectVariablesText(count) {\n      return \" and \" + count + \" other variable(s)\";\n    },\n\n    /**\n     * Removes the variables from the step.\n     * @param {array||object} [removedVariables] are the variables to be removed\n     */\n    multiRemoveVariables(removedVariables) {\n      if (removedVariables.constructor == Array) {\n        removedVariables.forEach(element => {\n          this.multiRemoveSingleVariable(element);\n        });\n      } else {\n        this.multiRemoveSingleVariable(removedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalRemoveVariables(removedVariables), removes a single variable\n     * @param {Object} [removedVariable] the variable-object to be removed\n     */\n    multiRemoveSingleVariable(removedVariable) {\n      for (let index = 0; index < this.localStep.variables.length; index++) {\n        if (this.localUsedVariables[this.localStep.variables[index]].id == removedVariable.id) {\n          delete this.localUsedVariables[this.localStep.variables[index]];\n          this.localStep.variables.splice(index, 1);\n          return;\n        }\n      }\n    },\n\n    /**\n     * Selects the variables from the step.\n     * @param {array||object} [selectedVariables] are the variables to be selected\n     */\n    multiSelectVariables(selectedVariables) {\n      if (selectedVariables.constructor == Array) {\n        selectedVariables.forEach(element => {\n          this.multiSelectSingleVariable(element);\n        });\n      } else {\n        this.multiSelectSingleVariable(selectedVariables);\n      }\n    },\n\n    /**\n     * Helper function for modalSelectVariables(selectedVariables), selects a single variable\n     * @param {object} [selectedVariable] the variable-object to be selected\n     */\n    multiSelectSingleVariable(selectedVariable) {\n      let varName = \"var\" + this.stepId + \"_\" + this.localStep.varCounter++;\n      this.localStep.variables.push(varName);\n      this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));\n    },\n\n    /**\n     * Changes the details of the step\n     * @param {object} [newDetails] Object containin the keys 'title' and 'description'\n     */\n    changeStepDetails(newDetails) {\n      this.localStep.title = newDetails.title;\n      this.localStep.description = newDetails.description;\n    },\n\n    /**\n     * Changes the type of the chart used inside a step\n     * @param {Number} type Number representing the chart type.\n     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.\n     */\n    changeChartType(type) {\n      this.localStep.chartTypeNumber = type;\n    },\n\n    /**\n     * Adds the object containing at least the label and the color\n     * corresponding to a graph field.\n     * @param {String} label\n     * @param {String} color\n     */\n    addNewField(label, color) {\n      let object = {\n        label,\n        color\n      };\n      this.localStep.chartData.push(object);\n    },\n\n    updateChartData(chartData) {\n      Vue.set(this.localStep, \"chartRenderingData\", JSON.parse(JSON.stringify(chartData)));\n      this.chartChanged = !this.chartChanged;\n    },\n\n    updateReferenceData(refData) {\n      Vue.set(this.localStep, \"chartItemReference\", JSON.parse(JSON.stringify(refData)));\n    }\n  },\n\n  data() {\n    return {\n      localStep: {},\n      localUsedVariables: {},\n      multiSelectedVariables: [],\n      chartChanged: false,\n      childrenChanged: false\n    };\n  }\n};\n</script>\n\n<style src=\"vue-multiselect/dist/vue-multiselect.min.css\"></style>\n\n<style lang=\"css\" scoped>\n.variable-label {\n  font-weight: bold;\n}\n\n.spaced {\n  justify-content: space-between;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 277 */
+/* 306 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(278);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__ = __webpack_require__(307);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableEditList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__ = __webpack_require__(317);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__RuleEditList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__ = __webpack_require__(303);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__ = __webpack_require__(332);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__ChartDisplay_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__ = __webpack_require__(206);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__ = __webpack_require__(233);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DetailsEditable_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue__ = __webpack_require__(314);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue__ = __webpack_require__(343);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__VariableMappingApiList_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList__ = __webpack_require__(322);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList__ = __webpack_require__(351);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ChartItemsList___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__ChartItemsList__);
 //
 //
@@ -47252,15 +47493,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 278 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(279)
+var __vue_script__ = __webpack_require__(308)
 /* template */
-var __vue_template__ = __webpack_require__(287)
+var __vue_template__ = __webpack_require__(316)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47299,14 +47540,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 279 */
+/* 308 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable__ = __webpack_require__(309);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuedraggable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableEditItem_vue__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableEditItem_vue__ = __webpack_require__(311);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VariableEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VariableEditItem_vue__);
 //
 //
@@ -47409,7 +47650,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 280 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47809,7 +48050,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   }
 
   if (true) {
-    var Sortable = __webpack_require__(281);
+    var Sortable = __webpack_require__(310);
     module.exports = buildDraggable(Sortable);
   } else if (typeof define == "function" && define.amd) {
     define(['sortablejs'], function (Sortable) {
@@ -47822,7 +48063,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 })();
 
 /***/ }),
-/* 281 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
@@ -49372,19 +49613,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
 
 
 /***/ }),
-/* 282 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(283)
+  __webpack_require__(312)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(285)
+var __vue_script__ = __webpack_require__(314)
 /* template */
-var __vue_template__ = __webpack_require__(286)
+var __vue_template__ = __webpack_require__(315)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -49423,17 +49664,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 283 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(284);
+var content = __webpack_require__(313);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("12702faf", content, false, {});
+var update = __webpack_require__(13)("12702faf", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -49449,7 +49690,7 @@ if(false) {
 }
 
 /***/ }),
-/* 284 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -49463,7 +49704,7 @@ exports.push([module.i, "\n.icon-menu {\n  font-size: 140%;\n}\n.arrow {\n  font
 
 
 /***/ }),
-/* 285 */
+/* 314 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49510,7 +49751,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 286 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -49625,7 +49866,7 @@ if (false) {
 }
 
 /***/ }),
-/* 287 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -49689,19 +49930,19 @@ if (false) {
 }
 
 /***/ }),
-/* 288 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(289)
+  __webpack_require__(318)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(291)
+var __vue_script__ = __webpack_require__(320)
 /* template */
-var __vue_template__ = __webpack_require__(302)
+var __vue_template__ = __webpack_require__(331)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -49740,17 +49981,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 289 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(290);
+var content = __webpack_require__(319);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("46221bcd", content, false, {});
+var update = __webpack_require__(13)("46221bcd", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -49766,7 +50007,7 @@ if(false) {
 }
 
 /***/ }),
-/* 290 */
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -49780,12 +50021,12 @@ exports.push([module.i, "\n.rule-label[data-v-424c86ca] {\n  font-weight: bold;\
 
 
 /***/ }),
-/* 291 */
+/* 320 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(292);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__ = __webpack_require__(321);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__RuleEditItem_vue__);
 //
 //
@@ -50038,19 +50279,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 292 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(293)
+  __webpack_require__(322)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(295)
+var __vue_script__ = __webpack_require__(324)
 /* template */
-var __vue_template__ = __webpack_require__(301)
+var __vue_template__ = __webpack_require__(330)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50089,17 +50330,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 293 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(294);
+var content = __webpack_require__(323);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("3b298c73", content, false, {});
+var update = __webpack_require__(13)("3b298c73", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -50115,7 +50356,7 @@ if(false) {
 }
 
 /***/ }),
-/* 294 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -50129,12 +50370,12 @@ exports.push([module.i, "\n.icon-trash[data-v-565776e0] {\n  font-size: 140%;\n}
 
 
 /***/ }),
-/* 295 */
+/* 324 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleLogic_vue__ = __webpack_require__(296);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleLogic_vue__ = __webpack_require__(325);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RuleLogic_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__RuleLogic_vue__);
 //
 //
@@ -50236,19 +50477,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 296 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(297)
+  __webpack_require__(326)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(299)
+var __vue_script__ = __webpack_require__(328)
 /* template */
-var __vue_template__ = __webpack_require__(300)
+var __vue_template__ = __webpack_require__(329)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50287,17 +50528,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 297 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(298);
+var content = __webpack_require__(327);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("55dd2c43", content, false, {});
+var update = __webpack_require__(13)("55dd2c43", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -50313,7 +50554,7 @@ if(false) {
 }
 
 /***/ }),
-/* 298 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -50321,13 +50562,13 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAqLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option v-if=\"reachableResults.length > 0\" value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.label == \"rule_ALWAYS\" || this.logic.hasOwnProperty(\"always\")) return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"always\", {});\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAoLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option v-if=\"reachableResults.length > 0\" value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.hasOwnProperty(\"any\") && this.logic.any[0].fact == \"trueValue\") return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 299 */
+/* 328 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50404,7 +50645,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     type: function type() {
-      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
+      if (this.logic.hasOwnProperty("any") && this.logic.any[0].fact == "trueValue") return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";
@@ -50415,7 +50656,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     setType: function setType() {
       switch (this.newType) {
         case "ALWAYS":
-          Vue.set(this.logic, "always", {});
           Vue.set(this.logic, "any", [{
             fact: "trueValue",
             operator: "equal",
@@ -50493,7 +50733,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 300 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -50805,7 +51045,7 @@ if (false) {
 }
 
 /***/ }),
-/* 301 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -51049,7 +51289,7 @@ if (false) {
 }
 
 /***/ }),
-/* 302 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -51112,15 +51352,15 @@ if (false) {
 }
 
 /***/ }),
-/* 303 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(304)
+var __vue_script__ = __webpack_require__(333)
 /* template */
-var __vue_template__ = __webpack_require__(313)
+var __vue_template__ = __webpack_require__(342)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -51159,18 +51399,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 304 */
+/* 333 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BarChart__ = __webpack_require__(305);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BarChart__ = __webpack_require__(334);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BarChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__BarChart__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PieChart__ = __webpack_require__(307);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PieChart__ = __webpack_require__(336);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PieChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__PieChart__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolarChart__ = __webpack_require__(309);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolarChart__ = __webpack_require__(338);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolarChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__PolarChart__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DoughnutChart__ = __webpack_require__(311);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DoughnutChart__ = __webpack_require__(340);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DoughnutChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DoughnutChart__);
 //
 //
@@ -51255,13 +51495,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 305 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(306)
+var __vue_script__ = __webpack_require__(335)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -51302,12 +51542,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 306 */
+/* 335 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(17);
 
 
 var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
@@ -51326,13 +51566,13 @@ var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveP
 });
 
 /***/ }),
-/* 307 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(308)
+var __vue_script__ = __webpack_require__(337)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -51373,12 +51613,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 308 */
+/* 337 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(17);
 
 
 var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
@@ -51397,13 +51637,13 @@ var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveP
 });
 
 /***/ }),
-/* 309 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(310)
+var __vue_script__ = __webpack_require__(339)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -51444,12 +51684,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 310 */
+/* 339 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(17);
 
 
 var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
@@ -51468,13 +51708,13 @@ var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveP
 });
 
 /***/ }),
-/* 311 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(312)
+var __vue_script__ = __webpack_require__(341)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -51515,12 +51755,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 312 */
+/* 341 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(17);
 
 
 var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveProp;
@@ -51539,7 +51779,7 @@ var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveP
 });
 
 /***/ }),
-/* 313 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -51610,15 +51850,15 @@ if (false) {
 }
 
 /***/ }),
-/* 314 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(315)
+var __vue_script__ = __webpack_require__(344)
 /* template */
-var __vue_template__ = __webpack_require__(321)
+var __vue_template__ = __webpack_require__(350)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -51657,12 +51897,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 315 */
+/* 344 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue__ = __webpack_require__(316);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue__ = __webpack_require__(345);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__VariableMappingApi_vue__);
 //
 //
@@ -51733,19 +51973,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 316 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(317)
+  __webpack_require__(346)
 }
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(319)
+var __vue_script__ = __webpack_require__(348)
 /* template */
-var __vue_template__ = __webpack_require__(320)
+var __vue_template__ = __webpack_require__(349)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -51784,17 +52024,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 317 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(318);
+var content = __webpack_require__(347);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("9a569c74", content, false, {});
+var update = __webpack_require__(13)("9a569c74", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -51810,7 +52050,7 @@ if(false) {
 }
 
 /***/ }),
-/* 318 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(true);
@@ -51824,7 +52064,7 @@ exports.push([module.i, "\n.warning[data-v-094a0c7f] {\n  border: solid 2px yell
 
 
 /***/ }),
-/* 319 */
+/* 348 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51952,7 +52192,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 320 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52108,7 +52348,7 @@ if (false) {
 }
 
 /***/ }),
-/* 321 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52142,15 +52382,15 @@ if (false) {
 }
 
 /***/ }),
-/* 322 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(323)
+var __vue_script__ = __webpack_require__(352)
 /* template */
-var __vue_template__ = __webpack_require__(327)
+var __vue_template__ = __webpack_require__(358)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -52189,12 +52429,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 323 */
+/* 352 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__ = __webpack_require__(324);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__ = __webpack_require__(353);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue__);
 //
 //
@@ -52274,28 +52514,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("refresh-chart-data-after-deletion", helpData);
       this.$emit("refresh-reference-data-after-deletion", helpRef);
     }
-  },
-  data: function data() {
-    return {
-      // localChartItems: []
-    };
   }
 });
 
 /***/ }),
-/* 324 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(354)
+}
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(325)
+var __vue_script__ = __webpack_require__(356)
 /* template */
-var __vue_template__ = __webpack_require__(326)
+var __vue_template__ = __webpack_require__(357)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -52330,12 +52569,51 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 325 */
+/* 354 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(355);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(13)("16561f08", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5b6408d8\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ChartItemEdit.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5b6408d8\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ChartItemEdit.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 355 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(10)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n.icon-trash {\n  font-size: 140%;\n}\n.arrow {\n  font-size: 120%;\n}\n", "", {"version":3,"sources":["/home/dansuf/git/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/ChartItemEdit.vue"],"names":[],"mappings":";AA4HA;EACA,gBAAA;CACA;AACA;EACA,gBAAA;CACA","file":"ChartItemEdit.vue","sourcesContent":["<template>\n    <div class=\"mt-2\">\n        <button type=\"button\" class=\"list-group-item list-group-item-action\" data-toggle=\"collapse\" :data-target=\"'#editChartItem_' + indexItem\"\n            aria-expanded=\"false\" :aria-controls=\"'editChartItem_' + indexItem\" :id=\"'headerChartItem_' + indexItem\" @click=\"show = !show\">\n            <i class=\"fo-icon icon-down-open arrow\" v-if=\"!show\">&#xe802;</i>\n            <i class=\"fo-icon icon-up-open arrow\" v-else>&#xe803;</i>\n            {{ chartItemLabel }}\n            <!--TODO: the icon below is used to delete the idem in the chart, but overlaps with the other functionality, so when deleting, sometimes it triggeres the openning or closing the collapsable-->\n            <i class=\"fo-icon icon-trash float-right\" @click=\"toggleRemoval()\">&#xf1f8;</i>\n        </button>\n        <div class=\"collapse mt-2\" :id=\"'editChartItem_' + indexItem\">\n            <form onsubmit=\"return false\">\n                <div class=\"form-group\">\n                    <label :for=\"'chartItemTitle_' + indexItem\">Label</label>\n                    <input type=\"text\" name=\"\" :id=\"'chartItemTitle_' + indexItem\" class=\"form-control\" v-model=\"localItemLabel\" placeholder=\"Label\"\n                        @change=\"toggleUpdate()\">\n                </div>\n                <div class=\"form-group\">\n                    <label :for=\"'chartItemColor_' + indexItem\">Color</label>\n                    <input type=\"color\" name=\"\" class=\"form-control\" :id=\"'chartItemColor_' + indexItem\" v-model=\"localItemColor\" @change=\"toggleUpdate()\" style=\"padding: 2px 4px;\">\n                </div>\n                <div class=\"form-group\">\n                    <label :for=\"'chartItemValue_' + indexItem\">Value</label>\n                    <input type=\"number\" name=\"\" class=\"form-control\" :id=\"'chartItemValue_' + indexItem\" v-model=\"localItemValue\" @change=\"toggleUpdate()\">\n                </div>\n                <div class=\"form-group\">\n                    <label :for=\"'chartItemReference_' + indexItem\">Variable</label>\n                    <select class=\"form-control\" :id=\"'chartItemReference_' + indexItem\" v-model=\"localReference.reference\" @change=\"toggleUpdate()\">\n                        <option v-for=\"(result, index) in availableResults\" :key=\"index\" :value=\"result\">{{ result }}</option>\n                    </select>\n                    <div class=\"form-check\" title=\"Negated result means '100-result', mainly useful for percentage-results.\">\n                        <input class=\"form-check-input\" type=\"checkbox\" :id=\"'negation_' + indexItem\" v-model=\"localReference.negation\">\n                        <label class=\"form-check-label\" :for=\"'negation_' + indexItem\">\n                            Negate the result\n                        </label>\n                    </div>\n                </div>\n            </form>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  props: {\n    chartItemLabel: {\n      type: String,\n      required: true\n    },\n    chartItemColor: {\n      type: String,\n      required: true\n    },\n    chartItemValue: {\n      type: Number,\n      required: true\n    },\n    chartItemReference: {\n      type: Object,\n      required: true\n    },\n    indexItem: {\n      type: Number,\n      required: true\n    },\n    availableResults: {\n      type: Array\n    }\n  },\n  mounted() {\n    this.reload();\n  },\n  data() {\n    return {\n      localItemLabel: \" \",\n      localItemColor: \" \",\n      localItemValue: 0,\n      localReference: \" \",\n      show: false\n    };\n  },\n  watch: {\n    chartItemLabel() {\n      this.reload();\n    },\n    chartItemColor() {\n      this.reload();\n    },\n    chartItemValue() {\n      this.reload();\n    },\n    chartItemReference() {\n      this.reload();\n    }\n  },\n  methods: {\n    reload() {\n      this.localItemLabel = this.chartItemLabel;\n      this.localItemColor = this.chartItemColor;\n      this.localItemValue = this.chartItemValue;\n      this.localReference = this.chartItemReference;\n    },\n    toggleShow() {\n      this.$emit(\"toggle1\", this.indexItem);\n    },\n\n    toggleUpdate() {\n      this.$emit(\"refresh-chart-data-lower\", [\n        this.localItemLabel,\n        this.localItemColor,\n        this.localItemValue,\n        this.indexItem,\n        this.localReference\n      ]);\n    },\n\n    toggleRemoval() {\n      this.$emit(\"remove-chart-item\", this.indexItem);\n    }\n  }\n};\n</script>\n\n<style>\n.icon-trash {\n  font-size: 140%;\n}\n.arrow {\n  font-size: 120%;\n}\n</style>\n"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 356 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
 //
 //
 //
@@ -52452,7 +52730,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 326 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52480,9 +52758,26 @@ var render = function() {
       },
       [
         !_vm.show
-          ? _c("i", { staticClass: "fo-icon icon-down-open" }, [_vm._v("")])
-          : _c("i", { staticClass: "fo-icon icon-up-open" }, [_vm._v("")]),
-        _vm._v("\n        " + _vm._s(_vm.chartItemLabel) + "\n    ")
+          ? _c("i", { staticClass: "fo-icon icon-down-open arrow" }, [
+              _vm._v("")
+            ])
+          : _c("i", { staticClass: "fo-icon icon-up-open arrow" }, [
+              _vm._v("")
+            ]),
+        _vm._v("\n        " + _vm._s(_vm.chartItemLabel) + "\n        "),
+        _vm._v(" "),
+        _c(
+          "i",
+          {
+            staticClass: "fo-icon icon-trash float-right",
+            on: {
+              click: function($event) {
+                _vm.toggleRemoval()
+              }
+            }
+          },
+          [_vm._v("")]
+        )
       ]
     ),
     _vm._v(" "),
@@ -52545,8 +52840,9 @@ var render = function() {
                 }
               ],
               staticClass: "form-control",
+              staticStyle: { padding: "2px 4px" },
               attrs: {
-                type: "text",
+                type: "color",
                 name: "",
                 id: "chartItemColor_" + _vm.indexItem
               },
@@ -52724,23 +53020,6 @@ var render = function() {
                 )
               ]
             )
-          ]),
-          _vm._v(" "),
-          _c("div", [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary ml-2",
-                staticStyle: { float: "right", "margin-bottom": "20px" },
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    _vm.toggleRemoval()
-                  }
-                }
-              },
-              [_vm._v("Remove")]
-            )
           ])
         ])
       ]
@@ -52758,7 +53037,7 @@ if (false) {
 }
 
 /***/ }),
-/* 327 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -52767,11 +53046,12 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _vm.currentStepData !== undefined
     ? _c("div", [
-        _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "row", staticStyle: { margin: "0px" } }, [
           _c(
             "button",
             {
               staticClass: "btn btn-primary ml-2",
+              staticStyle: { "margin-left": "0px", "margin-top": "10px" },
               attrs: {
                 type: "button",
                 disabled: _vm.availableResultsUpper.length == 0,
@@ -52833,7 +53113,7 @@ if (false) {
 }
 
 /***/ }),
-/* 328 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -53324,6 +53604,9 @@ var render = function() {
                                             {
                                               staticClass:
                                                 "btn btn-secondary dropdown-toggle",
+                                              staticStyle: {
+                                                "margin-top": "8px"
+                                              },
                                               attrs: {
                                                 href: "#",
                                                 role: "button",
@@ -53635,15 +53918,15 @@ if (false) {
 }
 
 /***/ }),
-/* 329 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(3)
 /* script */
-var __vue_script__ = __webpack_require__(330)
+var __vue_script__ = __webpack_require__(361)
 /* template */
-var __vue_template__ = __webpack_require__(331)
+var __vue_template__ = __webpack_require__(362)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -53682,7 +53965,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 330 */
+/* 361 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -53724,7 +54007,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 331 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -53823,12 +54106,12 @@ if (false) {
 }
 
 /***/ }),
-/* 332 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(146));
+		module.exports = factory(__webpack_require__(152));
 	else if(typeof define === 'function' && define.amd)
 		define("VueLoading", ["vue"], factory);
 	else if(typeof exports === 'object')
@@ -54229,13 +54512,13 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 });
 
 /***/ }),
-/* 333 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(334);
+var content = __webpack_require__(365);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -54243,7 +54526,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(238)(content, options);
+var update = __webpack_require__(261)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -54260,7 +54543,7 @@ if(false) {
 }
 
 /***/ }),
-/* 334 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(10)(false);
@@ -54274,18 +54557,18 @@ exports.push([module.i, "@keyframes spinAround{0%{transform:rotate(0deg)}to{tran
 
 
 /***/ }),
-/* 335 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(t,e){ true?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.VueMultiselect=e():t.VueMultiselect=e()}(this,function(){return function(t){function e(i){if(n[i])return n[i].exports;var r=n[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,e),r.l=!0,r.exports}var n={};return e.m=t,e.c=n,e.i=function(t){return t},e.d=function(t,n,i){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:i})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="/",e(e.s=66)}([function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e,n){t.exports=!n(12)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){var i=n(10),r=n(43),o=n(31),s=Object.defineProperty;e.f=n(1)?Object.defineProperty:function(t,e,n){if(i(t),e=o(e,!0),i(n),r)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e,n){var i=n(77),r=n(21);t.exports=function(t){return i(r(t))}},function(t,e,n){var i=n(9),r=n(52),o=n(18),s=n(55),u=n(53),a=function(t,e,n){var l,c,f,p,h=t&a.F,d=t&a.G,v=t&a.S,y=t&a.P,g=t&a.B,b=d?i:v?i[e]||(i[e]={}):(i[e]||{}).prototype,m=d?r:r[e]||(r[e]={}),_=m.prototype||(m.prototype={});d&&(n=e);for(l in n)c=!h&&b&&void 0!==b[l],f=(c?b:n)[l],p=g&&c?u(f,i):y&&"function"==typeof f?u(Function.call,f):f,b&&s(b,l,f,t&a.U),m[l]!=f&&o(m,l,p),y&&_[l]!=f&&(_[l]=f)};i.core=r,a.F=1,a.G=2,a.S=4,a.P=8,a.B=16,a.W=32,a.U=64,a.R=128,t.exports=a},function(t,e,n){var i=n(3),r=n(15);t.exports=n(1)?function(t,e,n){return i.f(t,e,r(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e,n){var i=n(29)("wks"),r=n(16),o=n(0).Symbol,s="function"==typeof o;(t.exports=function(t){return i[t]||(i[t]=s&&o[t]||(s?o:r)("Symbol."+t))}).store=i},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e,n){var i=n(13);t.exports=function(t){if(!i(t))throw TypeError(t+" is not an object!");return t}},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){var i=n(48),r=n(22);t.exports=Object.keys||function(t){return i(t,r)}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e){var n=0,i=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+i).toString(36))}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e,n){var i=n(109),r=n(110);t.exports=n(35)?function(t,e,n){return i.f(t,e,r(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){var i=n(8);t.exports=function(t,e){return!!t&&i(function(){e?t.call(null,function(){},1):t.call(null)})}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,e,n){var i=n(0),r=n(11),o=n(74),s=n(6),u=function(t,e,n){var a,l,c,f=t&u.F,p=t&u.G,h=t&u.S,d=t&u.P,v=t&u.B,y=t&u.W,g=p?r:r[e]||(r[e]={}),b=g.prototype,m=p?i:h?i[e]:(i[e]||{}).prototype;p&&(n=e);for(a in n)(l=!f&&m&&void 0!==m[a])&&a in g||(c=l?m[a]:n[a],g[a]=p&&"function"!=typeof m[a]?n[a]:v&&l?o(c,i):y&&m[a]==c?function(t){var e=function(e,n,i){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(e);case 2:return new t(e,n)}return new t(e,n,i)}return t.apply(this,arguments)};return e.prototype=t.prototype,e}(c):d&&"function"==typeof c?o(Function.call,c):c,d&&((g.virtual||(g.virtual={}))[a]=c,t&u.R&&b&&!b[a]&&s(b,a,c)))};u.F=1,u.G=2,u.S=4,u.P=8,u.B=16,u.W=32,u.U=64,u.R=128,t.exports=u},function(t,e){t.exports={}},function(t,e){t.exports=!0},function(t,e){e.f={}.propertyIsEnumerable},function(t,e,n){var i=n(3).f,r=n(2),o=n(7)("toStringTag");t.exports=function(t,e,n){t&&!r(t=n?t:t.prototype,o)&&i(t,o,{configurable:!0,value:e})}},function(t,e,n){var i=n(29)("keys"),r=n(16);t.exports=function(t){return i[t]||(i[t]=r(t))}},function(t,e,n){var i=n(0),r=i["__core-js_shared__"]||(i["__core-js_shared__"]={});t.exports=function(t){return r[t]||(r[t]={})}},function(t,e){var n=Math.ceil,i=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?i:n)(t)}},function(t,e,n){var i=n(13);t.exports=function(t,e){if(!i(t))return t;var n,r;if(e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;if("function"==typeof(n=t.valueOf)&&!i(r=n.call(t)))return r;if(!e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;throw TypeError("Can't convert object to primitive value")}},function(t,e,n){var i=n(0),r=n(11),o=n(25),s=n(33),u=n(3).f;t.exports=function(t){var e=r.Symbol||(r.Symbol=o?{}:i.Symbol||{});"_"==t.charAt(0)||t in e||u(e,t,{value:s.f(t)})}},function(t,e,n){e.f=n(7)},function(t,e,n){var i=n(53),r=n(36),o=n(57),s=n(37),u=n(104);t.exports=function(t,e){var n=1==t,a=2==t,l=3==t,c=4==t,f=6==t,p=5==t||f,h=e||u;return function(e,u,d){for(var v,y,g=o(e),b=r(g),m=i(u,d,3),_=s(b.length),x=0,w=n?h(e,_):a?h(e,0):void 0;_>x;x++)if((p||x in b)&&(v=b[x],y=m(v,x,g),t))if(n)w[x]=y;else if(y)switch(t){case 3:return!0;case 5:return v;case 6:return x;case 2:w.push(v)}else if(c)return!1;return f?-1:l||c?c:w}}},function(t,e,n){t.exports=!n(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e,n){var i=n(51);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==i(t)?t.split(""):Object(t)}},function(t,e,n){var i=n(56),r=Math.min;t.exports=function(t){return t>0?r(i(t),9007199254740991):0}},function(t,e,n){var i=n(111)("wks"),r=n(58),o=n(9).Symbol,s="function"==typeof o;(t.exports=function(t){return i[t]||(i[t]=s&&o[t]||(s?o:r)("Symbol."+t))}).store=i},function(t,e,n){"use strict";function i(t){return 0!==t&&(!(!Array.isArray(t)||0!==t.length)||!t)}function r(t){return function(){return!t.apply(void 0,arguments)}}function o(t,e){return void 0===t&&(t="undefined"),null===t&&(t="null"),!1===t&&(t="false"),-1!==t.toString().toLowerCase().indexOf(e.trim())}function s(t,e,n,i){return t.filter(function(t){return o(i(t,n),e)})}function u(t){return t.filter(function(t){return!t.$isLabel})}function a(t,e){return function(n){return n.reduce(function(n,i){return i[t]&&i[t].length?(n.push({$groupLabel:i[e],$isLabel:!0}),n.concat(i[t])):n},[])}}function l(t,e,n,i,r){return function(o){return o.map(function(o){var u;if(!o[n])return console.warn("Options passed to vue-multiselect do not contain groups, despite the config."),[];var a=s(o[n],t,e,r);return a.length?(u={},v()(u,i,o[i]),v()(u,n,a),u):[]})}}var c=n(65),f=n.n(c),p=n(59),h=(n.n(p),n(122)),d=(n.n(h),n(64)),v=n.n(d),y=n(120),g=(n.n(y),n(121)),b=(n.n(g),n(117)),m=(n.n(b),n(123)),_=(n.n(m),n(118)),x=(n.n(_),n(119)),w=(n.n(x),function(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];return function(t){return e.reduce(function(t,e){return e(t)},t)}});e.a={data:function(){return{search:"",isOpen:!1,prefferedOpenDirection:"below",optimizedHeight:this.maxHeight}},props:{internalSearch:{type:Boolean,default:!0},options:{type:Array,required:!0},multiple:{type:Boolean,default:!1},value:{type:null,default:function(){return[]}},trackBy:{type:String},label:{type:String},searchable:{type:Boolean,default:!0},clearOnSelect:{type:Boolean,default:!0},hideSelected:{type:Boolean,default:!1},placeholder:{type:String,default:"Select option"},allowEmpty:{type:Boolean,default:!0},resetAfter:{type:Boolean,default:!1},closeOnSelect:{type:Boolean,default:!0},customLabel:{type:Function,default:function(t,e){return i(t)?"":e?t[e]:t}},taggable:{type:Boolean,default:!1},tagPlaceholder:{type:String,default:"Press enter to create a tag"},tagPosition:{type:String,default:"top"},max:{type:[Number,Boolean],default:!1},id:{default:null},optionsLimit:{type:Number,default:1e3},groupValues:{type:String},groupLabel:{type:String},groupSelect:{type:Boolean,default:!1},blockKeys:{type:Array,default:function(){return[]}},preserveSearch:{type:Boolean,default:!1},preselectFirst:{type:Boolean,default:!1}},mounted:function(){this.multiple||this.clearOnSelect||console.warn("[Vue-Multiselect warn]: ClearOnSelect and Multiple props can’t be both set to false."),!this.multiple&&this.max&&console.warn("[Vue-Multiselect warn]: Max prop should not be used when prop Multiple equals false."),this.preselectFirst&&!this.internalValue.length&&this.options.length&&this.select(this.filteredOptions[0])},computed:{internalValue:function(){return this.value||0===this.value?Array.isArray(this.value)?this.value:[this.value]:[]},filteredOptions:function(){var t=this.search||"",e=t.toLowerCase().trim(),n=this.options.concat();return n=this.internalSearch?this.groupValues?this.filterAndFlat(n,e,this.label):s(n,e,this.label,this.customLabel):this.groupValues?a(this.groupValues,this.groupLabel)(n):n,n=this.hideSelected?n.filter(r(this.isSelected)):n,this.taggable&&e.length&&!this.isExistingOption(e)&&("bottom"===this.tagPosition?n.push({isTag:!0,label:t}):n.unshift({isTag:!0,label:t})),n.slice(0,this.optionsLimit)},valueKeys:function(){var t=this;return this.trackBy?this.internalValue.map(function(e){return e[t.trackBy]}):this.internalValue},optionKeys:function(){var t=this;return(this.groupValues?this.flatAndStrip(this.options):this.options).map(function(e){return t.customLabel(e,t.label).toString().toLowerCase()})},currentOptionLabel:function(){return this.multiple?this.searchable?"":this.placeholder:this.internalValue.length?this.getOptionLabel(this.internalValue[0]):this.searchable?"":this.placeholder}},watch:{internalValue:function(){this.resetAfter&&this.internalValue.length&&(this.search="",this.$emit("input",this.multiple?[]:null))},search:function(){this.$emit("search-change",this.search,this.id)}},methods:{getValue:function(){return this.multiple?this.internalValue:0===this.internalValue.length?null:this.internalValue[0]},filterAndFlat:function(t,e,n){return w(l(e,n,this.groupValues,this.groupLabel,this.customLabel),a(this.groupValues,this.groupLabel))(t)},flatAndStrip:function(t){return w(a(this.groupValues,this.groupLabel),u)(t)},updateSearch:function(t){this.search=t},isExistingOption:function(t){return!!this.options&&this.optionKeys.indexOf(t)>-1},isSelected:function(t){var e=this.trackBy?t[this.trackBy]:t;return this.valueKeys.indexOf(e)>-1},getOptionLabel:function(t){if(i(t))return"";if(t.isTag)return t.label;if(t.$isLabel)return t.$groupLabel;var e=this.customLabel(t,this.label);return i(e)?"":e},select:function(t,e){if(t.$isLabel&&this.groupSelect)return void this.selectGroup(t);if(!(-1!==this.blockKeys.indexOf(e)||this.disabled||t.$isDisabled||t.$isLabel)&&(!this.max||!this.multiple||this.internalValue.length!==this.max)&&("Tab"!==e||this.pointerDirty)){if(t.isTag)this.$emit("tag",t.label,this.id),this.search="",this.closeOnSelect&&!this.multiple&&this.deactivate();else{if(this.isSelected(t))return void("Tab"!==e&&this.removeElement(t));this.$emit("select",t,this.id),this.multiple?this.$emit("input",this.internalValue.concat([t]),this.id):this.$emit("input",t,this.id),this.clearOnSelect&&(this.search="")}this.closeOnSelect&&this.deactivate()}},selectGroup:function(t){var e=this,n=this.options.find(function(n){return n[e.groupLabel]===t.$groupLabel});if(n)if(this.wholeGroupSelected(n)){this.$emit("remove",n[this.groupValues],this.id);var i=this.internalValue.filter(function(t){return-1===n[e.groupValues].indexOf(t)});this.$emit("input",i,this.id)}else{var o=n[this.groupValues].filter(r(this.isSelected));this.$emit("select",o,this.id),this.$emit("input",this.internalValue.concat(o),this.id)}},wholeGroupSelected:function(t){return t[this.groupValues].every(this.isSelected)},removeElement:function(t){var e=!(arguments.length>1&&void 0!==arguments[1])||arguments[1];if(!this.disabled){if(!this.allowEmpty&&this.internalValue.length<=1)return void this.deactivate();var n="object"===f()(t)?this.valueKeys.indexOf(t[this.trackBy]):this.valueKeys.indexOf(t);if(this.$emit("remove",t,this.id),this.multiple){var i=this.internalValue.slice(0,n).concat(this.internalValue.slice(n+1));this.$emit("input",i,this.id)}else this.$emit("input",null,this.id);this.closeOnSelect&&e&&this.deactivate()}},removeLastElement:function(){-1===this.blockKeys.indexOf("Delete")&&0===this.search.length&&Array.isArray(this.internalValue)&&this.removeElement(this.internalValue[this.internalValue.length-1],!1)},activate:function(){var t=this;this.isOpen||this.disabled||(this.adjustPosition(),this.groupValues&&0===this.pointer&&this.filteredOptions.length&&(this.pointer=1),this.isOpen=!0,this.searchable?(this.preserveSearch||(this.search=""),this.$nextTick(function(){return t.$refs.search.focus()})):this.$el.focus(),this.$emit("open",this.id))},deactivate:function(){this.isOpen&&(this.isOpen=!1,this.searchable?this.$refs.search.blur():this.$el.blur(),this.preserveSearch||(this.search=""),this.$emit("close",this.getValue(),this.id))},toggle:function(){this.isOpen?this.deactivate():this.activate()},adjustPosition:function(){if("undefined"!=typeof window){var t=this.$el.getBoundingClientRect().top,e=window.innerHeight-this.$el.getBoundingClientRect().bottom;e>this.maxHeight||e>t||"below"===this.openDirection||"bottom"===this.openDirection?(this.prefferedOpenDirection="below",this.optimizedHeight=Math.min(e-40,this.maxHeight)):(this.prefferedOpenDirection="above",this.optimizedHeight=Math.min(t-40,this.maxHeight))}}}}},function(t,e,n){"use strict";var i=n(59);n.n(i);e.a={data:function(){return{pointer:0,pointerDirty:!1}},props:{showPointer:{type:Boolean,default:!0},optionHeight:{type:Number,default:40}},computed:{pointerPosition:function(){return this.pointer*this.optionHeight},visibleElements:function(){return this.optimizedHeight/this.optionHeight}},watch:{filteredOptions:function(){this.pointerAdjust()},isOpen:function(){this.pointerDirty=!1}},methods:{optionHighlight:function(t,e){return{"multiselect__option--highlight":t===this.pointer&&this.showPointer,"multiselect__option--selected":this.isSelected(e)}},groupHighlight:function(t,e){var n=this;if(!this.groupSelect)return["multiselect__option--disabled"];var i=this.options.find(function(t){return t[n.groupLabel]===e.$groupLabel});return[this.groupSelect?"multiselect__option--group":"multiselect__option--disabled",{"multiselect__option--highlight":t===this.pointer&&this.showPointer},{"multiselect__option--group-selected":this.wholeGroupSelected(i)}]},addPointerElement:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"Enter",e=t.key;this.filteredOptions.length>0&&this.select(this.filteredOptions[this.pointer],e),this.pointerReset()},pointerForward:function(){this.pointer<this.filteredOptions.length-1&&(this.pointer++,this.$refs.list.scrollTop<=this.pointerPosition-(this.visibleElements-1)*this.optionHeight&&(this.$refs.list.scrollTop=this.pointerPosition-(this.visibleElements-1)*this.optionHeight),this.filteredOptions[this.pointer]&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerForward()),this.pointerDirty=!0},pointerBackward:function(){this.pointer>0?(this.pointer--,this.$refs.list.scrollTop>=this.pointerPosition&&(this.$refs.list.scrollTop=this.pointerPosition),this.filteredOptions[this.pointer]&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerBackward()):this.filteredOptions[this.pointer]&&this.filteredOptions[0].$isLabel&&!this.groupSelect&&this.pointerForward(),this.pointerDirty=!0},pointerReset:function(){this.closeOnSelect&&(this.pointer=0,this.$refs.list&&(this.$refs.list.scrollTop=0))},pointerAdjust:function(){this.pointer>=this.filteredOptions.length-1&&(this.pointer=this.filteredOptions.length?this.filteredOptions.length-1:0),this.filteredOptions.length>0&&this.filteredOptions[this.pointer].$isLabel&&!this.groupSelect&&this.pointerForward()},pointerSet:function(t){this.pointer=t,this.pointerDirty=!0}}}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e,n){var i=n(13),r=n(0).document,o=i(r)&&i(r.createElement);t.exports=function(t){return o?r.createElement(t):{}}},function(t,e,n){t.exports=!n(1)&&!n(12)(function(){return 7!=Object.defineProperty(n(42)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){"use strict";var i=n(25),r=n(23),o=n(49),s=n(6),u=n(2),a=n(24),l=n(79),c=n(27),f=n(86),p=n(7)("iterator"),h=!([].keys&&"next"in[].keys()),d=function(){return this};t.exports=function(t,e,n,v,y,g,b){l(n,e,v);var m,_,x,w=function(t){if(!h&&t in P)return P[t];switch(t){case"keys":case"values":return function(){return new n(this,t)}}return function(){return new n(this,t)}},S=e+" Iterator",O="values"==y,L=!1,P=t.prototype,k=P[p]||P["@@iterator"]||y&&P[y],E=k||w(y),j=y?O?w("entries"):E:void 0,V="Array"==e?P.entries||k:k;if(V&&(x=f(V.call(new t)))!==Object.prototype&&(c(x,S,!0),i||u(x,p)||s(x,p,d)),O&&k&&"values"!==k.name&&(L=!0,E=function(){return k.call(this)}),i&&!b||!h&&!L&&P[p]||s(P,p,E),a[e]=E,a[S]=d,y)if(m={values:O?E:w("values"),keys:g?E:w("keys"),entries:j},b)for(_ in m)_ in P||o(P,_,m[_]);else r(r.P+r.F*(h||L),e,m);return m}},function(t,e,n){var i=n(10),r=n(83),o=n(22),s=n(28)("IE_PROTO"),u=function(){},a=function(){var t,e=n(42)("iframe"),i=o.length;for(e.style.display="none",n(76).appendChild(e),e.src="javascript:",t=e.contentWindow.document,t.open(),t.write("<script>document.F=Object<\/script>"),t.close(),a=t.F;i--;)delete a.prototype[o[i]];return a()};t.exports=Object.create||function(t,e){var n;return null!==t?(u.prototype=i(t),n=new u,u.prototype=null,n[s]=t):n=a(),void 0===e?n:r(n,e)}},function(t,e,n){var i=n(48),r=n(22).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return i(t,r)}},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e,n){var i=n(2),r=n(4),o=n(73)(!1),s=n(28)("IE_PROTO");t.exports=function(t,e){var n,u=r(t),a=0,l=[];for(n in u)n!=s&&i(u,n)&&l.push(n);for(;e.length>a;)i(u,n=e[a++])&&(~o(l,n)||l.push(n));return l}},function(t,e,n){t.exports=n(6)},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e,n){var i=n(50);t.exports=function(t,e,n){if(i(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,i){return t.call(e,n,i)};case 3:return function(n,i,r){return t.call(e,n,i,r)}}return function(){return t.apply(e,arguments)}}},function(t,e,n){var i=n(51);t.exports=Array.isArray||function(t){return"Array"==i(t)}},function(t,e,n){var i=n(9),r=n(18),o=n(107),s=n(58)("src"),u=Function.toString,a=(""+u).split("toString");n(52).inspectSource=function(t){return u.call(t)},(t.exports=function(t,e,n,u){var l="function"==typeof n;l&&(o(n,"name")||r(n,"name",e)),t[e]!==n&&(l&&(o(n,s)||r(n,s,t[e]?""+t[e]:a.join(String(e)))),t===i?t[e]=n:u?t[e]?t[e]=n:r(t,e,n):(delete t[e],r(t,e,n)))})(Function.prototype,"toString",function(){return"function"==typeof this&&this[s]||u.call(this)})},function(t,e){var n=Math.ceil,i=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?i:n)(t)}},function(t,e,n){var i=n(17);t.exports=function(t){return Object(i(t))}},function(t,e){var n=0,i=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+i).toString(36))}},function(t,e,n){"use strict";var i=n(5),r=n(34)(5),o=!0;"find"in[]&&Array(1).find(function(){o=!1}),i(i.P+i.F*o,"Array",{find:function(t){return r(this,t,arguments.length>1?arguments[1]:void 0)}}),n(99)("find")},function(t,e,n){"use strict";function i(t){n(124)}var r=n(67),o=n(126),s=n(125),u=i,a=s(r.a,o.a,!1,u,null,null);e.a=a.exports},function(t,e,n){t.exports=n(68)},function(t,e,n){t.exports=n(69)},function(t,e,n){t.exports=n(70)},function(t,e,n){function i(t,e,n){return e in t?r(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}var r=n(61);t.exports=i},function(t,e,n){function i(t){return(i="function"==typeof s&&"symbol"==typeof o?function(t){return typeof t}:function(t){return t&&"function"==typeof s&&t.constructor===s&&t!==s.prototype?"symbol":typeof t})(t)}function r(e){return"function"==typeof s&&"symbol"===i(o)?t.exports=r=function(t){return i(t)}:t.exports=r=function(t){return t&&"function"==typeof s&&t.constructor===s&&t!==s.prototype?"symbol":i(t)},r(e)}var o=n(63),s=n(62);t.exports=r},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(60),r=n(39),o=n(40);n.d(e,"Multiselect",function(){return i.a}),n.d(e,"multiselectMixin",function(){return r.a}),n.d(e,"pointerMixin",function(){return o.a}),e.default=i.a},function(t,e,n){"use strict";var i=n(39),r=n(40);e.a={name:"vue-multiselect",mixins:[i.a,r.a],props:{name:{type:String,default:""},selectLabel:{type:String,default:"Press enter to select"},selectGroupLabel:{type:String,default:"Press enter to select group"},selectedLabel:{type:String,default:"Selected"},deselectLabel:{type:String,default:"Press enter to remove"},deselectGroupLabel:{type:String,default:"Press enter to deselect group"},showLabels:{type:Boolean,default:!0},limit:{type:Number,default:99999},maxHeight:{type:Number,default:300},limitText:{type:Function,default:function(t){return"and ".concat(t," more")}},loading:{type:Boolean,default:!1},disabled:{type:Boolean,default:!1},openDirection:{type:String,default:""},showNoResults:{type:Boolean,default:!0},tabindex:{type:Number,default:0}},computed:{isSingleLabelVisible:function(){return this.singleValue&&(!this.isOpen||!this.searchable)&&!this.visibleValues.length},isPlaceholderVisible:function(){return!(this.internalValue.length||this.searchable&&this.isOpen)},visibleValues:function(){return this.multiple?this.internalValue.slice(0,this.limit):[]},singleValue:function(){return this.internalValue[0]},deselectLabelText:function(){return this.showLabels?this.deselectLabel:""},deselectGroupLabelText:function(){return this.showLabels?this.deselectGroupLabel:""},selectLabelText:function(){return this.showLabels?this.selectLabel:""},selectGroupLabelText:function(){return this.showLabels?this.selectGroupLabel:""},selectedLabelText:function(){return this.showLabels?this.selectedLabel:""},inputStyle:function(){if(this.multiple&&this.value&&this.value.length)return this.isOpen?{width:"auto"}:{width:"0",position:"absolute",padding:"0"}},contentStyle:function(){return this.options.length?{display:"inline-block"}:{display:"block"}},isAbove:function(){return"above"===this.openDirection||"top"===this.openDirection||"below"!==this.openDirection&&"bottom"!==this.openDirection&&"above"===this.prefferedOpenDirection},showSearchInput:function(){return this.searchable&&(!this.hasSingleSelectedSlot||!this.visibleSingleValue&&0!==this.visibleSingleValue||this.isOpen)}}}},function(t,e,n){n(92);var i=n(11).Object;t.exports=function(t,e,n){return i.defineProperty(t,e,n)}},function(t,e,n){n(95),n(93),n(96),n(97),t.exports=n(11).Symbol},function(t,e,n){n(94),n(98),t.exports=n(33).f("iterator")},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e){t.exports=function(){}},function(t,e,n){var i=n(4),r=n(89),o=n(88);t.exports=function(t){return function(e,n,s){var u,a=i(e),l=r(a.length),c=o(s,l);if(t&&n!=n){for(;l>c;)if((u=a[c++])!=u)return!0}else for(;l>c;c++)if((t||c in a)&&a[c]===n)return t||c||0;return!t&&-1}}},function(t,e,n){var i=n(71);t.exports=function(t,e,n){if(i(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,i){return t.call(e,n,i)};case 3:return function(n,i,r){return t.call(e,n,i,r)}}return function(){return t.apply(e,arguments)}}},function(t,e,n){var i=n(14),r=n(47),o=n(26);t.exports=function(t){var e=i(t),n=r.f;if(n)for(var s,u=n(t),a=o.f,l=0;u.length>l;)a.call(t,s=u[l++])&&e.push(s);return e}},function(t,e,n){t.exports=n(0).document&&document.documentElement},function(t,e,n){var i=n(41);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==i(t)?t.split(""):Object(t)}},function(t,e,n){var i=n(41);t.exports=Array.isArray||function(t){return"Array"==i(t)}},function(t,e,n){"use strict";var i=n(45),r=n(15),o=n(27),s={};n(6)(s,n(7)("iterator"),function(){return this}),t.exports=function(t,e,n){t.prototype=i(s,{next:r(1,n)}),o(t,e+" Iterator")}},function(t,e){t.exports=function(t,e){return{value:e,done:!!t}}},function(t,e,n){var i=n(14),r=n(4);t.exports=function(t,e){for(var n,o=r(t),s=i(o),u=s.length,a=0;u>a;)if(o[n=s[a++]]===e)return n}},function(t,e,n){var i=n(16)("meta"),r=n(13),o=n(2),s=n(3).f,u=0,a=Object.isExtensible||function(){return!0},l=!n(12)(function(){return a(Object.preventExtensions({}))}),c=function(t){s(t,i,{value:{i:"O"+ ++u,w:{}}})},f=function(t,e){if(!r(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!o(t,i)){if(!a(t))return"F";if(!e)return"E";c(t)}return t[i].i},p=function(t,e){if(!o(t,i)){if(!a(t))return!0;if(!e)return!1;c(t)}return t[i].w},h=function(t){return l&&d.NEED&&a(t)&&!o(t,i)&&c(t),t},d=t.exports={KEY:i,NEED:!1,fastKey:f,getWeak:p,onFreeze:h}},function(t,e,n){var i=n(3),r=n(10),o=n(14);t.exports=n(1)?Object.defineProperties:function(t,e){r(t);for(var n,s=o(e),u=s.length,a=0;u>a;)i.f(t,n=s[a++],e[n]);return t}},function(t,e,n){var i=n(26),r=n(15),o=n(4),s=n(31),u=n(2),a=n(43),l=Object.getOwnPropertyDescriptor;e.f=n(1)?l:function(t,e){if(t=o(t),e=s(e,!0),a)try{return l(t,e)}catch(t){}if(u(t,e))return r(!i.f.call(t,e),t[e])}},function(t,e,n){var i=n(4),r=n(46).f,o={}.toString,s="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],u=function(t){try{return r(t)}catch(t){return s.slice()}};t.exports.f=function(t){return s&&"[object Window]"==o.call(t)?u(t):r(i(t))}},function(t,e,n){var i=n(2),r=n(90),o=n(28)("IE_PROTO"),s=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=r(t),i(t,o)?t[o]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?s:null}},function(t,e,n){var i=n(30),r=n(21);t.exports=function(t){return function(e,n){var o,s,u=String(r(e)),a=i(n),l=u.length;return a<0||a>=l?t?"":void 0:(o=u.charCodeAt(a),o<55296||o>56319||a+1===l||(s=u.charCodeAt(a+1))<56320||s>57343?t?u.charAt(a):o:t?u.slice(a,a+2):s-56320+(o-55296<<10)+65536)}}},function(t,e,n){var i=n(30),r=Math.max,o=Math.min;t.exports=function(t,e){return t=i(t),t<0?r(t+e,0):o(t,e)}},function(t,e,n){var i=n(30),r=Math.min;t.exports=function(t){return t>0?r(i(t),9007199254740991):0}},function(t,e,n){var i=n(21);t.exports=function(t){return Object(i(t))}},function(t,e,n){"use strict";var i=n(72),r=n(80),o=n(24),s=n(4);t.exports=n(44)(Array,"Array",function(t,e){this._t=s(t),this._i=0,this._k=e},function(){var t=this._t,e=this._k,n=this._i++;return!t||n>=t.length?(this._t=void 0,r(1)):"keys"==e?r(0,n):"values"==e?r(0,t[n]):r(0,[n,t[n]])},"values"),o.Arguments=o.Array,i("keys"),i("values"),i("entries")},function(t,e,n){var i=n(23);i(i.S+i.F*!n(1),"Object",{defineProperty:n(3).f})},function(t,e){},function(t,e,n){"use strict";var i=n(87)(!0);n(44)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,e=this._t,n=this._i;return n>=e.length?{value:void 0,done:!0}:(t=i(e,n),this._i+=t.length,{value:t,done:!1})})},function(t,e,n){"use strict";var i=n(0),r=n(2),o=n(1),s=n(23),u=n(49),a=n(82).KEY,l=n(12),c=n(29),f=n(27),p=n(16),h=n(7),d=n(33),v=n(32),y=n(81),g=n(75),b=n(78),m=n(10),_=n(4),x=n(31),w=n(15),S=n(45),O=n(85),L=n(84),P=n(3),k=n(14),E=L.f,j=P.f,V=O.f,C=i.Symbol,T=i.JSON,A=T&&T.stringify,$=h("_hidden"),D=h("toPrimitive"),F={}.propertyIsEnumerable,M=c("symbol-registry"),B=c("symbols"),N=c("op-symbols"),R=Object.prototype,H="function"==typeof C,G=i.QObject,I=!G||!G.prototype||!G.prototype.findChild,K=o&&l(function(){return 7!=S(j({},"a",{get:function(){return j(this,"a",{value:7}).a}})).a})?function(t,e,n){var i=E(R,e);i&&delete R[e],j(t,e,n),i&&t!==R&&j(R,e,i)}:j,z=function(t){var e=B[t]=S(C.prototype);return e._k=t,e},U=H&&"symbol"==typeof C.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof C},W=function(t,e,n){return t===R&&W(N,e,n),m(t),e=x(e,!0),m(n),r(B,e)?(n.enumerable?(r(t,$)&&t[$][e]&&(t[$][e]=!1),n=S(n,{enumerable:w(0,!1)})):(r(t,$)||j(t,$,w(1,{})),t[$][e]=!0),K(t,e,n)):j(t,e,n)},J=function(t,e){m(t);for(var n,i=g(e=_(e)),r=0,o=i.length;o>r;)W(t,n=i[r++],e[n]);return t},q=function(t,e){return void 0===e?S(t):J(S(t),e)},X=function(t){var e=F.call(this,t=x(t,!0));return!(this===R&&r(B,t)&&!r(N,t))&&(!(e||!r(this,t)||!r(B,t)||r(this,$)&&this[$][t])||e)},Y=function(t,e){if(t=_(t),e=x(e,!0),t!==R||!r(B,e)||r(N,e)){var n=E(t,e);return!n||!r(B,e)||r(t,$)&&t[$][e]||(n.enumerable=!0),n}},Q=function(t){for(var e,n=V(_(t)),i=[],o=0;n.length>o;)r(B,e=n[o++])||e==$||e==a||i.push(e);return i},Z=function(t){for(var e,n=t===R,i=V(n?N:_(t)),o=[],s=0;i.length>s;)!r(B,e=i[s++])||n&&!r(R,e)||o.push(B[e]);return o};H||(C=function(){if(this instanceof C)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),e=function(n){this===R&&e.call(N,n),r(this,$)&&r(this[$],t)&&(this[$][t]=!1),K(this,t,w(1,n))};return o&&I&&K(R,t,{configurable:!0,set:e}),z(t)},u(C.prototype,"toString",function(){return this._k}),L.f=Y,P.f=W,n(46).f=O.f=Q,n(26).f=X,n(47).f=Z,o&&!n(25)&&u(R,"propertyIsEnumerable",X,!0),d.f=function(t){return z(h(t))}),s(s.G+s.W+s.F*!H,{Symbol:C});for(var tt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;tt.length>et;)h(tt[et++]);for(var tt=k(h.store),et=0;tt.length>et;)v(tt[et++]);s(s.S+s.F*!H,"Symbol",{for:function(t){return r(M,t+="")?M[t]:M[t]=C(t)},keyFor:function(t){if(U(t))return y(M,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){I=!0},useSimple:function(){I=!1}}),s(s.S+s.F*!H,"Object",{create:q,defineProperty:W,defineProperties:J,getOwnPropertyDescriptor:Y,getOwnPropertyNames:Q,getOwnPropertySymbols:Z}),T&&s(s.S+s.F*(!H||l(function(){var t=C();return"[null]"!=A([t])||"{}"!=A({a:t})||"{}"!=A(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!U(t)){for(var e,n,i=[t],r=1;arguments.length>r;)i.push(arguments[r++]);return e=i[1],"function"==typeof e&&(n=e),!n&&b(e)||(e=function(t,e){if(n&&(e=n.call(this,t,e)),!U(e))return e}),i[1]=e,A.apply(T,i)}}}),C.prototype[D]||n(6)(C.prototype,D,C.prototype.valueOf),f(C,"Symbol"),f(Math,"Math",!0),f(i.JSON,"JSON",!0)},function(t,e,n){n(32)("asyncIterator")},function(t,e,n){n(32)("observable")},function(t,e,n){n(91);for(var i=n(0),r=n(6),o=n(24),s=n(7)("toStringTag"),u=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],a=0;a<5;a++){var l=u[a],c=i[l],f=c&&c.prototype;f&&!f[s]&&r(f,s,l),o[l]=o.Array}},function(t,e,n){var i=n(38)("unscopables"),r=Array.prototype;void 0==r[i]&&n(18)(r,i,{}),t.exports=function(t){r[i][t]=!0}},function(t,e,n){var i=n(19);t.exports=function(t){if(!i(t))throw TypeError(t+" is not an object!");return t}},function(t,e,n){var i=n(115),r=n(37),o=n(114);t.exports=function(t){return function(e,n,s){var u,a=i(e),l=r(a.length),c=o(s,l);if(t&&n!=n){for(;l>c;)if((u=a[c++])!=u)return!0}else for(;l>c;c++)if((t||c in a)&&a[c]===n)return t||c||0;return!t&&-1}}},function(t,e,n){var i=n(50),r=n(57),o=n(36),s=n(37);t.exports=function(t,e,n,u,a){i(e);var l=r(t),c=o(l),f=s(l.length),p=a?f-1:0,h=a?-1:1;if(n<2)for(;;){if(p in c){u=c[p],p+=h;break}if(p+=h,a?p<0:f<=p)throw TypeError("Reduce of empty array with no initial value")}for(;a?p>=0:f>p;p+=h)p in c&&(u=e(u,c[p],p,l));return u}},function(t,e,n){var i=n(19),r=n(54),o=n(38)("species");t.exports=function(t){var e;return r(t)&&(e=t.constructor,"function"!=typeof e||e!==Array&&!r(e.prototype)||(e=void 0),i(e)&&null===(e=e[o])&&(e=void 0)),void 0===e?Array:e}},function(t,e,n){var i=n(103);t.exports=function(t,e){return new(i(t))(e)}},function(t,e,n){var i=n(19),r=n(9).document,o=i(r)&&i(r.createElement);t.exports=function(t){return o?r.createElement(t):{}}},function(t,e,n){"use strict";var i=n(18),r=n(55),o=n(8),s=n(17),u=n(38);t.exports=function(t,e,n){var a=u(t),l=n(s,a,""[t]),c=l[0],f=l[1];o(function(){var e={};return e[a]=function(){return 7},7!=""[t](e)})&&(r(String.prototype,t,c),i(RegExp.prototype,a,2==e?function(t,e){return f.call(t,this,e)}:function(t){return f.call(t,this)}))}},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){t.exports=!n(35)&&!n(8)(function(){return 7!=Object.defineProperty(n(105)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){var i=n(100),r=n(108),o=n(116),s=Object.defineProperty;e.f=n(35)?Object.defineProperty:function(t,e,n){if(i(t),e=o(e,!0),i(n),r)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e,n){var i=n(9),r=i["__core-js_shared__"]||(i["__core-js_shared__"]={});t.exports=function(t){return r[t]||(r[t]={})}},function(t,e,n){var i=n(5),r=n(17),o=n(8),s=n(113),u="["+s+"]",a="​",l=RegExp("^"+u+u+"*"),c=RegExp(u+u+"*$"),f=function(t,e,n){var r={},u=o(function(){return!!s[t]()||a[t]()!=a}),l=r[t]=u?e(p):s[t];n&&(r[n]=l),i(i.P+i.F*u,"String",r)},p=f.trim=function(t,e){return t=String(r(t)),1&e&&(t=t.replace(l,"")),2&e&&(t=t.replace(c,"")),t};t.exports=f},function(t,e){t.exports="\t\n\v\f\r   ᠎             　\u2028\u2029\ufeff"},function(t,e,n){var i=n(56),r=Math.max,o=Math.min;t.exports=function(t,e){return t=i(t),t<0?r(t+e,0):o(t,e)}},function(t,e,n){var i=n(36),r=n(17);t.exports=function(t){return i(r(t))}},function(t,e,n){var i=n(19);t.exports=function(t,e){if(!i(t))return t;var n,r;if(e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;if("function"==typeof(n=t.valueOf)&&!i(r=n.call(t)))return r;if(!e&&"function"==typeof(n=t.toString)&&!i(r=n.call(t)))return r;throw TypeError("Can't convert object to primitive value")}},function(t,e,n){"use strict";var i=n(5),r=n(34)(2);i(i.P+i.F*!n(20)([].filter,!0),"Array",{filter:function(t){return r(this,t,arguments[1])}})},function(t,e,n){"use strict";var i=n(5),r=n(101)(!1),o=[].indexOf,s=!!o&&1/[1].indexOf(1,-0)<0;i(i.P+i.F*(s||!n(20)(o)),"Array",{indexOf:function(t){return s?o.apply(this,arguments)||0:r(this,t,arguments[1])}})},function(t,e,n){var i=n(5);i(i.S,"Array",{isArray:n(54)})},function(t,e,n){"use strict";var i=n(5),r=n(34)(1);i(i.P+i.F*!n(20)([].map,!0),"Array",{map:function(t){return r(this,t,arguments[1])}})},function(t,e,n){"use strict";var i=n(5),r=n(102);i(i.P+i.F*!n(20)([].reduce,!0),"Array",{reduce:function(t){return r(this,t,arguments.length,arguments[1],!1)}})},function(t,e,n){n(106)("search",1,function(t,e,n){return[function(n){"use strict";var i=t(this),r=void 0==n?void 0:n[e];return void 0!==r?r.call(n,i):new RegExp(n)[e](String(i))},n]})},function(t,e,n){"use strict";n(112)("trim",function(t){return function(){return t(this,3)}})},function(t,e){},function(t,e){t.exports=function(t,e,n,i,r,o){var s,u=t=t||{},a=typeof t.default;"object"!==a&&"function"!==a||(s=t,u=t.default);var l="function"==typeof u?u.options:u;e&&(l.render=e.render,l.staticRenderFns=e.staticRenderFns,l._compiled=!0),n&&(l.functional=!0),r&&(l._scopeId=r);var c;if(o?(c=function(t){t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext,t||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),i&&i.call(this,t),t&&t._registeredComponents&&t._registeredComponents.add(o)},l._ssrRegister=c):i&&(c=i),c){var f=l.functional,p=f?l.render:l.beforeCreate;f?(l._injectStyles=c,l.render=function(t,e){return c.call(e),p(t,e)}):l.beforeCreate=p?[].concat(p,c):[c]}return{esModule:s,exports:u,options:l}}},function(t,e,n){"use strict";var i=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"multiselect",class:{"multiselect--active":t.isOpen,"multiselect--disabled":t.disabled,"multiselect--above":t.isAbove},attrs:{tabindex:t.searchable?-1:t.tabindex},on:{focus:function(e){t.activate()},blur:function(e){!t.searchable&&t.deactivate()},keydown:[function(e){return"button"in e||!t._k(e.keyCode,"down",40,e.key,"ArrowDown")?e.target!==e.currentTarget?null:(e.preventDefault(),void t.pointerForward()):null},function(e){return"button"in e||!t._k(e.keyCode,"up",38,e.key,"ArrowUp")?e.target!==e.currentTarget?null:(e.preventDefault(),void t.pointerBackward()):null},function(e){return"button"in e||!t._k(e.keyCode,"enter",13,e.key,"Enter")||!t._k(e.keyCode,"tab",9,e.key,"Tab")?(e.stopPropagation(),e.target!==e.currentTarget?null:void t.addPointerElement(e)):null}],keyup:function(e){if(!("button"in e)&&t._k(e.keyCode,"esc",27,e.key,"Escape"))return null;t.deactivate()}}},[t._t("caret",[n("div",{staticClass:"multiselect__select",on:{mousedown:function(e){e.preventDefault(),e.stopPropagation(),t.toggle()}}})],{toggle:t.toggle}),t._v(" "),t._t("clear",null,{search:t.search}),t._v(" "),n("div",{ref:"tags",staticClass:"multiselect__tags"},[n("div",{directives:[{name:"show",rawName:"v-show",value:t.visibleValues.length>0,expression:"visibleValues.length > 0"}],staticClass:"multiselect__tags-wrap"},[t._l(t.visibleValues,function(e){return[t._t("tag",[n("span",{staticClass:"multiselect__tag"},[n("span",{domProps:{textContent:t._s(t.getOptionLabel(e))}}),t._v(" "),n("i",{staticClass:"multiselect__tag-icon",attrs:{"aria-hidden":"true",tabindex:"1"},on:{keydown:function(n){if(!("button"in n)&&t._k(n.keyCode,"enter",13,n.key,"Enter"))return null;n.preventDefault(),t.removeElement(e)},mousedown:function(n){n.preventDefault(),t.removeElement(e)}}})])],{option:e,search:t.search,remove:t.removeElement})]})],2),t._v(" "),t.internalValue&&t.internalValue.length>t.limit?[t._t("limit",[n("strong",{staticClass:"multiselect__strong",domProps:{textContent:t._s(t.limitText(t.internalValue.length-t.limit))}})])]:t._e(),t._v(" "),n("transition",{attrs:{name:"multiselect__loading"}},[t._t("loading",[n("div",{directives:[{name:"show",rawName:"v-show",value:t.loading,expression:"loading"}],staticClass:"multiselect__spinner"})])],2),t._v(" "),n("input",{directives:[{name:"show",rawName:"v-show",value:t.isOpen&&t.searchable,expression:"isOpen && searchable"}],ref:"search",staticClass:"multiselect__input",style:t.inputStyle,attrs:{name:t.name,id:t.id,type:"text",autocomplete:"off",placeholder:t.placeholder,disabled:t.disabled,tabindex:t.tabindex},domProps:{value:t.search},on:{input:function(e){t.updateSearch(e.target.value)},focus:function(e){e.preventDefault(),t.activate()},blur:function(e){e.preventDefault(),t.deactivate()},keyup:function(e){if(!("button"in e)&&t._k(e.keyCode,"esc",27,e.key,"Escape"))return null;t.deactivate()},keydown:[function(e){if(!("button"in e)&&t._k(e.keyCode,"down",40,e.key,"ArrowDown"))return null;e.preventDefault(),t.pointerForward()},function(e){if(!("button"in e)&&t._k(e.keyCode,"up",38,e.key,"ArrowUp"))return null;e.preventDefault(),t.pointerBackward()},function(e){return"button"in e||!t._k(e.keyCode,"enter",13,e.key,"Enter")?(e.preventDefault(),e.stopPropagation(),e.target!==e.currentTarget?null:void t.addPointerElement(e)):null},function(e){if(!("button"in e)&&t._k(e.keyCode,"delete",[8,46],e.key,["Backspace","Delete"]))return null;e.stopPropagation(),t.removeLastElement()}]}}),t._v(" "),t.isSingleLabelVisible?n("span",{staticClass:"multiselect__single",on:{mousedown:function(e){return e.preventDefault(),t.toggle(e)}}},[t._t("singleLabel",[[t._v(t._s(t.currentOptionLabel))]],{option:t.singleValue})],2):t._e(),t._v(" "),t.isPlaceholderVisible?n("span",{on:{mousedown:function(e){return e.preventDefault(),t.toggle(e)}}},[t._t("placeholder",[n("span",{staticClass:"multiselect__single"},[t._v("\n            "+t._s(t.placeholder)+"\n          ")])])],2):t._e()],2),t._v(" "),n("transition",{attrs:{name:"multiselect"}},[n("div",{directives:[{name:"show",rawName:"v-show",value:t.isOpen,expression:"isOpen"}],ref:"list",staticClass:"multiselect__content-wrapper",style:{maxHeight:t.optimizedHeight+"px"},on:{focus:t.activate,mousedown:function(t){t.preventDefault()}}},[n("ul",{staticClass:"multiselect__content",style:t.contentStyle},[t._t("beforeList"),t._v(" "),t.multiple&&t.max===t.internalValue.length?n("li",[n("span",{staticClass:"multiselect__option"},[t._t("maxElements",[t._v("Maximum of "+t._s(t.max)+" options selected. First remove a selected option to select another.")])],2)]):t._e(),t._v(" "),!t.max||t.internalValue.length<t.max?t._l(t.filteredOptions,function(e,i){return n("li",{key:i,staticClass:"multiselect__element"},[e&&(e.$isLabel||e.$isDisabled)?t._e():n("span",{staticClass:"multiselect__option",class:t.optionHighlight(i,e),attrs:{"data-select":e&&e.isTag?t.tagPlaceholder:t.selectLabelText,"data-selected":t.selectedLabelText,"data-deselect":t.deselectLabelText},on:{click:function(n){n.stopPropagation(),t.select(e)},mouseenter:function(e){if(e.target!==e.currentTarget)return null;t.pointerSet(i)}}},[t._t("option",[n("span",[t._v(t._s(t.getOptionLabel(e)))])],{option:e,search:t.search})],2),t._v(" "),e&&(e.$isLabel||e.$isDisabled)?n("span",{staticClass:"multiselect__option",class:t.groupHighlight(i,e),attrs:{"data-select":t.groupSelect&&t.selectGroupLabelText,"data-deselect":t.groupSelect&&t.deselectGroupLabelText},on:{mouseenter:function(e){if(e.target!==e.currentTarget)return null;t.groupSelect&&t.pointerSet(i)},mousedown:function(n){n.preventDefault(),t.selectGroup(e)}}},[t._t("option",[n("span",[t._v(t._s(t.getOptionLabel(e)))])],{option:e,search:t.search})],2):t._e()])}):t._e(),t._v(" "),n("li",{directives:[{name:"show",rawName:"v-show",value:t.showNoResults&&0===t.filteredOptions.length&&t.search&&!t.loading,expression:"showNoResults && (filteredOptions.length === 0 && search && !loading)"}]},[n("span",{staticClass:"multiselect__option"},[t._t("noResult",[t._v("No elements found. Consider changing the search query.")])],2)]),t._v(" "),t._t("afterList")],2)])])],2)},r=[],o={render:i,staticRenderFns:r};e.a=o}])});
 
 /***/ }),
-/* 336 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(146));
+		module.exports = factory(__webpack_require__(152));
 	else if(typeof define === 'function' && define.amd)
 		define(["vue"], factory);
 	else if(typeof exports === 'object')

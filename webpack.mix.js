@@ -21,6 +21,7 @@ if (!mix.inProduction()) {
 
 mix
   .js("resources/assets/js/app.js", "public/js")
+  .js("resources/assets/js/WorkflowStep.js", "public/js")
   .js("resources/assets/js/sidebar.js", "public/js")
   .js("resources/assets/js/designer.js", "public/js")
   .js("resources/assets/js/designerGraph.js", "public/js")

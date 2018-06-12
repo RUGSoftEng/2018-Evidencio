@@ -1,4 +1,10 @@
-@extends('layouts.app') @section('content') @include('partials.sidebar')
+@extends('layouts.app') 
+
+@section('content') 
+
+@include('partials.sidebar')
+
+<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 
 <div class="container-fluid height-100" id="designerDiv">
 
@@ -41,6 +47,7 @@
                 <div class="card-header">
                     Designer
                     <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
+                    <button type="button" class="btn btn-success float-right" :disabled="!isDraft" @click="publishWorkflow">Publish</button>
                 </div>
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
@@ -60,7 +67,6 @@
 </div>
 
 <script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
-<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>
 <script src="{{ asset('js/designerGraph.js') }}"></script>
 

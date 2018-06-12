@@ -17,10 +17,11 @@
         </div>
         <ul class="list-unstyled components">
             <li>
-                <a  href="{{ route('home') }}">Home</a>
+                <a  href="{{ route('patient') }}">Home</a>
                 <a  href="{{ route('myworkflows') }}">My Workflows</a>
             </li>
             <li>
+                @can('is-administrator')
                 <a class="subMenu" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
                 <ul class="collapse list-unstyled" id="pageSubmenu">
                     <li><a class="sidebar-listitem" href="{{ route('usersverification.index') }}">Users verification</a></li>
