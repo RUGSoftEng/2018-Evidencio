@@ -2,8 +2,8 @@
     <div class="mt-2">
         <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editChartItem_' + indexItem"
             aria-expanded="false" :aria-controls="'editChartItem_' + indexItem" :id="'headerChartItem_' + indexItem" @click="show = !show">
-            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
             {{ chartItemLabel }}
             <!--TODO: the icon below is used to delete the idem in the chart, but overlaps with the other functionality, so when deleting, sometimes it triggeres the openning or closing the collapsable-->
             <i class="fo-icon icon-trash float-right" @click="toggleRemoval()">&#xf1f8;</i>
@@ -120,3 +120,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.icon-trash {
+  font-size: 140%;
+}
+.arrow {
+  font-size: 120%;
+}
+</style>

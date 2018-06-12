@@ -1,4 +1,10 @@
-@extends('layouts.app') @section('content') @include('partials.sidebar')
+@extends('layouts.app') 
+
+@section('content') 
+
+@include('partials.sidebar')
+
+<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 
 <div class="container-fluid height-100" id="designerDiv">
 
@@ -61,7 +67,6 @@
 </div>
 
 <script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
-<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>
 <script src="{{ asset('js/designerGraph.js') }}"></script>
 

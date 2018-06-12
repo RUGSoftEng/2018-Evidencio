@@ -81,11 +81,6 @@ export default {
       this.$emit("refresh-chart-data-after-deletion", helpData);
       this.$emit("refresh-reference-data-after-deletion", helpRef);
     }
-  },
-  data() {
-    return {
-      // localChartItems: []
-    };
   }
 };
 </script>

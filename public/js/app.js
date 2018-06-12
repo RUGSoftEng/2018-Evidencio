@@ -5274,7 +5274,8 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 10 */
+/* 10 */,
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5700,7 +5701,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5777,7 +5778,6 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */,
 /* 13 */,
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -30882,10 +30882,10 @@ Chart.defaults = __webpack_require__(2);
 Chart.Element = __webpack_require__(4);
 Chart.elements = __webpack_require__(6);
 Chart.Interaction = __webpack_require__(21);
-Chart.layouts = __webpack_require__(10);
+Chart.layouts = __webpack_require__(11);
 Chart.platform = __webpack_require__(22);
 Chart.plugins = __webpack_require__(23);
-Chart.Ticks = __webpack_require__(11);
+Chart.Ticks = __webpack_require__(12);
 
 __webpack_require__(172)(Chart);
 __webpack_require__(173)(Chart);
@@ -34657,7 +34657,7 @@ module.exports = function(Chart) {
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 var Interaction = __webpack_require__(21);
-var layouts = __webpack_require__(10);
+var layouts = __webpack_require__(11);
 var platform = __webpack_require__(22);
 var plugins = __webpack_require__(23);
 
@@ -35947,7 +35947,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(10);
+var layouts = __webpack_require__(11);
 
 module.exports = function(Chart) {
 
@@ -36001,7 +36001,7 @@ module.exports = function(Chart) {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(11);
+var Ticks = __webpack_require__(12);
 
 defaults._set('scale', {
 	display: true,
@@ -38231,7 +38231,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(11);
+var Ticks = __webpack_require__(12);
 
 module.exports = function(Chart) {
 
@@ -38428,7 +38428,7 @@ module.exports = function(Chart) {
 
 
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(11);
+var Ticks = __webpack_require__(12);
 
 /**
  * Generate a set of logarithmic ticks
@@ -38783,7 +38783,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(11);
+var Ticks = __webpack_require__(12);
 
 module.exports = function(Chart) {
 
@@ -42635,7 +42635,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(10);
+var layouts = __webpack_require__(11);
 
 var noop = helpers.noop;
 
@@ -43218,7 +43218,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(4);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(10);
+var layouts = __webpack_require__(11);
 
 var noop = helpers.noop;
 
