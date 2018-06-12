@@ -1,7 +1,7 @@
 $(document).ready(function () {
     yaSimpleScrollbar.attach(document.getElementById('sidebar'));
 
-    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fo-icon icon-user">&#xe800;</i></button>');
+    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fo-icon icon-user">&#xf0c9;</i></button>');
 
 
     $('#dismiss, .overlay').on('click', function () {

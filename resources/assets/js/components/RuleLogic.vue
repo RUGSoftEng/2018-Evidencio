@@ -3,11 +3,16 @@
         <div class="form-group" v-if="type == 'none'">
             <label for="selectType">Choose a type</label>
             <select name="selectType" id="selectType" class="form-control" v-model="newType">
-                <option value="LOGIC">Comparison</option>
+                <option v-if="logic.label=='rule'" value="ALWAYS">No condition</option>
+                <option v-if="reachableResults.length > 0" value="LOGIC">Comparison</option>
                 <option value="AND">Logical AND</option>
                 <option value="OR">Logical OR</option>
             </select>
             <button class="btn btn-primary form-control mt-2" @click="setType">Select type</button>
+        </div>
+        <div v-else-if="type == 'always'">
+          <h6 class="no-condition">No condition</h6>
+
         </div>
         <div class="form-row" v-else-if="type == 'logic'">
             <div class="col">
@@ -65,6 +70,7 @@ export default {
   },
   computed: {
     type() {
+      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";
@@ -74,6 +80,16 @@ export default {
   methods: {
     setType() {
       switch (this.newType) {
+        case "ALWAYS":
+          Vue.set(this.logic, "always", {});
+          Vue.set(this.logic, "any", [
+            {
+              fact: "trueValue",
+              operator: "equal",
+              value: true
+            }
+          ]);
+          break;
         case "LOGIC":
           if (this.logic.label == "rule") {
             Vue.set(this.logic, "any", [
@@ -123,11 +139,13 @@ export default {
   },
   mounted() {
     this.refreshNewLabel();
+    if (this.logic.label == "rule") this.newType = "ALWAYS";
+    else this.newType = "LOGIC";
   },
   data() {
     return {
       hover: false,
-      newType: "LOGIC",
+      newType: "",
       newLabel: "",
       operators: [
         {

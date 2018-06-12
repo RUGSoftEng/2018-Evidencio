@@ -104,11 +104,9 @@ window.vObj = new Vue({
       this.steps.forEach(localStep => {
         localStep.rules.forEach(rule => {
           rule.target.stepId = this.getStepIdFromDatabaseId(rule.target.id);
-          rule.create = true;
-          rule.destroy = false;
-          rule.change = false;
+          rule.action = "create";
           if (rule.target.stepId == -1) {
-            rule.destroy = true;
+            rule.action = "destroy";
           }
         });
         localStep.apiCalls.forEach(apiCall => {
@@ -189,10 +187,11 @@ window.vObj = new Vue({
           },
           url: "/designer/fetch",
           type: "POST",
+          timeout: 5000,
           data: {
             modelId: modelId
           },
-          success: function (result) {
+          success: function (result, textStatus) {
             self.debug = result;
             self.models.push(result);
             let newVars = self.models[self.models.length - 1].variables.length;
@@ -211,6 +210,13 @@ window.vObj = new Vue({
             self.modelIds.push(modelId);
             self.recountVariableUses();
             self.runDummyModelEvidencio(self.models.length - 1);
+          },
+          error: function (xhr, textStatus, errorThrown) {
+            self.$notify({
+              title: "Failed to grab Evidencio model",
+              text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
+              type: "error"
+            });
           }
         });
       }
@@ -246,6 +252,7 @@ window.vObj = new Vue({
         },
         url: "/designer/runmodel",
         type: "POST",
+        timeout: 5000,
         data: {
           modelId: self.models[localModelId].id,
           values: values
@@ -258,6 +265,13 @@ window.vObj = new Vue({
               self.models[localModelId].resultVars.push("result_" + self.models[localModelId].id.toString() + "_" + index);
             }
           }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          self.$notify({
+            title: "Failed to run Evidencio model",
+            text: "There seems to be an issue with connection to Evidencio (evidencio.com). Please try again later.",
+            type: "error"
+          });
         }
       });
     },
@@ -296,6 +310,7 @@ window.vObj = new Vue({
         },
         url: url,
         type: "POST",
+        timeout: 5000,
         data: {
           title: self.title,
           description: self.description,
@@ -310,7 +325,7 @@ window.vObj = new Vue({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
               type: "success"
-            })
+            });
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
             window.history.pushState(window.history.state, "", pathArray[0] + "//" + pathArray[2] + "/designer?workflow=" + self.workflowId);
@@ -341,13 +356,15 @@ window.vObj = new Vue({
                 });
               }
             }
-          } else {
-            self.$notify({
-              title: "Saving failed",
-              text: "Your workflow failed to save.",
-              type: "error"
-            })
           }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          self.$notify({
+            title: "Saving failed",
+            text: "Your workflow failed to save. Please try again later.",
+            type: "error"
+          });
+          console.log(errorThrown);
         }
       });
     },
@@ -381,14 +398,20 @@ window.vObj = new Vue({
               self.addStep(element.title, element.description, element.level);
               let localStep = self.steps[index];
               localStep.id = element.id;
+              localStep.type = element.type;
               localStep.colour = element.colour;
-              localStep.variables = element.variables;
-              localStep.varCounter = element.variables.length;
-              localStep.rules = [];
-              element.rules.map(rule => {
-                localStep.rules.push(self.prepareSingleRule(rule));
-              });
-              localStep.apiCalls = element.apiCalls;
+              if (localStep.type == "input") {
+                localStep.variables = element.variables;
+                localStep.varCounter = element.variables.length;
+                element.rules.map(rule => {
+                  localStep.rules.push(self.prepareSingleRule(rule));
+                });
+                localStep.apiCalls = element.apiCalls;
+              } else {
+                localStep.chartTypeNumber = Number(element.chartTypeNumber);
+                localStep.chartItemReference = element.chartItemReference;
+                localStep.chartRenderingData = element.chartRenderingData;
+              }
             });
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
@@ -401,6 +424,17 @@ window.vObj = new Vue({
             self.workflowId = null;
             Event.fire("normalStart");
           }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          self.$notify({
+            title: "Loading failed",
+            text: "Your workflow failed to load. Please try again later.",
+            type: "error"
+          });
+          console.log(errorThrown);
+          window.setTimeout(() => {
+            window.location.replace("/designer");
+          }, 2000);
         }
       });
     },
@@ -428,7 +462,16 @@ window.vObj = new Vue({
       })).then(function (x) {
         Event.fire("loadWorkflowAllModelsLoaded");
       }, function (e) {
-        Console.log("At least one of the requests failed.");
+        self.$notify({
+          title: "Loading workflow failed",
+          text: "Some requested information from Evidencio failed to arrive, loading failed.",
+          type: "error"
+        });
+        console.log("At least one of the requests failed.");
+        console.log(e);
+        window.setTimeout(() => {
+          window.location.replace("/designer");
+        }, 2000);
       });
     },
 
@@ -462,6 +505,204 @@ window.vObj = new Vue({
     getLocalIdFromModelId(modelId) {
       for (let index = 0; index < this.modelIds.length; index++) {
         if (this.modelIds[index] == modelId) return index;
+      }
+      return -1;
+    },
+
+    /**
+     * Checks if variables used in a VariableMapping for the API call is not available anymore. If so, replace it with an available variable.
+     */
+    checkPossibleVariableMappingFailures() {
+      let showNotification = false;
+      this.steps.forEach((step, index) => {
+        if (step.apiCalls.length > 0) {
+          let reachableVars = this.getVariablesUpToStep(index).concat(step.variables);;
+          if (reachableVars.length > 0) {
+            let ifNotFound = reachableVars[0];
+            step.apiCalls.forEach(apiCall => {
+              apiCall.variables.forEach(variable => {
+                if (this.getArrayIndex(variable.localVariable, reachableVars) == -1) {
+                  variable.localVariable = ifNotFound;
+                  showNotification = true;
+                }
+              });
+            })
+          } else {
+            step.apiCalls = [];
+            showNotification = true;
+          }
+        }
+      });
+      if (showNotification)
+        this.$notify({
+          title: "Variable removed",
+          text: "You have removed one or more variables that were used in a model-calculation, it is now replaced with another.",
+          type: "warn"
+        });
+    },
+
+    /**
+     * Checks if results used in a result-step are removed, making them unavailable. If so, this label is removed.
+     */
+    checkPossibleLogicOrResultLabelFailures() {
+      let showNotification = false;
+      let notificationType = "all"
+      this.steps.forEach((step, index) => {
+        if (step.type == "result" || step.rules.length > 0) {
+          let reachableResults = this.getResultsUpToStep(index);
+          step.apiCalls.forEach(apiCall => {
+            reachableResults = reachableResults.concat(apiCall.results.map(result => {
+              return result.name;
+            }));
+          })
+          if (reachableResults.length > 0) {
+            if (step.type == "result") {
+              for (let resultIndex = step.chartItemReference.length - 1; resultIndex >= 0; resultIndex--) {
+                if (this.getArrayIndex(step.chartItemReference[resultIndex].reference, reachableResults) == -1) {
+                  step.chartItemReference.splice(resultIndex, 1);
+                  step.chartRenderingData.labels.splice(resultIndex, 1);
+                  step.chartRenderingData.datasets[0].data.splice(resultIndex, 1);
+                  step.chartRenderingData.datasets[0].backgroundColor.splice(resultIndex, 1);
+                  showNotification = true;
+                  notificationType = "item";
+                }
+              }
+            }
+            if (step.rules.length > 0) {
+              let baseFact = reachableResults[0];
+              step.rules.forEach(rule => {
+                if (this.checkRuleReachability(rule.condition, reachableResults, baseFact)) {
+                  showNotification = true;
+                  notificationType = "rule";
+                }
+              });
+            }
+          } else {
+            step.chartItemReference = [];
+            step.chartRenderingData = {
+              labels: [],
+              datasets: [{
+                data: [],
+                backgroundColor: []
+              }]
+            }
+            step.rules.forEach(rule => {
+              if (this.checkRuleUsingResult(rule.condition)) {
+                rule.action = "destroy";
+              }
+            })
+            showNotification = true;
+            notificationType = "all";
+          }
+        }
+      });
+      if (showNotification)
+        switch (notificationType) {
+          case "item":
+            this.$notify({
+              title: "Result-item removed",
+              text: "You have removed one or more model-calculations that were used in a result-step, it is now removed.",
+              type: "warn"
+            });
+            break;
+          case "rule":
+            this.$notify({
+              title: "Rule changed",
+              text: "You have removed one or more model-calculations that were used in a result-step, please check your current rules.",
+              type: "warn"
+            });
+            break;
+          case "all":
+            this.$notify({
+              title: "Result-items or logical rules removed",
+              text: "You have removed (access to) all model-calculations that were used in a step, the components using these (rules or result-items) have been removed.",
+              type: "warn"
+            });
+            break;
+        }
+
+    },
+
+    /**
+     * Checks if a rule is still possible, if not make changes.
+     *  - Missing fact? Replace with first known fact (breaks the logic, but still allows the designer to keep the structure)
+     *  - All facts missing? Delete the rule (no feasible way to keep the structure)
+     * @param {Object} rule 
+     * @param {Array} reachableResults 
+     * @param {String} baseFact 
+     */
+    checkRuleReachability(rule, reachableResults, baseFact) {
+      let showNotification = false;
+      if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
+        if (this.getArrayIndex(rule.fact, reachableResults) == -1) {
+          rule.fact = baseFact;
+          showNotification = true;
+        }
+      } else if (rule.hasOwnProperty("any")) {
+        rule.any.forEach(part => {
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+        });
+      } else if (rule.hasOwnProperty("all")) {
+        rule.all.forEach(part => {
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+        });
+      }
+      return showNotification;
+    },
+
+    /**
+     * Checks if a rule is using results (true) or is a 'no condition' rule (false)
+     * @param {Object} rule
+     */
+    checkRuleUsingResult(rule) {
+      if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
+        return true;
+      } else if (rule.hasOwnProperty("any")) {
+        for (let index = rule.any.length - 1; index >= 0; index--)
+          if (this.checkRuleUsingResult(rule.any[index])) return true;
+      } else if (rule.hasOwnProperty("all")) {
+        for (let index = rule.all.length - 1; index >= 0; index--)
+          if (this.checkRuleUsingResult(rule.all[index])) return true;
+      }
+      return false;
+    },
+
+    /**
+     * Find all variables reachable/known up to (but not including) the given step
+     * @param {Number} localStepId 
+     */
+    getVariablesUpToStep(localStepId) {
+      let variables = [];
+      this.getAncestorStepList(localStepId).forEach(stepId => {
+        variables = variables.concat(this.steps[stepId].variables);
+      });
+      return variables;
+    },
+
+    /**
+     * Find all results reachable/known up to (but no including) the given step
+     * @param {Number} localStepId 
+     */
+    getResultsUpToStep(localStepId) {
+      let results = [];
+      this.getAncestorStepList(localStepId).forEach(stepId => {
+        this.steps[stepId].apiCalls.forEach(apiCall => {
+          results = results.concat(apiCall.results.map(result => {
+            return result.name;
+          }));
+        });
+      });
+      return results;
+    },
+
+    /**
+     * Finds the index in the reachables based on the local variable name
+     * @param {String} varName
+     * @param {Array} reachableVariables
+     */
+    getArrayIndex(varName, reachableVariables) {
+      for (let index = reachableVariables.length - 1; index >= 0; index--) {
+        if (reachableVariables[index] == varName) return index;
       }
       return -1;
     },
@@ -525,19 +766,33 @@ window.vObj = new Vue({
         varCounter: 0,
         rules: [],
         apiCalls: [],
-        create: true,
-        destroy: false,
+        action: "create",
         chartTypeNumber: 0,
-        chartData: [],
         chartRenderingData: {
-          labels: ['January', 'February'],
+          labels: [],
           datasets: [{
-            // label: 'A simple label',
-            label: "Edit Label",
-            backgroundColor: ['#0000ff', '#ff0000'],
-            data: [40, 20]
+            backgroundColor: [],
+            data: []
           }]
-        }
+        },
+        /*{
+                 labels: ['January', 'February'],
+                 datasets: [{
+                   // label: "Edit Label",
+                   backgroundColor: ['#0000ff', '#ff0000'],
+                   data: [40, 20]
+                 }]
+               },*/
+        chartItemReference: []
+        /*[{
+                    reference: "first",
+                    negation: false
+                  },
+                  {
+                    reference: "second",
+                    negation: false
+                  }
+                ]*/
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
@@ -550,7 +805,7 @@ window.vObj = new Vue({
      * @param {Number} id of step that should be removed. IMPORTANT: this should be the step-id, not the node-id
      */
     removeStep(id) {
-      this.steps[id].destroy = true;
+      this.steps[id].action = "destroy";
       this.stepsChanged = !this.stepsChanged;
     },
 
@@ -664,8 +919,8 @@ window.vObj = new Vue({
           this.confirmDialog.approvalFunction = () => {
             let stepIds = this.levels[this.confirmDialog.data - 1].steps;
             for (let indexStep = 0; indexStep < stepIds.length; indexStep++) {
-              this.steps[stepIds[indexStep]].rules.map(x => {
-                x.destroy = true;
+              this.steps[stepIds[indexStep]].rules.map(rule => {
+                rule.action = "destroy";
               });
             }
             this.connectionsChanged = !this.connectionsChanged;
@@ -696,17 +951,19 @@ window.vObj = new Vue({
      * @param {Object} changedStep has the new step and usedVariables (with changes made in the modal)
      */
     applyChanges(changedStep) {
-      changedStep.step.rules.map(x => {
-        if (x.create == false) x.change = true;
+      changedStep.step.rules.map(rule => {
+        if (rule.action == "none") rule.action = "change";
       });
       this.steps[this.selectedStepId] = changedStep.step;
       this.usedVariables = changedStep.usedVars;
-      this.connectionsChanged = !this.connectionsChanged;
       // Set new backgroundcolor
       cy.getElementById(this.steps[this.selectedStepId].nodeId).style({
         "background-color": changedStep.step.colour
       });
       this.recountVariableUses();
+      this.checkPossibleVariableMappingFailures();
+      this.checkPossibleLogicOrResultLabelFailures();
+      this.connectionsChanged = !this.connectionsChanged;
     },
 
     /**
@@ -806,7 +1063,7 @@ window.vObj = new Vue({
         return list;
       this.levels[previousLevel].steps.forEach(stId => {
         this.steps[stId].rules.forEach(rule => {
-          if (rule.target.stepId == stepId)
+          if (rule.action != "destroy" && rule.target.stepId == stepId)
             list = list.concat(this.getAncestorStepListHelper(stId));
         });
       });
@@ -892,27 +1149,31 @@ window.vObj = new Vue({
     stepsChanged: function () {
       for (let index = this.steps.length - 1; index >= 0; index--) {
         let currentStep = this.steps[index];
-        if (currentStep.create) {
-          currentStep.nodeId = cy.add({
-            classes: "node",
-            data: {
-              id: "node_" + this.nodeCounter
-            },
-            style: {
-              "background-color": currentStep.colour
-            }
-          }).id();
-          currentStep.create = false;
-          cy.getElementById(currentStep.nodeId).style({
-            label: currentStep.id
-          });
-          this.nodeCounter++;
-        }
-        if (currentStep.destroy) {
-          cy.remove(cy.getElementById(currentStep.nodeId));
-          this.removeRulesByTarget(index);
-          this.removeStepFromLevel(index);
-          this.steps.splice(index, 1);
+        switch (currentStep.action) {
+          case "create":
+            currentStep.nodeId = cy.add({
+              classes: "node",
+              data: {
+                id: "node_" + this.nodeCounter
+              },
+              style: {
+                "background-color": currentStep.colour
+              }
+            }).id();
+            currentStep.create = false;
+            cy.getElementById(currentStep.nodeId).style({
+              label: currentStep.id
+            });
+            this.nodeCounter++;
+            currentStep.action = "none";
+            break;
+          case "destroy":
+            cy.remove(cy.getElementById(currentStep.nodeId));
+            this.removeRulesByTarget(index);
+            this.removeStepFromLevel(index);
+            this.steps.splice(index, 1);
+            currentStep.action = "none";
+            break;
         }
       }
       this.positionSteps();
@@ -951,41 +1212,38 @@ window.vObj = new Vue({
      * Adds/removes/changes rules in required
      */
     connectionsChanged: function () {
-      this.steps.forEach((element, index) => {
-        for (let index = element.rules.length - 1; index >= 0; index--) {
-          let currentRule = element.rules[index];
-          if (currentRule.create) {
-            let source = element.nodeId;
-            let target = this.steps[currentRule.target.stepId].nodeId;
-            currentRule.edgeId = cy.add({
-              classes: "edge",
-              data: {
-                id: "edge_" + this.edgeCounter,
-                source: source,
-                target: target
-              }
-            }).id();
-            currentRule.create = false;
-            this.edgeCounter++;
-          } else if (currentRule.change) {
-            let target = this.steps[currentRule.target.stepId].nodeId;
-            cy.getElementById(currentRule.edgeId).move({
-              target: target
-            });
-            currentRule.change = false;
-          } else if (currentRule.destroy) {
-            cy.remove(cy.getElementById(currentRule.edgeId));
-            element.rules.splice(index, 1);
+      this.steps.forEach((step, index) => {
+        for (let index = step.rules.length - 1; index >= 0; index--) {
+          let currentRule = step.rules[index];
+          switch (currentRule.action) {
+            case "create":
+              let source = step.nodeId;
+              let target = this.steps[currentRule.target.stepId].nodeId;
+              currentRule.edgeId = cy.add({
+                classes: "edge",
+                data: {
+                  id: "edge_" + this.edgeCounter,
+                  source: source,
+                  target: target
+                }
+              }).id();
+              this.edgeCounter++;
+              currentRule.action = "none";
+              break;
+            case "change":
+              let newTarget = this.steps[currentRule.target.stepId].nodeId;
+              cy.getElementById(currentRule.edgeId).move({
+                target: newTarget
+              });
+              currentRule.action = "none";
+              break;
+            case "destroy":
+              cy.remove(cy.getElementById(currentRule.edgeId));
+              step.rules.splice(index, 1);
+              break;
           }
         }
       });
-    },
-
-    /**
-     * Should extra variables be selected, recount the variableuses.
-     */
-    selectedVariables: function () {
-      this.recountVariableUses();
     }
   }
 });

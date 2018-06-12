@@ -71,33 +71,34 @@
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <div class="container-fluid" v-if="variablesUpToStep.length != 0">
-                                                    <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
-                                                        track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
-                                                        :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
-                                                        @select="modelSelectAPI" @remove="modelRemoveApi">
-                                                        <template slot="tag" slot-scope="props">
-                                                            <span class="badge badge-info badge-larger">
-                                                                <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
-                                                                <span class="custom__remove" @click="props.remove(props.option)">❌</span>
-                                                            </span>
-                                                        </template>
-                                                    </multiselect>
-                                                    <div class="list-group">
-                                                        <variable-mapping-api v-for="(apiCall, index) in localStep.apiCalls" :key="index" :index="index" :model="apiCall" :used-variables="localUsedVariables"
-                                                            :reachable-variables="variablesUpToStep"> </variable-mapping-api>
+                                                <div class="container-fluid">
+                                                    <div v-if="variablesUpToStep.length != 0">
+                                                        <label for="apiCallModelSelect">Select model for calculation:</label>
+                                                        <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
+                                                            track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
+                                                            :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                            @select="modelSelectAPI" @remove="modelRemoveApi">
+                                                            <template slot="tag" slot-scope="props">
+                                                                <span class="badge badge-info badge-larger">
+                                                                    <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                                    <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                                </span>
+                                                            </template>
+                                                        </multiselect>
                                                     </div>
-                                                </div>
-                                                <div class="container-fluid" v-else>
-                                                    <h6>A model calculation cannot be done without variables. Either add fields
-                                                        to the current step or link it to a precious step to use the fields
-                                                        of that step.</h6>
+                                                    <div v-else>
+                                                        <h6>A model calculation cannot be done without variables. Either add
+                                                            fields to the current step or link it to a precious step to use
+                                                            the fields of that step.</h6>
+                                                    </div>
+                                                    <label for="variableMappingList" class="variable-label mb-2">Selected models</label>
+                                                    <variable-mapping-api-list :api-calls="localStep.apiCalls" :used-variables="localUsedVariables" :reachable-variables="variablesUpToStep"
+                                                        @remove="localStep.apiCalls = []"></variable-mapping-api-list>
                                                 </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep"></rule-edit-list>
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged" @remove="removeResultUsingRules"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -120,11 +121,19 @@
                                                         <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-                                                <chart-items-list :chart-items="this.localStep.chartData"></chart-items-list>
+                                                <chart-items-list :current-step-data="localStep.chartRenderingData"
+                                                                  :item-reference-upper="localStep.chartItemReference"
+                                                                  :available-results-upper="resultsUpToStep"
+                                                                  @refresh-chart-data="updateChartData($event)"
+                                                                  @refresh-chart-data1="updateChartData($event)"
+                                                                  @refresh-chart-data-after-deletion="updateChartData($event)"
+                                                                  @refresh-reference-data="updateReferenceData($event)"
+                                                                  @refresh-reference-data1="updateReferenceData($event)"
+                                                                  @refresh-reference-data-after-deletion="updateReferenceData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview :chart-type="this.localStep.chartTypeNumber" :chart-data="this.localStep.chartRenderingData"></chart-preview>
+                                            <chart-preview :chart-type="localStep.chartTypeNumber" :chart-data-upper="localStep.chartRenderingData" :changed="chartChanged"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +163,7 @@ import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
 import DetailsEditable from "./DetailsEditable.vue";
-import VariableMappingApi from "./VariableMappingApi.vue";
+import VariableMappingApiList from "./VariableMappingApiList.vue";
 import ChartItemsList from "./ChartItemsList";
 
 export default {
@@ -163,7 +172,7 @@ export default {
     RuleEditList,
     ChartPreview,
     DetailsEditable,
-    VariableMappingApi,
+    VariableMappingApiList,
     ChartItemsList
   },
   props: {
@@ -204,18 +213,20 @@ export default {
   computed: {
     // Array containing all variables assigned up to and including the current step
     variablesUpToStep: function() {
-      let vars = this.ancestorVariables;
+      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
-      let results = this.ancestorResults;
-      this.localStep.apiCalls.forEach(apiCall => {
-        apiCall.results.map(result => {
-          results.push(result.name);
+      let results = JSON.parse(JSON.stringify(this.ancestorResults));
+      if (this.localStep.hasOwnProperty("apiCalls")) {
+        this.localStep.apiCalls.forEach(apiCall => {
+          apiCall.results.map(result => {
+            results.push(result.name);
+          });
         });
-      });
+      }
       return results;
     },
     // Array of model-representations for API-call
@@ -272,6 +283,8 @@ export default {
       this.setSelectedVariables();
       this.setSelectedModels();
       this.updateRuleTargetDetails();
+      this.chartChanged = !this.chartChanged;
+      this.childrenChanged = !this.childrenChanged;
     },
 
     /**
@@ -303,6 +316,18 @@ export default {
     updateOrder(newOrderVariables) {
       this.selectedVariables = newOrderVariables;
       this.localStep.variables = newOrderVariables;
+    },
+
+    /**
+     * Remove all rules in the current step that use results.
+     */
+    removeResultUsingRules() {
+      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {
+        const rule = this.localStep.rules[index].condition;
+        if (!(rule.hasOwnProperty("any") && rule.any[0].fact == "trueValue")) {
+          this.localStep.rules.action = "destroy";
+        }
+      }
     },
 
     /**
@@ -488,6 +513,15 @@ export default {
         color
       };
       this.localStep.chartData.push(object);
+    },
+
+    updateChartData(chartData) {
+      Vue.set(this.localStep, "chartRenderingData", JSON.parse(JSON.stringify(chartData)));
+      this.chartChanged = !this.chartChanged;
+    },
+
+    updateReferenceData(refData) {
+      Vue.set(this.localStep, "chartItemReference", JSON.parse(JSON.stringify(refData)));
     }
   },
 
@@ -495,7 +529,9 @@ export default {
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
+      multiSelectedVariables: [],
+      chartChanged: false,
+      childrenChanged: false
     };
   }
 };

@@ -22,15 +22,21 @@ use Illuminate\Database\Eloquent\Model;
  * starting point for new steps
  * @property int workflow_step_level Level (depth) of the step in workflow tree
  * @property string colour Colour of the node in HTML format (#rrggbb)
+ * @property int result_step_chart_type
+ * @property string result_step_main_label
  */
 class Step extends Model
 {
-    protected $fillable = ['title','description','workflow_step_level','colour','is_stored'];
+    protected $fillable = [
+        'title', 'description', 'workflow_step_level', 'colour',
+        'is_stored', 'result_step_chart_type',
+        'result_step_main_label'
+    ];
     protected $touches = ['workflow'];
 
     public function workflow()
     {
-        return $this->belongsTo('App\Workflow','workflow_step_workflow_id');
+        return $this->belongsTo('App\Workflow', 'workflow_step_workflow_id');
     }
 
     /**
@@ -41,12 +47,12 @@ class Step extends Model
      */
     public function nextSteps()
     {
-        return $this->belongsToMany('App\Step','next_steps','previous_step_id','next_step_id')->withPivot("condition","title","description");
+        return $this->belongsToMany('App\Step', 'next_steps', 'previous_step_id', 'next_step_id')->withPivot("condition", "title", "description");
     }
 
     public function previousSteps()
     {
-        return $this->belongsToMany('App\Step','next_steps','next_step_id','previous_step_id')->withPivot("condition","title","description");
+        return $this->belongsToMany('App\Step', 'next_steps', 'next_step_id', 'previous_step_id')->withPivot("condition", "title", "description");
     }
 
 
@@ -56,15 +62,15 @@ class Step extends Model
      */
     public function fields()
     {
-        return $this->belongsToMany('App\Field','field_in_input_steps','input_step_id','field_id')->withPivot("order");
+        return $this->belongsToMany('App\Field', 'field_in_input_steps', 'input_step_id', 'field_id')->withPivot("order");
     }
 
     /**
-      * @return List of Evidencio model ids that are run after the step
-      */
+     * @return List of Evidencio model ids that are run after the step
+     */
     public function modelRuns()
     {
-        return $this->hasMany('App\Result','step_id')->groupBy('evidencio_model_id')->pluck('evidencio_model_id');
+        return $this->hasMany('App\Result', 'step_id')->groupBy('evidencio_model_id')->pluck('evidencio_model_id');
     }
 
     /**
@@ -72,7 +78,7 @@ class Step extends Model
      */
     public function modelRunResults()
     {
-        return $this->hasMany('App\Result','step_id');
+        return $this->hasMany('App\Result', 'step_id');
     }
 
     /**
@@ -80,7 +86,7 @@ class Step extends Model
      */
     public function modelRunResultsById($modelId)
     {
-        return $this->hasMany('App\Result','step_id')->where('evidencio_model_id',$modelId);
+        return $this->hasMany('App\Result', 'step_id')->where('evidencio_model_id', $modelId);
     }
 
 
@@ -89,7 +95,7 @@ class Step extends Model
      */
     public function modelRunFields()
     {
-        return $this->belongsToMany('App\Field','model_run_field_mappings','step_id','field_id')->withPivot('evidencio_model_id','evidencio_field_id');
+        return $this->belongsToMany('App\Field', 'model_run_field_mappings', 'step_id', 'field_id')->withPivot('evidencio_model_id', 'evidencio_field_id');
     }
 
     /**
@@ -97,6 +103,27 @@ class Step extends Model
      */
     public function modelRunFieldsById($modelId)
     {
-        return $this->belongsToMany('App\Field','model_run_field_mappings','step_id','field_id')->withPivot('evidencio_field_id')->wherePivot('evidencio_model_id', $modelId);
+        return $this->belongsToMany('App\Field', 'model_run_field_mappings', 'step_id', 'field_id')->withPivot('evidencio_field_id')->wherePivot('evidencio_model_id', $modelId);
     }
+
+    /**
+     * Results used in the chart displayed in the result step
+     * @property string item_label label of the result in the chart
+     * @property string item_background_colour colour of the result item in the
+     * chart, in the HTML format
+     * @property int item_data placeholder value for the result for presentational
+     * purposes used on the designer side
+     * @property bool item_is_negated specifies if the value in the chart should
+     * be displayed as 100 - variable_value
+     */
+    public function resultStepChartItems()
+    {
+        return $this->belongsToMany('App\Result', 'result_step_chart_items', 'item_result_step_id', 'item_result_id')->withPivot('item_label', 'item_background_colour', 'item_data', 'item_is_negated');
+    }
+
+    public function getModel($id)
+    {
+      return Step::where('workflow_step_workflow_id', '=', $id)->orderBy('workflow_step_level')->get();
+    }
+
 }

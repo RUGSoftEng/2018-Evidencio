@@ -13,8 +13,8 @@
 
 Route::get('/', function () {
   return view('patient');
-});
-
+})
+->name('home');
 
 Auth::routes();
 
@@ -56,6 +56,26 @@ Route::post('/designer/search', 'DesignerController@fetchSearch');
 Route::post('/designer/save', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/save/{workflowId}', 'DesignerSaveController@saveWorkflow');
 Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow');
+
+Route::get('/about', function () {
+  return view('about');
+})->name('about');
+
+Route::get('/termsandconditions', function () {
+  return view('termsandconditions');
+})->name('termsandconditions');
+
+Route::get('/privacypolicy', function () {
+  return view('privacypolicy');
+})->name('privacypolicy');
+
+Route::get('/userguide',function() {
+	return view('userguide');
+})->name('userguide')->middleware('auth');
+
+Route::get('/disclaimer',function() {
+	return view('disclaimer');
+})->name('disclaimer');
 
 Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows');
 Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow');

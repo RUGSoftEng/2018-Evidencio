@@ -1,9 +1,9 @@
 <template>
-    <div class="mt-3">
+    <div class="mt-2">
         <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editApi_' + index"
             aria-expanded="false" :aria-controls="'editApi_' + index" :id="'headerApi_' + index" @click="show = !show" :class="{warning: warningExists}">
-            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
             {{ model.title }}
             <span class="badge badge-secondary float-right">Id: {{ model.evidencioModelId }}</span>
         </button>
@@ -11,7 +11,7 @@
             The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,
             please do this mapping manually.
         </div>
-        <div class="collapse" :id="'editApi_' + index">
+        <div class="collapse mt-2" :id="'editApi_' + index">
             <form>
                 <div class="form-row">
                     <div class="form-group col-md-6" v-for="(variableMap, indexMap) in model.variables" :key="indexMap">
@@ -87,15 +87,6 @@ export default {
       return this.arrayOr(this.warnings);
     }
   },
-  watch: {
-    // Change API mapping if a field is removed/added (only used in case of removal, actually)
-    reachableVariables: function() {
-      let ifNotFound = this.reachableVariables[0];
-      this.model.variables.forEach(variable => {
-        if (this.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;
-      });
-    }
-  },
   methods: {
     /**
      * Tries to find a field in the reachables that has the given evidencioVariableId
@@ -118,17 +109,6 @@ export default {
         if (array[index]) return true;
       }
       return false;
-    },
-
-    /**
-     * Finds the index in the reachables based on the local variable name
-     * @param {String} varName
-     */
-    getReachableIndex(varName) {
-      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {
-        if (this.reachableVariables[index] == varName) return index;
-      }
-      return -1;
     }
   },
   data() {
@@ -142,5 +122,8 @@ export default {
 <style scoped>
 .warning {
   border: solid 2px yellow;
+}
+.arrow {
+  font-size: 120%;
 }
 </style>

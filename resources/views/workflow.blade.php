@@ -3,15 +3,13 @@ The page will create a list of the variables of the step, either a slider for co
 or radio buttons for categorical values.--}}
 
 <?php
-
  use App\EvidencioAPI;
  use App\Workflow;
 ?>
 
-
 @extends('layouts.app')
 
-@section('content')
+@section('content')@include('partials.sidebar')
 {{--makes inputs for all the required variables--}}
 
 @if (!empty($result))
@@ -22,6 +20,7 @@ or radio buttons for categorical values.--}}
   <h5><?php echo $result['steps'][0]['title'] ?></h5>
   <form method="POST" action="/graph">
     {{ csrf_field() }}
+    <input type="hidden" name="db_id" value="<?php echo $id ?>">
     <input type="hidden" name="model" value="<?php echo $result['evidencioModels'][0] ?>">
     <ul class="list-group">
     @foreach ($result['steps'][0]['variables'] as $item)
@@ -46,7 +45,6 @@ or radio buttons for categorical values.--}}
           {{--javascript for making the sliders--}}
             <script type="text/javascript">
               var slider<?php echo $item['id']; ?> = document.getElementById("<?php echo $item['id']; ?>");
-
               noUiSlider.create(slider<?php echo $item['id']; ?>, {
                 start: [<?php echo $min ?>],
                 connect: [true,false],
@@ -57,11 +55,9 @@ or radio buttons for categorical values.--}}
                 },
               });
               var input<?php echo $item['id']; ?> = document.getElementById("answer[<?php echo $item['id']; ?>]");
-
               slider<?php echo $item['id']; ?>.noUiSlider.on('update', function( values, handle ) {
 	               input<?php echo $item['id']; ?>.value = values[handle];
                });
-
                input<?php echo $item['id']; ?>.addEventListener('change', function(){
 	                slider<?php echo $item['id']; ?>.noUiSlider.set(this.value);
                 });
@@ -71,13 +67,11 @@ or radio buttons for categorical values.--}}
       @if ($item['type']=='categorical')
         <?php  echo $item['title'].": ";?>
         <br>
-
         @foreach ($item['options'] as $value)
           <input type="radio" name="answer[<?php echo $item['id']; ?>]" value="<?php echo $value['title']; ?>" >
           <?php echo $value['title']; ?>
           <br>
         @endforeach
-
       @endif
     </li>
     @endforeach
@@ -86,6 +80,5 @@ or radio buttons for categorical values.--}}
   <button type="submit" class="btn btn-primary btn-sm">submit</button>
   </form>
 </div>
-
 @endif
 @endsection

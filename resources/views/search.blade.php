@@ -7,17 +7,12 @@ use App\EvidencioAPI;
 use App\Workflow;
 $numResult = 0;
 if (!empty($_GET['search'])) {
-  //$decodeRes = EvidencioAPI::search($_GET['search']);
   $result = (new Workflow)->search($_GET['search']);
   $numResult = count($result);
-
 }
-
 ?>
-
 @extends('layouts.app')
-
-@section('content')
+@section('content')@include('partials.sidebar')
 <br>
 {{--the search bar--}}
 <div class="container">
@@ -42,7 +37,7 @@ if (!empty($_GET['search'])) {
             <?php echo $wflow['description'] ?>
           </ul>
           <br />
-          Model Creator: <b>{{ $wflow['first_name'] }} {{ $wflow['last_name'] }}</b><br /> 4.5/5 Stars  |  <i><a href="/feedback">Provide Feedback</a></i>
+          Model Creator: <b><?php echo ($wflow['fname'] . ' '. $wflow['lname']) ?></b><br />
         </li>
       <?php endforeach;
     endif;
@@ -50,5 +45,5 @@ if (!empty($_GET['search'])) {
         <div class="alert alert-warning">No results found for : <?php echo $_GET['search']; ?> </div>
   <?php endif; ?>
 </div>
-
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 @endsection

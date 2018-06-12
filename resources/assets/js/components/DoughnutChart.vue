@@ -1,17 +1,16 @@
 <script>
-import { Doughnut } from "vue-chartjs";
+  import { Doughnut, mixins } from 'vue-chartjs';
+  const { reactiveProp } = mixins;
 
-export default {
-  props: {
-    label: {
-      type: String
+  export default {
+    extends: Doughnut,
+    props: {
+      options: {}
     },
-    data: {}
-  },
-  extends: Doughnut,
-  mounted() {
-    // Overwriting base render method with actual data.
-    this.renderChart(this.data);
+    mixins: [reactiveProp],
+    mounted () {
+      // Overwriting base render method with actual data.
+      this.renderChart(this.chartData, this.options);
+    }
   }
-};
 </script>
