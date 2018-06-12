@@ -33,10 +33,10 @@
 
         <div v-if="resultStep==1">
           <form method="GET" action="/graph">
-
+            <input type="hidden" name="db_id" v-model="this.step.id">
             <input type="hidden" name="model" v-model="this.stepEvidencioId">
             <div v-for="variable in step.variables">
-
+        
                 <input type="hidden" :name="'answer['+variable.id+']'" v-model="resultAnswers[variable.id]">
 
             </div>
