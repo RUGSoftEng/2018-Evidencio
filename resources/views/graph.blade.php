@@ -8,10 +8,10 @@ This will return an array with the result and their parameters.--}}
 <?php
 use App\EvidencioAPI;
 use App\Result;
-if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
-  $decodeRes = EvidencioAPI::run($_POST['model'],$_POST['answer']);
-  $modelDetails = EvidencioAPI::getModel($_POST['model']);
-  $friendly = Result::getResult($_POST['db_id'])->toArray();
+if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
+  $decodeRes = EvidencioAPI::run($_GET['model'],$_GET['answer']);
+  $modelDetails = EvidencioAPI::getModel($_GET['model']);
+  $friendly = Result::getResult($_GET['db_id'])->toArray();
   if(!empty($friendly)){
       $dataLabel = "";
       $bgColor = "";
@@ -192,7 +192,7 @@ if(!empty($decodeRes["result"])){
   <h3>Actions</h3>
   <form method="post" action="/PDF">
     {{ csrf_field() }}
-    <input type="hidden" name="model" value="{{ $_POST['model'] }}"/>
+    <input type="hidden" name="model" value="{{ $_GET['model'] }}"/>
     <input type="hidden" name="model_name" value="{{ $decodeRes['title'] }}"/>
     <input type="hidden" name="friendlyRes" value="@if(!empty($friendly[0]['desc'])) {{ $friendly[0]['desc'] }} @endif"/>
     <input type="hidden" id="chartdata" name="chartIMG"/>
@@ -209,7 +209,7 @@ if(!empty($decodeRes["result"])){
     else{
       echo '<input type="hidden" name="res[]" value="'. $decodeRes["result"] . '"/>';
     }
-    foreach($_POST['answer'] as $value)
+    foreach($_GET['answer'] as $value)
     {
       echo '<input type="hidden" name="answer[]" value="'. $value. '"/>';
     }
