@@ -9,7 +9,7 @@
             <li class="list-group-item" v-for="(variable, varIndex) in step.variables" :key="varIndex">
                 <div v-if="variable.type=='continuous'">
                     <p>{{variable.title}}: {{variable.options.min}} - {{variable.options.max}} by {{variable.options.step}}</p>
-
+                    <br>
                     <div class="slidecontainer">
                         <vue-slider :min="variable.options.min" :max="variable.options.max" :interval="variable.options.step" v-model="inputs[variable.databaseId]"
                         @input="sliderChange(variable.databaseId, $event)"></vue-slider>
@@ -27,7 +27,23 @@
             </li>
         </ul>
         <br>
-        <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
+        <div v-if="resultStep==0">
+          <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
+        </div>
+
+        {{this.answers[0]}}
+        <div v-if="resultStep==0">
+          <form method="GET" action="/graph">
+
+            <input type="hidden" name="model" v-model="this.stepEvidencioId">
+            <div v-for="variable in step.variables">
+
+                <input type="hidden" :name="'answers['+variable.id+']'" v-model="answers[0][variable.id]">
+
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">submit</button>
+          </form>
+        </div>
 
 
 
@@ -64,7 +80,14 @@ export default {
           });
 
           this.step.nextSteps.forEach(nextStep => {
-            this.rules.push(JSON.parse(nextStep.pivot.condition));
+            if (nextStep.hasOwnProperty("pivot")) {
+              this.rules.push(JSON.parse(nextStep.pivot.condition));
+              console.log(0);
+            } else {
+              console.log(1);
+              this.resultStep=1;
+            }
+
           });
           this.engine = new Engine();
           this.rules.map(rule => {
@@ -74,7 +97,7 @@ export default {
         }
       }
     }
-    console.log(this.stepEvidencioId);
+
   },
   data() {
     return {
@@ -88,10 +111,12 @@ export default {
       facts: {
         trueValue: true
       },
-      answers: [],
+      answers: {},
       engine: null,
       stepEvidencioId: 0,
-      result: {}
+      result: {},
+      nextID:0,
+      resultStep:0
     };
   },
   watch: {
@@ -116,24 +141,51 @@ export default {
       });
       this.answers = ret;
     },
-    // TODO: fix submitResult
-    submitResult(id) {
-      Event.fire("submitResult", id);
-    },
-    // TODO: fix next step
+
     nextStep() {
       var nextStepID;
       runStep();
-      //// TODO: add rule engine Here
-      //nextStepID=Result of rule Engine
+      nextStepID=this.nextID;
+      nextStep(nextStepID)
+    },
+    nextStep(nextStepID) {
       for (var key in this.workflowData.steps) {
-        if (this.workflowData.steps[key].id == nextStepID) {
-          this.step = this.workflowData.steps[key];
-          this.stepEvidencioId = this.step.evidencioModelID[0].evidencio_model_id;
+        if (this.workflowData.steps.hasOwnProperty(key)) {
+          if (this.workflowData.steps[key].id == nextStepID) {
+            this.step = this.workflowData.steps[key];
+            for (var varKey in this.step.variables) {
+              if (this.step.variables.hasOwnProperty(varKey)) {
+                let variable = this.step.variables[varKey];
+                if (variable.type == "continuous") this.inputs[variable.databaseId] = variable.options.min;
+              }
+            }
+            this.step.apiMapping.forEach((apiCall, index) => {
+              this.mapping[index] = {};
+              apiCall.forEach(api => {
+                this.mapping[index][api.pivot.evidencio_field_id] = api.id;
+              });
+            });
+            this.step.nextSteps.forEach(nextStep => {
+              if (nextStep.hasOwnProperty("pivot")) {
+                this.rules.push(JSON.parse(nextStep.pivot.condition));
+                console.log(0);
+              } else {
+                console.log(1);
+                this.resultStep=1;
+              }
+
+            })
+
+            this.engine = new Engine();
+            this.rules.map(rule => {
+              this.engine.addRule(rule);
+            });
+            this.stepEvidencioId = this.step.evidencioModelIds[0];
+          }
         }
       }
     },
-    //// TODO: fix api call
+
     runStep() {
       var self = this;
       let calculations = [];
@@ -161,19 +213,25 @@ export default {
                     self.facts["result_" + modelId + "_" + ind] = res.result;
                   });
                 }
-                console.log(self.result);
+
               }
             });
           })
         )
         .then(function(x) {
+
           self.engine.run(self.facts).then(events => {
             events.map(event => {
               if (event.type == "goToNextStep") {
                 console.log(event.params.stepId);
+                self.nextID=event.params.stepId;
               }
             });
           });
+
+        }).then(function(x) {
+          var nextStepID=self.nextID;
+            self.nextStep(nextStepID)
         });
     }
   }
