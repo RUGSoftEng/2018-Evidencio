@@ -9,7 +9,9 @@ Vue.component('acme-component', {
 Vue.component("WorkflowStep", require("./components/WorkflowStep.vue"));
 
 
-
+import {
+  Engine
+} from 'json-rules-engine';
 
 
 new Vue ({
