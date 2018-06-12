@@ -16,22 +16,22 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       $dataLabel = "";
       $bgColor = "";
       foreach($friendly as $f){
-        $dataLabel = $dataLabel . ', ' . $f["item_label"];
+        $dataLabel = $dataLabel . ',\' ' . $f["item_label"] . '\'';
         $bgColor = $bgColor . ',\'' . $f["item_background_colour"] . '\'';
       }
       $dataLabel = substr($dataLabel, 1);
-      $bgColor = substr($bgColor, 2);
+      $bgColor = substr($bgColor, 1);
   }
   if(!empty($decodeRes["result"])){
       $result = $decodeRes["result"];
       $dataLabel = "";
       $bgColor = "";
       foreach($friendly as $f){
-        $dataLabel = $dataLabel . ', ' . $f["item_label"];
+        $dataLabel = $dataLabel . ', \'' . $f["item_label"] . '\'';
         $bgColor = $bgColor . ',\'' . $f["item_background_colour"] . '\'';
       }
       $dataLabel = substr($dataLabel, 1);
-      $bgColor = substr($bgColor, 2);
+      $bgColor = substr($bgColor, 1);
   }
   else {
       $result = "";
@@ -42,6 +42,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   if(empty($bgColor)){
     $bgColor = "'#ff0000', '#00ffff'";
   }
+  $chartType = "bar";
   if(!empty($friendly[0]["chartType"])){
     if($friendly[0]["chartType"] == 0){
       $chartType = "pie";
