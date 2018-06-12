@@ -26,6 +26,9 @@ Route::get('/usersverification/download/{id}', 'UsersVerificationController@down
 Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
 Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
 
+Route::get("/editaccount", 'EditAccountController@index')->name('editaccount.index');
+Route::post("/editaccount", 'EditAccountController@edit')->name('editaccount.edit');
+
 Route::get('/notverified', function() {
   return view('notverified');
 })->name('notverified')
