@@ -83,23 +83,8 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
    <br/><br/><br/>
    @if(!empty($decodeRes['result']))
   <div class"row justify-content-center">
-    <table width="100%" style="margin-left:auto; margin-right:auto;">
+    <table width="100%" class="mx-auto" style="max-width: 600px">
       <tr>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
-        <th width="4%"></th>
         <th width="4%"></th>
         <th width="4%"></th>
         <th width="4%"></th>
@@ -118,9 +103,9 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
           else {
             $numSad = $decodeRes["result"];
           }
-          for($j = 0; $j <4; $j++){
+          for($j = 0; $j <10; $j++){
             echo "<tr>";
-            for($i = 0; $i < 25; $i++ ){
+            for($i = 0; $i < 10; $i++ ){
               if($numSad > 0){ ?>
                 <td><img src="{{ URL::to('/images/highRisk.png') }}" width="100%" /></td>
         <?php  $numSad = $numSad -1;
