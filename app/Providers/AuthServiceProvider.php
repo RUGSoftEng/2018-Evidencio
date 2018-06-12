@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Workflow;
+use App\Policies\WorkflowPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        Workflow::class => WorkflowPolicy::class
     ];
 
     /**
@@ -25,6 +28,20 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('view-designer', function($user) {
+            return $user->is_verified && $user->email_verified;
+        });
+
+        Gate::define('not-view-designer', function($user) {
+            return !$user->is_verified || !$user->email_verified;
+        });
+
+        Gate::define('is-administrator', function($user) {
+            return $user->is_administrator;
+        });
+
+        Gate::define('patient-view-workflow', function($user, Workflow $workflow) {
+            return $workflow->is_verified && $workflow->is_published;
+        });
     }
 }
