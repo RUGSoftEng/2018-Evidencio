@@ -17,6 +17,8 @@
     "/js/rules-engine-test.js.map": "/js/rules-engine-test.js.map",
     "/js/designerGraph.js": "/js/designerGraph.js",
     "/js/designerGraph.js.map": "/js/designerGraph.js.map",
+    "/js/WorkflowStep.js": "/js/WorkflowStep.js",
+    "/js/WorkflowStep.js.map": "/js/WorkflowStep.js.map",
     "/js/registration.js": "/js/registration.js",
     "/js/registration.js.map": "/js/registration.js.map",
     "/js/sidebar.js": "/js/sidebar.js",

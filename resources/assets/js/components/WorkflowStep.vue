@@ -1,123 +1,133 @@
-<template >
-<div class="container">
-  <h3>{{workflowData.title}}</h3>
-  <br>
-    <h5>{{step.title}}</h5>
+<template>
+    <div class="container">
+        <h3>{{workflowData.title}}</h3>
+        <br>
+        <h5>{{step.title}}</h5>
 
-      <input type="hidden" :name="model" :value="workflowData.evidencioModels[0]">
-      <ul class="list-group">
-        <li class="list-group-item" v-for="variable in step.variables">
-          <div v-if="variable.type=='continuous'">
-            <p>{{variable.title}}: {{variable.options.min}} - {{variable.options.max}} by {{variable.options.step}}</p>
+        <input type="hidden" :name="model" :value="workflowData.evidencioModels[0]">
+        <ul class="list-group">
+            <li class="list-group-item" v-for="(variable, varIndex) in step.variables" :key="varIndex">
+                <div v-if="variable.type=='continuous'">
+                    <p>{{variable.title}}: {{variable.options.min}} - {{variable.options.max}} by {{variable.options.step}}</p>
 
-            <div class="slidecontainer">
-              <input type="range" :min="variable.options.min" :max="variable.options.max" v-model="answers[variable.id]" class="slider" >
-            </div>
-              <input type="number" :step='variable.options.step' v-model="answers[variable.id]">
+                    <div class="slidecontainer">
+                        <vue-slider :min="variable.options.min" :max="variable.options.max" :interval="variable.options.step" :value="answers[variable.id]" 
+                        @input="sliderChange(variable.id, $event)"></vue-slider>
+                    </div>
+                </div>
+                <div v-else>
+                    {{variable.title}}:
+                    <div v-for="(option, optIndex) in variable.options" :key="optIndex">
+                        <input type="radio" button-variant="outline-primary" :id="'radio_' + varIndex + '_' + optIndex" :name="answers[option.id]"
+                            v-model="answers[variable.id]" :value="option.title">
+                        <label :for="'radio_' + varIndex + '_' + optIndex">{{option.title}}</label>
+                        <br>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <br>
+        <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
 
-          </div>
-          <div v-if="variable.type=='categorical'">
-            {{variable.title}}:
-            <div v-for="option in variable.options">
-              <input type="radio" button-variant="outline-primary" :name="answers[option.id]" v-model="answers[variable.id]" :value="option.title" >
-              {{option.title}}
-              <br>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <br>
-      <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
-      {{this.result}}
 
 
-</div>
+    </div>
 
 </template>
 
 
 <script>
+import vueSlider from "vue-slider-component";
+import { Engine } from "json-rules-engine";
+
 export default {
-    props: ['workflowData'],
-    mounted(){
-      for(var key in this.workflowData.steps){
-        if(this.workflowData.steps[key].level==this.stepLevel){
-          this.step=this.workflowData.steps[key];
-          this.stepEvidencioId=this.step.evidencioModelID[0].evidencio_model_id;
+  components: {
+    vueSlider
+  },
+  props: ["workflowData"],
+  mounted() {
+    for (var key in this.workflowData.steps) {
+      if (this.workflowData.steps.hasOwnProperty(key)) {
+        if (this.workflowData.steps[key].level == this.stepLevel) {
+          this.step = this.workflowData.steps[key];
+          for (var varKey in this.step.variables) {
+            if (this.step.variables.hasOwnProperty(varKey)) {
+              let variable = this.step.variables[varKey];
+              if (variable.type == "continuous") this.answers[variable.id] = variable.options.min;
+            }
+          }
+          this.step.nextSteps.forEach(nextStep => {
+            this.rules.push(JSON.parse(nextStep.pivot.condition));
+          });
+          this.engine = new Engine();
+          this.rules.map(rule => {
+            this.engine.addRule(rule);
+          });
+          this.stepEvidencioId = this.step.evidencioModelID[0].evidencio_model_id;
         }
       }
-    console.log(this.stepEvidencioId);
-
-    },
-    data() {
-
-      return {
-        model:0,
-        stepLevel:0,
-        inputResult:0,
-        step:{},
-        stepEvidencioId:0,
-        answers:{},
-        result:0
-      };
-    },
-    methods:{
-      // TODO: fix submitResult
-      submitResult(id){
-        Event.fire("submitResult", id);
-      },
-      // TODO: fix next step
-      nextStep(){
-        var nextStepID;
-        let engine = new Engine();
-        //save rules in rule engine
-        for(var key in this.step.nextSteps){
-          let condition=this.step.nextSteps[key].pivot.condition;
-          let rule = new Rule(condition);
-          engine.addRule(rule);
-        }
-        var key = "result" + "_" + this.stepEvidencioId + "_" + 0;
-        let resultFact= this.result;
-        let facts;
-        facts[key]=this.result;
-        //run rule engine and get next step ID
-        engine.run(facts).then(events => {
-          events.map(event => {
-            if (event.type == "goToNextStep") {
-              nextStepID = event.params.stepId;
-            }
-          });
-        });
-        //// TODO: add rule engine Here
-        //nextStepID=Result of rule Engine
-        //get new step
-        for(var key in this.workflowData.steps){
-          if(this.workflowData.steps[key].id==nextStepID){
-            this.step=this.workflowData.steps[key];
-            this.stepEvidencioId=this.step.evidencioModelID[0].evidencio_model_id;
-          }
-        }
-
-      },
-      runStep() {
-        var self = this;
-
-        $.ajax({
-          headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-          },
-          url: "/workflow/run",
-          type: "POST",
-          data: {
-            modelId:this.stepEvidencioId,
-            values:this.answers
-          },
-          success: function(result) {
-            self.debug = result;
-            self.result= result.result;
-          }
-        });
-      },
     }
-}
+    console.log(this.stepEvidencioId);
+  },
+  data() {
+    return {
+      model: 0,
+      stepLevel: 0,
+      inputResult: 0,
+      step: {},
+      rules: [],
+      engine: null,
+      stepEvidencioId: 0,
+      answers: {},
+      result: {}
+    };
+  },
+  methods: {
+    sliderChange(key, value) {
+      Vue.set(this.answers, key, value);
+    },
+    // TODO: fix submitResult
+    submitResult(id) {
+      Event.fire("submitResult", id);
+    },
+    // TODO: fix next step
+    nextStep() {
+      var nextStepID;
+      runStep();
+      //// TODO: add rule engine Here
+      //nextStepID=Result of rule Engine
+      for (var key in this.workflowData.steps) {
+        if (this.workflowData.steps[key].id == nextStepID) {
+          this.step = this.workflowData.steps[key];
+          this.stepEvidencioId = this.step.evidencioModelID[0].evidencio_model_id;
+        }
+      }
+    },
+    //// TODO: fix api call
+    runStep() {
+      var self = this;
+
+      $.ajax({
+        headers: {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/workflow/run",
+        type: "POST",
+        data: {
+          modelId: self.stepEvidencioId,
+          values: self.answers
+        },
+        success: function(result) {
+          self.result = result;
+          if (result.hasOwnProperty("result")) {
+            //normal
+          } else {
+            //composite
+          }
+          console.log(self.result);
+        }
+      });
+    }
+  }
+};
 </script>

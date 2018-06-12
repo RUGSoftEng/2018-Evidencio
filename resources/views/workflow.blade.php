@@ -98,6 +98,6 @@ or radio buttons for categorical values.--}}
 
 <script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
 <link href="{{ asset('css/designer.css') }}" rel="stylesheet">
-<script src="{{ asset('js/designer.js') }}"></script>
+<!--<script src="{{ asset('js/designer.js') }}"></script>-->
 <script src="{{ asset('js/WorkflowStep.js') }}"></script>
 @endsection
