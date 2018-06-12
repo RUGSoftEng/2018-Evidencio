@@ -66,10 +66,12 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
     }
   }
 
+if(!empty($decodeRes["result"])){
   if(!$friendly[0]["item_is_negated"])
-    $numSad = (100 - (int)$decodeRes["result"]);
+      $numSad = (100 - (int)$decodeRes["result"]);
   else {
-    $numSad = $decodeRes["result"];
+      $numSad = $decodeRes["result"];
+    }
   }
 }
 ?>
