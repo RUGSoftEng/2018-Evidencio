@@ -54,17 +54,3 @@ class Result extends Model
       }
 
 }
-
-/* Getting the friendly result from our DB. TODO convert to Eloquent
-SELECT result_step_chart_items.*, results.*, workflows.id FROM `result_step_chart_items`
-INNER JOIN results ON results.id = item_result_id
-INNER JOIN steps ON steps.id = item_result_step_id
-INNER JOIN workflows ON workflows.id = steps.workflow_step_workflow_id
-WHERE result_step_chart_items.item_result_step_id = 33*/
-
-/* Ordered steps. SQL equivalent. TODO convert to Eloquent
-SELECT * FROM fields as f
-INNER JOIN field_in_input_steps inp ON f.id = inp.field_id
-WHERE inp.input_step_id = 21                       //id with disorderly results.
-ORDER BY inp.order ASC
-*/
