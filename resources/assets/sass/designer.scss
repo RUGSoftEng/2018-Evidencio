@@ -153,14 +153,9 @@
   min-height: calc(100% - 10px);
 }
 
-//#outputCategories {
-//max-height: 45vh;
-//}
-// #outputOptionsMenu {
-//   //max-height: 45vh;
-// }
 #chartLayoutDesigner {
   min-height: 45vh;
   max-height: 45vh;
   overflow: auto;
+  overflow-x: hidden;
 }

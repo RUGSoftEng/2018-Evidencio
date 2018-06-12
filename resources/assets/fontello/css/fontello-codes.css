@@ -7,5 +7,8 @@
 .icon-cancel:before { content: '\e805'; } /* '' */
 .icon-cancel-1:before { content: '\e806'; } /* '' */
 .icon-floppy:before { content: '\e807'; } /* '' */
+.icon-down-open-1:before { content: '\e808'; } /* '' */
+.icon-up-open-1:before { content: '\e809'; } /* '' */
 .icon-menu:before { content: '\f0c9'; } /* '' */
 .icon-file-pdf:before { content: '\f1c1'; } /* '' */
+.icon-trash:before { content: '\f1f8'; } /* '' */

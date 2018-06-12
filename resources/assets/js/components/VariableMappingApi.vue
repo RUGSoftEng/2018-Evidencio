@@ -1,17 +1,23 @@
 <template>
-    <div class="card mt-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ model.title }}</h5>
-            <div class="alert alert-warning" role="alert" v-if="warningExists">
-                The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,
-                please do this mapping manually.
-            </div>
+    <div class="mt-2">
+        <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editApi_' + index"
+            aria-expanded="false" :aria-controls="'editApi_' + index" :id="'headerApi_' + index" @click="show = !show" :class="{warning: warningExists}">
+            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
+            {{ model.title }}
+            <span class="badge badge-secondary float-right">Id: {{ model.evidencioModelId }}</span>
+        </button>
+        <div class="alert alert-warning" role="alert" v-if="warningExists">
+            The fieldmapping is done based on the expected use of fields. For the indicated field(s) the mapping could not be done automatically,
+            please do this mapping manually.
+        </div>
+        <div class="collapse mt-2" :id="'editApi_' + index">
             <form>
                 <div class="form-row">
                     <div class="form-group col-md-6" v-for="(variableMap, indexMap) in model.variables" :key="indexMap">
                         <label :for="'select_' + indexMap">{{ variableMap.evidencioTitle }}</label>
-                        <multiselect :class="{warning: warnings[indexMap]}" :options="reachableVariables" :allow-empty="false"
-                            deselect-label="Cannot be empty" v-model="variableMap.localVariable">
+                        <multiselect :class="{warning: warnings[indexMap]}" :options="reachableVariables" :allow-empty="false" deselect-label="Cannot be empty"
+                            v-model="variableMap.localVariable">
                             <template slot="singleLabel" slot-scope="props">
                                 <span class="option__desc">
                                     <span class="option__title">{{ usedVariables[props.option].title }}</span>
@@ -21,27 +27,26 @@
                                 <div class="option__desc">
                                     <span class="option__title">{{ usedVariables[props.option].title }}</span>
                                 </div>
-                             </template>
+                            </template>
                         </multiselect>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="card-body">
+                        <h5 class="card-title">Result variables</h5>
+                        <h5>
+                            <span class="badge badge-secondary mx-1" v-for="(result, index) in model.results" :key="index">{{ result.name }}</span>
+                        </h5>
+                    </div>
+                </div>
             </form>
-        </div>
-        <div class="card-body">
-            <h6 class="card-title">Result variables</h6>
-            <span class="badge badge-secondary mx-1" v-for="(result, index) in model.results" :key="index">{{ result.name }}</span>
         </div>
     </div>
 </template>
 
 
 <script>
-import Multiselect from "vue-multiselect";
-
 export default {
-  components: {
-    Multiselect
-  },
   props: {
     model: {
       type: Object,
@@ -54,9 +59,14 @@ export default {
     usedVariables: {
       type: Object,
       required: true
+    },
+    index: {
+      type: Number,
+      required: true
     }
   },
   computed: {
+    // Preselect all fields, set a warning boolean to true if a field cannot be found
     warnings: function() {
       let ret = Array(this.model.variables.length).fill(false);
       if (this.model.variables[0].localVariable == "") {
@@ -77,15 +87,11 @@ export default {
       return this.arrayOr(this.warnings);
     }
   },
-  watch: {
-    reachableVariables: function() {
-      let ifNotFound = this.reachableVariables[0];
-      this.model.variables.forEach(variable => {
-        if (this.getReachableIndex(variable.localVariable) == -1) variable.localVariable = ifNotFound;
-      });
-    }
-  },
   methods: {
+    /**
+     * Tries to find a field in the reachables that has the given evidencioVariableId
+     * @param {Number} evidencioVariableId
+     */
     findReachableVariable(evidencioVariableId) {
       for (let index = this.reachableVariables.length - 1; index >= 0; index--) {
         if (this.usedVariables[this.reachableVariables[index]].id == evidencioVariableId)
@@ -93,18 +99,22 @@ export default {
       }
       return "";
     },
+
+    /**
+     * Performs the OR operation on the given array of booleans
+     * @param {Array}
+     */
     arrayOr(array) {
       for (let index = array.length - 1; index >= 0; index--) {
         if (array[index]) return true;
       }
       return false;
-    },
-    getReachableIndex(varName) {
-      for (let index = this.reachableVariables.length - 1; index >= 0; index--) {
-        if (this.reachableVariables[index] == varName) return index;
-      }
-      return -1;
     }
+  },
+  data() {
+    return {
+      show: false
+    };
   }
 };
 </script>
@@ -112,5 +122,8 @@ export default {
 <style scoped>
 .warning {
   border: solid 2px yellow;
+}
+.arrow {
+  font-size: 120%;
 }
 </style>

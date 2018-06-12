@@ -16,10 +16,6 @@ Route::get('/', function () {
 });
 
 
-Route::get('/myworkflows', function () {
-  return view('myworkflows');
-})->name('myworkflows');
-
 Auth::routes();
 
 Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
@@ -67,3 +63,11 @@ Route::get('/userguide',function() {
 Route::get('/disclaimer',function() {
 	return view('disclaimer');
 })->name('disclaimer');
+
+Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows')->middleware('auth');
+Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow')->middleware('auth');
+
+//Testing of rules engine
+Route::get('/test-rules-engine', function () {
+  return view('json-rules-engine-test');
+});
