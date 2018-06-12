@@ -33,6 +33,7 @@
    					 </li>
 
    					 <li><a href="#section6"><h5 class="card-text" style="color:blue;">Save your Workflow</h5></a></li>
+					 <li><a href="#section7"><h5 class="card-text" style="color:blue;">Example of a workflow design cycle</h5></a></li>
    				</ol>
 		</div>
 	</div>
@@ -190,6 +191,93 @@
 					<li>
 						<h5><b>Save your Workflow</b></h5>
 						<p class="card-text" style="color:black;">Evidencio Patient Portal does not autosave your changes. Do not forget to click on <button type="button" class="btn btn-primary btn-sm">Save Workflow</button> to save your workflow. </p> 
+					</li>
+				</div>
+
+				<br>
+
+				<div id="section7">
+					<li>
+						<h5><b>Example of a workflow design cycle</b></h5>
+						<p class="card-text" style="color:black;">For this quick tutorial on how to use the function of
+							customizing steps, we will try to go over a process of making a mock workflow. This workflow
+							will only consist of an input step and an result step.
+						</p>
+						<p class="card-text" style="color:black;">Firstly, we need to make two steps. We do so by using
+							the &lsquo;+&rsquo; buttons. We will click the blue plus button on the level below the
+							(already existing) root node.<br />Furthermore, a model needs to be loaded. You can do so by
+							clicking on a &ldquo;Search Evidencio Model&rdquo; button and searching for the adequate
+							model. This will tell us precisely which variables need to be used for the calculation of
+							the given model. This is done through the &lsquo;variables&rsquo; panel in the lower left
+							corner. You can also keep track of the number of times you have used a variable (hint: if
+							it wasn&rsquo;t used the number next to it will be a zero in a red circle).
+						</p>
+						<p class="card-text" style="color:black;">It is advisable to keep everything adequately named
+							and patient friendly.
+						</p>
+						<p class="card-text" style="color:black;">Secondly, we go to the input step (in our case the
+							root node), and under the section &lsquo;variables&rsquo; select all of the variables which
+							are going to asked for in this step. Also these are the variables which are needed for the
+							calculation of the model. Every variable can be edited by clicking on it.<br />When all is
+							patient friendly and filled in, you can advance to the section &lsquo;model
+							calculation&rsquo; in which you will define the corresponding model which uses the variables
+							provided in the calculation. This model, after the calculation, returns a return variable
+							which is named in the lines of: &ldquo;result_0123_0&rdquo; (where the numbers will probably
+							differ)<br />After selecting the variables and the model, you should advance to the section
+							&lsquo;logic&rsquo;. This is the key to connecting steps. Here, you will, based on the return
+							variable(s) (previously explained), calculate the desirable next step(s). We will select the
+							previously added step as the target node and will use the blank rule. Note that you can use
+							any of the given operations to compare the result variable.<br />If done properly, after
+							clicking save, a line should appear between these two steps. It marks a connection between
+							them.
+						</p>
+						<p class="card-text" style="color:black;">Thirdly, since we want to communicate the result with
+							the patient, we will click on the step below and in the top-left part select from the
+							drop-down menu the result step. This will change the layout.<br />Now, it is worth mentioning
+							that the result steps can only be utilized if somewhere in the ancestor steps (steps above a
+							certain step, which are connected to it directly or via other steps), there is a loaded model
+							which returns a return variable. Since we have done this, we can continue.<br />The main part
+							of the window is split into two parts. Left is where you will edit the data of the output,
+							and on the right you will be able to see how it would be communicated to the user.<br />We
+							begin by clicking the button &ldquo;Add item&rdquo;. This will generate a new item in the
+							chart. Moreover, it will show a new drop-down menu on the right where you can edit the data
+							of the corresponding chart item. In this drop-down menu, you will see tools to edit the
+							label, color, value, result variable, and a checkbox to toggle the negation mode.
+						</p>
+						<ul>
+							<li style="line-height: normal; tab-stops: list 36.0pt;"><p class="card-text" style="color:black;">label
+									is the short description of an associated chart item</p>
+							</li>
+							<li style="line-height: normal; tab-stops: list 36.0pt;"><p class="card-text" style="color:black;">color
+									is used to further describe the chart item</p>
+							</li>
+							<li style="line-height: normal; tab-stops: list 36.0pt;"><p class="card-text" style="color:black;">value
+									is used only by you in order to see how the graph looks like in different scenarios</p>
+							</li>
+							<li style="line-height: normal; tab-stops: list 36.0pt;"><p class="card-text" style="color:black;">result
+									variable is used to connect a chart item to a calculation result obtained in one of
+									the input steps above the given node.</p>
+							</li>
+							<li style="line-height: normal; tab-stops: list 36.0pt;"><p class="card-text" style="color:black;">The
+									negation box is used in the scenario where, for example, you want to show the user
+									the percentage. You would make two chart items for the same variable. One would show
+									the percentages as the model calculates them (without the checkbox checked), while
+									the other, which has the checkbox checked, would communicate to the patient the other,
+									complement, option (rest of the percentages). This is calculated by a simple 100-the
+									result. It is provided as a tool so that you can make both results patient
+									friendly.</p>
+							</li>
+						</ul>
+						<p class="card-text" style="color:black;">After this has been done you can save the step. Now,
+							if you are satisfied with it, click the &lsquo;Publish&rsquo; button in the upper-right area.
+							This will send the model to our team who will review it and either decide to ask you to correct
+							it a bit or open it for the public. In case of the former, You can find it in your drafts,
+							under the section &ldquo;My workflows&rdquo; found in the sidebar. And, in case of the latter,
+							we congratulate you because your model is ready for the patients and doctors to use.</span>
+						</p>
+						<p class="card-text" style="color:black;">&nbsp;</p>
+						<p class="card-text" style="color:black;">Good luck and kind regards,</p>
+						<p class="card-text" style="color:black;">The Evidencio Patient Portal Team</p>
 					</li>
 				</div>
 			
