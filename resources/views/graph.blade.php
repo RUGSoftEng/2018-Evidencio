@@ -23,7 +23,15 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       $bgColor = substr($bgColor, 1);
   }
   if(!empty($decodeRes["result"])){
-      $result = $decodeRes["result"];
+      if(!empty($friendly[1])){
+        if($friendly[1]["item_is_negated"])
+          $result = $decodeRes["result"] . ', ' . (100- (int)$decodeRes['result']);
+        if($friendly[0]["item_is_negated"])
+          $result = (100- (int)$decodeRes['result']) . ', ' . $decodeRes["result"];
+      }
+      else{
+          $result = $decodeRes['result'];
+      }
       $dataLabel = "";
       $bgColor = "";
       foreach($friendly as $f){
@@ -105,7 +113,11 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       </tr>
       <tr>
         <?php
-          $numSad = $decodeRes["result"];
+          if(!$friendly[0]["item_is_negated"])
+            $numSad = (100 - (int)$decodeRes["result"]);
+          else {
+            $numSad = $decodeRes["result"];
+          }
           for($j = 0; $j <4; $j++){
             echo "<tr>";
             for($i = 0; $i < 25; $i++ ){
@@ -122,7 +134,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       </tr></table>
       <br />
       <br />
-      <h5>Model results show that among 100 patients with/require <?php echo $decodeRes["title"] ?>, <kbd><?php echo $result?></kbd> have similar response like yours. </h5>
+      <h5>Model results show that among 100 patients with/require <?php echo $decodeRes["title"] ?>, <kbd><?php echo $decodeRes["result"]?></kbd> have similar response like yours. </h5>
       @endif
       <p><?php  if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?></p>
     </div>
@@ -199,6 +211,9 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
     <input type="hidden" name="model_name" value="<?php echo $decodeRes['title'] ?>"/>
     <input type="hidden" name="friendlyRes" value="<?php if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?> "/>
     <input type="hidden" id="chartdata" name="chartIMG"/>
+    @if(!empty($decodeRes['result']))
+    <input type="hidden" name="resultVal" value="<?php if(!$friendly[0]["item_is_negated"]){echo  (100 - (int)$decodeRes["result"]);} else { echo $decodeRes["result"]; } ?>"/>
+    @endif
     <?php
     if(!empty($decodeRes["resultSet"])){
       foreach($decodeRes["resultSet"] as $item){

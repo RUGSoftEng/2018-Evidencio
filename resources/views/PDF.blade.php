@@ -125,10 +125,10 @@ if(isset($_POST["generatePDF"])){
   <tr><td>';
   if(count($_POST['res']) == 1){
   $content .='<img src="';
-  if($_POST['res'][0] < 15){
+  if($_POST['resultVal'] < 15){
     $content .= "/images/lowRisk.png";
   }
-  elseif ($_POST['res'][0] < 65) {
+  elseif ($_POST['resultVal'] < 65) {
     $content .= "/images/normalRisk.jpg";
   }
   else {
