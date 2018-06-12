@@ -50296,15 +50296,6 @@ jQuery.fn.extend( {
 					return data;
 				}
 
-<<<<<<< HEAD
-try {
-    window.$ = window.jQuery = __webpack_require__(197);
-
-    __webpack_require__(208);
-} catch (e) {
-    console.log('Failed to load jQuery or Bootstrap');
-}
-=======
 				// Attempt to "discover" the data in
 				// HTML5 custom data-* attrs
 				data = dataAttr( elem, key );
@@ -50315,7 +50306,6 @@ try {
 				// We tried really hard, but the data doesn't exist.
 				return;
 			}
->>>>>>> origin/designer
 
 			// Set the data...
 			this.each( function() {
@@ -50338,17 +50328,9 @@ jQuery.extend( {
 	queue: function( elem, type, data ) {
 		var queue;
 
-<<<<<<< HEAD
-if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
-}
-=======
 		if ( elem ) {
 			type = ( type || "fx" ) + "queue";
 			queue = dataPriv.get( elem, type );
->>>>>>> origin/designer
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {

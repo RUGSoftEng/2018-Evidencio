@@ -11,11 +11,8 @@
     "/css/workflow.css.map": "/css/workflow.css.map",
     "/css/sidebar.css.map": "/css/sidebar.css.map",
     "/css/designer.css.map": "/css/designer.css.map",
-<<<<<<< HEAD
-=======
     "/js/rules-engine-test.js": "/js/rules-engine-test.js",
     "/js/rules-engine-test.js.map": "/js/rules-engine-test.js.map",
->>>>>>> origin/designer
     "/js/designerGraph.js": "/js/designerGraph.js",
     "/js/designerGraph.js.map": "/js/designerGraph.js.map",
     "/js/sidebar.js": "/js/sidebar.js",
