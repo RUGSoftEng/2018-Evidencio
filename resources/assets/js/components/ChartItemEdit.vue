@@ -15,7 +15,7 @@
                 </div>
                 <div class="form-group">
                     <label :for="'chartItemColor_' + indexItem">Color</label>
-                    <input type="text" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="localItemColor" @change="toggleUpdate()">
+                    <input type="color" name="" class="form-control" :id="'chartItemColor_' + indexItem" v-model="localItemColor" @change="toggleUpdate()" style="padding: 2px 4px;">
                 </div>
                 <div class="form-group">
                     <label :for="'chartItemValue_' + indexItem">Value</label>
