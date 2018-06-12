@@ -77,4 +77,19 @@ class Workflow extends Model
         }
         return $results;
     }
+
+    /**
+     * Publishes the workflow. The designer can pusblish a workflow to indicate that it should appear on the website.
+     * Right now it is automatically marked verified, but this should be done by another user/administrator, who 
+     * should be notified of the published workflow in some way. However, we have not been able to implement workflow 
+     * verification.
+     *
+     * @return void
+     */
+    public function publish()
+    {
+        $this->is_draft = false;
+        $this->is_verified = true; //TODO: change to 'is_published' after implementing reviewing of the workflows
+        $this->save();
+    }
 }

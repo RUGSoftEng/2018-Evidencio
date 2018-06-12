@@ -46,6 +46,7 @@ window.vObj = new Vue({
     title: "Default title",
     description: "Default description",
     languageCode: "EN",
+    isDraft: true,
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
@@ -326,7 +327,8 @@ window.vObj = new Vue({
             self.$notify({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
-              type: "success"
+              type: "success",
+              duration: 6000
             });
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
@@ -358,6 +360,7 @@ window.vObj = new Vue({
                 });
               }
             }
+            return true;
           }
         },
         error: function (xhr, textStatus, errorThrown) {
@@ -368,6 +371,7 @@ window.vObj = new Vue({
             duration: 6000
           });
           console.log(errorThrown);
+          return false;
         }
       });
     },
@@ -389,21 +393,25 @@ window.vObj = new Vue({
         success: function (result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
+            // First save the change-indicators
             let currentSteps = self.stepsChanged;
             let currentLevels = self.levelsChanged;
+            // Set the general workflow-information
             self.title = result.title;
             self.description = result.description;
             self.languageCode = result.languageCode;
+            self.isDraft = result.isDraft;
+            // Add each step, then set the information
             result.steps.forEach((element, index) => {
               while (self.levels.length <= element.level)
                 self.addLevel(self.levels.length);
-              console.log("Index: " + index + ", #steps: " + self.steps.length);
               self.addStep(element.title, element.description, element.level);
               let localStep = self.steps[index];
               localStep.id = element.id;
               localStep.type = element.type;
               localStep.colour = element.colour;
               if (localStep.type == "input") {
+                // Input step: set variables, rules, apiCalls
                 localStep.variables = element.variables;
                 localStep.varCounter = element.variables.length;
                 element.rules.map(rule => {
@@ -411,16 +419,20 @@ window.vObj = new Vue({
                 });
                 localStep.apiCalls = element.apiCalls;
               } else {
+                // Result step: set chart-information and items
                 localStep.chartTypeNumber = Number(element.chartTypeNumber);
                 localStep.chartItemReference = element.chartItemReference;
                 localStep.chartRenderingData = element.chartRenderingData;
               }
             });
+            // Set usedVariables, if it is not empty
             if (result.usedVariables.constructor !== Array)
               self.usedVariables = result.usedVariables;
+            // Make sure that the view is updated correctly
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            // Load the necessary information from Evidencio
             self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
@@ -443,6 +455,102 @@ window.vObj = new Vue({
       });
     },
 
+    publishWorkflow() {
+      this.saveWorkflow()
+      if (this.checkWorkflowFormat()) {
+        const self = this;
+        $.ajax({
+          url: '/myworkflows/publish/' + self.workflowId,
+          type: 'GET',
+          success: function (result) {
+            if (result.success) {
+              self.$notify({
+                title: "Worklfow is published successfully",
+                text: "Your workflow has been successfully publised. As soon as it has been verified by the Evidencio-team it will be available for the patients.",
+                type: "success",
+                duration: 6000
+              });
+              self.isDraft = false;
+            } else {
+              self.$notify({
+                title: "Worklfow failed to publish",
+                text: "This workflow failed to be published. Either it could not be found, or you are not the owner of the workflow. Please contact the Evidencio-team for help.",
+                type: "error",
+                duration: 6000
+              });
+            }
+          },
+          error: function (error) {
+            self.$notify({
+              title: "Something went wrong.",
+              text: "This workflow failed to be published. Something went wrong with your request. Please contact the Evidencio-team for help.",
+              type: "error",
+              duration: 6000
+            });
+            console.log(error);
+          }
+        })
+      }
+    },
+
+    checkWorkflowFormat() {
+      let areStepsReachable = new Array(this.steps.length).fill(false);
+      let deadEnd = false;
+      let duplicateRules = false;
+      let isGraph = false;
+      let stack = [0];
+      while (stack.length > 0) {
+        let currentStepId = stack.pop();
+        if (areStepsReachable[currentStepId])
+          isGraph = true;
+        areStepsReachable[currentStepId] = true;
+        let currentStep = this.steps[currentStepId];
+        if (currentStep.type == "input") {
+          if (currentStep.rules.length > 0) {
+            for (let index = currentStep.rules.length - 1; index >= 0; index--) {
+              let currentRule = currentStep.rules[index];
+              stack.push(currentRule.target.stepId);
+              for (let secondIndex = index - 1; secondIndex >= 0; secondIndex--) {
+                if (JSON.stringify(currentRule.condition) == JSON.stringify(currentStep.rules[secondIndex].condition))
+                  duplicateRules = true;
+              }
+            }
+          } else {
+            deadEnd = true;
+          }
+        }
+      }
+      let allStepsReachable = this.arrayAnd(areStepsReachable);
+      if (allStepsReachable && !deadEnd && !duplicateRules && !isGraph) {
+        return true
+      }
+      let message = "There are some problems with your workflow, namely:<ul>";
+      if (!allStepsReachable)
+        message += "<li>Not all steps are currently reachable. Either remove the unreachable steps or add rules to connect them.</li>";
+      if (deadEnd)
+        message += "<li>Some of the leaf-steps are Input-steps, all leaf-steps should be Result-steps.</li>";
+      if (duplicateRules)
+        message += "<li>Some rules in a step have the same condition. Please remove rules with the same condition.</li>";
+      if (isGraph)
+        message += "<li>Two or more rules have the same target, please make sure the workflow is a tree and not a graph.</li>";
+      message += "</ul>";
+      this.$notify({
+        title: "Cannot be published",
+        text: message,
+        duration: 10000,
+        type: 'error'
+      })
+      return false;
+    },
+
+    arrayAnd(arr) {
+      for (let index = 0; index < arr.length; index++) {
+        if (!arr[index]) return false;
+      }
+      return true;
+    },
+
+
     /**
      * Prepares a rule loaded from the database for use in the designer
      * @param {Object} databaseRule 
@@ -452,7 +560,7 @@ window.vObj = new Vue({
         title: databaseRule.title,
         description: databaseRule.description,
         target: databaseRule.target,
-        condition: JSON.parse(databaseRule.jsonRule).conditions
+        condition: databaseRule.jsonRule.conditions
       };
     },
 
@@ -586,7 +694,7 @@ window.vObj = new Vue({
             }
           } else {
             // No results available for use in the step
-            if (step.chartItemReference.length > 0 || step.rules.length > 0) {
+            if (step.chartItemReference.length > 0) {
               step.chartItemReference = [];
               step.chartRenderingData = {
                 labels: [],
@@ -595,11 +703,13 @@ window.vObj = new Vue({
                   backgroundColor: []
                 }]
               }
-              step.rules.forEach(rule => {
-                if (this.checkRuleUsingResult(rule.condition)) {
-                  rule.action = "destroy";
-                }
-              })
+              if (step.rules.length > 0) {
+                step.rules.forEach(rule => {
+                  if (this.checkRuleUsingResult(rule.condition)) {
+                    rule.action = "destroy";
+                  }
+                })
+              }
               showNotification = true;
               notificationType = "all";
             }

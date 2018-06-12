@@ -44,7 +44,7 @@ class DesignerLoadController extends Controller
         $retObj["description"] = $workflow->description;
         $retObj["languageCode"] = $workflow->language_code;
         $retObj["evidencioModels"] = $this->getLoadedEvidencioModels($workflow);
-
+        $retObj["isDraft"] = $workflow->is_draft;
         $retObj["steps"] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
@@ -169,7 +169,7 @@ class DesignerLoadController extends Controller
             $rule = [];
             $rule["title"] = $dbRule->pivot->title;
             $rule["description"] = $dbRule->pivot->desription;
-            $rule["jsonRule"] = $dbRule->pivot->condition;
+            $rule["jsonRule"] = json_decode(str_replace('"true"', 'true', $dbRule->pivot->condition));
             $rule["target"] = [
                 "id" => $dbRule->id,
                 "title" => $dbRule->title,

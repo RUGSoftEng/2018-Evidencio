@@ -41,6 +41,7 @@
                 <div class="card-header">
                     Designer
                     <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
+                    <button type="button" class="btn btn-success float-right" :disabled="!isDraft" @click="publishWorkflow">Publish</button>
                 </div>
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))

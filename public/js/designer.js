@@ -44083,6 +44083,7 @@ window.vObj = new Vue({
     title: "Default title",
     description: "Default description",
     languageCode: "EN",
+    isDraft: true,
     steps: [],
     levels: [],
     maxStepsPerLevel: 0,
@@ -44367,7 +44368,8 @@ window.vObj = new Vue({
             self.$notify({
               title: "Save successful",
               text: "Your workflow has been successfully saved.",
-              type: "success"
+              type: "success",
+              duration: 6000
             });
             self.workflowId = Number(result.workflowId);
             var pathArray = location.href.split("/");
@@ -44399,6 +44401,7 @@ window.vObj = new Vue({
                 });
               }
             }
+            return true;
           }
         },
         error: function error(xhr, textStatus, errorThrown) {
@@ -44409,6 +44412,7 @@ window.vObj = new Vue({
             duration: 6000
           });
           console.log(errorThrown);
+          return false;
         }
       });
     },
@@ -44431,21 +44435,25 @@ window.vObj = new Vue({
         success: function success(result) {
           console.log("Workflow loaded: " + result.success);
           if (result.success) {
+            // First save the change-indicators
             var currentSteps = self.stepsChanged;
             var currentLevels = self.levelsChanged;
+            // Set the general workflow-information
             self.title = result.title;
             self.description = result.description;
             self.languageCode = result.languageCode;
+            self.isDraft = result.isDraft;
+            // Add each step, then set the information
             result.steps.forEach(function (element, index) {
               while (self.levels.length <= element.level) {
                 self.addLevel(self.levels.length);
-              }console.log("Index: " + index + ", #steps: " + self.steps.length);
-              self.addStep(element.title, element.description, element.level);
+              }self.addStep(element.title, element.description, element.level);
               var localStep = self.steps[index];
               localStep.id = element.id;
               localStep.type = element.type;
               localStep.colour = element.colour;
               if (localStep.type == "input") {
+                // Input step: set variables, rules, apiCalls
                 localStep.variables = element.variables;
                 localStep.varCounter = element.variables.length;
                 element.rules.map(function (rule) {
@@ -44453,15 +44461,19 @@ window.vObj = new Vue({
                 });
                 localStep.apiCalls = element.apiCalls;
               } else {
+                // Result step: set chart-information and items
                 localStep.chartTypeNumber = Number(element.chartTypeNumber);
                 localStep.chartItemReference = element.chartItemReference;
                 localStep.chartRenderingData = element.chartRenderingData;
               }
             });
+            // Set usedVariables, if it is not empty
             if (result.usedVariables.constructor !== Array) self.usedVariables = result.usedVariables;
+            // Make sure that the view is updated correctly
             self.recountVariableUses();
             self.stepsChanged = !currentSteps;
             self.levelsChanged = !currentLevels;
+            // Load the necessary information from Evidencio
             self.LoadWorkflowLoadModels(result.evidencioModels);
             self.panView();
           } else {
@@ -44483,6 +44495,92 @@ window.vObj = new Vue({
         }
       });
     },
+    publishWorkflow: function publishWorkflow() {
+      this.saveWorkflow();
+      if (this.checkWorkflowFormat()) {
+        var _self = this;
+        $.ajax({
+          url: '/myworkflows/publish/' + _self.workflowId,
+          type: 'GET',
+          success: function success(result) {
+            if (result.success) {
+              _self.$notify({
+                title: "Worklfow is published successfully",
+                text: "Your workflow has been successfully publised. As soon as it has been verified by the Evidencio-team it will be available for the patients.",
+                type: "success",
+                duration: 6000
+              });
+              _self.isDraft = false;
+            } else {
+              _self.$notify({
+                title: "Worklfow failed to publish",
+                text: "This workflow failed to be published. Either it could not be found, or you are not the owner of the workflow. Please contact the Evidencio-team for help.",
+                type: "error",
+                duration: 6000
+              });
+            }
+          },
+          error: function error(_error) {
+            _self.$notify({
+              title: "Something went wrong.",
+              text: "This workflow failed to be published. Something went wrong with your request. Please contact the Evidencio-team for help.",
+              type: "error",
+              duration: 6000
+            });
+            console.log(_error);
+          }
+        });
+      }
+    },
+    checkWorkflowFormat: function checkWorkflowFormat() {
+      var areStepsReachable = new Array(this.steps.length).fill(false);
+      var deadEnd = false;
+      var duplicateRules = false;
+      var isGraph = false;
+      var stack = [0];
+      while (stack.length > 0) {
+        var currentStepId = stack.pop();
+        if (areStepsReachable[currentStepId]) isGraph = true;
+        areStepsReachable[currentStepId] = true;
+        var currentStep = this.steps[currentStepId];
+        if (currentStep.type == "input") {
+          if (currentStep.rules.length > 0) {
+            for (var index = currentStep.rules.length - 1; index >= 0; index--) {
+              var currentRule = currentStep.rules[index];
+              stack.push(currentRule.target.stepId);
+              for (var secondIndex = index - 1; secondIndex >= 0; secondIndex--) {
+                if (JSON.stringify(currentRule.condition) == JSON.stringify(currentStep.rules[secondIndex].condition)) duplicateRules = true;
+              }
+            }
+          } else {
+            deadEnd = true;
+          }
+        }
+      }
+      var allStepsReachable = this.arrayAnd(areStepsReachable);
+      if (allStepsReachable && !deadEnd && !duplicateRules && !isGraph) {
+        return true;
+      }
+      var message = "There are some problems with your workflow, namely:<ul>";
+      if (!allStepsReachable) message += "<li>Not all steps are currently reachable. Either remove the unreachable steps or add rules to connect them.</li>";
+      if (deadEnd) message += "<li>Some of the leaf-steps are Input-steps, all leaf-steps should be Result-steps.</li>";
+      if (duplicateRules) message += "<li>Some rules in a step have the same condition. Please remove rules with the same condition.</li>";
+      if (isGraph) message += "<li>Two or more rules have the same target, please make sure the workflow is a tree and not a graph.</li>";
+      message += "</ul>";
+      this.$notify({
+        title: "Cannot be published",
+        text: message,
+        duration: 10000,
+        type: 'error'
+      });
+      return false;
+    },
+    arrayAnd: function arrayAnd(arr) {
+      for (var index = 0; index < arr.length; index++) {
+        if (!arr[index]) return false;
+      }
+      return true;
+    },
 
 
     /**
@@ -44494,7 +44592,7 @@ window.vObj = new Vue({
         title: databaseRule.title,
         description: databaseRule.description,
         target: databaseRule.target,
-        condition: JSON.parse(databaseRule.jsonRule).conditions
+        condition: databaseRule.jsonRule.conditions
       };
     },
 
@@ -44639,7 +44737,7 @@ window.vObj = new Vue({
             }
           } else {
             // No results available for use in the step
-            if (step.chartItemReference.length > 0 || step.rules.length > 0) {
+            if (step.chartItemReference.length > 0) {
               step.chartItemReference = [];
               step.chartRenderingData = {
                 labels: [],
@@ -44648,11 +44746,13 @@ window.vObj = new Vue({
                   backgroundColor: []
                 }]
               };
-              step.rules.forEach(function (rule) {
-                if (_this7.checkRuleUsingResult(rule.condition)) {
-                  rule.action = "destroy";
-                }
-              });
+              if (step.rules.length > 0) {
+                step.rules.forEach(function (rule) {
+                  if (_this7.checkRuleUsingResult(rule.condition)) {
+                    rule.action = "destroy";
+                  }
+                });
+              }
               showNotification = true;
               notificationType = "all";
             }
@@ -50377,7 +50477,7 @@ exports = module.exports = __webpack_require__(10)(true);
 
 
 // module
-exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAqLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option v-if=\"reachableResults.length > 0\" value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.label == \"rule_ALWAYS\" || this.logic.hasOwnProperty(\"always\")) return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"always\", {});\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.fo-icon[data-v-456d749b] {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator[data-v-456d749b] {\n  text-align: center;\n}\n", "", {"version":3,"sources":["/home/jaap/Evidencio/2018-Evidencio/resources/assets/js/components/resources/assets/js/components/RuleLogic.vue"],"names":[],"mappings":";AAoLA;EACA,sBAAA;EACA,YAAA;EACA,kBAAA;CACA;AACA;EACA,mBAAA;CACA","file":"RuleLogic.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"form-group\" v-if=\"type == 'none'\">\n            <label for=\"selectType\">Choose a type</label>\n            <select name=\"selectType\" id=\"selectType\" class=\"form-control\" v-model=\"newType\">\n                <option v-if=\"logic.label=='rule'\" value=\"ALWAYS\">No condition</option>\n                <option v-if=\"reachableResults.length > 0\" value=\"LOGIC\">Comparison</option>\n                <option value=\"AND\">Logical AND</option>\n                <option value=\"OR\">Logical OR</option>\n            </select>\n            <button class=\"btn btn-primary form-control mt-2\" @click=\"setType\">Select type</button>\n        </div>\n        <div v-else-if=\"type == 'always'\">\n          <h6 class=\"no-condition\">No condition</h6>\n\n        </div>\n        <div class=\"form-row\" v-else-if=\"type == 'logic'\">\n            <div class=\"col\">\n                <select name=\"resultName\" class=\"form-control\" v-model=\"logic.fact\" title=\"Model result\" required>\n                    <option :value=\"result\" v-for=\"(result, index) in reachableResults\" :key=\"index\">{{ result }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <select name=\"operator\" class=\"form-control\" v-model=\"logic.operator\" title=\"Operator\" required>\n                    <option :value=\"op.name\" v-for=\"(op, index) in operators\" :key=\"index\">{{ op.label }}</option>\n                </select>\n            </div>\n            <div class=\"col\">\n                <input type=\"number\" class=\"form-control\" v-model=\"logic.value\" title=\"Value to compare with\">\n            </div>\n        </div>\n        <div class=\"card\" :class=\"{'border-primary': hover, 'border-light': !hover}\" v-else>\n            <div class=\"card-header\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-up-open-1\">&#xe809;</i>\n            </div>\n            <div class=\"list-group list-group-flush\">\n                <template v-for=\"(expression, index) in logic[type]\">\n                    <div v-if=\"index > 0\" class=\"list-group-item logic-operator\" :id=\"'inBetween_' + index-1\" :label=\"currentLabel + index + '_0'\">\n                        <strong class=\"text-uppercase\">{{ type }}</strong>\n                    </div>\n                    <div class=\"list-group-item\" :label=\"currentLabel + index + '_1'\">\n                        <rule-logic :logic=\"expression\" :current-label=\"newLabel\" :reachable-results=\"reachableResults\"></rule-logic>\n                    </div>\n                </template>\n            </div>\n            <div class=\"card-footer\" @mouseover=\"hover = true\" @mouseout=\"hover = false\">\n                <i class=\"fo-icon icon-down-open-1\">&#xe808;</i>\n            </div>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n  name: \"rule-logic\",\n  props: {\n    logic: {\n      type: Object,\n      required: true\n    },\n    currentLabel: {\n      type: String,\n      required: false,\n      default: \"\"\n    },\n    reachableResults: {\n      type: Array,\n      required: true\n    }\n  },\n  computed: {\n    type() {\n      if (this.logic.hasOwnProperty(\"any\") && this.logic.any[0].fact == \"trueValue\") return \"always\";\n      if (this.logic.hasOwnProperty(\"all\")) return \"all\";\n      if (this.logic.hasOwnProperty(\"any\")) return \"any\";\n      if (this.logic.hasOwnProperty(\"fact\")) return \"logic\";\n      return \"none\";\n    }\n  },\n  methods: {\n    setType() {\n      switch (this.newType) {\n        case \"ALWAYS\":\n          Vue.set(this.logic, \"any\", [\n            {\n              fact: \"trueValue\",\n              operator: \"equal\",\n              value: true\n            }\n          ]);\n          break;\n        case \"LOGIC\":\n          if (this.logic.label == \"rule\") {\n            Vue.set(this.logic, \"any\", [\n              {\n                fact: this.getFirstResult(),\n                operator: this.operators[0].name,\n                value: 0\n              }\n            ]);\n          } else {\n            Vue.set(this.logic, \"fact\", this.getFirstResult());\n            Vue.set(this.logic, \"operator\", this.operators[0].name);\n            Vue.set(this.logic, \"value\", 0);\n          }\n          break;\n        case \"AND\":\n          Vue.set(this.logic, \"all\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n        case \"OR\":\n          Vue.set(this.logic, \"any\", [\n            {\n              label: \"sub\"\n            },\n            {\n              label: \"sub\"\n            }\n          ]);\n          break;\n      }\n      this.refreshNewLabel();\n      Vue.set(this.logic, \"label\", this.newLabel);\n    },\n    getFirstResult() {\n      if (this.reachableResults.length == 0) return \"\";\n      else return this.reachableResults[0];\n    },\n    refreshNewLabel() {\n      this.newLabel = this.currentLabel + \"_\" + this.type.toUpperCase();\n    }\n  },\n  mounted() {\n    this.refreshNewLabel();\n    if (this.logic.label == \"rule\") this.newType = \"ALWAYS\";\n    else this.newType = \"LOGIC\";\n  },\n  data() {\n    return {\n      hover: false,\n      newType: \"\",\n      newLabel: \"\",\n      operators: [\n        {\n          label: \"<\",\n          name: \"lessThan\"\n        },\n        {\n          label: \"≤\",\n          name: \"lessThanInclusive\"\n        },\n        {\n          label: \"=\",\n          name: \"equal\"\n        },\n        {\n          label: \"≠\",\n          name: \"notEqual\"\n        },\n        {\n          label: \"≥\",\n          name: \"greaterThanInclusive\"\n        },\n        {\n          label: \">\",\n          name: \"greaterThan\"\n        }\n      ]\n    };\n  }\n};\n</script>\n\n<style scoped>\n.fo-icon {\n  display: inline-block;\n  width: 100%;\n  font-weight: 100%;\n}\n.logic-operator {\n  text-align: center;\n}\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -50460,7 +50560,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     type: function type() {
-      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
+      if (this.logic.hasOwnProperty("any") && this.logic.any[0].fact == "trueValue") return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";
@@ -50471,7 +50571,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     setType: function setType() {
       switch (this.newType) {
         case "ALWAYS":
-          Vue.set(this.logic, "always", {});
           Vue.set(this.logic, "any", [{
             fact: "trueValue",
             operator: "equal",

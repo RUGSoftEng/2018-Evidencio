@@ -41,7 +41,6 @@ class DesignerSaveController extends Controller
         $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
-        $workflow->is_verified = true; //TODO: remove that line after implementing reviewing of the workflows
         $workflow->save();
         $workflow->touch();
         if ($request->modelIds != null) {
@@ -283,7 +282,6 @@ class DesignerSaveController extends Controller
                             "condition" => json_encode($rule["jsonRule"])
                         ]);
                     }
-
                     $savedRules = $savedRules->reject(function ($value) use ($nextStepId) {
                         return $value->id == $nextStepId;
                     });
