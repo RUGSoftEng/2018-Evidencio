@@ -19,6 +19,17 @@ class WorkflowController extends Controller
 {
 
     /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index($workflowId)
+    {
+        $result = WorkflowController::loadWorkflow($workflowId);
+        return view('workflow')->with('result', $result);
+    }
+
+    /**
      * Loads a workflow from the database based on the workflowId
      *
      * @param Number $workflowId
@@ -85,8 +96,9 @@ class WorkflowController extends Controller
     {
         $retObj = [];
         $retObj['id'] = $dbStep->id;
-        $retObj['evidencioModelID'] =$dbStep->modelRunResults()->get();
-        $retObj['nextSteps'] =$dbStep->nextSteps()->get();
+        $retObj['evidencioModelIds'] = $dbStep->modelRuns();
+        $retObj['apiMapping'] = $this->loadApiVariableMapping($dbStep);
+        $retObj['nextSteps'] = $dbStep->nextSteps()->get();
         $retObj['title'] = $dbStep->title;
         $retObj['description'] = $dbStep->description;
         $retObj['colour'] = $dbStep->colour;
@@ -137,10 +149,15 @@ class WorkflowController extends Controller
         }
         return $retObj;
     }
-    public function index($workflowId)
+
+    private function loadApiVariableMapping($dbStep)
     {
-        $result = WorkflowController::loadWorkflow($workflowId);
-        return view('workflow')->with('result', $result);
+        $retObj = [];
+        $models = $dbStep->modelRuns();
+        foreach ($models as $model) {
+            $retObj[] = $dbStep->modelRunFields()->wherePivot("evidencio_model_id", $model)->get();
+        }
+        return $retObj;
     }
 
     public function runModel(Request $request)
@@ -150,6 +167,8 @@ class WorkflowController extends Controller
         $data = EvidencioAPI::run($request->modelId, $request->values);
         return $data;
     }
+
+
 
 
 }

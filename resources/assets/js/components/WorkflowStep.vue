@@ -11,15 +11,15 @@
                     <p>{{variable.title}}: {{variable.options.min}} - {{variable.options.max}} by {{variable.options.step}}</p>
 
                     <div class="slidecontainer">
-                        <vue-slider :min="variable.options.min" :max="variable.options.max" :interval="variable.options.step" :value="answers[variable.id]" 
-                        @input="sliderChange(variable.id, $event)"></vue-slider>
+                        <vue-slider :min="variable.options.min" :max="variable.options.max" :interval="variable.options.step" v-model="inputs[variable.databaseId]"
+                        @input="sliderChange(variable.databaseId, $event)"></vue-slider>
                     </div>
                 </div>
                 <div v-else>
                     {{variable.title}}:
                     <div v-for="(option, optIndex) in variable.options" :key="optIndex">
-                        <input type="radio" button-variant="outline-primary" :id="'radio_' + varIndex + '_' + optIndex" :name="answers[option.id]"
-                            v-model="answers[variable.id]" :value="option.title">
+                        <input type="radio" button-variant="outline-primary" :id="'radio_' + varIndex + '_' + optIndex" :name="variable.title"
+                            v-model="inputs[variable.databaseId]" :value="option.title">
                         <label :for="'radio_' + varIndex + '_' + optIndex">{{option.title}}</label>
                         <br>
                     </div>
@@ -53,9 +53,16 @@ export default {
           for (var varKey in this.step.variables) {
             if (this.step.variables.hasOwnProperty(varKey)) {
               let variable = this.step.variables[varKey];
-              if (variable.type == "continuous") this.answers[variable.id] = variable.options.min;
+              if (variable.type == "continuous") this.inputs[variable.databaseId] = variable.options.min;
             }
           }
+          this.step.apiMapping.forEach((apiCall, index) => {
+            this.mapping[index] = {};
+            apiCall.forEach(api => {
+              this.mapping[index][api.pivot.evidencio_field_id] = api.id;
+            });
+          });
+
           this.step.nextSteps.forEach(nextStep => {
             this.rules.push(JSON.parse(nextStep.pivot.condition));
           });
@@ -63,7 +70,7 @@ export default {
           this.rules.map(rule => {
             this.engine.addRule(rule);
           });
-          this.stepEvidencioId = this.step.evidencioModelID[0].evidencio_model_id;
+          this.stepEvidencioId = this.step.evidencioModelIds[0];
         }
       }
     }
@@ -75,16 +82,39 @@ export default {
       stepLevel: 0,
       inputResult: 0,
       step: {},
+      mapping: [],
+      inputs: {},
       rules: [],
+      facts: {
+        trueValue: true
+      },
+      answers: [],
       engine: null,
       stepEvidencioId: 0,
-      answers: {},
       result: {}
     };
   },
+  watch: {
+    inputs() {
+      this.calculateAnswers();
+    }
+  },
   methods: {
     sliderChange(key, value) {
-      Vue.set(this.answers, key, value);
+      Vue.set(this.inputs, key, value);
+      this.calculateAnswers();
+    },
+    calculateAnswers() {
+      let ret = [];
+      this.mapping.forEach((apiCall, index) => {
+        ret[index] = {};
+        for (var key in apiCall) {
+          if (apiCall.hasOwnProperty(key)) {
+            ret[index][key] = this.inputs[apiCall[key]];
+          }
+        }
+      });
+      this.answers = ret;
     },
     // TODO: fix submitResult
     submitResult(id) {
@@ -107,25 +137,29 @@ export default {
     runStep() {
       var self = this;
 
-      $.ajax({
-        headers: {
-          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-        },
-        url: "/workflow/run",
-        type: "POST",
-        data: {
-          modelId: self.stepEvidencioId,
-          values: self.answers
-        },
-        success: function(result) {
-          self.result = result;
-          if (result.hasOwnProperty("result")) {
-            //normal
-          } else {
-            //composite
+      this.step.evidencioModelIds.forEach((modelId, index) => {
+        $.ajax({
+          headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+          },
+          url: "/workflow/run",
+          type: "POST",
+          data: {
+            modelId: modelId,
+            values: self.answers[index]
+          },
+          success: function(result) {
+            self.result = result;
+            if (result.hasOwnProperty("result")) {
+              self.facts["result_" + modelId + "_0"] = result.result;
+            } else {
+              result.resultSet.forEach((res, ind) => {
+                self.facts["result_" + modelId + "_" + ind] = res.result;
+              });
+            }
+            console.log(self.result);
           }
-          console.log(self.result);
-        }
+        });
       });
     }
   }
