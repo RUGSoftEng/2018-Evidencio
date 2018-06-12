@@ -110,7 +110,7 @@
                                             <div id="chartLayoutDesigner">
                                                 <div class="dropdown">
                                                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                        aria-expanded="false"  style="margin-top: 8px;">
                                                         Pick a chart type
                                                     </a>
 

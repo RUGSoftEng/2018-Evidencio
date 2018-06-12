@@ -5,6 +5,8 @@
             <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
             <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
             {{ chartItemLabel }}
+            <!--TODO: the icon below is used to delete the idem in the chart, but overlaps with the other functionality, so when deleting, sometimes it triggeres the openning or closing the collapsable-->
+            <i class="fo-icon icon-trash float-right" @click="toggleRemoval()">&#xf1f8;</i>
         </button>
         <div class="collapse mt-2" :id="'editChartItem_' + indexItem">
             <form onsubmit="return false">
@@ -32,9 +34,6 @@
                             Negate the result
                         </label>
                     </div>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary ml-2" style="float: right; margin-bottom: 20px;" @click="toggleRemoval()">Remove</button>
                 </div>
             </form>
         </div>
