@@ -7,7 +7,7 @@
 <div class="container">
 	<div class="card">
 		<div class="card-header">
-			<h3 class="card-title">User Guide</h5>
+			<h3 class="card-title">User Guide</h3>
 		</div>
 		<div class="card-body" data-spy="scroll" data-target=".navbar" data-offset="50">
 			<h5 class="card-text" style="color:black;">Using Evidencio's <b>Designer</b>, you can integrate your Evidencio Models to Evidencio Patient Portal. These integrated models are called <b>Workflows</b>.</h5>
@@ -31,9 +31,9 @@
    					 		<li><a href="#section10"><h5 class="card-text" style="color:blue;">Logic Menu</h5></a></li>
    					 	</ol>	
    					 </li>
-
+					 <li><a href="#section11"><h5 class="card-text" style="color:blue;">Add Levels and Steps</h5></a></li>
    					 <li><a href="#section6"><h5 class="card-text" style="color:blue;">Save your Workflow</h5></a></li>
-					 <li><a href="#section7"><h5 class="card-text" style="color:blue;">Example of a workflow design cycle</h5></a></li>
+					 <li><a href="#section12"><h5 class="card-text" style="color:blue;">Example of a workflow design cycle</h5></a></li>
    				</ol>
 		</div>
 	</div>
@@ -187,6 +187,17 @@
 
 				<br>
 
+				<div id="section11">
+					<li>
+						<h5><b>Output Editor</b></h5>
+						<p class="card-text" style="color:black;"> You can also edit the output of the workflow, as
+							described in the last section of this tutorial. It's layout is as follows:</p>
+						<p style="text-align: center;"><img width="50%" height="50%" src="{{ URL::to('/images/EntireModal.png') }}"></p>
+					</li>
+				</div>
+
+				<br>
+
 				<div id="section6">
 					<li>
 						<h5><b>Save your Workflow</b></h5>
@@ -196,7 +207,7 @@
 
 				<br>
 
-				<div id="section7">
+				<div id="section12">
 					<li>
 						<h5><b>Example of a workflow design cycle</b></h5>
 						<p class="card-text" style="color:black;">For this quick tutorial on how to use the function of
