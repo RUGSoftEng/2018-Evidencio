@@ -16,7 +16,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       $dataLabel = "";
       $bgColor = "";
       foreach($friendly as $f){
-        $dataLabel = $dataLabel . ',\' ' . $f["item_label"] . '\'';
+        $dataLabel = $dataLabel . ',\' ' . htmlspecialchars($f["item_label"]) . '\'';
         $bgColor = $bgColor . ',\'' . $f["item_background_colour"] . '\'';
       }
       $dataLabel = substr($dataLabel, 1);
@@ -35,7 +35,7 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
       $dataLabel = "";
       $bgColor = "";
       foreach($friendly as $f){
-        $dataLabel = $dataLabel . ', \'' . $f["item_label"] . '\'';
+        $dataLabel = $dataLabel . ', \'' . htmlspecialchars($f["item_label"]) . '\'';
         $bgColor = $bgColor . ',\'' . $f["item_background_colour"] . '\'';
       }
       $dataLabel = substr($dataLabel, 1);
@@ -64,6 +64,12 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
     else if($friendly[0]["chartType"] == 3){
       $chartType = "polarArea";
     }
+  }
+
+  if(!$friendly[0]["item_is_negated"])
+    $numSad = (100 - (int)$decodeRes["result"]);
+  else {
+    $numSad = $decodeRes["result"];
   }
 }
 ?>
@@ -97,36 +103,28 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
         <th width="4%"></th>
       </tr>
       <tr>
-        <?php
-          if(!$friendly[0]["item_is_negated"])
-            $numSad = (100 - (int)$decodeRes["result"]);
-          else {
-            $numSad = $decodeRes["result"];
-          }
-          for($j = 0; $j <10; $j++){
-            echo "<tr>";
-            for($i = 0; $i < 10; $i++ ){
-              if($numSad > 0){ ?>
+          @for($j = 0; $j <10; $j++)
+            <tr>
+            @for($i = 0; $i < 10; $i++ )
+              @if($numSad > 0)
                 <td><img src="{{ URL::to('/images/highRisk.png') }}" width="100%" /></td>
-        <?php  $numSad = $numSad -1;
-              } else{   ?>
+                <?php  $numSad = $numSad -1; ?>
+              @else
                   <td><img src="{{ URL::to('/images/lowRisk.png') }}" width="100%"/></td>
-        <?php }
-            }
-            echo "</tr>";
-          }
-       ?>
+              @endif
+            @endfor
+            </tr>
+          @endfor
       </tr></table>
       <br />
       <br />
-      <h5>Model results show that among 100 patients with/require <?php echo $decodeRes["title"] ?>, <kbd><?php echo $decodeRes["result"]?></kbd> have similar response like yours. </h5>
       @endif
-      <p><?php  if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?></p>
+      <h5>@if(!empty($friendly[0]['desc'])){{ $friendly[0]['desc'] }} @endif</h5>
     </div>
 </div>
 {{--Javascript for the creating the chat using Chartjs--}}
 <script>
-  var chartType = '<?php if(!empty($friendly)) echo $chartType; else  echo "pie";?>'; //default is pie if none-specfied
+  var chartType =@if(!empty($friendly)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
   var resultChart;
   var ctx = document.getElementById("graph").getContext('2d');
   Chart.defaults.global.defaultFontSize = 20;
@@ -135,17 +133,17 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
     resultChart = new Chart(ctx, {
         type: chartType,
         data: {
-            labels: [ <?php if(!empty($dataLabel)){ echo $dataLabel; } else { echo "'Positive', 'Negative'"; } ?>], // default is 2-value input; positive and negative.
+            labels: [ @if(!empty($dataLabel)) {!! $dataLabel !!} @else "'Positive', 'Negative'" @endif], // default is 2-value input; positive and negative.
             datasets: [{
-                label: [<?php echo $dataLabel ?>],
-                data: [<?php echo $result ?>],
-                backgroundColor: [<?php echo $bgColor ?>]
+                label: [{!! $dataLabel !!}],
+                data: [{{ $result }}],
+                backgroundColor: [{!! $bgColor !!}]
             }]
         },
         options: {
           title:{
             display:true,
-            text:"<?php echo $decodeRes['title'] ?>",
+            text:"{{ $decodeRes['title'] }}",
             fontSize:25
           },
           legend:{
@@ -192,12 +190,12 @@ if (!empty($_POST['answer'])&&!empty($_POST['model'])) {
   <h3>Actions</h3>
   <form method="post" action="/PDF">
     {{ csrf_field() }}
-    <input type="hidden" name="model" value="<?php echo $_POST['model']?>"/>
-    <input type="hidden" name="model_name" value="<?php echo $decodeRes['title'] ?>"/>
-    <input type="hidden" name="friendlyRes" value="<?php if(!empty($friendly[0]['desc'])){echo $friendly[0]['desc']; } ?> "/>
+    <input type="hidden" name="model" value="{{ $_POST['model'] }}"/>
+    <input type="hidden" name="model_name" value="{{ $decodeRes['title'] }}"/>
+    <input type="hidden" name="friendlyRes" value="@if(!empty($friendly[0]['desc'])) {{ $friendly[0]['desc'] }} @endif"/>
     <input type="hidden" id="chartdata" name="chartIMG"/>
     @if(!empty($decodeRes['result']))
-    <input type="hidden" name="resultVal" value="<?php if(!$friendly[0]["item_is_negated"]){echo  (100 - (int)$decodeRes["result"]);} else { echo $decodeRes["result"]; } ?>"/>
+    <input type="hidden" name="resultVal" value=" @if(!$friendly[0]["item_is_negated"]) {{ (100 - (int)$decodeRes["result"]) }} @else {{ $decodeRes["result"]  }} @endif"/>
     @endif
     <?php
     if(!empty($decodeRes["resultSet"])){

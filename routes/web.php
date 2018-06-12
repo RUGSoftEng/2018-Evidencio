@@ -13,8 +13,8 @@
 
 Route::get('/', function () {
   return view('patient');
-});
-
+})
+->name('home');
 
 Auth::routes();
 

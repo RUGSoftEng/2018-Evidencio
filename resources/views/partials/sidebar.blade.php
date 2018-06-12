@@ -1,5 +1,5 @@
-@guest
-@else
+@auth
+<link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
 <div class="wrapper">
     <nav id="sidebar">
         <div id="dismiss">
@@ -17,9 +17,8 @@
         </div>
         <ul class="list-unstyled components">
             <li>
-                <a  href="/">Home</a>
-                <a  href="/designer">Model Designer</a>
-                <a  href="/myworkflows">My Workflows</a>
+                <a  href="{{ route('home') }}">Home</a>
+                <a  href="{{ route('myworkflows') }}">My Workflows</a>
             </li>
             <li>
                 <a class="subMenu" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Administrator</a>
@@ -46,5 +45,4 @@
     </nav>
 </div>
 <script src="{{ asset('js/sidebar.js') }}"></script>
-<link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
-@endguest
+@endauth
