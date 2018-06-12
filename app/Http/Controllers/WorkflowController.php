@@ -139,7 +139,7 @@ class WorkflowController extends Controller
     public function index($workflowId)
     {
         $result = WorkflowController::loadWorkflow($workflowId);
-        return view('workflow')->with('result',$result);
+        return view('workflow')->with('result', $result);
     }
 
     public function runModel(Request $request)

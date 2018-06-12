@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     type() {
-      if (this.logic.label == "rule_ALWAYS" || this.logic.hasOwnProperty("always")) return "always";
+      if (this.logic.hasOwnProperty("any") && this.logic.any[0].fact == "trueValue") return "always";
       if (this.logic.hasOwnProperty("all")) return "all";
       if (this.logic.hasOwnProperty("any")) return "any";
       if (this.logic.hasOwnProperty("fact")) return "logic";
@@ -81,7 +81,6 @@ export default {
     setType() {
       switch (this.newType) {
         case "ALWAYS":
-          Vue.set(this.logic, "always", {});
           Vue.set(this.logic, "any", [
             {
               fact: "trueValue",

@@ -13,24 +13,24 @@
 
 Route::get('/', function () {
   return view('patient');
-});
+})->name('patient');
 
 
 Auth::routes();
 
-Route::get('/emailverify/{token}','Auth\RegisterController@verifyUser')->name('emailverification');
+Route::get('/emailverify/{token}', 'Auth\RegisterController@verifyUser')->name('emailverification');
 
 Route::get('/usersverification', 'UsersVerificationController@index')->name('usersverification.index');
 
 Route::get('/usersverification/download/{id}', 'UsersVerificationController@download')->name('usersverification.download');
-Route::post('/usersverification/accept','UsersVerificationController@accept')->name('usersverification.accept');
-Route::post('/usersverification/reject','UsersVerificationController@reject')->name('usersverification.reject');
+Route::post('/usersverification/accept', 'UsersVerificationController@accept')->name('usersverification.accept');
+Route::post('/usersverification/reject', 'UsersVerificationController@reject')->name('usersverification.reject');
 
-Route::get('/notverified', function() {
+Route::get('/notverified', function () {
   return view('notverified');
 })->name('notverified')
-->middleware('auth')
-->middleware('can:not-view-designer');
+  ->middleware('auth')
+  ->middleware('can:not-view-designer');
 
 Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
@@ -57,6 +57,7 @@ Route::post('/designer/load/{workflowId}', 'DesignerLoadController@loadWorkflow'
 
 Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows');
 Route::get('/myworkflows/delete/{workflowId}', 'MyWorkflowsController@deleteWorkflow');
+Route::get('/myworkflows/publish/{workflowId}', 'MyWorkflowsController@publishWorkflow');
 
 //Testing of rules engine
 Route::get('/test-rules-engine', function () {

@@ -87,4 +87,23 @@ class MyWorkflowsController extends Controller
         return redirect()->route('myworkflows');
     	//return view('/myworkflows',compact('workflows'));
     }
+
+
+    /**
+     * Publish the workflow.
+     *
+     * @param Number $workflowId
+     * @return Array with boolean success: True if successfully published, false if not.
+     */
+    public function publishWorkflow($workflowId)
+    {
+        $workflow = Workflow::find($workflowId);
+        $user = Auth::user();
+        if ($workflow != null && $user->can("save", $workflow) && !$workflow->is_verified) {
+            $workflow->publish();
+            return ["success" => true];
+        }
+        return ["false" => true];
+    }
+
 }
