@@ -34,7 +34,7 @@ Route::get('/notverified', function () {
 
 Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
-Route::post('/graph', 'GraphController@index');
+Route::get('/graph', 'GraphController@index');
 
 Route::get('/search', function () {
   return view('search');

@@ -31,22 +31,20 @@
           <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
         </div>
 
-        {{this.answers[0]}}
-        <div v-if="resultStep==0">
+        <div v-if="resultStep==1">
           <form method="GET" action="/graph">
 
             <input type="hidden" name="model" v-model="this.stepEvidencioId">
             <div v-for="variable in step.variables">
 
-                <input type="hidden" :name="'answers['+variable.id+']'" v-model="answers[0][variable.id]">
+                <input type="hidden" :name="'answer['+variable.id+']'" v-model="resultAnswers[variable.id]">
 
             </div>
-            <button type="submit" class="btn btn-primary btn-sm">submit</button>
+            <button type="submit" class="btn btn-primary btn-sm" @click="resultPage()">submit</button>
           </form>
         </div>
-
-
-
+        <br>
+        <br>
     </div>
 
 </template>
@@ -66,6 +64,10 @@ export default {
       if (this.workflowData.steps.hasOwnProperty(key)) {
         if (this.workflowData.steps[key].level == this.stepLevel) {
           this.step = this.workflowData.steps[key];
+          this.stepEvidencioId = this.step.evidencioModelIds[0];
+          if (this.step.nextSteps.length == 0) {
+            this.resultStep=1;
+          }
           for (var varKey in this.step.variables) {
             if (this.step.variables.hasOwnProperty(varKey)) {
               let variable = this.step.variables[varKey];
@@ -80,20 +82,13 @@ export default {
           });
 
           this.step.nextSteps.forEach(nextStep => {
-            if (nextStep.hasOwnProperty("pivot")) {
               this.rules.push(JSON.parse(nextStep.pivot.condition));
-              console.log(0);
-            } else {
-              console.log(1);
-              this.resultStep=1;
-            }
-
           });
           this.engine = new Engine();
           this.rules.map(rule => {
             this.engine.addRule(rule);
           });
-          this.stepEvidencioId = this.step.evidencioModelIds[0];
+
         }
       }
     }
@@ -101,6 +96,7 @@ export default {
   },
   data() {
     return {
+      resultAnswers:0,
       model: 0,
       stepLevel: 0,
       inputResult: 0,
@@ -122,6 +118,9 @@ export default {
   watch: {
     inputs() {
       this.calculateAnswers();
+    },
+    answers(){
+      this.resultAnswers=this.answers[0];
     }
   },
   methods: {
@@ -141,6 +140,9 @@ export default {
       });
       this.answers = ret;
     },
+    resultPage(){
+      this.resultAnswers=this.answers[0];
+    },
 
     nextStep() {
       var nextStepID;
@@ -153,6 +155,9 @@ export default {
         if (this.workflowData.steps.hasOwnProperty(key)) {
           if (this.workflowData.steps[key].id == nextStepID) {
             this.step = this.workflowData.steps[key];
+            if (this.step.nextSteps.length == 0) {
+              this.resultStep=1;
+            }
             for (var varKey in this.step.variables) {
               if (this.step.variables.hasOwnProperty(varKey)) {
                 let variable = this.step.variables[varKey];
@@ -166,13 +171,9 @@ export default {
               });
             });
             this.step.nextSteps.forEach(nextStep => {
-              if (nextStep.hasOwnProperty("pivot")) {
+
                 this.rules.push(JSON.parse(nextStep.pivot.condition));
-                console.log(0);
-              } else {
-                console.log(1);
-                this.resultStep=1;
-              }
+
 
             })
 
