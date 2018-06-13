@@ -54,11 +54,12 @@ if ($dbStep != null) {
     $firstResult = $dbResults->first();
     if($dbResults->where("result_name", '!=', $firstResult->result_name)->isEmpty()) {
       if ($firstResult->pivot->item_is_negated)
-        $numSad = (100 - (int)$_POST[$dbResults->first()->result_name]);
-      else 
-        $numSad = $_POST[$dbResults->first()->result_name];
+        $numSad =  $_POST[$dbResults->first()->result_name];
+      else
+        $numSad =   (100 - (int)$_POST[$dbResults->first()->result_name]);
     }
   }
+  $results = $dbResults->toArray();
 }
 
 /*  if(!empty($decodeRes["result"])){
@@ -108,7 +109,7 @@ if ($dbStep != null) {
 <div class="container">
   <canvas id="graph"></canvas>
    <br/><br/><br/>
-   @if(!empty($decodeRes['result']))
+   @if(count($results) <= 2)
   <div class"row justify-content-center">
     <table width="100%" class="mx-auto" style="max-width: 600px">
       <tr>
@@ -139,16 +140,15 @@ if ($dbStep != null) {
       </tr></table>
       <br />
       <br />
-      @endif
+@endif
       <h5>@if(!empty($friendly[0]['desc'])){{ $friendly[0]['desc'] }} @endif</h5>
     </div>
 </div>
 {{--Javascript for the creating the chat using Chartjs--}}
 <script>
-  var chartType =@if (!empty($chartType)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
+  var chartType = @if (!empty($chartType)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
   var resultChart;
   var ctx = document.getElementById("graph").getContext('2d');
-  //var options = <?php echo str_replace('"true"', 'true', $dbStep->result_step_chart_options); ?>;
   Chart.defaults.global.defaultFontSize = 20;
   init();
   function init() {
@@ -165,7 +165,7 @@ if ($dbStep != null) {
       options: {
         title:{
           display:true,
-          text:"{{ $dbStep->title }}",
+          text:'{{ $dbStep->title }}',
           fontSize:25
         },
         legend:{
@@ -194,7 +194,38 @@ if ($dbStep != null) {
     document.getElementById("chartdata").value = canv.toDataURL("image/jpg");
   }
 </script>
+
 <div class="container">
-<?php if (!empty($description)) print_r($description) ?>
+<h3>Actions</h3>
+<form method="post" action="/PDF">
+    {{ csrf_field() }}
+    <input type="hidden" name="model" value="{{ $_POST['db_id'] }}"/>
+    <input type="hidden" name="model_name" value="{{ $_POST['workflow_title'] }}"/>
+    <input type="hidden" name="friendlyRes" value="{{ $_POST['workflow_description'] }}"/>
+    <input type="hidden" id="chartdata" name="chartIMG"/>
+    <?php
+    if(count($results) == 1){
+      echo '<input type="hidden" name="resultVal" value="' . $numSad . '" />';
+    }
+    foreach($results as $item)
+     {
+      echo '<input type="hidden" name="res[]" value="'. $_POST[$item['result_name']] . '"/>';
+    }
+    foreach($_POST['answers'] as $value)
+    {
+      echo '<input type="hidden" name="answer[]" value="'. $value. '"/>';
+    }
+    foreach ($_POST['title'] as $item){
+    echo '<input type="hidden" name="qn[]" value="'. $item . '"/>';
+    }
+    foreach ($_POST['descriptions'] as $item){
+    echo '<input type="hidden" name="desc[]" value="'. $item . '"/>';
+    }
+    echo '<input type="hidden" name="remarks" value="'. $description . '"/>';
+    ?>
+    <input type="submit" onclick="loadData()" name="generatePDF" id="export" value="Export Result to PDF" class="btn btn-info"/>
+  </form>
+    <?php if (!empty($description)) {print_r($description);} ?>
 </div>
+
 @endsection

@@ -155,9 +155,7 @@ if(isset($_POST["generatePDF"])){
   $count = $count + 1;
   }
   if(!empty($_POST["remarks"])){
-    foreach($_POST["remarks"] as $txt){
-      $content .= '<p>'. $txt .'</p>';
-    }
+      $content .= '<p>'. $_POST["remarks"] .'</p>';
   }
   else{
     $content .= 'No additional information given. You may want to seek for professional advice.';
