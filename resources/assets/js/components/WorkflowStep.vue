@@ -12,14 +12,14 @@
                     <br>
                     <div class="slidecontainer">
                         <vue-slider :min="variable.options.min" :max="variable.options.max" :interval="variable.options.step" v-model="inputs[variable.databaseId]"
-                        @input="sliderChange(variable.databaseId, $event)"></vue-slider>
+                            @input="sliderChange(variable.databaseId, $event)"></vue-slider>
                     </div>
                 </div>
                 <div v-else>
                     {{variable.title}}:
                     <div v-for="(option, optIndex) in variable.options" :key="optIndex">
-                        <input type="radio" button-variant="outline-primary" :id="'radio_' + varIndex + '_' + optIndex" :name="variable.title"
-                            v-model="inputs[variable.databaseId]" :value="option.title">
+                        <input type="radio" button-variant="outline-primary" :id="'radio_' + varIndex + '_' + optIndex" :name="variable.title" v-model="inputs[variable.databaseId]"
+                            :value="option.title">
                         <label :for="'radio_' + varIndex + '_' + optIndex">{{option.title}}</label>
                         <br>
                     </div>
@@ -28,19 +28,25 @@
         </ul>
         <br>
         <div v-if="resultStep==0">
-          <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
+            <button type="submit" class="btn btn-primary btn-sm" @click="runStep()">submit</button>
         </div>
 
         <div v-if="resultStep==1">
-          <form method="GET" action="/graph">
-            <input type="hidden" name="db_id" v-model="this.step.id">
-            <div v-for="(modelResult, key) in modelResults" :key="key">
-        
-                <input type="hidden" :name="key" v-model="modelResults[key]">
-
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-          </form>
+            <form method="POST" action="/graph">
+                <input type="hidden" name="_token" :value="csrf">
+                <input type="hidden" name="db_id" v-model="this.step.id">
+                <input type="hidden" name="workflow_title" v-model="workflowData.title">
+                <input type="hidden" name="workflow_description" v-model="workflowData.description">
+                <div v-for="(variable, key) in variablesStripped" :key="key">
+                    <input type="hidden" name="title[]" v-model="variablesStripped[key].title">
+                    <input type="hidden" name="descriptions[]" v-model="variablesStripped[key].description">
+                    <input type="hidden" name="answers[]" v-model="variablesStripped[key].answer">
+                </div>
+                <div v-for="(modelResult, key) in modelResults" :key="key">
+                    <input type="hidden" :name="key" v-model="modelResults[key]">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+            </form>
         </div>
         <br>
         <br>
@@ -61,7 +67,18 @@ export default {
   mounted() {
     for (var key in this.workflowData.steps) {
       if (this.workflowData.steps.hasOwnProperty(key)) {
-        if (this.workflowData.steps[key].level == this.stepLevel) {
+        let currenStep = this.workflowData.steps[key];
+        for (var variable in currenStep.variables) {
+          if (currenStep.variables.hasOwnProperty(variable)) {
+            let currentVar = currenStep.variables[variable];
+            this.variables[currentVar.id] = {
+              title: currentVar.title,
+              description: currentVar.description,
+              answer: null
+            };
+          }
+        }
+        if (currenStep.level == this.stepLevel) {
           this.step = this.workflowData.steps[key];
           this.stepEvidencioId = this.step.evidencioModelIds[0];
           if (this.step.nextSteps.length == 0) {
@@ -93,10 +110,13 @@ export default {
   },
   data() {
     return {
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
       model: 0,
       stepLevel: 0,
       inputResult: 0,
       step: {},
+      variables: {},
+      variablesStripped: {},
       mapping: [],
       inputs: {},
       rules: [],
@@ -104,6 +124,7 @@ export default {
         trueValue: true
       },
       answers: {},
+      allAnswers: [],
       modelResults: {},
       engine: null,
       stepEvidencioId: 0,
@@ -129,15 +150,26 @@ export default {
         for (var key in apiCall) {
           if (apiCall.hasOwnProperty(key)) {
             ret[index][key] = this.inputs[apiCall[key]];
+            this.variables[key].answer = this.inputs[apiCall[key]];
           }
         }
       });
       this.answers = ret;
     },
+    stripVariables() {
+      let newVars = {};
+      for (var key in this.variables) {
+        if (this.variables.hasOwnProperty(key)) {
+          if (this.variables[key].answer != null) newVars[key] = this.variables[key];
+        }
+      }
+      this.variablesStripped = newVars;
+    },
 
     nextStep() {
       var nextStepID;
       runStep();
+      this.allAnswers.push(this.answer);
       nextStepID = this.nextID;
       nextStep(nextStepID);
     },
@@ -220,6 +252,7 @@ export default {
         })
         .then(function(x) {
           var nextStepID = self.nextID;
+          self.stripVariables();
           self.nextStep(nextStepID);
         });
     }

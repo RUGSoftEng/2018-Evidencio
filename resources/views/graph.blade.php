@@ -9,13 +9,15 @@ This will return an array with the result and their parameters.--}}
 use App\EvidencioAPI;
 use App\Result;
 use App\Step;
+use App\Workflow;
 // if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
   //$decodeRes = EvidencioAPI::run($_GET['model'],$_GET['answer']);
   //$modelDetails = EvidencioAPI::getModel($_GET['model']);
-  // $friendly = Result::getResult($_GET['db_id'])->toArray();
+  // $friendly = Result::getResult($_GET['db_id'])->toArray();s
 
-  $dbStep = Step::find($_GET["db_id"]);
+$dbStep = Step::find($_POST["db_id"]);
 if ($dbStep != null) {
+  $workflow = Workflow::find($dbStep->workflow_id);
   $dbResults = $dbStep->ResultStepChartItems()->get();
   $description = $dbStep->description;
   if ($dbResults->isNotEmpty()) {
@@ -26,11 +28,11 @@ if ($dbStep != null) {
     foreach($dbResults as $dbResult){
       $dataLabel = $dataLabel . ',\' ' . htmlspecialchars($dbResult->pivot->item_label) . '\'';
       $bgColor = $bgColor . ',\'' . $dbResult->pivot->item_background_colour . '\'';
-      $description = str_replace("$" . $dbResult->result_name . "$", $_GET[$dbResult->result_name], $description);
+      $description = str_replace("$" . $dbResult->result_name . "$", $_POST[$dbResult->result_name], $description);
       if ($dbResult->pivot->item_is_negated)
-        $result = $result . "," . (100 - (int)$_GET[$dbResult->result_name]);
+        $result = $result . "," . (100 - (int)$_POST[$dbResult->result_name]);
       else
-        $result = $result . "," . $_GET[$dbResult->result_name];
+        $result = $result . "," . $_POST[$dbResult->result_name];
     }
     $dataLabel = substr($dataLabel, 1);
     $bgColor = substr($bgColor, 1);
@@ -52,9 +54,9 @@ if ($dbStep != null) {
     $firstResult = $dbResults->first();
     if($dbResults->where("result_name", '!=', $firstResult->result_name)->isEmpty()) {
       if ($firstResult->pivot->item_is_negated)
-        $numSad = (100 - (int)$_GET[$dbResults->first()->result_name]);
-      else
-        $numSad = $_GET[$dbResults->first()->result_name];
+        $numSad = (100 - (int)$_POST[$dbResults->first()->result_name]);
+      else 
+        $numSad = $_POST[$dbResults->first()->result_name];
     }
   }
 }
@@ -143,41 +145,42 @@ if ($dbStep != null) {
 </div>
 {{--Javascript for the creating the chat using Chartjs--}}
 <script>
-  var chartType =@if(!empty($chartType)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
+  var chartType =@if (!empty($chartType)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
   var resultChart;
   var ctx = document.getElementById("graph").getContext('2d');
+  //var options = <?php echo str_replace('"true"', 'true', $dbStep->result_step_chart_options); ?>;
   Chart.defaults.global.defaultFontSize = 20;
   init();
-  function init(){
+  function init() {
     resultChart = new Chart(ctx, {
-        type: chartType,
-        data: {
-            labels: [ @if(!empty($dataLabel)) {!! $dataLabel !!} @else "'Positive', 'Negative'" @endif], // default is 2-value input; positive and negative.
-            datasets: [{
-                label: [{!! $dataLabel !!}],
-                data: [{{ $result }}],
-                backgroundColor: [{!! $bgColor !!}]
-            }]
+      type: chartType,
+      data: {
+        labels: [ @if(!empty($dataLabel)) {!! $dataLabel !!} @else "'Positive', 'Negative'" @endif], // default is 2-value input; positive and negative.
+        datasets: [{
+            label: [{!! $dataLabel !!}],
+            data: [{{ $result }}],
+            backgroundColor: [{!! $bgColor !!}]
+        }]
+      },
+      options: {
+        title:{
+          display:true,
+          text:"{{ $dbStep->title }}",
+          fontSize:25
         },
-        options: {
-          title:{
-            display:true,
-            text:"{{ $dbStep->title }}",
-            fontSize:25
-          },
-          legend:{
-            postion:'right',
-            display:true
-          },
-          responsive:true,
-          tooltips: {
-                mode: 'label',
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        return data['labels'][tooltipItem['index']]+': '+data['datasets'][0]['data'][tooltipItem['index']];
-                    }
-                }
-            },
+        legend:{
+          postion:'right',
+          display:true
+        },
+        responsive:true,
+        tooltips: {
+          mode: 'label',
+          callbacks: {
+              label: function(tooltipItem, data) {
+                  return data['labels'][tooltipItem['index']]+': '+data['datasets'][0]['data'][tooltipItem['index']];
+              }
+          }
+        }
       }
     });
   }

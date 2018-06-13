@@ -311,6 +311,19 @@ window.vObj = new Vue({
           newRule.description = rule.description;
           step.rules[index] = newRule;
         });
+        if (step.type == "result") {
+          step.chartOptions = {
+            maintainAspectRatio: true,
+            legend: false,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        }
       });
       localSteps.map((x, index) => {
         x["level"] = this.getStepLevel(index);

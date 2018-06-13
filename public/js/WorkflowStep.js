@@ -5395,6 +5395,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -5409,7 +5414,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     for (var key in this.workflowData.steps) {
       if (this.workflowData.steps.hasOwnProperty(key)) {
-        if (this.workflowData.steps[key].level == this.stepLevel) {
+        var currenStep = this.workflowData.steps[key];
+        for (var variable in currenStep.variables) {
+          if (currenStep.variables.hasOwnProperty(variable)) {
+            var currentVar = currenStep.variables[variable];
+            this.variables[currentVar.id] = {
+              title: currentVar.title,
+              description: currentVar.description,
+              answer: null
+            };
+          }
+        }
+        if (currenStep.level == this.stepLevel) {
           this.step = this.workflowData.steps[key];
           this.stepEvidencioId = this.step.evidencioModelIds[0];
           if (this.step.nextSteps.length == 0) {
@@ -5417,8 +5433,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
           for (var varKey in this.step.variables) {
             if (this.step.variables.hasOwnProperty(varKey)) {
-              var variable = this.step.variables[varKey];
-              if (variable.type == "continuous") this.inputs[variable.databaseId] = variable.options.min;
+              var _variable = this.step.variables[varKey];
+              if (_variable.type == "continuous") this.inputs[_variable.databaseId] = _variable.options.min;
             }
           }
           this.step.apiMapping.forEach(function (apiCall, index) {
@@ -5441,10 +5457,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
       model: 0,
       stepLevel: 0,
       inputResult: 0,
       step: {},
+      variables: {},
+      variablesStripped: {},
       mapping: [],
       inputs: {},
       rules: [],
@@ -5452,6 +5471,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         trueValue: true
       },
       answers: {},
+      allAnswers: [],
       modelResults: {},
       engine: null,
       stepEvidencioId: 0,
@@ -5480,10 +5500,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         for (var key in apiCall) {
           if (apiCall.hasOwnProperty(key)) {
             ret[index][key] = _this2.inputs[apiCall[key]];
+            _this2.variables[key].answer = _this2.inputs[apiCall[key]];
           }
         }
       });
       this.answers = ret;
+    },
+    stripVariables: function stripVariables() {
+      var newVars = {};
+      for (var key in this.variables) {
+        if (this.variables.hasOwnProperty(key)) {
+          if (this.variables[key].answer != null) newVars[key] = this.variables[key];
+        }
+      }
+      this.variablesStripped = newVars;
     },
     nextStep: function (_nextStep) {
       function nextStep() {
@@ -5498,6 +5528,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }(function () {
       var nextStepID;
       runStep();
+      this.allAnswers.push(this.answer);
       nextStepID = this.nextID;
       nextStep(nextStepID);
     })
@@ -5574,6 +5605,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     }).then(function (x) {
       var nextStepID = self.nextID;
+      self.stripVariables();
       self.nextStep(nextStepID);
     });
   }), _methods)
@@ -5740,8 +5772,13 @@ var render = function() {
       ? _c("div", [
           _c(
             "form",
-            { attrs: { method: "GET", action: "/graph" } },
+            { attrs: { method: "POST", action: "/graph" } },
             [
+              _c("input", {
+                attrs: { type: "hidden", name: "_token" },
+                domProps: { value: _vm.csrf }
+              }),
+              _vm._v(" "),
               _c("input", {
                 directives: [
                   {
@@ -5768,20 +5805,124 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: this.stepEvidencioId,
-                    expression: "this.stepEvidencioId"
+                    value: _vm.workflowData.title,
+                    expression: "workflowData.title"
                   }
                 ],
-                attrs: { type: "hidden", name: "model" },
-                domProps: { value: this.stepEvidencioId },
+                attrs: { type: "hidden", name: "workflow_title" },
+                domProps: { value: _vm.workflowData.title },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(this, "stepEvidencioId", $event.target.value)
+                    _vm.$set(_vm.workflowData, "title", $event.target.value)
                   }
                 }
+              }),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.workflowData.description,
+                    expression: "workflowData.description"
+                  }
+                ],
+                attrs: { type: "hidden", name: "workflow_description" },
+                domProps: { value: _vm.workflowData.description },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(
+                      _vm.workflowData,
+                      "description",
+                      $event.target.value
+                    )
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _vm._l(_vm.variablesStripped, function(variable, key) {
+                return _c("div", { key: key }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.variablesStripped[key].title,
+                        expression: "variablesStripped[key].title"
+                      }
+                    ],
+                    attrs: { type: "hidden", name: "title[]" },
+                    domProps: { value: _vm.variablesStripped[key].title },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.variablesStripped[key],
+                          "title",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.variablesStripped[key].description,
+                        expression: "variablesStripped[key].description"
+                      }
+                    ],
+                    attrs: { type: "hidden", name: "descriptions[]" },
+                    domProps: { value: _vm.variablesStripped[key].description },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.variablesStripped[key],
+                          "description",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.variablesStripped[key].answer,
+                        expression: "variablesStripped[key].answer"
+                      }
+                    ],
+                    attrs: { type: "hidden", name: "answers[]" },
+                    domProps: { value: _vm.variablesStripped[key].answer },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.variablesStripped[key],
+                          "answer",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ])
               }),
               _vm._v(" "),
               _vm._l(_vm.modelResults, function(modelResult, key) {
