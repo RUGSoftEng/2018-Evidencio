@@ -35,7 +35,7 @@ if ($dbStep != null) {
     $dataLabel = substr($dataLabel, 1);
     $bgColor = substr($bgColor, 1);
     $result = substr($result, 1);
-  
+
     $chartType = "bar";
     if($chartNumber == 0){
       $chartType = "bar";
@@ -53,7 +53,7 @@ if ($dbStep != null) {
     if($dbResults->where("result_name", '!=', $firstResult->result_name)->isEmpty()) {
       if ($firstResult->pivot->item_is_negated)
         $numSad = (100 - (int)$_GET[$dbResults->first()->result_name]);
-      else 
+      else
         $numSad = $_GET[$dbResults->first()->result_name];
     }
   }
@@ -87,7 +87,7 @@ if ($dbStep != null) {
   if(empty($bgColor)){
     $bgColor = "'#ff0000', '#00ffff'";
   }
-  
+
 
 
 // }*/
@@ -191,7 +191,7 @@ if ($dbStep != null) {
     document.getElementById("chartdata").value = canv.toDataURL("image/jpg");
   }
 </script>
-
+<div class="container">
 <?php if (!empty($description)) print_r($description) ?>
-
+</div>
 @endsection
