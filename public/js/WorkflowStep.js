@@ -5441,7 +5441,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      resultAnswers: 0,
       model: 0,
       stepLevel: 0,
       inputResult: 0,
@@ -5453,6 +5452,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         trueValue: true
       },
       answers: {},
+      modelResults: {},
       engine: null,
       stepEvidencioId: 0,
       result: {},
@@ -5464,9 +5464,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   watch: {
     inputs: function inputs() {
       this.calculateAnswers();
-    },
-    answers: function answers() {
-      this.resultAnswers = this.answers[0];
     }
   },
   methods: (_methods = {
@@ -5487,9 +5484,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       });
       this.answers = ret;
-    },
-    resultPage: function resultPage() {
-      this.resultAnswers = this.answers[0];
     },
     nextStep: function (_nextStep) {
       function nextStep() {
@@ -5530,7 +5524,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             });
           });
           this.step.nextSteps.forEach(function (nextStep) {
-
             _this3.rules.push(JSON.parse(nextStep.pivot.condition));
           });
 
@@ -5561,15 +5554,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           self.result = result;
           if (result.hasOwnProperty("result")) {
             self.facts["result_" + modelId + "_0"] = result.result;
+            self.modelResults["result_" + modelId + "_0"] = result.result;
           } else {
             result.resultSet.forEach(function (res, ind) {
               self.facts["result_" + modelId + "_" + ind] = res.result;
+              self.modelResults["result_" + modelId + "_" + ind] = res.result;
             });
           }
         }
       });
     })).then(function (x) {
-
       self.engine.run(self.facts).then(function (events) {
         events.map(function (event) {
           if (event.type == "goToNextStep") {
@@ -5753,6 +5747,27 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
+                    value: this.step.id,
+                    expression: "this.step.id"
+                  }
+                ],
+                attrs: { type: "hidden", name: "db_id" },
+                domProps: { value: this.step.id },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(this.step, "id", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
                     value: this.stepEvidencioId,
                     expression: "this.stepEvidencioId"
                   }
@@ -5769,32 +5784,25 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
-              _vm._l(_vm.step.variables, function(variable) {
-                return _c("div", [
+              _vm._l(_vm.modelResults, function(modelResult, key) {
+                return _c("div", { key: key }, [
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.resultAnswers[variable.id],
-                        expression: "resultAnswers[variable.id]"
+                        value: _vm.modelResults[key],
+                        expression: "modelResults[key]"
                       }
                     ],
-                    attrs: {
-                      type: "hidden",
-                      name: "answer[" + variable.id + "]"
-                    },
-                    domProps: { value: _vm.resultAnswers[variable.id] },
+                    attrs: { type: "hidden", name: key },
+                    domProps: { value: _vm.modelResults[key] },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(
-                          _vm.resultAnswers,
-                          variable.id,
-                          $event.target.value
-                        )
+                        _vm.$set(_vm.modelResults, key, $event.target.value)
                       }
                     }
                   })
@@ -5805,14 +5813,9 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-primary btn-sm",
-                  attrs: { type: "submit" },
-                  on: {
-                    click: function($event) {
-                      _vm.resultPage()
-                    }
-                  }
+                  attrs: { type: "submit" }
                 },
-                [_vm._v("submit")]
+                [_vm._v("Submit")]
               )
             ],
             2

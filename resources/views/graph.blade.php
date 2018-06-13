@@ -8,21 +8,58 @@ This will return an array with the result and their parameters.--}}
 <?php
 use App\EvidencioAPI;
 use App\Result;
-if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
-  $decodeRes = EvidencioAPI::run($_GET['model'],$_GET['answer']);
-  $modelDetails = EvidencioAPI::getModel($_GET['model']);
-  $friendly = Result::getResult($_GET['db_id'])->toArray();
-  if(!empty($friendly)){
-      $dataLabel = "";
-      $bgColor = "";
-      foreach($friendly as $f){
-        $dataLabel = $dataLabel . ',\' ' . htmlspecialchars($f["item_label"]) . '\'';
-        $bgColor = $bgColor . ',\'' . $f["item_background_colour"] . '\'';
-      }
-      $dataLabel = substr($dataLabel, 1);
-      $bgColor = substr($bgColor, 1);
+use App\Step;
+// if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
+  //$decodeRes = EvidencioAPI::run($_GET['model'],$_GET['answer']);
+  //$modelDetails = EvidencioAPI::getModel($_GET['model']);
+  // $friendly = Result::getResult($_GET['db_id'])->toArray();
+
+  $dbStep = Step::find($_GET["db_id"]);
+if ($dbStep != null) {
+  $dbResults = $dbStep->ResultStepChartItems()->get();
+  $description = $dbStep->description;
+  if ($dbResults->isNotEmpty()) {
+    $chartNumber = (int)($dbStep->result_step_chart_type);
+    $dataLabel = "";
+    $bgColor = "";
+    $result = "";
+    foreach($dbResults as $dbResult){
+      $dataLabel = $dataLabel . ',\' ' . htmlspecialchars($dbResult->pivot->item_label) . '\'';
+      $bgColor = $bgColor . ',\'' . $dbResult->pivot->item_background_colour . '\'';
+      $description = str_replace("$" . $dbResult->result_name . "$", $_GET[$dbResult->result_name], $description);
+      if ($dbResult->pivot->item_is_negated)
+        $result = $result . "," . (100 - (int)$_GET[$dbResult->result_name]);
+      else
+        $result = $result . "," . $_GET[$dbResult->result_name];
+    }
+    $dataLabel = substr($dataLabel, 1);
+    $bgColor = substr($bgColor, 1);
+    $result = substr($result, 1);
+  
+    $chartType = "bar";
+    if($chartNumber == 0){
+      $chartType = "bar";
+    }
+    else if($chartNumber  == 1){
+      $chartType = "pie";
+    }
+    else if($chartNumber == 2){
+      $chartType = "doughnut";
+    }
+    else if($chartNumber == 3){
+      $chartType = "polarArea";
+    }
+    $firstResult = $dbResults->first();
+    if($dbResults->where("result_name", '!=', $firstResult->result_name)->isEmpty()) {
+      if ($firstResult->pivot->item_is_negated)
+        $numSad = (100 - (int)$_GET[$dbResults->first()->result_name]);
+      else 
+        $numSad = $_GET[$dbResults->first()->result_name];
+    }
   }
-  if(!empty($decodeRes["result"])){
+}
+
+/*  if(!empty($decodeRes["result"])){
       if(!empty($friendly[1])){
         if($friendly[1]["item_is_negated"])
           $result = $decodeRes["result"] . ', ' . (100- (int)$decodeRes['result']);
@@ -50,30 +87,10 @@ if (!empty($_GET['answer'])&&!empty($_GET['model'])) {
   if(empty($bgColor)){
     $bgColor = "'#ff0000', '#00ffff'";
   }
-  $chartType = "bar";
-  if(!empty($friendly[0]["chartType"])){
-    if($friendly[0]["chartType"] == 0){
-      $chartType = "pie";
-    }
-    else if($friendly[0]["chartType"]  == 1){
-      $chartType = "bar";
-    }
-    else if($friendly[0]["chartType"] == 2){
-      $chartType = "doughnut";
-    }
-    else if($friendly[0]["chartType"] == 3){
-      $chartType = "polarArea";
-    }
-  }
+  
 
-if(!empty($decodeRes["result"])){
-  if(!$friendly[0]["item_is_negated"])
-      $numSad = (100 - (int)$decodeRes["result"]);
-  else {
-      $numSad = $decodeRes["result"];
-    }
-  }
-}
+
+// }*/
 ?>
 @extends('layouts.app')
 @section('content')@include('partials.sidebar')
@@ -126,7 +143,7 @@ if(!empty($decodeRes["result"])){
 </div>
 {{--Javascript for the creating the chat using Chartjs--}}
 <script>
-  var chartType =@if(!empty($friendly)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
+  var chartType =@if(!empty($chartType)) '{{ $chartType }}' @else 'pie' @endif; //default is pie if none-specfied
   var resultChart;
   var ctx = document.getElementById("graph").getContext('2d');
   Chart.defaults.global.defaultFontSize = 20;
@@ -145,7 +162,7 @@ if(!empty($decodeRes["result"])){
         options: {
           title:{
             display:true,
-            text:"{{ $decodeRes['title'] }}",
+            text:"{{ $dbStep->title }}",
             fontSize:25
           },
           legend:{
@@ -174,60 +191,7 @@ if(!empty($decodeRes["result"])){
     document.getElementById("chartdata").value = canv.toDataURL("image/jpg");
   }
 </script>
-<div class="container">
-  <?php
-  if(!empty($decodeRes['additionalResultSet'])){
-    foreach($decodeRes['additionalResultSet'] as $text){
-   print_r($text['key']);
-    }
-  }?>
-  <br><br>
-  <?php
-  if(!empty($decodeRes['conditionalResultText'])){
-   print_r($decodeRes['conditionalResultText']);
- }?>
-  <br><br>
-</div>
-<div class="container">
-  <h3>Actions</h3>
-  <form method="post" action="/PDF">
-    {{ csrf_field() }}
-    <input type="hidden" name="model" value="{{ $_GET['model'] }}"/>
-    <input type="hidden" name="model_name" value="{{ $decodeRes['title'] }}"/>
-    <input type="hidden" name="friendlyRes" value="@if(!empty($friendly[0]['desc'])) {{ $friendly[0]['desc'] }} @endif"/>
-    <input type="hidden" id="chartdata" name="chartIMG"/>
-    @if(!empty($decodeRes['result']))
-    <input type="hidden" name="resultVal" value=" @if(!$friendly[0]["item_is_negated"]) {{ (100 - (int)$decodeRes["result"]) }} @else {{ $decodeRes["result"]  }} @endif"/>
-    @endif
-    <?php
-    if(!empty($decodeRes["resultSet"])){
-      foreach($decodeRes["resultSet"] as $item){
-        echo '<input type="hidden" name="res[]" value="'. $item["result"] . '"/>';
-        echo '<input type="hidden" name="resText[]" value="' . $item["conditionalResultText"] . '"/>';
-      }
-    }
-    else{
-      echo '<input type="hidden" name="res[]" value="'. $decodeRes["result"] . '"/>';
-    }
-    foreach($_GET['answer'] as $value)
-    {
-      echo '<input type="hidden" name="answer[]" value="'. $value. '"/>';
-    }
-    ?>
-    <?php
-    foreach ($modelDetails['variables'] as $item){
-    echo '<input type="hidden" name="qn[]" value="'. $item['title']. '"/>';
-    }
-    ?>
-    <?php
-    foreach ($modelDetails['variables'] as $item){
-    echo '<input type="hidden" name="desc[]" value="'. $item['description']. '"/>';
-    }
-    ?>
-    <?php
-    echo '<input type="hidden" name="remarks[]" value="'. $decodeRes['conditionalResultText'] . '"/>';
-    ?>
-    <input type="submit" onclick="loadData()" name="generatePDF" id="export" value="Export Result to PDF" class="btn btn-info"/>
-  </form>
-</div>
+
+<?php if (!empty($description)) print_r($description) ?>
+
 @endsection

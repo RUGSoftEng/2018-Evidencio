@@ -34,13 +34,12 @@
         <div v-if="resultStep==1">
           <form method="GET" action="/graph">
             <input type="hidden" name="db_id" v-model="this.step.id">
-            <input type="hidden" name="model" v-model="this.stepEvidencioId">
-            <div v-for="variable in step.variables">
+            <div v-for="(modelResult, key) in modelResults" :key="key">
         
-                <input type="hidden" :name="'answer['+variable.id+']'" v-model="resultAnswers[variable.id]">
+                <input type="hidden" :name="key" v-model="modelResults[key]">
 
             </div>
-            <button type="submit" class="btn btn-primary btn-sm" @click="resultPage()">submit</button>
+            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
           </form>
         </div>
         <br>
@@ -66,7 +65,7 @@ export default {
           this.step = this.workflowData.steps[key];
           this.stepEvidencioId = this.step.evidencioModelIds[0];
           if (this.step.nextSteps.length == 0) {
-            this.resultStep=1;
+            this.resultStep = 1;
           }
           for (var varKey in this.step.variables) {
             if (this.step.variables.hasOwnProperty(varKey)) {
@@ -82,21 +81,18 @@ export default {
           });
 
           this.step.nextSteps.forEach(nextStep => {
-              this.rules.push(JSON.parse(nextStep.pivot.condition));
+            this.rules.push(JSON.parse(nextStep.pivot.condition));
           });
           this.engine = new Engine();
           this.rules.map(rule => {
             this.engine.addRule(rule);
           });
-
         }
       }
     }
-
   },
   data() {
     return {
-      resultAnswers:0,
       model: 0,
       stepLevel: 0,
       inputResult: 0,
@@ -108,19 +104,17 @@ export default {
         trueValue: true
       },
       answers: {},
+      modelResults: {},
       engine: null,
       stepEvidencioId: 0,
       result: {},
-      nextID:0,
-      resultStep:0
+      nextID: 0,
+      resultStep: 0
     };
   },
   watch: {
     inputs() {
       this.calculateAnswers();
-    },
-    answers(){
-      this.resultAnswers=this.answers[0];
     }
   },
   methods: {
@@ -140,15 +134,12 @@ export default {
       });
       this.answers = ret;
     },
-    resultPage(){
-      this.resultAnswers=this.answers[0];
-    },
 
     nextStep() {
       var nextStepID;
       runStep();
-      nextStepID=this.nextID;
-      nextStep(nextStepID)
+      nextStepID = this.nextID;
+      nextStep(nextStepID);
     },
     nextStep(nextStepID) {
       for (var key in this.workflowData.steps) {
@@ -156,7 +147,7 @@ export default {
           if (this.workflowData.steps[key].id == nextStepID) {
             this.step = this.workflowData.steps[key];
             if (this.step.nextSteps.length == 0) {
-              this.resultStep=1;
+              this.resultStep = 1;
             }
             for (var varKey in this.step.variables) {
               if (this.step.variables.hasOwnProperty(varKey)) {
@@ -171,11 +162,8 @@ export default {
               });
             });
             this.step.nextSteps.forEach(nextStep => {
-
-                this.rules.push(JSON.parse(nextStep.pivot.condition));
-
-
-            })
+              this.rules.push(JSON.parse(nextStep.pivot.condition));
+            });
 
             this.engine = new Engine();
             this.rules.map(rule => {
@@ -209,30 +197,30 @@ export default {
                 self.result = result;
                 if (result.hasOwnProperty("result")) {
                   self.facts["result_" + modelId + "_0"] = result.result;
+                  self.modelResults["result_" + modelId + "_0"] = result.result;
                 } else {
                   result.resultSet.forEach((res, ind) => {
                     self.facts["result_" + modelId + "_" + ind] = res.result;
+                    self.modelResults["result_" + modelId + "_" + ind] = res.result;
                   });
                 }
-
               }
             });
           })
         )
         .then(function(x) {
-
           self.engine.run(self.facts).then(events => {
             events.map(event => {
               if (event.type == "goToNextStep") {
                 console.log(event.params.stepId);
-                self.nextID=event.params.stepId;
+                self.nextID = event.params.stepId;
               }
             });
           });
-
-        }).then(function(x) {
-          var nextStepID=self.nextID;
-            self.nextStep(nextStepID)
+        })
+        .then(function(x) {
+          var nextStepID = self.nextID;
+          self.nextStep(nextStepID);
         });
     }
   }
