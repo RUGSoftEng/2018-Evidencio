@@ -353,6 +353,61 @@
 31.05 - Made a first working version of rules, worked on loading them
 31.05 - Made a first working version of rules, worked on loading them
 31.05 - Tiny layout changes, refactorings, bug-fixes
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+05.06 - Preparation for presentation, fixing tiny bug
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs + autofocus of search-modal
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Fixed some (pass by reference vs pass by value) bugs
+09.06 - Some bugfixes
+09.06 - Some bugfixes
+09.06 - Start to fixing sidebar-layout
+09.06 - More bugfixing
+10.06 - Fixed bug that could cause unexpected behaviour
+11.06 - Made PR, fixed conflicts (the wrong way, but it works), fixed some bugs (again)
+11.06 - Start to workflow publising
+11.06 - Start to workflow publising
+11.06 - Start to workflow publising
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Work on patient side, changed slider to better working version
+12.06 - Work on patient side, added variable mapping for api call
+12.06 - Work on patient side, made API-calls for all models of the current step
+12.06 - Work on patient side, saved rules/results of the current step
+12.06 - Work on patient side, Make next step show up based on rules and facts with the rules-engine
+13.06 - Work on patient side, showing of results
+13.06 - Work on patient side, showing of results
+13.06 - Work on patient side, showing of results
+
+
 
 
 

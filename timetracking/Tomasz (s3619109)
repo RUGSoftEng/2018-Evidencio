@@ -216,3 +216,34 @@
 - 30.05 - checking and updating documents
 - 30.05 - checking and updating documents
 - 30.05 - checking and updating documents
+- 31.05 - finishing documents
+- 31.05 - merging branches for pull request
+- 31.05 - merging branches for pull request and creating the PR itself
+- 4.06 - discussing saving of charts in the DB
+- 4.06 - making migration for saving charts in the DB
+- 4.06 - updating and testing the server
+- 4.06 - making migration for chart options
+- 4.06 - merging recent migrations to the PDF branch
+- 4.06 - fixing styling in the PDF branch and making chart columns nullable in steps table
+- 6.06 - fixing permissions issues with saving worflows and creating DB column for variable negations in charts
+- 6.06 - adding proper primary key to model_run_field_mapping
+- 7.06 - reasearching and making better token for email verification
+- 7.06 - reasearching and making better token for email verification
+- 7.06 - making queues for email sending
+- 7.06 - making account removal after 24 hours if the verification link has not been clicked
+- 7.06 - adding editing of accounts
+- 11.06 - reviewing pull request of designer
+- 11.06 - adding editing of accounts
+- 11.06 - adding editing of accounts
+- 11.06 - adding editing of accounts
+- 11.06 - improving styling of users verification page
+- 12.06 - fixing visibility of unpublished workflows for patients
+- 12.06 - fixing visibility of unpublished workflows for patients
+- 12.06 - looking through commits of release branch to see if there are any that need to be pushed to development
+- 12.06 - checking PDF PR
+- 12.06 - helping Javier with issues regarding the PR
+- 12.06 - helping Javier with issues regarding the PR
+- 12.06 - fixing PDF's code
+- 12.06 - fixing PDF's code
+- 12.06 - merging branches
+- 12.06 - merging branches
