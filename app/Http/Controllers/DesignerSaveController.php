@@ -41,7 +41,6 @@ class DesignerSaveController extends Controller
         $workflow->language_code = $request->languageCode;
         $workflow->title = $request->title;
         $workflow->description = $request->description;
-        $workflow->is_verified = true; //TODO: remove that line after implementing reviewing of the workflows
         $workflow->save();
         $workflow->touch();
         if ($request->modelIds != null) {
@@ -49,11 +48,11 @@ class DesignerSaveController extends Controller
         }
         $IDs = $this->saveSteps($request->steps, $request->variables, $workflow);
 
-        $returnObj['workflowId'] = $workflow->id;
-        $returnObj['stepIds'] = $IDs['stepIds'];
-        $returnObj['variableIds'] = $IDs['variableIds'];
-        $returnObj['optionIds'] = $IDs['optionIds'];
-        $returnObj['resultIds'] = $IDs['resultIds'];
+        $returnObj["workflowId"] = $workflow->id;
+        $returnObj["stepIds"] = $IDs["stepIds"];
+        $returnObj["variableIds"] = $IDs["variableIds"];
+        $returnObj["optionIds"] = $IDs["optionIds"];
+        $returnObj["resultIds"] = $IDs["resultIds"];
         return $returnObj;
     }
 
@@ -69,7 +68,7 @@ class DesignerSaveController extends Controller
     {
         if ($workflowId != null) {
             $workflow = Workflow::find($workflowId);
-            if ($workflow == null || $user->cant('save',$workflow)) {
+            if ($workflow == null || $user->cant('save', $workflow)) {
                 $workflow = new Workflow;
             }
         } else {
@@ -107,8 +106,6 @@ class DesignerSaveController extends Controller
     {
         $savedSteps = $workflow->steps()->get();
         $stepIds = [];
-        $variableIds = [];
-        $ruleIds = [];
         $fieldIds = ['variableIds' => [], 'optionIds' => []];
         foreach ($steps as $step) {
             if (($stp = $savedSteps->where('id', $step['id']))->isNotEmpty()) {
@@ -127,9 +124,11 @@ class DesignerSaveController extends Controller
                 $step["variables"] = [];
             }
             $stp->touch();
-            $newFieldIds = $this->saveFields($stp, $step, $variables);
-            $fieldIds["variableIds"] = array_merge($fieldIds["variableIds"], $newFieldIds["variableIds"]);
-            $fieldIds["optionIds"] = array_merge($fieldIds["optionIds"], $newFieldIds["optionIds"]);
+            if ($step["type"] == "input") {
+                $newFieldIds = $this->saveFields($stp, $step, $variables);
+                $fieldIds["variableIds"] = array_merge($fieldIds["variableIds"], $newFieldIds["variableIds"]);
+                $fieldIds["optionIds"] = array_merge($fieldIds["optionIds"], $newFieldIds["optionIds"]);
+            }
             $stepIds[] = $stp->id;
         }
 
@@ -147,6 +146,10 @@ class DesignerSaveController extends Controller
             foreach ($mappings as $mapping) {
                 $value->modelRunFields()->detach($mapping);
             }
+            $resultLabels = $value->resultStepChartItems()->get();
+            foreach ($resultLabels as $resultLabel) {
+                $value->resultStepChartItems()->detach($resultLabel);
+            }
             $results = $value->modelRunResults()->get();
             foreach ($results as $result) {
                 $value->modelRunResults()->detach($result);
@@ -163,9 +166,11 @@ class DesignerSaveController extends Controller
             }
             $value->delete();
         });
+
+        // Save the possible results
         foreach ($steps as $key => $step) {
             $resultIds[] = [];
-            $dbStep = $workflow->steps()->where('id', $stepIds[$key])->first();
+            $dbStep = $workflow->steps()->where("id", $stepIds[$key])->first();
             if (!isset($step["apiCalls"]))
                 $step["apiCalls"] = [];
             $resultIds[$key] = $this->saveStepModelApiMapping($dbStep, $step["apiCalls"], $fieldIds["variableIds"]);
@@ -174,7 +179,35 @@ class DesignerSaveController extends Controller
             $this->saveRules($dbStep, $step["rules"], $stepIds);
         }
 
-        return ['stepIds' => $stepIds, 'variableIds' => $fieldIds['variableIds'], 'optionIds' => $fieldIds['optionIds'], 'resultIds' => $resultIds];
+        // Save the result-step
+        $possibleResults = $workflow->resultsOfWorkflow();
+        foreach ($steps as $stepKey => $step) {
+            if ($step["type"] == "result" && isset($step["chartItemReference"])) {
+                $dbStep = $workflow->steps()->where("id", $stepIds[$stepKey])->first();
+                $dbStep->result_step_chart_type = $step["chartTypeNumber"];
+                $dbStep->save();
+                $references = $step["chartItemReference"];
+                $labels = $step["chartRenderingData"]["labels"];
+                $datasets = $step["chartRenderingData"]["datasets"][0];
+                $dbStep->resultStepChartItems()->detach();
+                foreach ($references as $key => $reference) {
+                    $dbResult = $possibleResults->where("result_name", $reference["reference"])->first();
+                    $dbStep->resultStepChartItems()->save($dbResult, [
+                        "item_label" => $labels[$key],
+                        "item_background_colour" => $datasets["backgroundColor"][$key],
+                        "item_data" => $datasets["data"][$key],
+                        "item_is_negated" => $reference["negation"] == "true"
+                    ]);
+                }
+            }
+        }
+
+        return [
+            "stepIds" => $stepIds,
+            "variableIds" => $fieldIds["variableIds"],
+            "optionIds" => $fieldIds["optionIds"],
+            "resultIds" => $resultIds
+        ];
     }
 
     /**
@@ -249,7 +282,6 @@ class DesignerSaveController extends Controller
                             "condition" => json_encode($rule["jsonRule"])
                         ]);
                     }
-
                     $savedRules = $savedRules->reject(function ($value) use ($nextStepId) {
                         return $value->id == $nextStepId;
                     });

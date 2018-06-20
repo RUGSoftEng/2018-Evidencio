@@ -44,7 +44,7 @@ class DesignerLoadController extends Controller
         $retObj["description"] = $workflow->description;
         $retObj["languageCode"] = $workflow->language_code;
         $retObj["evidencioModels"] = $this->getLoadedEvidencioModels($workflow);
-
+        $retObj["isDraft"] = $workflow->is_draft;
         $retObj["steps"] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
@@ -93,6 +93,29 @@ class DesignerLoadController extends Controller
         $retObj["variables"] = $variables["varIds"];
         $retObj["rules"] = $this->loadStepRules($dbStep);
         $retObj["apiCalls"] = $this->loadStepModelApiMapping($dbStep);
+        $retObj["chartItemReference"] = [];
+        $retObj["chartRenderingData"] = [
+            "labels" => [],
+            "datasets" => [[
+                "data" => [],
+                "backgroundColor" => []
+            ]]
+        ];
+        $retObj["chartTypeNumber"] = $dbStep->result_step_chart_type;
+        $savedLabels = $dbStep->resultStepChartItems()->get();
+        foreach ($savedLabels as $key => $label) {
+            $retObj["chartItemReference"][] = [
+                "reference" => $label->result_name,
+                "negation" => $label->pivot->item_is_negated == 1
+            ];
+            $retObj["chartRenderingData"]["labels"][] = $label->pivot->item_label;
+            $retObj["chartRenderingData"]["datasets"][0]["data"][] = $label->pivot->item_data;
+            $retObj["chartRenderingData"]["datasets"][0]["backgroundColor"][] = $label->pivot->item_background_colour;
+        }
+        if ($savedLabels->isNotEmpty())
+            $retObj["type"] = "result";
+        else
+            $retObj["type"] = "input";
         return ["step" => $retObj, "usedVariables" => $variables["usedVariables"]];
     }
 
@@ -146,7 +169,7 @@ class DesignerLoadController extends Controller
             $rule = [];
             $rule["title"] = $dbRule->pivot->title;
             $rule["description"] = $dbRule->pivot->desription;
-            $rule["jsonRule"] = $dbRule->pivot->condition;
+            $rule["jsonRule"] = json_decode(str_replace('"true"', 'true', $dbRule->pivot->condition));
             $rule["target"] = [
                 "id" => $dbRule->id,
                 "title" => $dbRule->title,

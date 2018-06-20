@@ -60,9 +60,16 @@ class DesignerController extends Controller
         return json_encode($data);
     }
 
+    /**
+     * Run the model with the specified parameters
+     *
+     * @param Request $request
+     * @return JSON Evidencio model results
+     */
     public function runModel(Request $request)
     {
         $data = EvidencioAPI::run($request->modelId, $request->values);
         return $data;
     }
+
 }

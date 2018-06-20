@@ -19,19 +19,76 @@
         <div class="card-body">
 
             @if(count($users) > 0)
-            <div class="table-responsive">
+            <div>
                 <table class="table table-usersverification">
-                    <tr>
+                    <tr class="d-none d-md-table-row">
                         <th>{{_("Name")}}</th>
-                        <th>{{_("Academic degree")}}</th>
+                        <th>{{_("BIG Code")}}</th>
                         <th>{{_("Organisation")}}</th>
                         <th></th>
                     </tr>
                     @foreach($users as $user)
-                    <tr>
+                    <tr class="d-md-none">
+                        <td>
+                            <dl class="row mt-4 mb-1">
+                                <dt class="col-sm-3">{{_("Name")}}</dt>
+                                <dd class="col-sm-9">{{ $user->first_name }} {{ $user->last_name }}</dd>
+                                <dt class="col-sm-3">{{_("BIG Code")}}</dt>
+                                <dd class="col-sm-9">
+                                    @if($user->big_code)
+                                    {{$user->big_code}}
+                                    @else
+                                    {{_("Not provided")}}
+                                    @endif
+                                </dd>
+                                <dt class="col-sm-3">{{_("Organisation")}}</dt>
+                                <dd class="col-sm-9">
+                                    @if($user->organisation)
+                                    {{$user->organisation}}
+                                    @else
+                                    {{_("Not provided")}}
+                                    @endif
+                                </dd>
+                                <dt class="col-sm-3">{{_("Email")}}</dt>
+                                <dd class="col-sm-9">{{ $user->email }}</dd>
+                                <dt class="col-sm-3">{{_("Academic Degree")}}</dt>
+                                <dd class="col-sm-9">
+                                    @if($user->academic_degree)
+                                    {{$user->academic_degree}}
+                                    @else
+                                    {{_("Not provided")}}
+                                    @endif
+                                </dd>
+                                <dt class="col-sm-3">{{_("Bio")}}</dt>
+                                <dd class="col-sm-9">
+                                    @if($user->bio)
+                                    {{$user->bio}}
+                                    @else
+                                    {{_("Not provided")}}
+                                    @endif
+                                </dd>
+                                @foreach($user->registrationDocuments as $document)
+                                <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
+                                <dd class="col-sm-9">{{ $document->name }} <a class="badge badge-secondary" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
+                                @endforeach
+                            </dl>
+
+                            <form method="post" class="user-accept d-inline-block mt-1 mb-4" action="{{ route("usersverification.accept")}}">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="user_id" value="{{$user->id}}">
+                                <input type="submit" class="btn btn-success btn-sm" value="{{_("Accept")}}">
+                            </form>
+                            <form method="post" class="user-reject d-inline-block mt-1 mb-4" action="{{ route("usersverification.reject")}}">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="user_id" value="{{$user->id}}">
+                                <input type="submit" class="btn btn-danger btn-sm" value="{{_("Reject")}}">
+                            </form>
+                        </td>
+                    </tr>
+                    <tr class="d-none d-md-table-row">
                         <td>{{$user->first_name}} {{$user->last_name}}</td>
-                        @if($user->academic_degree)
-                        <td>{{$user->academic_degree}}</td>
+                        @if($user->big_code)
+                        <td>{{$user->big_code}}</td>
                         @else
                         <td>{{_("Not provided")}}</td>
                         @endif
@@ -53,16 +110,16 @@
                         </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="d-none d-md-table-row">
                         <td colspan="5" class="px-3 py-0 border-top-0">
                             <div class="collapse" id="collapse-{{$user->id}}">
                                 <dl class="row my-4">
                                     <dt class="col-sm-3">{{_("Email")}}</dt>
                                     <dd class="col-sm-9">{{ $user->email }}</dd>
-                                    <dt class="col-sm-3">{{_("BIG Code")}}</dt>
+                                    <dt class="col-sm-3">{{_("Academic Degree")}}</dt>
                                     <dd class="col-sm-9">
-                                        @if($user->big_code)
-                                        {{$user->big_code}}
+                                        @if($user->academic_degree)
+                                        {{$user->academic_degree}}
                                         @else
                                         {{_("Not provided")}}
                                         @endif
@@ -77,7 +134,7 @@
                                     </dd>
                                     @foreach($user->registrationDocuments as $document)
                                     <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
-                                    <dd class="col-sm-9">{{ $document->name }} <a class="btn btn-primary btn-sm" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
+                                    <dd class="col-sm-9">{{ $document->name }} <a class="badge badge-secondary" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
                                     @endforeach
                                 </dl>
                             </div>

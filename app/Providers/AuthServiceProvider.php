@@ -39,5 +39,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('is-administrator', function($user) {
             return $user->is_administrator;
         });
+
+        Gate::define('patient-view-workflow', function($user, Workflow $workflow) {
+            return $workflow->is_verified && $workflow->is_published;
+        });
     }
 }

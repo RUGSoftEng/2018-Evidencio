@@ -10413,8 +10413,8 @@ a.text-dark:focus {
 
 @font-face {
   font-family: 'fontello';
-  src: url(/fonts/fontello.eot?bc777a8855a906f91400b0b23bfbb7e0);
-  src: url(/fonts/fontello.eot?bc777a8855a906f91400b0b23bfbb7e0) format("embedded-opentype"), url(/fonts/fontello.woff?d52411abda13fdf10a0922d9d692336f) format("woff"), url(/fonts/fontello.ttf?d531208088af52453296fa0601841645) format("truetype"), url(/fonts/fontello.svg?f1be6b599ee3dd27589c6cc1cbccedd5) format("svg");
+  src: url(/fonts/fontello.eot?406162383811dfaf1d53f10a2d25340c);
+  src: url(/fonts/fontello.eot?406162383811dfaf1d53f10a2d25340c) format("embedded-opentype"), url(/fonts/fontello.woff?d946d94102f4d938568e8ea5dcc8b708) format("woff"), url(/fonts/fontello.ttf?a6a3e7448923cfd22f98653f3c638a43) format("truetype"), url(/fonts/fontello.svg?9b3d4d79d693e2cfd216ef8b16f723d2) format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -10427,7 +10427,6 @@ a.text-dark:focus {
   display: inline-block;
   text-decoration: inherit;
   width: 1em;
-  margin-right: .2em;
   text-align: center;
   /* opacity: .8; */
   /* For safety - reset parent styles, that can break glyph codes*/
@@ -10437,7 +10436,6 @@ a.text-dark:focus {
   line-height: 1em;
   /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
-  margin-left: .2em;
   /* You can be more comfortable with increased icons size */
   /* font-size: 120%; */
   /* Font smoothing. That was taken from TWBS */

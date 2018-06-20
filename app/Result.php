@@ -23,7 +23,6 @@ class Result extends Model
     protected $touches = ['step'];
 
     public $timestamps = false;
-
     /**
      * Step, after which there is an Evidencio model run that returns the result
      */
@@ -39,9 +38,22 @@ class Result extends Model
      * chart, in the HTML format
      * @property int item_data placeholder value for the result for presentational
      * purposes used on the designer side
+     *
+     * @property bool item_is_negated specifies if the value in the chart should
+     * be displayed as 100 - variable_value
      */
     public function usedInChartsInResultSteps()
     {
-        return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data');
+        return $this->belongsToMany('App\Step','result_step_chart_items','item_result_id','item_result_step_id')->withPivot('item_label','item_background_colour','item_data','item_is_negated');
     }
+
+    public static function getResult($id)
+    {
+      return  Result::join('steps', 'steps.id', '=', 'results.step_id')
+        ->join('result_step_chart_items', 'item_result_id', '=', 'results.id')
+        ->where('steps.workflow_step_workflow_id', '=', $id)
+        ->select('steps.id as sid', 'steps.description as desc', 'steps.result_step_chart_type as chartType', 'results.*', 'result_step_chart_items.*', 'steps.result_step_chart_options as opt')
+        ->get();
+      }
+
 }

@@ -10,6 +10,7 @@ use App\Step;
 use App\Field;
 use App\Option;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\UnauthorizedException;
 
 /**
  * WorkflowController class, handles database- and API-calls for Workflowpage.
@@ -22,6 +23,11 @@ class WorkflowController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index($workflowId)
+    {
+        $result = WorkflowController::loadWorkflow($workflowId);
+        return view('workflow')->with('result', $result);
+    }
 
     /**
      * Loads a workflow from the database based on the workflowId
@@ -34,7 +40,12 @@ class WorkflowController extends Controller
         $retObj = [];
         $usedVariables = [];
         $workflow = Workflow::find($workflowId);
-        if ($workflow == null || !$workflow->is_verified) {
+
+        if (!$workflow->is_verified || !$workflow->is_published) {
+            throw new UnauthorizedException(_("This action is unauthorized."));
+        }
+
+        if ($workflow == null) {
             $retObj['success'] = false;
             return $retObj;
         }
@@ -47,8 +58,10 @@ class WorkflowController extends Controller
         $retObj['steps'] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
+        //dd($steps);
         foreach ($steps as $step) {
             $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
+            //dd($stepLoaded);
             $retObj['steps'][$counter] = $stepLoaded['step'];
 
             $counter++;
@@ -84,6 +97,12 @@ class WorkflowController extends Controller
     {
         $retObj = [];
         $retObj['id'] = $dbStep->id;
+        $retObj['evidencioModelIds'] = $dbStep->modelRuns();
+        $retObj['apiMapping'] = $this->loadApiVariableMapping($dbStep);
+        $retObj['nextSteps'] = $dbStep->nextSteps()->get();
+        foreach ($retObj['nextSteps'] as $nextStep) {
+            $nextStep['pivot']['condition'] = str_replace('"true"', 'true', $nextStep['pivot']['condition']);
+        }
         $retObj['title'] = $dbStep->title;
         $retObj['description'] = $dbStep->description;
         $retObj['colour'] = $dbStep->colour;
@@ -102,6 +121,7 @@ class WorkflowController extends Controller
             $name = 'var' . $stepNum . '_' . $key;
             $varIds[] = $name;
             $usedVariables[$name] = $this->loadVariable($value);
+
         }
         return $usedVariables;
     }
@@ -134,11 +154,25 @@ class WorkflowController extends Controller
         }
         return $retObj;
     }
-    public function index($workflowId)
+
+    private function loadApiVariableMapping($dbStep)
     {
-        $result = WorkflowController::loadWorkflow($workflowId);
-        return view('workflow')->with('result',$result);
+        $retObj = [];
+        $models = $dbStep->modelRuns();
+        foreach ($models as $model) {
+            $retObj[] = $dbStep->modelRunFields()->wherePivot("evidencio_model_id", $model)->get();
+        }
+        return $retObj;
     }
+
+    public function runModel(Request $request)
+    {
+        // TODO Check if the model is connected to a published workflow to avoid
+        // misuse of the API
+        $data = EvidencioAPI::run($request->modelId, $request->values);
+        return $data;
+    }
+
 
 
 

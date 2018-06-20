@@ -55,7 +55,7 @@ class UsersVerificationController extends Controller
 
         $user->save();
 
-        Mail::to($user)->send(new AccountApproved($user));
+        Mail::to($user)->queue(new AccountApproved($user));
 
         return redirect()->route("usersverification.index");
     }
@@ -78,7 +78,7 @@ class UsersVerificationController extends Controller
 
         $user->delete();
 
-        Mail::to($email)->send(new AccountRejected($userName));
+        Mail::to($email)->queue(new AccountRejected($userName));
 
         return redirect()->route("usersverification.index");
     }

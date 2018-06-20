@@ -23,16 +23,16 @@ use Illuminate\Database\Eloquent\Model;
 class Workflow extends Model
 {
 
-    protected $fillable = ['title','description','language_code'];
+    protected $fillable = ['title', 'description', 'language_code'];
 
     public function author()
     {
-        return $this->belongsTo('App\User','author_id');
+        return $this->belongsTo('App\User', 'author_id');
     }
 
     public function verifiedByReviewer()
     {
-        return $this->belongsTo('App\User','verified_by_reviewer_id');
+        return $this->belongsTo('App\User', 'verified_by_reviewer_id');
     }
 
     /**
@@ -40,7 +40,7 @@ class Workflow extends Model
      */
     public function steps()
     {
-        return $this->hasMany('App\Step','workflow_step_workflow_id');
+        return $this->hasMany('App\Step', 'workflow_step_workflow_id');
     }
 
     /**
@@ -48,7 +48,7 @@ class Workflow extends Model
      */
     public function loadedEvidencioModels()
     {
-        return $this->hasMany('App\LoadedEvidencioModel','workflow_id');
+        return $this->hasMany('App\LoadedEvidencioModel', 'workflow_id');
     }
 
     /**
@@ -56,11 +56,48 @@ class Workflow extends Model
      */
     public function verificationComments()
     {
-        return $this->hasMany('App\VerificationComment','workflow_id');
+        return $this->hasMany('App\VerificationComment', 'workflow_id');
     }
 
-    public function search($title){
-        return Workflow::join('users', 'users.id', '=', 'author_id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->select('users.id','users.first_name', 'users.last_name', 'workflows.*')->get();
-//        return Workflow::join('users', 'author_id', '=', 'users.id')->where('title', 'LIKE', '%'.$title.'%')->orWhere('description', 'LIKE', '%'.$title.'%')->get();
+    public static function search($title)
+    {
+        return Workflow::join('users', 'users.id', '=', 'author_id')
+        ->where(function ($query) use ($title) {
+            $query->where('title', 'LIKE', '%' . $title . '%')
+                  ->orWhere('description', 'LIKE', '%' . $title . '%');
+        })
+        ->where('workflows.is_verified',true)
+        ->where('is_published',true)
+        ->select('users.id', 'users.first_name', 'users.last_name', 'workflows.*')
+        ->get();
+    }
+
+    /**
+     * Returns all the results of a workflow
+     */
+    public function resultsOfWorkflow()
+    {
+        $steps = $this->steps()->get();
+        $results = collect([]);
+        foreach ($steps as $step) {
+            $results = $results->merge($step->modelRunResults()->get());
+        }
+        return $results;
+    }
+
+    /**
+     * Publishes the workflow. The designer can publish a workflow to indicate that it should appear on the website.
+     * Right now it is automatically marked verified, but this should be done by another user/administrator, who
+     * should be notified of the published workflow in some way. However, we have not been able to implement workflow
+     * verification.
+     *
+     * @return void
+     */
+    public function publish()
+    {
+        $this->is_draft = false;
+        $this->is_published = true;
+        $this->is_verified = true; //TODO: remove this after implementing reviewing of the workflows
+        $this->save();
     }
 }

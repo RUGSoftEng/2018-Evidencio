@@ -91,13 +91,14 @@
                                                             fields to the current step or link it to a precious step to use
                                                             the fields of that step.</h6>
                                                     </div>
+                                                    <label for="variableMappingList" class="variable-label mb-2">Selected models</label>
                                                     <variable-mapping-api-list :api-calls="localStep.apiCalls" :used-variables="localUsedVariables" :reachable-variables="variablesUpToStep"
                                                         @remove="localStep.apiCalls = []"></variable-mapping-api-list>
                                                 </div>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep"></rule-edit-list>
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged" @remove="removeResultUsingRules"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
@@ -109,7 +110,7 @@
                                             <div id="chartLayoutDesigner">
                                                 <div class="dropdown">
                                                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                        aria-expanded="false"  style="margin-top: 8px;">
                                                         Pick a chart type
                                                     </a>
 
@@ -212,13 +213,13 @@ export default {
   computed: {
     // Array containing all variables assigned up to and including the current step
     variablesUpToStep: function() {
-      let vars = this.ancestorVariables;
+      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));
       vars = vars.concat(this.localStep.variables);
       return vars;
     },
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
-      let results = this.ancestorResults;
+      let results = JSON.parse(JSON.stringify(this.ancestorResults));
       if (this.localStep.hasOwnProperty("apiCalls")) {
         this.localStep.apiCalls.forEach(apiCall => {
           apiCall.results.map(result => {
@@ -283,6 +284,7 @@ export default {
       this.setSelectedModels();
       this.updateRuleTargetDetails();
       this.chartChanged = !this.chartChanged;
+      this.childrenChanged = !this.childrenChanged;
     },
 
     /**
@@ -314,6 +316,18 @@ export default {
     updateOrder(newOrderVariables) {
       this.selectedVariables = newOrderVariables;
       this.localStep.variables = newOrderVariables;
+    },
+
+    /**
+     * Remove all rules in the current step that use results.
+     */
+    removeResultUsingRules() {
+      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {
+        const rule = this.localStep.rules[index].condition;
+        if (!(rule.hasOwnProperty("any") && rule.any[0].fact == "trueValue")) {
+          this.localStep.rules.action = "destroy";
+        }
+      }
     },
 
     /**
@@ -516,7 +530,8 @@ export default {
       localStep: {},
       localUsedVariables: {},
       multiSelectedVariables: [],
-      chartChanged: false
+      chartChanged: false,
+      childrenChanged: false
     };
   }
 };

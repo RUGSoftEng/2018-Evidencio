@@ -59,7 +59,8 @@ export default {
 <style scoped>
 .sizing {
     position: relative;
-    min-height: 300px;
+    /*Next line is commented out because the list of variables in the 'Variables' box was going over it, and a scrollbar was appearing on the entire page*/
+    /*min-height: 300px;*/
 }
 
 .scrollbar {

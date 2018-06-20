@@ -72,6 +72,8 @@ class RegisterController extends Controller
         {
             if(!$user->email_verified)
             {
+                // We don't remove the token to be able to show information that
+                // the e-mail has already been verified.
                 $user->email_verified = true;
                 $user->save();
                 $status = _("Your e-mail is verified, you can now log in!");
@@ -132,7 +134,7 @@ class RegisterController extends Controller
             'organisation' => $data['organisation'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'email_token' => sha1(time()), //TODO smarter token
+            'email_token' => bin2hex(openssl_random_pseudo_bytes(16)),
         ]);
 
         if(array_key_exists('file',$data))
@@ -146,7 +148,7 @@ class RegisterController extends Controller
             ]);
         }
 
-        Mail::to($user)->send(new VerifyMail($user));
+        Mail::to($user)->queue(new VerifyMail($user));
 
         return $user;
     }

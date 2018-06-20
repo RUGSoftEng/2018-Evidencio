@@ -1,10 +1,11 @@
 <template>
     <div>
-        <button type="button" class="list-group-item list-group-item-action" data-toggle="collapse" :data-target="'#editRule_' + index"
+        <button type="button" class="list-group-item list-group-item-action" :class="{warning: warning}" data-toggle="collapse" :data-target="'#editRule_' + index"
             aria-expanded="false" :aria-controls="'editRule_' + index" :id="'headerRule_' + index" @click="show = !show">
-            <i class="fo-icon icon-down-open" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open" v-else>&#xe803;</i>
+            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
+            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
             {{ rule.title }}
+            <i class="fo-icon icon-trash float-right" @click="removeRule">&#xf1f8;</i>
         </button>
         <div class="form-group collapse" :id="'editRule_' + index">
             <label for="title" class="mb-0">Title</label>
@@ -17,7 +18,7 @@
             </div>
             <label class="mb-0" for="target">Target</label>
             <multiselect name="target" v-model="rule.target" label="title" track-by="ind" :options="children" :option-height="44" :show-labels="false"
-                preselect-first :allow-empty="false">
+                preselect-first :allow-empty="false" @input="$emit('children-changed')">
                 <template slot="singleLabel" slot-scope="props">
                     <div class="container-fluid">
                         <div class="row">
@@ -78,6 +79,15 @@ export default {
     reachableResults: {
       type: Array,
       required: true
+    },
+    warning: {
+      type: Boolean,
+      required: true
+    }
+  },
+  methods: {
+    removeRule() {
+      this.$emit("remove", this.index);
     }
   },
   data() {
@@ -87,3 +97,18 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.icon-trash {
+  font-size: 140%;
+}
+.arrow {
+  font-size: 120%;
+}
+.border-secondary {
+  border-color: #ced4da !important;
+}
+.warning {
+  border: solid 2px yellow;
+}
+</style>
