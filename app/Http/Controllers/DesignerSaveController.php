@@ -185,6 +185,8 @@ class DesignerSaveController extends Controller
             if ($step["type"] == "result" && isset($step["chartItemReference"])) {
                 $dbStep = $workflow->steps()->where("id", $stepIds[$stepKey])->first();
                 $dbStep->result_step_chart_type = $step["chartTypeNumber"];
+                if ($step["chartTypeNumber"] == 0)
+                    $dbStep->result_step_chart_options = json_encode($step["chartOptions"]);
                 $dbStep->save();
                 $references = $step["chartItemReference"];
                 $labels = $step["chartRenderingData"]["labels"];

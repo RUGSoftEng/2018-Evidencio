@@ -36,7 +36,7 @@ Route::get('/notverified', function () {
 
 Route::get('/designer', 'DesignerController@index')->name('designer')->middleware('auth');
 
-Route::get('/graph', 'GraphController@index');
+Route::post('/graph', 'GraphController@index');
 
 Route::get('/search', function () {
   return view('search');
@@ -69,12 +69,12 @@ Route::get('/privacypolicy', function () {
   return view('privacypolicy');
 })->name('privacypolicy');
 
-Route::get('/userguide',function() {
-	return view('userguide');
+Route::get('/userguide', function () {
+  return view('userguide');
 })->name('userguide')->middleware('auth');
 
-Route::get('/disclaimer',function() {
-	return view('disclaimer');
+Route::get('/disclaimer', function () {
+  return view('disclaimer');
 })->name('disclaimer');
 
 Route::get('/myworkflows', 'MyWorkflowsController@index')->name('myworkflows');
