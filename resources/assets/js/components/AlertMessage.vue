@@ -12,13 +12,11 @@ export default {
   props: {
     type: {
       type: String,
-      required: false,
-      default: "success"
+      required: false
     },
     message: {
       type: String,
-      required: true,
-      default: "Default"
+      required: true
     },
     show: {
       type: Boolean,

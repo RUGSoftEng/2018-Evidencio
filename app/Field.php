@@ -54,4 +54,119 @@ class Field extends Model
     {
         return $this->belongsToMany('App\Step','model_run_field_mappings','field_id','step_id');
     }
+
+
+    /**
+     * Updates the information of a single variable
+     *
+     * @param Array $field Array containing data of field (variable)
+     */
+    public function saveSingleField($field)
+    {
+        $this->friendly_title = $field["title"];
+        $this->friendly_description = $field["description"];
+        $this->evidencio_variable_id = $field["id"];
+        if ($field["type"] == "continuous") {
+            $this->continuous_field_max = $field["options"]["max"];
+            $this->continuous_field_min = $field["options"]["min"];
+            $this->continuous_field_unit = $field["options"]["unit"];
+            $this->continuous_field_step_by = $field["options"]["step"];
+        }
+        $this->save();
+    }
+
+    /**
+     * Saves/updates the options belonging to a categorical variable.
+     *
+     * @param Array $options Array of options
+     * @return Array Array filled with the database IDs of the saved options.
+     */
+    public function saveCategoricalOptions($options)
+    {
+        $optionIds = [];
+        $savedOptions = $this->options()->get();
+        foreach ($options as $option) {
+            if ($savedOptions->isNotEmpty() && ($opt = $savedOptions->where("id", $option["databaseId"]))->isNotEmpty()) {
+                $opt = $opt->first();
+                $opt->setInformation($option);
+                $opt->save();
+                $savedOptions = $savedOptions->reject(function ($value) use ($option) {
+                    return ($value->id == $option["databaseId"]);
+                });
+            } else {
+                $opt = new Option;
+                $opt->setInformation($option);
+                $this->options()->save($opt);
+            }
+            $optionIds[] = $opt->id;
+        }
+        $savedOptions->map(function ($value) {
+            $value->delete();
+        });
+        return $optionIds;
+    }
+
+    /**
+     * Removes a field from the database. First detaches and deletes connected options.
+     *
+     * @return void
+     */
+    public function removeField()
+    {
+        $stepsUsing = $this->usedInRunsInSteps()->get();
+        $stepsUsing->map(function ($value) {
+            $value->modelRunFields()->detach($this);
+        });
+        $options = $this->options()->get();
+        foreach ($options as $option) {
+            $option->delete();
+        }
+        $this->delete();
+    }
+
+    /**
+     * Loads a single variable. The variables are called `Fields` in the database.
+     *
+     * @return Array Array containing all the fields of the variable and the options, if available.
+     */
+    public function loadField()
+    {
+        $retObj = [];
+        $retObj["databaseId"] = $this->id;
+        $retObj["title"] = $this->friendly_title;
+        $retObj["description"] = $this->friendly_description;
+        $retObj["id"] = $this->evidencio_variable_id;
+        $options = $this->options()->get();
+        if ($options->isEmpty()) {
+            $retObj["type"] = "continuous";
+            $retObj["options"]["max"] = $this->continuous_field_max;
+            $retObj["options"]["min"] = $this->continuous_field_min;
+            $retObj["options"]["step"] = $this->continuous_field_step_by;
+            $retObj["options"]["unit"] = $this->continuous_field_unit;
+        } else {
+            $retObj["type"] = 'categorical';
+            $retObj["options"] = [];
+            foreach ($options as $key => $option) {
+                $retObj["options"][$key] = $option->loadOption();
+            }
+        }
+        return $retObj;
+    }
+
+    /**
+     * Load a field for an API-call variable mapping.
+     * Unfortunately some required information for the designer is unknown at this point.
+     * The localVariable & evidencioTitle are set at the client side.
+     *
+     * @return Array Array containing variable information required for api-call variable mapping
+     */
+    public function loadFieldForApiVariableMapping()
+    {
+        return [
+            "evidencioVariableId" => $this->pivot->evidencio_field_id,
+            "fieldId" => $this->id,
+            "localVariable" => -1,
+            "evidencioTitle" => ""
+        ];
+    }
 }

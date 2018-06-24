@@ -7,7 +7,7 @@
             <label for="description" class="mb-0 mt-2">Description</label>
             <textarea id="description" cols="30" v-model="localDescription" @input="change" placeholder="Description" :disabled="!editing"
                 :class="{'form-control': editing, 'form-control-plaintext': !editing }" :rows="numberOfRows"></textarea>
-            <input type="image" class="buttonIcon right" :src="getImage" @click="editing = !editing" alt="Edit">
+            <input type="image" class="buttonIcon float-right" :src="getImage" @click="editing = !editing" alt="Edit">
         </div>
     </form>
 </template>
@@ -25,23 +25,23 @@ export default {
   props: {
     title: {
       type: String,
-      required: true,
+      required: false,
       default: () => {
         return "";
       }
     },
     description: {
       type: String,
-      required: true,
+      required: false,
       default: () => {
         return "";
       }
     },
     numberOfRows: {
-      type: String,
+      type: Number,
       required: false,
       default: () => {
-        return "3";
+        return 3;
       }
     }
   },
@@ -82,10 +82,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.right {
-  float: right;
-}
-
 textarea {
   resize: none;
 }
