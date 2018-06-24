@@ -27,7 +27,7 @@ class DesignerLoadController extends Controller
     /**
      * Loads a workflow from the database based on the workflowId
      *
-     * @param Number $workflowId
+     * @param Int $workflowId
      * @return Array
      */
     public function loadWorkflow($workflowId)
@@ -119,6 +119,13 @@ class DesignerLoadController extends Controller
         return ["step" => $retObj, "usedVariables" => $variables["usedVariables"]];
     }
 
+    /**
+     * Loads the variables of a step
+     *
+     * @param App|Step $dbStep Database model of the step
+     * @param Int $stepNum Index of the step to load variables for (used for correct assigning)
+     * @return Array Array containing the identifications of the loaded variables and the variables themselves
+     */
     private function loadVariablesOfStep($dbStep, $stepNum)
     {
         $usedVariables = [];
@@ -132,6 +139,12 @@ class DesignerLoadController extends Controller
         return ["varIds" => $varIds, "usedVariables" => $usedVariables];
     }
 
+    /**
+     * Loads a single variable
+     *
+     * @param App|Field $dbVariable Database model of the variable. The variables are called `Fields` in the database.
+     * @return Array Array containing all the fields of the variable.
+     */
     private function loadVariable($dbVariable)
     {
         $retObj = [];
@@ -161,6 +174,14 @@ class DesignerLoadController extends Controller
         return $retObj;
     }
 
+    /**
+     * Loads the rules (conditional connections to next steps) of a step
+     *
+     * @param App|Step $dbStep Database model of the step
+     * @return Array Array containing the rules
+     * 
+     * @todo Find nicer way to do the json_decode. Clash between PHP and JS.
+     */
     private function loadStepRules($dbStep)
     {
         $retObj = [];
@@ -180,6 +201,14 @@ class DesignerLoadController extends Controller
         return $retObj;
     }
 
+    /**
+     * Loads the Variable mappings for all API-calls performed in a step.
+     * Multiple API-calls can be done in a step, for each call a mapping can be done to select
+     * the variables that should be used for the API-call.
+     *
+     * @param App|Step $dbStep Database model of the step
+     * @return Array Array containing the variable mappings of the API-calls
+     */
     private function loadStepModelApiMapping($dbStep)
     {
         $retObj = [];

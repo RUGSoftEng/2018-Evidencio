@@ -28,8 +28,8 @@ class DesignerSaveController extends Controller
      * Saves the workflow in the database.
      * Should the workflowId be given, that workflow will be updated.
      *
-     * @param HTTP|Request $request Post request withWorkflow data (title/description, steps, etc.)
-     * @param Number $workflowId
+     * @param Request $request Post request withWorkflow data (title/description, steps, etc.)
+     * @param Int $workflowId
      * @return Array Array with workflowId, [stepIds], [variableIds], [optionIds]
      */
     public function saveWorkflow(Request $request, $workflowId = null)
@@ -60,8 +60,8 @@ class DesignerSaveController extends Controller
      * Gets the workflow-object from a Id, if given and if it exists and is owned by the given user.
      * If not, create a new workflow
      *
-     * @param [App|User] $user
-     * @param [Number] $workflowId
+     * @param App|User $user
+     * @param Int $workflowId
      * @return App|Workflow
      */
     private function getWorkflowFromId($user, $workflowId)
