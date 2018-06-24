@@ -2,7 +2,7 @@
 
 @section('content')
 
-{{ _("Dear")}} {{$user->first_name}},<br>
+{{ __("Dear :name",['name' => $user->first_name])}},<br>
 
 <p>{{ _("You have been registered on Evidencio Patient Portal. Please click the link below to verify your e-mail address:") }}</p>
 

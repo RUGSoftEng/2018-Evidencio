@@ -35,7 +35,7 @@ class UsersVerificationController extends Controller
     public function index()
     {
         $users = User::where('is_verified',0)->where('email_verified',1)->get();
-        return view('usersverification', ['users' => $users]);
+        return view('usersverification', compact("users"));
     }
 
     /**

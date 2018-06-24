@@ -5753,6 +5753,27 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
+                    value: this.step.id,
+                    expression: "this.step.id"
+                  }
+                ],
+                attrs: { type: "hidden", name: "db_id" },
+                domProps: { value: this.step.id },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(this.step, "id", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
                     value: this.stepEvidencioId,
                     expression: "this.stepEvidencioId"
                   }
