@@ -26,8 +26,3 @@ Route::get('/graph', 'GraphController@index');
 Route::post('/PDF', function () {
   return view('PDF');
 });
-
-//Testing of rules engine
-Route::get('/test-rules-engine', function () {
-  return view('json-rules-engine-test');
-});
