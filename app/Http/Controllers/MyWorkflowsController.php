@@ -29,6 +29,12 @@ class MyWorkflowsController extends Controller
         return view('myworkflows', compact('workflows'));
     }
 
+    /**
+     * Delete the workflow.
+     *
+     * @param int $id ID of a worflow to delete
+     * @return \Illuminate\Http\Response
+     */
     public function deleteWorkflow($id)
     {
         Workflow::find($id)->safeDelete();
