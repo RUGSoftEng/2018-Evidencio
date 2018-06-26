@@ -100,4 +100,59 @@ class Workflow extends Model
         $this->is_verified = true; //TODO: remove this after implementing reviewing of the workflows
         $this->save();
     }
+
+
+    /**
+     * Deletes the workflow with all of its related objects in the database
+     *
+     * @return void
+     */
+    public function safeDelete() : void
+    {
+
+        //delete comment replies of those comments
+        foreach ($this->verificationComments()->get() as $verificationComment) {
+            CommentReply::where('verification_comment_id', $verificationComment->id)->delete();
+        }
+
+        //delete the verification comments
+        VerificationComment::where('workflow_id', $this->id)->delete();
+
+        /*****delete the record about the loaded evidencio model for that workflow*****/
+        LoadedEvidencioModel::where('workflow_id', $this->id)->delete();
+
+
+        /*****delete steps, options, fields, results*****/
+        $steps = Step::where('workflow_step_workflow_id', $this->id)->orderBy('workflow_step_level', 'desc')->get();
+        foreach ($steps as $step) {
+            //references to Jaap DesignerSaveController, saveSteps function
+            //$nextSteps = $step -> nextSteps() -> get();
+            //foreach ($nextSteps as $nextStep) {
+            //    $step->nextSteps()->detach($nextStep);
+            //}
+            $previousSteps = $step->previousSteps()->get();
+            foreach ($previousSteps as $previousStep) {
+                $step->previousSteps()->detach($previousStep);
+            }
+
+            $mappings = $step->modelRunFields()->get();
+            foreach ($mappings as $mapping) {
+                $step->modelRunFields()->detach($mapping);
+            }
+            $fields = $step->fields()->get();
+            foreach ($fields as $field) {
+                $step->fields()->detach($field);
+                $options = $field->options()->get();
+                foreach ($options as $option) {
+                    $option->delete();
+                }
+                $field->delete();
+            }
+            Result::where('step_id', $step->id)->delete();
+
+        }
+        Step::where('workflow_step_workflow_id', $this->id)->delete();
+
+        $this->delete();
+    }
 }
