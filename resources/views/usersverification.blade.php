@@ -68,7 +68,7 @@
                                     @endif
                                 </dd>
                                 @foreach($user->registrationDocuments as $document)
-                                <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
+                                <dt class="col-sm-3">{{__("Document :no", ['no' => $loop->iteration])}}</dt>
                                 <dd class="col-sm-9">{{ $document->name }} <a class="badge badge-secondary" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
                                 @endforeach
                             </dl>
@@ -133,7 +133,7 @@
                                         @endif
                                     </dd>
                                     @foreach($user->registrationDocuments as $document)
-                                    <dt class="col-sm-3">{{_("Document ")}}{{ $loop->iteration }}</dt>
+                                    <dt class="col-sm-3">{{__("Document :no", ['no' => $loop->iteration])}}</dt>
                                     <dd class="col-sm-9">{{ $document->name }} <a class="badge badge-secondary" href="{{ route('usersverification.download',['id' => $document->id]) }}">{{_("Open")}}</a></dd>
                                     @endforeach
                                 </dl>

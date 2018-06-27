@@ -125,7 +125,7 @@
                             <div class="col-md-6" id="files">
                                 <document-input v-for="(item,index) in fileList" v-bind:file="index" v-bind:key="item.id"></document-input>
                                 <div class="text-right">
-                                    <button class="btn btn-primary add-document" v-on:click="addButton" type="button">+</button>
+                                    <button class="btn btn-primary add-document" v-on:click="addButton" type="button" v-show="fileList.length < maxFileNum">+</button>
                                 </div>
 
                                 <small class="form-text text-muted">
