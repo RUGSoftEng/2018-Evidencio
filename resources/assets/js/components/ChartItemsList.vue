@@ -25,11 +25,23 @@ export default {
   props: {
     currentStepData: {
       type: Object,
-      required: true
+      required: false,
+      default: () => {
+          return {
+            labels: [],
+            datasets: [{
+                backgroundColor: [],
+                data: []
+            }]
+          }
+      }
     },
     itemReferenceUpper: {
       type: Array,
-      required: true
+      required: false,
+      default: () => {
+          return [];
+      }
     },
     availableResultsUpper: {
       type: Array,

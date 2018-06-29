@@ -115,18 +115,18 @@ a:focus {
 
 .subMenu[aria-expanded="false"]::before,
 .subMenu[aria-expanded="true"]::before {
-  content: '\e802';
+  content: '\f0d7';
   display: block;
   position: absolute;
   right: 20px;
   font-size: 0.9em;
-  font-family: 'fontello';
+  font-family: 'Font Awesome 5 Free';
 }
 
 .subMenu[aria-expanded="true"]::before {
-  content: '\e803';
+  content: '\f0d8';
   font-size: 0.9em;
-  font-family: 'fontello';
+  font-family: 'Font Awesome 5 Free';
 }
 
 .sidebar-listitem {

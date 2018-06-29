@@ -2,10 +2,10 @@
     <div>
         <button type="button" class="list-group-item list-group-item-action" aria-expanded="false" :aria-controls="'editVar_' + index"
             :id="'headerVar_' + index" @click="toggleShow">
-            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
+            <i class="fas fa-angle-down icon" v-if="!show"></i>
+            <i class="fas fa-angle-up icon" v-else></i>
             {{ variable.title }}
-            <i class="fo-icon icon-menu handle float-right">&#xf0c9;</i>
+            <i class="fas fa-bars handle icon float-right"></i>
         </button>
         <div class="form-group collapse" :id="'editVar_' + index">
             <label for="title" class="mb-0">Title</label>
@@ -41,11 +41,8 @@ export default {
 </script>
 
 <style>
-.icon-menu {
+.icon {
   font-size: 140%;
-}
-.arrow {
-  font-size: 120%;
 }
 </style>
 
