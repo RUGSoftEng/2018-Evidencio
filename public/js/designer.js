@@ -51447,7 +51447,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   props: {
     label10: {
       type: String,
-      default: 'This is a label I want to create'
+      default: "This is a label I want to create"
     },
     chartType: {
       type: Number,
@@ -51457,10 +51457,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       type: Object,
       default: function _default() {
         return {
-          labels: ['January', 'February'],
+          labels: ["January", "February"],
           datasets: [{
             // label: "Edit Label",
-            backgroundColor: ['#0000ff', '#ff0000'],
+            backgroundColor: ["#0000ff", "#ff0000"],
             data: [40, 20]
           }]
         };
@@ -51560,7 +51560,10 @@ var reactiveProp = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["mixins"].reactiveP
 /* harmony default export */ __webpack_exports__["default"] = ({
   extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["Bar"],
   props: {
-    options: {}
+    options: {
+      type: Object,
+      required: true
+    }
   },
   mixins: [reactiveProp],
   mounted: function mounted() {
@@ -52469,12 +52472,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     ChartItemEdit: __WEBPACK_IMPORTED_MODULE_0__ChartItemEdit_vue___default.a
   },
   props: {
-    currentStepData: {},
+    currentStepData: {
+      type: Object,
+      required: true
+    },
     itemReferenceUpper: {
-      type: Array
+      type: Array,
+      required: true
     },
     availableResultsUpper: {
-      type: Array
+      type: Array,
+      required: true
     }
   },
   computed: {
@@ -52509,14 +52517,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("refresh-reference-data", this.itemReferenceUpper);
     },
     toggleUpperRemoveChartItem: function toggleUpperRemoveChartItem(delIndex) {
-      var helpData = JSON.parse(JSON.stringify(this.currentStepData));
-      var helpRef = JSON.parse(JSON.stringify(this.itemReferenceUpper));
-      helpData.labels.splice(delIndex, 1);
-      helpData.datasets[0].backgroundColor.splice(delIndex, 1);
-      helpData.datasets[0].data.splice(delIndex, 1);
-      helpRef.splice(delIndex, 1);
-      this.$emit("refresh-chart-data-after-deletion", helpData);
-      this.$emit("refresh-reference-data-after-deletion", helpRef);
+      this.currentStepData.labels.splice(delIndex, 1);
+      this.currentStepData.datasets[0].backgroundColor.splice(delIndex, 1);
+      this.currentStepData.datasets[0].data.splice(delIndex, 1);
+      this.itemReferenceUpper.splice(delIndex, 1);
+      this.$emit("refresh-chart-data-after-deletion", this.currentStepData);
+      this.$emit("refresh-reference-data-after-deletion", this.itemReferenceUpper);
     }
   }
 });

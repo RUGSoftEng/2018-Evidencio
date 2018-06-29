@@ -5,7 +5,10 @@
   export default {
     extends: Bar,
     props: {
-      options: {}
+      options: {
+        type: Object,
+        required: true
+      }
     },
     mixins: [reactiveProp],
     mounted () {

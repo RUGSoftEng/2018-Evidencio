@@ -133,25 +133,13 @@ class Step extends Model
      */
     public function removeStep()
     {
-        $previousSteps = $this->previousSteps()->get();
-        foreach ($previousSteps as $previousStep) {
-            $this->previousSteps()->detach($previousStep);
-        }
-        $nextSteps = $this->nextSteps()->get();
-        foreach ($nextSteps as $nextStep) {
-            $this->nextSteps()->detach($nextStep);
-        }
-        $mappings = $this->modelRunFields()->get();
-        foreach ($mappings as $mapping) {
-            $this->modelRunFields()->detach($mapping);
-        }
-        $resultLabels = $this->resultStepChartItems()->get();
-        foreach ($resultLabels as $resultLabel) {
-            $this->resultStepChartItems()->detach($resultLabel);
-        }
+        $this->previousSteps()->detach();
+        $this->nextSteps()->detach();
+        $this->modelRunFields()->detach();
+        $this->resultStepChartItems()->detach();
+
         $results = $this->modelRunResults()->get();
         foreach ($results as $result) {
-            $this->modelRunResults()->detach($result);
             $result->delete();
         }
         $fields = $this->fields()->get();

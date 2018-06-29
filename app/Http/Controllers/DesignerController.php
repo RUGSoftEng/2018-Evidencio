@@ -51,7 +51,7 @@ class DesignerController extends Controller
      * Fetch models from Evidencio based on their search result, used for designer to search for models.
      *
      * @param Request $request Post request containing a Evidencio Model Search
-     * @return String Evidencio models
+     * @return String Evidencio models (Stringified JSON)
      */
     public function fetchSearch(Request $request)
     {
