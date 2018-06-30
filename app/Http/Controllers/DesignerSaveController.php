@@ -27,7 +27,7 @@ class DesignerSaveController extends Controller
      * @param Int $workflowId
      * @return Array Array with workflowId, [stepIds], [variableIds], [optionIds]
      */
-    public function saveWorkflow(Request $request, $workflowId = null)
+    public function saveWorkflow(Request $request, Int $workflowId = null) : Array
     {
         
         $user = Auth::user();
@@ -44,7 +44,7 @@ class DesignerSaveController extends Controller
      * @param Int $workflowId
      * @return App|Workflow
      */
-    private function getWorkflowFromId($user, $workflowId)
+    private function getWorkflowFromId(User $user, Int $workflowId) : Workflow
     {
         if ($workflowId != null) {
             $workflow = Workflow::find($workflowId);

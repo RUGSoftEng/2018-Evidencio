@@ -131,7 +131,7 @@ class Step extends Model
      *
      * @return void
      */
-    public function removeStep()
+    public function removeStep() : void
     {
         $this->previousSteps()->detach();
         $this->nextSteps()->detach();
@@ -151,14 +151,14 @@ class Step extends Model
     }
 
 
-    // ---------------------------------- LOAD ---------------------------------- //
+    // ---------------------------------- SAVE ---------------------------------- //
 
     /**
      * Updates the information of a single step
      *
      * @param Array $step Array containing data of step
      */
-    public function saveSingleStep($step)
+    public function saveSingleStep(Array $step) : void
     {
         $this->title = $step['title'];
         $this->description = $step['description'];
@@ -175,7 +175,7 @@ class Step extends Model
      * @param Array $variables Array of variables of workflow
      * @return Array Array with [variableIds], [optionIds], the IDs of the saved variables and options in the database.
      */
-    public function saveFields($step, $variables)
+    public function saveFields(Array $step, Array $variables) : Array
     {
         $variableIds = [];
         $optionIds = [];
@@ -218,7 +218,7 @@ class Step extends Model
      * 
      * @return Array Array with the database-ids of the result-models.
      */
-    public function saveStepModelApiMapping($apiCalls, $variableIds)
+    public function saveStepModelApiMapping(Array $apiCalls, Array $variableIds) : Array
     {
         $resultIds = [];
         $savedApiVars = $this->modelRunFields()->get();
@@ -290,7 +290,7 @@ class Step extends Model
      * @param Array $variableIds Array that is used to find the corresponding Field in the database
      * @return void
      */
-    private function saveSingleApiVariableMapping($apiVar, $apiCall, $variableIds)
+    private function saveSingleApiVariableMapping(Array $apiVar, Array $apiCall, Array $variableIds) : void
     {
         $apiField = Field::where('id', $variableIds[$apiVar["localVariable"]])->first();
         $this->modelRunFields()->save($apiField, [
@@ -306,7 +306,7 @@ class Step extends Model
      * @param Array $stepIds Array containing the ids used for the steps to identify them.
      * @return void
      */
-    public function saveRules($rules, $stepIds)
+    public function saveRules(Array $rules, Array $stepIds) : void
     {
         $savedRules = $this->nextSteps()->get();
         if (!empty($rules)) {
@@ -346,7 +346,7 @@ class Step extends Model
      * @param Array $step Array containing the required information.
      * @return void
      */
-    public function saveResultStepInfo(Array $step)
+    public function saveResultStepInfo(Array $step) : void
     {
         $possibleResults = Workflow::find($this->workflow_step_workflow_id)->resultsOfWorkflow();
         $this->result_step_chart_type = $step["chartTypeNumber"];
@@ -371,7 +371,7 @@ class Step extends Model
      *
      * @return void
      */
-    public function removeResults()
+    public function removeResults() : void
     {
         $this->resultStepChartItems()->detach();
         $this->result_step_chart_type = null;
@@ -383,10 +383,10 @@ class Step extends Model
     /**
      * Loads the relevant information for a step (NOT including the variables)
      *
-     * @param Number $stepNum Number that indicates what step in workflow it is.
+     * @param Int $stepNum Number that indicates what step in workflow it is.
      * @return Array Array containing information of step and the used variables.
      */
-    public function loadStep($stepNum)
+    public function loadStep(Int $stepNum) : Array
     {
         $retObj = [];
         $retObj["id"] = $this->id;
@@ -430,7 +430,7 @@ class Step extends Model
      * @param Int $stepNum Index of the step to load variables for (used for correct assigning)
      * @return Array Array containing the identifications of the loaded variables and the variables themselves
      */
-    private function loadVariablesOfStep($stepNum)
+    private function loadVariablesOfStep(Int $stepNum) : Array
     {
         $usedVariables = [];
         $variables = $this->fields()->get();
@@ -450,7 +450,7 @@ class Step extends Model
      *
      * @return Array Array containing the variable mappings of the API-calls
      */
-    private function loadStepModelApiMapping()
+    private function loadStepModelApiMapping() : Array
     {
         $retObj = [];
         $dbRuns = $this->modelRuns();
@@ -480,7 +480,7 @@ class Step extends Model
      * 
      * @todo Find nicer way to do the json_decode. Clash between PHP and JS.
      */
-    private function loadStepRules()
+    private function loadStepRules() : Array
     {
         $retObj = [];
         $dbRules = $this->nextSteps()->get();
@@ -495,7 +495,7 @@ class Step extends Model
      *
      * @return Array Array containing the rule to reach the next step
      */
-    private function loadRuleNextStep()
+    private function loadRuleNextStep() : Array
     {
         return [
             "title" => $this->pivot->title,

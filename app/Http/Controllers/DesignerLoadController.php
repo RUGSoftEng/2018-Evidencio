@@ -25,7 +25,7 @@ class DesignerLoadController extends Controller
      * @param Int $workflowId
      * @return Array
      */
-    public function loadWorkflow($workflowId)
+    public function loadWorkflow(Int $workflowId) : Array
     {
         $retObj = [];
         $usedVariables = [];

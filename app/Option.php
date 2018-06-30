@@ -30,7 +30,7 @@ class Option extends Model
      * @param Array $optionInfo
      * @return void
      */
-    public function setInformation(Array $optionInfo)
+    public function setInformation(Array $optionInfo) : void
     {
         $this->title = $optionInfo["title"];
         $this->friendly_title = $optionInfo["friendlyTitle"];
@@ -41,7 +41,7 @@ class Option extends Model
      *
      * @return Array Array with the information of an option.
      */
-    public function loadOption()
+    public function loadOption() : Array
     {
         return [
             "title" => $this->title,

@@ -78,8 +78,9 @@ class Workflow extends Model
 
     /**
      * Returns all the results of a workflow
+     * @return Collection Collection with result-objects from the database
      */
-    public function resultsOfWorkflow()
+    public function resultsOfWorkflow() : Collection
     {
         $steps = $this->steps()->get();
         $results = collect([]);
@@ -97,7 +98,7 @@ class Workflow extends Model
      *
      * @return void
      */
-    public function publish()
+    public function publish() : void
     {
         $this->is_draft = false;
         $this->is_published = true;
@@ -112,11 +113,11 @@ class Workflow extends Model
      * Saves the workflow in the database. Also returns the ids for the client side.
      * Should the workflowId be given, that workflow will be updated.
      *
-     * @param Http|Request $request Post request withWorkflow data (title/description, steps, etc.)
+     * @param Request $request Post request withWorkflow data (title/description, steps, etc.)
      * @param App|User $user User object from the database to save the workflow to.
      * @return Array Array with workflowId, [stepIds], [variableIds], [optionIds]
      */
-    public function saveWorkflow(Request $request, User $user)
+    public function saveWorkflow(Request $request, User $user) : Array
     {
         $returnObj = [];
         $this->author_id = $user->id;
@@ -142,8 +143,9 @@ class Workflow extends Model
      * Saves the loaded evimodels of a workflow, is required for the designer side.
      *
      * @param Array $modelIds IDs of loaded Evidencio models
+     * @return void
      */
-    private function saveLoadedEvidencioModels($modelIds)
+    private function saveLoadedEvidencioModels(Array $modelIds) : void
     {
         $savedLoadedModels = $this->loadedEvidencioModels()->get();
         foreach ($modelIds as $modelId) {
@@ -161,7 +163,7 @@ class Workflow extends Model
      * @param Array $variables Variables of workflow
      * @return Array Array with [stepIds], [variableIds], [optionIds]
      */
-    private function saveSteps($steps, $variables)
+    private function saveSteps(Array $steps, Array $variables) : Array
     {
         $savedSteps = $this->steps()->get();
         $stepIds = [];
@@ -228,7 +230,7 @@ class Workflow extends Model
      *
      * @return Array
      */
-    public function loadWorkflow()
+    public function loadWorkflow() : Array
     {
         $retObj = [];
         $usedVariables = [];
@@ -258,7 +260,7 @@ class Workflow extends Model
      *
      * @return Array Array of Evidencio model Ids
      */
-    private function getLoadedEvidencioModels()
+    private function getLoadedEvidencioModels() : Array
     {
         $array = [];
         $models = $this->loadedEvidencioModels()->get();

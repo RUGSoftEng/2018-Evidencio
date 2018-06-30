@@ -64,7 +64,7 @@ class Result extends Model
      * @param Int $number Number used to indicate the order of the results.
      * @return void
      */
-    public function saveResult($modelId, $name, $number)
+    public function saveResult(Int $modelId, String $name, Int $number) : void
     {
         $this->evidencio_model_id = $modelId;
         $this->result_name = $name;
@@ -76,7 +76,7 @@ class Result extends Model
      *
      * @return Array Array containing the result information
      */
-    public function loadResult()
+    public function loadResult() : Array
     {
         return [
             "name" => $this->result_name,

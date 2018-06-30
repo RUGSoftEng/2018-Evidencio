@@ -60,8 +60,9 @@ class Field extends Model
      * Updates the information of a single variable
      *
      * @param Array $field Array containing data of field (variable)
+     * @return void
      */
-    public function saveSingleField($field)
+    public function saveSingleField(Array $field) : void
     {
         $this->friendly_title = $field["title"];
         $this->friendly_description = $field["description"];
@@ -81,7 +82,7 @@ class Field extends Model
      * @param Array $options Array of options
      * @return Array Array filled with the database IDs of the saved options.
      */
-    public function saveCategoricalOptions($options)
+    public function saveCategoricalOptions(Array $options) : Array
     {
         $optionIds = [];
         $savedOptions = $this->options()->get();
@@ -111,7 +112,7 @@ class Field extends Model
      *
      * @return void
      */
-    public function removeField()
+    public function removeField() : void
     {
         $stepsUsing = $this->usedInRunsInSteps()->get();
         $stepsUsing->map(function ($value) {
@@ -129,7 +130,7 @@ class Field extends Model
      *
      * @return Array Array containing all the fields of the variable and the options, if available.
      */
-    public function loadField()
+    public function loadField() : Array
     {
         $retObj = [];
         $retObj["databaseId"] = $this->id;
@@ -160,7 +161,7 @@ class Field extends Model
      *
      * @return Array Array containing variable information required for api-call variable mapping
      */
-    public function loadFieldForApiVariableMapping()
+    public function loadFieldForApiVariableMapping() : Array
     {
         return [
             "evidencioVariableId" => $this->pivot->evidencio_field_id,
