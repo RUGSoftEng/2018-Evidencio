@@ -58,10 +58,8 @@ class WorkflowController extends Controller
         $retObj['steps'] = [];
         $counter = 0;
         $steps = $workflow->steps()->get();
-        //dd($steps);
         foreach ($steps as $step) {
             $stepLoaded = $this->loadStep($step, $counter, $usedVariables);
-            //dd($stepLoaded);
             $retObj['steps'][$counter] = $stepLoaded['step'];
 
             $counter++;

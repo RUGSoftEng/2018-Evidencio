@@ -269,4 +269,34 @@ class Workflow extends Model
             $array[] = $model->model_id;
         return $array;
     }
+
+    /**
+     * Deletes the workflow with all of its related objects in the database
+     *
+     * @return void
+     */
+    public function safeDelete() : void
+    {
+
+        //delete comment replies of those comments
+        foreach ($this->verificationComments()->get() as $verificationComment) {
+            CommentReply::where('verification_comment_id', $verificationComment->id)->delete();
+        }
+
+        //delete the verification comments
+        VerificationComment::where('workflow_id', $this->id)->delete();
+
+        /*****delete the record about the loaded evidencio model for that workflow*****/
+        LoadedEvidencioModel::where('workflow_id', $this->id)->delete();
+
+
+        /*****delete steps, options, fields, results*****/
+        $steps = $this->steps()->get();
+        foreach ($steps as $step) {
+            $step->removeStep();
+
+        }
+  
+        $this->delete();
+    }
 }

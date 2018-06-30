@@ -138,15 +138,15 @@ class RegisterController extends Controller
         ]);
 
         if(array_key_exists('file',$data))
-        foreach($data['file'] as $file)
-        {
-            $path = $file->store('documents');
+            foreach($data['file'] as $file)
+            {
+                $path = $file->store('documents');
 
-            $user->registrationDocuments()->create([
-                'name' => $file->getClientOriginalName(),
-                'url' => $path
-            ]);
-        }
+                $user->registrationDocuments()->create([
+                    'name' => $file->getClientOriginalName(),
+                    'url' => $path
+                ]);
+            }
 
         Mail::to($user)->queue(new VerifyMail($user));
 

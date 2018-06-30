@@ -15,11 +15,6 @@ window.appRegistration = new Vue({
     addButton: function(event) {
       this.fileList.push({id: this.next_id});
       this.next_id++;
-
-      if(this.fileList.length >= this.maxFileNum)
-      {
-        $(".add-document").hide();
-      }
     }
   }
 });

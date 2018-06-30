@@ -201,10 +201,6 @@ window.appRegistration = new Vue({
     addButton: function addButton(event) {
       this.fileList.push({ id: this.next_id });
       this.next_id++;
-
-      if (this.fileList.length >= this.maxFileNum) {
-        $(".add-document").hide();
-      }
     }
   }
 });
@@ -286,10 +282,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var id = parseInt(event.target.id.replace(regex, '$1'));
 
             appRegistration.fileList.splice(id, 1);
-
-            if ($(".add-document").is(":hidden") && appRegistration.fileList.length < appRegistration.maxFileNum) {
-                $(".add-document").show();
-            }
         },
         updateFile: function updateFile(event) {
             var fileName = event.target.files[0].name;

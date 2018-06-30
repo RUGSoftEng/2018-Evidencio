@@ -29,63 +29,17 @@ class MyWorkflowsController extends Controller
         return view('myworkflows', compact('workflows'));
     }
 
+    /**
+     * Delete the workflow.
+     *
+     * @param int $id ID of a worflow to delete
+     * @return \Illuminate\Http\Response
+     */
     public function deleteWorkflow($id)
     {
-        /*****delete the verification comments and comment replies*****/
-
-        //get the id's of verification comments of given workflow
-        $verificationComments = VerificationComment::where('workflow_id', '=', $id)->get();
-
-        //delete comment replies of those comments
-        foreach ($verificationComments as $verificationComment) {
-            CommentReply::where('verification_comment_id', $verificationComment->id)->delete();
-        }
-
-        //delete the verification comments
-        VerificationComment::where('workflow_id', $id)->delete();
-
-        /*****delete the record about the loaded evidencio model for that workflow*****/
-        LoadedEvidencioModel::where('workflow_id', $id)->delete();
-
-
-        /*****delete steps, options, fields, results*****/
-        $steps = Step::where('workflow_step_workflow_id', $id)->orderBy('workflow_step_level', 'desc')->get();
-        foreach ($steps as $step) {
-            //references to Jaap DesignerSaveController, saveSteps function
-            //$nextSteps = $step -> nextSteps() -> get();
-            //foreach ($nextSteps as $nextStep) {
-            //    $step->nextSteps()->detach($nextStep);
-            //}
-            $previousSteps = $step->previousSteps()->get();
-            foreach ($previousSteps as $previousStep) {
-                $step->previousSteps()->detach($previousStep);
-            }
-
-            $mappings = $step->modelRunFields()->get();
-            foreach ($mappings as $mapping) {
-                $step->modelRunFields()->detach($mapping);
-            }
-            $fields = $step->fields()->get();
-            foreach ($fields as $field) {
-                $step->fields()->detach($field);
-                $options = $field->options()->get();
-                foreach ($options as $option) {
-                    $option->delete();
-                }
-                $field->delete();
-            }
-            Result::where('step_id', $step->id)->delete();
-
-        }
-        Step::where('workflow_step_workflow_id', $id)->delete();
-
-        Workflow::destroy($id);
-
-        $user_id = Auth::user()->id;
-        $workflows = Workflow::where('author_id', '=', $user_id)->get();
+        Workflow::find($id)->safeDelete();
 
         return redirect()->route('myworkflows');
-    	//return view('/myworkflows',compact('workflows'));
     }
 
 
@@ -101,9 +55,9 @@ class MyWorkflowsController extends Controller
         $user = Auth::user();
         if ($workflow != null && $user->can("save", $workflow) && !$workflow->is_published) {
             $workflow->publish();
-            return ["success" => true];
+            return response()->json(["success" => true],200);
         }
-        return ["false" => true];
+        return response()->json(["success" => false],400);
     }
 
 }
