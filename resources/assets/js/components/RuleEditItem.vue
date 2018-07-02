@@ -2,10 +2,10 @@
     <div>
         <button type="button" class="list-group-item list-group-item-action" :class="{warning: warning}" data-toggle="collapse" :data-target="'#editRule_' + index"
             aria-expanded="false" :aria-controls="'editRule_' + index" :id="'headerRule_' + index" @click="show = !show">
-            <i class="fo-icon icon-down-open arrow" v-if="!show">&#xe802;</i>
-            <i class="fo-icon icon-up-open arrow" v-else>&#xe803;</i>
+            <i class="fas fa-angle-down icon" v-if="!show"></i>
+            <i class="fas fa-angle-up icon" v-else></i>
             {{ rule.title }}
-            <i class="fo-icon icon-trash float-right" @click="removeRule">&#xf1f8;</i>
+            <i class="fas fa-trash-alt icon float-right" @click="removeRule"></i>
         </button>
         <div class="form-group collapse" :id="'editRule_' + index">
             <label for="title" class="mb-0">Title</label>
@@ -99,11 +99,8 @@ export default {
 </script>
 
 <style scoped>
-.icon-trash {
+.icon {
   font-size: 140%;
-}
-.arrow {
-  font-size: 120%;
 }
 .border-secondary {
   border-color: #ced4da !important;

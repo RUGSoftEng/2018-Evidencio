@@ -375,7 +375,6 @@ window.vObj = new Vue({
         type: "POST",
         data: {},
         success: function (result) {
-          console.log("Workflow loaded: " + result.success);
           if (result.success) {
             // First save the change-indicators
             let currentSteps = self.stepsChanged;
@@ -434,7 +433,7 @@ window.vObj = new Vue({
           console.log(errorThrown);
           window.setTimeout(() => {
             window.location.replace("/designer");
-          }, 2000);
+          }, 4000);
         }
       });
     },
@@ -707,7 +706,7 @@ window.vObj = new Vue({
      */
     checkPossibleLogicOrResultLabelFailures() {
       let showNotification = false;
-      let notificationType = "all"
+      let notificationType = "all";
       this.steps.forEach((step, index) => {
         if (step.type == "result" || step.rules.length > 0) {
           let reachableResults = this.getResultsUpToStep(index);
@@ -750,16 +749,17 @@ window.vObj = new Vue({
                   backgroundColor: []
                 }]
               }
-              if (step.rules.length > 0) {
-                step.rules.forEach(rule => {
-                  if (this.checkRuleUsingResult(rule.condition)) {
-                    rule.action = "destroy";
-                  }
-                })
-              }
               showNotification = true;
-              notificationType = "all";
             }
+            if (step.rules.length > 0) {
+              step.rules.forEach(rule => {
+                if (this.checkRuleUsingResult(rule.condition)) {
+                  rule.action = "destroy";
+                  showNotification = true;
+                }
+              })
+            }
+            notificationType = "all";
           }
         }
       });
@@ -802,22 +802,22 @@ window.vObj = new Vue({
      * @param {String} baseFact 
      */
     checkRuleReachability(rule, reachableResults, baseFact) {
-      let showNotification = false;
+      let usesFacts = false;
       if (rule.hasOwnProperty("fact") && rule.fact != "trueValue") {
         if (this.getArrayIndex(rule.fact, reachableResults) == -1) {
           rule.fact = baseFact;
-          showNotification = true;
+          usesFacts = true;
         }
       } else if (rule.hasOwnProperty("any")) {
         rule.any.forEach(part => {
-          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) usesFacts = true;
         });
       } else if (rule.hasOwnProperty("all")) {
         rule.all.forEach(part => {
-          if (this.checkRuleReachability(part, reachableResults, baseFact)) showNotification = true;
+          if (this.checkRuleReachability(part, reachableResults, baseFact)) usesFacts = true;
         });
       }
-      return showNotification;
+      return usesFacts;
     },
 
     /**
@@ -945,24 +945,7 @@ window.vObj = new Vue({
             data: []
           }]
         },
-        /*{
-                 labels: ['January', 'February'],
-                 datasets: [{
-                   // label: "Edit Label",
-                   backgroundColor: ['#0000ff', '#ff0000'],
-                   data: [40, 20]
-                 }]
-               },*/
         chartItemReference: []
-        /*[{
-                    reference: "first",
-                    negation: false
-                  },
-                  {
-                    reference: "second",
-                    negation: false
-                  }
-                ]*/
       });
       this.stepsChanged = !this.stepsChanged;
       this.levels[level].steps.push(this.steps.length - 1);
@@ -1351,6 +1334,23 @@ window.vObj = new Vue({
     changeWorkflowDetails(newDetails) {
       this.title = newDetails.title;
       this.description = newDetails.description;
+    },
+
+    /**
+     * Fixes the rule-target indices.
+     * @param {Number} removedStep Index of the step that will be removed
+     */
+    changeRuleTargetsUponStepRemoval(removedStep) {
+      this.steps.forEach(step => {
+        if (step.hasOwnProperty("rules")) {
+          let numberOfRules = step.rules.length;
+          for (let index = 0; index < numberOfRules; index++) {
+            let rule = step.rules[index];
+            if (rule.target.stepId > removedStep)
+              rule.target.stepId--;
+          }
+        }
+      });
     }
   },
 
@@ -1383,6 +1383,7 @@ window.vObj = new Vue({
             cy.remove(cy.getElementById(currentStep.nodeId));
             this.removeRulesByTarget(index);
             this.removeStepFromLevel(index);
+            this.changeRuleTargetsUponStepRemoval(index);
             this.steps.splice(index, 1);
             currentStep.action = "none";
             break;
@@ -1424,7 +1425,7 @@ window.vObj = new Vue({
      * Adds/removes/changes rules in required
      */
     connectionsChanged: function () {
-      this.steps.forEach((step, index) => {
+      this.steps.forEach((step) => {
         for (let index = step.rules.length - 1; index >= 0; index--) {
           let currentRule = step.rules[index];
           switch (currentRule.action) {
@@ -1456,6 +1457,7 @@ window.vObj = new Vue({
           }
         }
       });
+      this.checkPossibleLogicOrResultLabelFailures()
     }
   }
 });

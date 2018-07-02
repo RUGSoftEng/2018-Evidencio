@@ -31,7 +31,7 @@
                             </div>
 
                             <div class="col-md-8 mb-2">
-                                <details-editable :title="localStep.title" :description="localStep.description" @change="changeStepDetails" number-of-rows="2"></details-editable>
+                                <details-editable :title="localStep.title" :description="localStep.description" @change="changeStepDetails" :number-of-rows=2></details-editable>
                             </div>
                         </div>
 
@@ -220,12 +220,14 @@ export default {
     // Array containing all results calculated up to and including the current step
     resultsUpToStep: function() {
       let results = JSON.parse(JSON.stringify(this.ancestorResults));
-      if (this.localStep.hasOwnProperty("apiCalls")) {
-        this.localStep.apiCalls.forEach(apiCall => {
-          apiCall.results.map(result => {
-            results.push(result.name);
+      if (this.localStep.type == "input") {
+        if (this.localStep.hasOwnProperty("apiCalls")) {
+          this.localStep.apiCalls.forEach(apiCall => {
+            apiCall.results.map(result => {
+              results.push(result.name);
+            });
           });
-        });
+        }
       }
       return results;
     },

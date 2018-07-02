@@ -15,71 +15,72 @@
 </template>
 
 <script>
-    import BarChart from "./BarChart";
-    import PieChart from "./PieChart";
-    import PolarChart from "./PolarChart";
-    import DoughnutChart from "./DoughnutChart";
-    export default {
-      components: {
-        BarChart,
-        PieChart,
-        PolarChart,
-        DoughnutChart
-      },
-      props: {
-        label10: {
-          type: String,
-          default: 'This is a label I want to create'
-        },
-        chartType:
-            {
-          type: Number,
-          default: 0
-        },
-        chartDataUpper: {
-          type: Object,
-          default: () => {
-            return {
-              labels: ['January', 'February'],
-              datasets: [{
-                // label: "Edit Label",
-                backgroundColor: ['#0000ff', '#ff0000'],
-                data: [40, 20]
-              }]
-            }
-          }
-        },
-        changed: {
-          type: Boolean,
-          required: true
-        },
-      },
-      watch: {
-        changed: function() {
-          this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
-        }
-      },
-      mounted() {
-        this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
-      },
-      data() {
+import BarChart from "./BarChart";
+import PieChart from "./PieChart";
+import PolarChart from "./PolarChart";
+import DoughnutChart from "./DoughnutChart";
+export default {
+  components: {
+    BarChart,
+    PieChart,
+    PolarChart,
+    DoughnutChart
+  },
+  props: {
+    label10: {
+      type: String,
+      default: "This is a label I want to create"
+    },
+    chartType: {
+      type: Number,
+      default: 0
+    },
+    chartDataUpper: {
+      type: Object,
+      default: () => {
         return {
-          localChartDataUpper: {},
-          chartOptions: {
-            // responsive: true,
-            maintainAspectRatio: true,
-            legend: false,
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
+          labels: ["January", "February"],
+          datasets: [
+            {
+              backgroundColor: ["#0000ff", "#ff0000"],
+              data: [40, 20]
             }
-          }
+          ]
+        };
+      }
+    },
+    changed: {
+      type: Boolean,
+      required: true
+    }
+  },
+  watch: {
+    changed: function() {
+      this.localChartDataUpper = JSON.parse(
+        JSON.stringify(this.chartDataUpper)
+      );
+    }
+  },
+  mounted() {
+    this.localChartDataUpper = JSON.parse(JSON.stringify(this.chartDataUpper));
+  },
+  data() {
+    return {
+      localChartDataUpper: {},
+      chartOptions: {
+        maintainAspectRatio: true,
+        legend: false,
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              }
+            }
+          ]
         }
       }
-    }
-
+    };
+  }
+};
 </script>
-

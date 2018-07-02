@@ -54,6 +54,34 @@ class Result extends Model
         ->where('steps.workflow_step_workflow_id', '=', $id)
         ->select('steps.id as sid', 'steps.description as desc', 'steps.result_step_chart_type as chartType', 'results.*', 'result_step_chart_items.*', 'steps.result_step_chart_options as opt')
         ->get();
-      }
+    }
+
+    /**
+     * Save a result object.
+     *
+     * @param Int $modelId Evidencio model id
+     * @param String $name Name of the result (used for identification)
+     * @param Int $number Number used to indicate the order of the results.
+     * @return void
+     */
+    public function saveResult(Int $modelId, String $name, Int $number) : void
+    {
+        $this->evidencio_model_id = $modelId;
+        $this->result_name = $name;
+        $this->result_number = $number;
+    }
+
+    /**
+     * Load a result from the database
+     *
+     * @return Array Array containing the result information
+     */
+    public function loadResult() : Array
+    {
+        return [
+            "name" => $this->result_name,
+            "databaseId" => $this->id
+        ];
+    }
 
 }

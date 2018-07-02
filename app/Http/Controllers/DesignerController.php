@@ -37,7 +37,7 @@ class DesignerController extends Controller
     /**
      * Fetch model from Evidencio based on its id, used for designer to retrieve variables.
      * 
-     * @param HTTP|Request $request Post request containing a Evidencio modelId
+     * @param Request $request Post request containing a Evidencio modelId
      * @return JSON Evidencio model data
      */
     public function fetchVariables(Request $request)
@@ -50,8 +50,8 @@ class DesignerController extends Controller
     /**
      * Fetch models from Evidencio based on their search result, used for designer to search for models.
      *
-     * @param HTTP|Request $request Post request containing a Evidencio Model Search
-     * @return JSON Evidencio models
+     * @param Request $request Post request containing a Evidencio Model Search
+     * @return String Evidencio models (Stringified JSON)
      */
     public function fetchSearch(Request $request)
     {

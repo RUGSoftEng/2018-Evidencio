@@ -9,7 +9,7 @@
             
             <div class="card-header">
                 <h3 style="display: inline-block;">My Workflows</h3>
-                <button style= "float: right;" type="button" class="btn btn-primary"  onclick="window.location='{{ url("/designer") }}'"><i class="fo-icon icon-plus">&#xe804;</i> Create New Workflow</button>
+                <button style= "float: right;" type="button" class="btn btn-primary"  onclick="window.location='{{ url("/designer") }}'"><i class="fas fa-plus"></i> Create New Workflow</button>
             </div>
             </div>
             
