@@ -1,8 +1,3 @@
-<!--
- - Color changing
- - Gray functions
-    -->
-
 <template>
     <!-- Modal -->
     <div class="modal fade" id="modalStep" tabindex="-1" role="dialog" aria-labelledby="modalStepOptions" aria-hidden="true">
@@ -35,22 +30,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-8" v-if="localStep.type == 'input'">
-                                <vue-multiselect v-model="multiSelectedVariables" :options="possibleVariables" :multiple="true" group-values="variables"
-                                    group-label="title" :group-select="true" :close-on-select="false" :clear-on-select="false"
-                                    label="title" track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
-                                    placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
-                                    <template slot="tag" slot-scope="props">
-                                        <span class="badge badge-info badge-larger">
-                                            <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
-                                            <span class="custom__remove" @click="props.remove(props.option)">❌</span>
-                                        </span>
-                                    </template>
-                                </vue-multiselect>
-                            </div>
-
-                            <div class="col-md-8" v-if="localStep.type == 'result'">
-
+                            <div class="col-md-8 mb-2">
+                                <details-editable :title="localStep.title" :description="localStep.description" @change="changeStepDetails" :number-of-rows=2></details-editable>
                             </div>
                         </div>
 
@@ -64,9 +45,9 @@
                                             <div class="nav nav-tabs card-header-tabs nav-scroll" id="nav-tab-modal" role="tablist">
                                                 <a class="nav-item nav-link active" id="nav-variables-tab" data-toggle="tab" href="#nav-variables" role="tab" aria-controls="nav-variables"
                                                     aria-selected="true">Variables</a>
+                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api" aria-selected="false">Model calculation</a>
                                                 <a class="nav-item nav-link" id="nav-logic-tab" data-toggle="tab" href="#nav-logic" role="tab" aria-controls="nav-logic"
                                                     aria-selected="false">Logic</a>
-                                                <a class="nav-item nav-link" id="nav-api-tab" data-toggle="tab" href="#nav-api" role="tab" aria-controls="nav-api" aria-selected="false">Model calculation</a>
                                             </div>
                                         </nav>
                                     </div>
@@ -74,154 +55,85 @@
                                         <div class="tab-content" id="nav-tabContent-modal">
 
                                             <div class="tab-pane fade show active" id="nav-variables" role="tabpanel" aria-labelledby="nav-variables-tab">
-                                                <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables"></variable-edit-list>
-                                            </div>
-
-                                            <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
-                                                <rule-edit-list :rules="localStep.rules" :children="childNodes"></rule-edit-list>
-                                                <!--<div class="container-fluid">
-                                                    <button type="button" class="btn btn-primary" @click="addRule()">Add rule</button>
-                                                    <table class="table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Condition</th>
-                                                                <th>Target</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(rule, index) in modalRules">
-                                                                <td data-label="Name">
-                                                                    <div class="form-group">
-                                                                        <input type="text" class="form-control" name="Name" :id="'ruleName_' + index" :aria-describedby="'helpId_' + index" placeholder="Rule name"
-                                                                            v-model="rule.name">
-                                                                        <small :id="'helpId_' + index" class="form-text text-muted">Name of the rule</small>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-label="Condition">Wayne</td>
-                                                                <td data-label="Target">Batman</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>-->
+                                                <multiselect v-model="multiSelectedVariables" :options="models" :multiple="true" group-values="variables" group-label="title"
+                                                    :group-select="true" :close-on-select="false" :clear-on-select="false" label="title"
+                                                    track-by="id" :limit=3 :limit-text="multiselectVariablesText" :preserve-search="true"
+                                                    placeholder="Choose variables" @remove="multiRemoveVariables" @select="multiSelectVariables">
+                                                    <template slot="tag" slot-scope="props">
+                                                        <span class="badge badge-info badge-larger">
+                                                            <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                            <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                        </span>
+                                                    </template>
+                                                </multiselect>
+                                                <label for="variableEditList" class="variable-label mb-2">Selected variables</label>
+                                                <variable-edit-list :selected-variables="localStep.variables" :used-variables="localUsedVariables" @sort="updateOrder($event)"></variable-edit-list>
                                             </div>
 
                                             <div class="tab-pane fade" id="nav-api" role="tabpanel" aria-labelledby="nav-api-tab">
-                                                <!--<div class="container-fluid">
-                                                    <label for="apiCallModelSelect">Select model for calculation:</label>
-                                                    <vue-multiselect id="apiCallModelSelect" v-model="modalApiCall.model" deselect-label="Cannot be done without a model" track-by="id"
-                                                        label="title" placeholder="Select one" :options="modelChoiceRepresentation"
-                                                        :searchable="true" :allow-empty="false" open-direction="bottom" @select="apiCallModelChangeAction">
-                                                    </vue-multiselect>
-                                                    <small class="form-text text-muted">Model used for calculation</small>
-                                                    <h6>Set variables used in calculation:</h6>
-                                                    <div class="form-group" v-for="apiVariable in modalApiCall.variables">
-                                                        <label :for="'var_' + apiVariable.originalID">@{{ apiVariable.originalTitle }}</label>
-                                                        <select class="custom-select" :name="apiVariable.title" :id="'var_' + apiVariable.originalID" v-model="apiVariable.targetID">
-                                                            <option v-for="usedVariable in modalUsedVariables" :key="usedVariable.id">@{{ usedVariable.title }}</option>
-                                                        </select>
+                                                <div class="container-fluid">
+                                                    <div v-if="variablesUpToStep.length != 0">
+                                                        <label for="apiCallModelSelect">Select model for calculation:</label>
+                                                        <multiselect id="apiCallModelSelect" :multiple="true" v-model="multiSelectedModels" deselect-label="Remove model calculation"
+                                                            track-by="id" label="title" placeholder="Select a model" :options="modelChoiceRepresentation"
+                                                            :searchable="false" :allow-empty="true" open-direction="bottom" :close-on-select="false"
+                                                            @select="modelSelectAPI" @remove="modelRemoveApi">
+                                                            <template slot="tag" slot-scope="props">
+                                                                <span class="badge badge-info badge-larger">
+                                                                    <span class="badge-maxwidth">{{ props.option.title }}</span>&nbsp;
+                                                                    <span class="custom__remove" @click="props.remove(props.option)">❌</span>
+                                                                </span>
+                                                            </template>
+                                                        </multiselect>
                                                     </div>
-                                                </div>-->
+                                                    <div v-else>
+                                                        <h6>A model calculation cannot be done without variables. Either add
+                                                            fields to the current step or link it to a precious step to use
+                                                            the fields of that step.</h6>
+                                                    </div>
+                                                    <label for="variableMappingList" class="variable-label mb-2">Selected models</label>
+                                                    <variable-mapping-api-list :api-calls="localStep.apiCalls" :used-variables="localUsedVariables" :reachable-variables="variablesUpToStep"
+                                                        @remove="localStep.apiCalls = []"></variable-mapping-api-list>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="nav-logic" role="tabpanel" aria-labelledby="nav-logic-tab">
+                                                <rule-edit-list :rules="localStep.rules" :children="childrenStepsExtended" :reachable-results="resultsUpToStep" :children-changed="childrenChanged" @remove="removeResultUsingRules"></rule-edit-list>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div id="outputOptionsMenu" class="card" v-if="localStep.type == 'result'">
+                                <div id="outputOptionsMenu" class="card" v-else>
                                     <div id="outputCategories" class="row vdivide">
                                         <div id="outputTypeLeft" class="col-sm-6">
+                                            <div id="chartLayoutDesigner">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false"  style="margin-top: 8px;">
+                                                        Pick a chart type
+                                                    </a>
 
-                                            <div id="outputCategoriesAccordion">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
-                                                            Pie Chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseOne" class="collapse show" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                        <a class="dropdown-item" v-on:click="changeChartType(0)">Bar Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(1)">Pie Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(2)">Polar Area Chart</a>
+                                                        <a class="dropdown-item" v-on:click="changeChartType(3)">Doughnut chart</a>
                                                     </div>
                                                 </div>
-
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
-                                                            Bar Plot
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseTwo" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum dolor sit amet, adhuc temporibus concludaturque nec et, cu nostrud euismod dissentias mel. Te nec vidisse persius
-                                                            referrentur. Ad ius semper iuvaret, albucius placerat mea ad.
-                                                            Agam appetere quo te, ad nusquam suavitate reformidans pri. Pri
-                                                            viderer nominavi an, eu solet labores deserunt vim, te diceret
-                                                            adipiscing liberavisse qui. Eos in viris tacimates periculis,
-                                                            in pri consequat theophrastus, amet accusamus duo in. Aperiri
-                                                            verterem per et, augue congue cu vis. Ne inani erroribus cum.
-                                                            Essent tritani insolens eu pri. Ei dolore mucius detraxit sea,
-                                                            vide liber ne est. Cu tation aliquip quaestio cum, per ad aeterno
-                                                            patrioque intellegam. Te sit minimum albucius. Ad scripta consulatu
-                                                            vim, cu case laudem partem vix. Ei eos consul inimicus, ius id
-                                                            blandit deseruisse. Est purto idque ea, per cu eripuit saperet
-                                                            consetetur. Id vim error nihil noster, in illud oblique sententiae
-                                                            nec. Eu velit laudem nec, at tacimates imperdiet nec. Ei prima
-                                                            aperiri legendos duo, ut rebum ullamcorper deterruisset his.
-                                                            Vel eu feugiat salutatus, at ipsum aeterno reprehendunt sit.
-                                                            Te dicam suscipit percipitur vel, in quo nulla graecis necessitatibus,
-                                                            alia tollit placerat ut mel. Nominavi invidunt ut vel, copiosae
-                                                            scribentur his cu. At eos vero noster. Ius vitae everti an, pro
-                                                            eu dicunt convenire splendide. Vim natum illum signiferumque
-                                                            et, numquam petentium per id. No duo adolescens vituperatoribus,
-                                                            luptatum reprehendunt te quo. Erat impedit quo ut, sed dicant
-                                                            omnesque an. Mel inani vitae omnesque ex, expetendis delicatissimi
-                                                            conclusionemque in vel.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
-                                                            Doughnut chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseThree" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
-                                                            Polar area Chart
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseFour" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-                                                            Smiley Faces
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapseFive" class="collapse" data-parent="#outputCategoriesAccordion">
-                                                        <div class="card-body">
-                                                            Lorem ipsum..
-                                                        </div>
-                                                    </div>
-                                                </div>
-
+                                                <chart-items-list :current-step-data="localStep.chartRenderingData"
+                                                                  :item-reference-upper="localStep.chartItemReference"
+                                                                  :available-results-upper="resultsUpToStep"
+                                                                  @refresh-chart-data="updateChartData($event)"
+                                                                  @refresh-chart-data1="updateChartData($event)"
+                                                                  @refresh-chart-data-after-deletion="updateChartData($event)"
+                                                                  @refresh-reference-data="updateReferenceData($event)"
+                                                                  @refresh-reference-data1="updateReferenceData($event)"
+                                                                  @refresh-reference-data-after-deletion="updateReferenceData($event)"></chart-items-list>
                                             </div>
                                         </div>
                                         <div id="outputTypeRight" class="col-sm-6">
-                                            <chart-preview></chart-preview>
+                                            <chart-preview :chart-type="localStep.chartTypeNumber" :chart-data-upper="localStep.chartRenderingData" :changed="chartChanged"></chart-preview>
                                         </div>
                                     </div>
                                 </div>
@@ -230,9 +142,15 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply Changes</button>
+                <div class="modal-footer spaced">
+                    <div>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#confirmModal" :disabled="this.stepId==0"
+                            @click="remove">Remove</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="apply">Apply</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -244,37 +162,101 @@
 import VariableEditList from "./VariableEditList.vue";
 import RuleEditList from "./RuleEditList.vue";
 import ChartPreview from "./ChartDisplay.vue";
+import DetailsEditable from "./DetailsEditable.vue";
+import VariableMappingApiList from "./VariableMappingApiList.vue";
+import ChartItemsList from "./ChartItemsList";
 
 export default {
   components: {
     VariableEditList,
     RuleEditList,
-      ChartPreview,
+    ChartPreview,
+    DetailsEditable,
+    VariableMappingApiList,
+    ChartItemsList
   },
   props: {
     stepId: {
       type: Number,
       required: true
     },
-    step: {
-      type: Object,
-      default: () => {}
+    models: {
+      type: Array,
+      required: true
+    },
+    steps: {
+      type: Array,
+      required: true
     },
     usedVariables: {
       type: Object,
       required: true
     },
-    possibleVariables: {
+    ancestorVariables: {
       type: Array,
       required: true
     },
-    childNodes: {
+    ancestorResults: {
+      type: Array,
+      required: true
+    },
+    childrenSteps: {
       type: Array,
       required: true
     },
     changed: {
       type: Boolean,
       required: true
+    }
+  },
+
+  computed: {
+    // Array containing all variables assigned up to and including the current step
+    variablesUpToStep: function() {
+      let vars = JSON.parse(JSON.stringify(this.ancestorVariables));
+      vars = vars.concat(this.localStep.variables);
+      return vars;
+    },
+    // Array containing all results calculated up to and including the current step
+    resultsUpToStep: function() {
+      let results = JSON.parse(JSON.stringify(this.ancestorResults));
+      if (this.localStep.type == "input") {
+        if (this.localStep.hasOwnProperty("apiCalls")) {
+          this.localStep.apiCalls.forEach(apiCall => {
+            apiCall.results.map(result => {
+              results.push(result.name);
+            });
+          });
+        }
+      }
+      return results;
+    },
+    // Array of model-representations for API-call
+    modelChoiceRepresentation: function() {
+      let representation = [];
+      this.models.forEach((model, index) => {
+        representation.push({
+          localId: index,
+          title: model.title,
+          id: model.id
+        });
+      });
+      return representation;
+    },
+    // Array containing all children of the current step
+    childrenStepsExtended: function() {
+      let children = [];
+      this.childrenSteps.forEach((childId, index) => {
+        let step = this.steps[childId];
+        children.push({
+          stepId: childId,
+          colour: step.colour,
+          id: step.id,
+          ind: index,
+          title: step.title
+        });
+      });
+      return children;
     }
   },
 
@@ -294,17 +276,122 @@ export default {
   },
 
   methods: {
+    /**
+     * Called whenever the modal is opened again.
+     */
     reload() {
-      this.localStep = JSON.parse(JSON.stringify(this.step));
+      this.localStep = JSON.parse(JSON.stringify(this.steps[this.stepId]));
       this.localUsedVariables = JSON.parse(JSON.stringify(this.usedVariables));
       this.setSelectedVariables();
+      this.setSelectedModels();
+      this.updateRuleTargetDetails();
+      this.chartChanged = !this.chartChanged;
+      this.childrenChanged = !this.childrenChanged;
     },
 
+    /**
+     * Apply the changes made to the step (send an Event that does it)
+     */
     apply() {
       this.$emit("change", {
         step: this.localStep,
         usedVars: this.localUsedVariables
       });
+    },
+
+    /**
+     * Start the process of removing a step
+     */
+    remove() {
+      Event.fire("confirmDialog", {
+        title: "Removal of Step",
+        message: "Are you sure you want to remove this step?",
+        type: "removeStep",
+        data: this.stepId
+      });
+    },
+
+    /**
+     * Update the order of the fields/variables
+     * @param {Array} newOrderVariables has the new order of the variables
+     */
+    updateOrder(newOrderVariables) {
+      this.selectedVariables = newOrderVariables;
+      this.localStep.variables = newOrderVariables;
+    },
+
+    /**
+     * Remove all rules in the current step that use results.
+     */
+    removeResultUsingRules() {
+      for (let index = this.localStep.rules.length - 1; index >= 0; index--) {
+        const rule = this.localStep.rules[index].condition;
+        if (!(rule.hasOwnProperty("any") && rule.any[0].fact == "trueValue")) {
+          this.localStep.rules.action = "destroy";
+        }
+      }
+    },
+
+    /**
+     * Add a model to the API field mapping list
+     * @param {Object} model to be added
+     */
+    modelSelectAPI(model) {
+      this.localStep.apiCalls.push({
+        evidencioModelId: model.id,
+        title: model.title,
+        results: this.models[model.localId].resultVars.map(result => {
+          return {
+            name: result,
+            databaseId: -1
+          };
+        }),
+        variables: this.models[model.localId].variables.map(variable => {
+          return {
+            evidencioVariableId: variable.id,
+            evidencioTitle: variable.title,
+            localVariable: ""
+          };
+        })
+      });
+    },
+
+    /**
+     * Remove a model from the API field mapping list
+     * @param {Object} model to be removed
+     */
+    modelRemoveApi(model) {
+      for (let index = this.localStep.apiCalls.length - 1; index >= 0; index--) {
+        if (this.localStep.apiCalls[index].evidencioModelId == model.id) {
+          this.localStep.apiCalls.splice(index, 1);
+          return;
+        }
+      }
+    },
+
+    /**
+     * Set the selected models for the API field mapping, to be called on reload()
+     */
+    setSelectedModels() {
+      this.multiSelectedModels = [];
+      this.multiSelectedModels = this.localStep.apiCalls.map(apiCall => {
+        return {
+          localId: this.findModel(apiCall.evidencioModelId),
+          title: apiCall.title,
+          id: apiCall.evidencioModelId
+        };
+      });
+    },
+
+    /**
+     * Find a model locally based on the Evidencio Model Id
+     * @param {Number} evidencioModelId
+     */
+    findModel(evidencioModelId) {
+      for (let index = 0; index < this.models.length; index++) {
+        if (this.models[index].id == evidencioModelId) return index;
+      }
+      return -1;
     },
 
     /**
@@ -315,8 +402,8 @@ export default {
       this.multiSelectedVariables = [];
       for (let index = 0; index < this.localStep.variables.length; index++) {
         let origID = this.localUsedVariables[this.localStep.variables[index]].id;
-        findVariable: for (let indexOfMod = 0; indexOfMod < this.possibleVariables.length; indexOfMod++) {
-          const element = this.possibleVariables[indexOfMod];
+        findVariable: for (let indexOfMod = 0; indexOfMod < this.models.length; indexOfMod++) {
+          const element = this.models[indexOfMod];
           for (let indexInMod = 0; indexInMod < element.variables.length; indexInMod++) {
             if (element.variables[indexInMod].id == origID) {
               this.multiSelectedVariables.push(element.variables[indexInMod]);
@@ -325,6 +412,17 @@ export default {
           }
         }
       }
+    },
+
+    /**
+     * Everytime the modal is opened, the details for the rule-targets should be updated.
+     */
+    updateRuleTargetDetails() {
+      this.localStep.rules.forEach(rule => {
+        let next = rule.target,
+          nextStep = this.steps[next.stepId];
+        (next.id = nextStep.id), (next.title = nextStep.title), (next.colour = nextStep.colour);
+      });
     },
 
     /**
@@ -351,7 +449,7 @@ export default {
 
     /**
      * Helper function for modalRemoveVariables(removedVariables), removes a single variable
-     * @param {object} [removedVariable] the variable-object to be removed
+     * @param {Object} [removedVariable] the variable-object to be removed
      */
     multiRemoveSingleVariable(removedVariable) {
       for (let index = 0; index < this.localStep.variables.length; index++) {
@@ -385,90 +483,70 @@ export default {
       let varName = "var" + this.stepId + "_" + this.localStep.varCounter++;
       this.localStep.variables.push(varName);
       this.localUsedVariables[varName] = JSON.parse(JSON.stringify(selectedVariable));
+    },
+
+    /**
+     * Changes the details of the step
+     * @param {object} [newDetails] Object containin the keys 'title' and 'description'
+     */
+    changeStepDetails(newDetails) {
+      this.localStep.title = newDetails.title;
+      this.localStep.description = newDetails.description;
+    },
+
+    /**
+     * Changes the type of the chart used inside a step
+     * @param {Number} type Number representing the chart type.
+     * 0 -> Bar, 1 -> Pie, 2 -> PolarArea, 3 -> Doughnut.
+     */
+    changeChartType(type) {
+      this.localStep.chartTypeNumber = type;
+    },
+
+    /**
+     * Adds the object containing at least the label and the color
+     * corresponding to a graph field.
+     * @param {String} label
+     * @param {String} color
+     */
+    addNewField(label, color) {
+      let object = {
+        label,
+        color
+      };
+      this.localStep.chartData.push(object);
+    },
+
+    updateChartData(chartData) {
+      Vue.set(this.localStep, "chartRenderingData", JSON.parse(JSON.stringify(chartData)));
+      this.chartChanged = !this.chartChanged;
+    },
+
+    updateReferenceData(refData) {
+      Vue.set(this.localStep, "chartItemReference", JSON.parse(JSON.stringify(refData)));
     }
-
-    // /**
-    //  * Adds a rule to the list of rules
-    //  */
-    // addRule() {
-    //   this.modalRules.push({
-    //     name: "Go to target",
-    //     rule: [],
-    //     target: -1
-    //   });
-    //   this.modalEditRuleFlags.push(false);
-    // },
-
-    // /**
-    //  * Removes the rule with the given index from the list
-    //  * @param {integer} [ruleIndex] of rule to be removed
-    //  */
-    // removeRule(ruleIndex) {
-    //   this.modalRules.splice(ruleIndex, 1);
-    //   this.modalEditRuleFlags.splice(ruleIndex, 1);
-    // },
-
-    // /**
-    //  * Allows for a rule to be edited.
-    //  * @param {integer} [index] of the rule to be edited
-    //  */
-    // editRule(index) {
-    //   Vue.set(this.modalEditRuleFlags, index, !this.modalEditRuleFlags[index]);
-    // },
-
-    // /**
-    //  * Returns the index in the models-array based on the Evidencio model ID, -1 if it does not exist.
-    //  * @param {integer} [modelID] is the Evidencio model ID.
-    //  */
-    // getModelIndex(modelID) {
-    //   for (let index = 0; index < this.models.length; index++) {
-    //     if (this.models[index].id == modelID) return index;
-    //   }
-    //   return -1;
-    // },
-
-    // /**
-    //  * Sets the variables-array in the apiCall-object to the variables of the newly selected model
-    //  * @param {object} [selectedModel] is the newly selected model
-    //  */
-    // apiCallModelChangeAction(selectedModel) {
-    //   let modID = this.getModelIndex(selectedModel.id);
-    //   if (modID == -1) {
-    //     this.modalApiCall.variables = [];
-    //     return;
-    //   }
-    //   let modVars = [];
-    //   this.models[modID].variables.forEach(element => {
-    //     modVars.push({
-    //       originalTitle: element.title,
-    //       originalID: element.id,
-    //       targetID: null
-    //     });
-    //   });
-    //   this.modalApiCall.variables = modVars;
-    // }
   },
 
   data() {
     return {
       localStep: {},
       localUsedVariables: {},
-      multiSelectedVariables: []
-      /*  
-      nodeID: -1, //ID in vue steps-array
-      DatabaseStepId: -1, //ID in database
-      modalStepType: "input",
-      modalSelectedColor: "#000000",
-      modalMultiselectSelectedVariables: [],
-      modalSelectedVariables: [],
-      modalVarCounter: -1,
-      modalUsedVariables: {},
-      modalRules: [],
-      modalApiCall: {
-        model: null,
-        variables: []
-      }*/
+      multiSelectedVariables: [],
+      chartChanged: false,
+      childrenChanged: false
     };
   }
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
+<style lang="css" scoped>
+.variable-label {
+  font-weight: bold;
+}
+
+.spaced {
+  justify-content: space-between;
+}
+</style>

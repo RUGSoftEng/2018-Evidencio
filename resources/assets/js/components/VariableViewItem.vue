@@ -1,13 +1,12 @@
 <template v-if='modelLoaded'>
     <div class="card">
-        <a href="#" @click="toggleShow" class="card-header collapsed" :id="'varViewCollapseHeader_' + indexItem" 
+        <div @click="toggleShow" class="card-header collapsed d-flex justify-content-between" :id="'varViewCollapseHeader_' + indexItem" 
             aria-expanded="true" :aria-controls="'varViewCollapse_' + variable.ind" data-parent="#accVariablesView">
             <h6 class="mb-0">
                 {{ variable.title }}
-                <span class="badge badge-pill" :class="{'badge-danger': timesUsed==0, 'badge-success': timesUsed>0}">{{ timesUsed }}</span>
-
             </h6>
-        </a>
+            <h6><span class="badge badge-pill float-right" :class="{'badge-danger': timesUsed==0, 'badge-success': timesUsed>0}">{{ timesUsed }}</span></h6>
+        </div>
 
         <div :id="'varViewCollapse_' + indexItem" class="collapse" :aria-labelledby="'#varViewCollapseHeader_' + indexItem">
             <p>{{ variable.title }}</p>

@@ -1,43 +1,17 @@
 <template>
-    <div class="card">
-        <a href="#" @click="toggleShow" class="card-header collapsed" :id="'varEditCollapseHeader_' + indexItem" data-parent="#accVariablesEdit"
-            aria-expanded="false" :aria-controls="'varEditCollapse_' + indexItem">
-            <h6 class="mb-0">
-                {{ variable.title }}
-            </h6>
-        </a>
-
-        <div :id="'varEditCollapse_' + indexItem" class="collapse" :aria-labelledby="'#varEditCollapseHeader_' + indexItem">
-            <div class="card-body">
-                <form onsubmit="return false">
-                    <div v-if="editing">
-                        <div class="form-group">
-                            <label :for="'titleVar_' + indexItem">Title: </label>
-                            <input type="text" name="" :id="'titleVar_' + indexItem" class="form-control" v-model="variable.title" placeholder="Title">
-                            <small :id="'titleVarHelp_' + indexItem" class="form-text text-muted">Title of the variable</small>
-                        </div>
-                        <div class="form-group">
-                            <label :for="'descriptionVar_' + indexItem">Description: </label>
-                            <textarea class="form-control" :id="'descriptionVar_' + indexItem" cols="30" rows="3" v-model="variable.description"></textarea>
-                            <small :id="'descriptionVarHelp_' + indexItem" class="form-text text-muted">Description of the variable</small>
-                            <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="form-group">
-                            <label :for="'titleVar_' + indexItem">Title: </label>
-                            <span>{{ variable.title }}</span>
-                            <small :id="'titleVarHelp_' + indexItem" class="form-text text-muted">Title of the variable</small>
-                        </div>
-                        <div class="form-group">
-                            <label :for="'descriptionVar_' + indexItem">Description: </label>
-                            <span>{{ variable.description }} </span>
-                            <small :id="'descriptionVarHelp_' + indexItem" class="form-text text-muted">Description of the variable</small>
-                            <input type="image" class="buttonIcon" :src="getImage" @click="editing = !editing" alt="Edit">
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <div>
+        <button type="button" class="list-group-item list-group-item-action" aria-expanded="false" :aria-controls="'editVar_' + index"
+            :id="'headerVar_' + index" @click="toggleShow">
+            <i class="fas fa-angle-down icon" v-if="!show"></i>
+            <i class="fas fa-angle-up icon" v-else></i>
+            {{ variable.title }}
+            <i class="fas fa-bars handle icon float-right"></i>
+        </button>
+        <div class="form-group collapse" :id="'editVar_' + index">
+            <label for="title" class="mb-0">Title</label>
+            <input type="text" name="title" class="form-control" v-model="variable.title" placeholder="Title">
+            <label for="description" class="mb-0 mt-2">Description</label>
+            <textarea id="description" cols="30" class="form-control" v-model="variable.description" placeholder="Description" rows="2"></textarea>
         </div>
     </div>
 </template>
@@ -49,29 +23,26 @@ export default {
       type: Object,
       required: true
     },
-    indexItem: {
+    show: {
+      type: Boolean,
+      required: true
+    },
+    index: {
       type: Number,
       required: true
     }
   },
-
-  data() {
-    return {
-      editing: false
-    };
-  },
-
   methods: {
     toggleShow() {
-      this.$emit("toggle", this.indexItem);
-    }
-  },
-
-  computed: {
-    getImage: function() {
-      if (this.editing) return "/images/check.svg";
-      else return "/images/pencil.svg";
+      this.$emit("toggle", this.index);
     }
   }
 };
 </script>
+
+<style>
+.icon {
+  font-size: 140%;
+}
+</style>
+

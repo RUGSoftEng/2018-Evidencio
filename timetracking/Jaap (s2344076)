@@ -227,3 +227,187 @@
 17.04 - Meeting with customers (Rick and Rob)
 17.04 - Meeting with customers (Rick and Rob)
 17.04 - Working on Architecture document
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Started working on refactoring with Vue components, failing mostly
+19.04 - Changed GET request to POST request
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+20.04 - Got first Vue component working
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+22.04 - Continued with refactoring, moved two lists completely to separate components
+23.04 - Started reading up on how Laravel Eloquent works
+23.04 - Started reading up on how Laravel Eloquent works
+24.04 - First tries in saving in database, change to tables required
+24.04 - First tries in saving in database, change to tables required
+24.04 - First tries in saving in database, change to tables required
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component
+25.04 - Continued with refactoring, start moving modal to component, some functionality lost
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+27.04 - Playing around with database again, change to tables required
+01.05 - Tiny real start on database, also fixed code based on comments Frank
+01.05 - Tiny real start on database, also fixed code based on comments Frank
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+02.05 - Continued working on saving in the database
+04.05 - Biggest part done for saving in database (except for rules/api variable mapping)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+04.05 - Biggest part done for saving in database, got first load to work (variables only, not yet actually applied to Vue)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (general styling)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (function commenting)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (function commenting)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn), most of the time spend with getting npm-version of fontawesome working
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (cdn->npm/yarn)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (splitting of files)
+05.05 - Hadn't seen comments by Daan, started working on fixing those (splitting of files), extra time lost due to bug fixes 
+05.05 - Hadn't seen comments by Daan, started working on fixing those (Minimizing fontawesome, failed for now)
+06.05 - Trying to minify FontAwesome again, again failing to get the webpack plugin to work
+06.05 - Alternative found for minimizing fontawesome, fontello allows for selection of icons to be included only
+06.05 - Alternative found for minimizing fontawesome, testing it
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+08.05 - Continued working on making it possible to save/load the workflows from/to the database
+09.05 - Added possibility to edit title/description of workflow, other tiny (layout) changes
+09.05 - Added possibility to edit title/description of workflow, other tiny (layout) changes
+09.05 - Database fields changed to snake-case by Tomek, made appropiate changes in own code
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+10.05 - Steps can be removed (including dialog), first start to adding rules
+11.05 - Layout fix that ended up not being a fix
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Layout changes, rule removal when required, start to getting result structure
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+13.05 - Retrieve accessiable fields from current location (for API variable mapping), fixed bug
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Saving/loading API variable mapping + rules (was a pain to do due to Asynchronous calls)
+15.05 - Made a mistake while merging... errors everywhere
+15.05 - Made a mistake while merging... errors everywhere, also fixed some bugs
+18.05 - Meeting with the customer (Rick)
+18.05 - Meeting with the customer (Rick)
+18.05 - Group meeting to set up goals
+23.05 - Split DesignerController in three separate files. MVC is horribly violated, but I have no time to fix this.
+23.05 - Fixed problem of adding a rule at a leaf node. Added changing time-stamp.
+23.05 - Meeting with TA (Frank)
+24.05 - Meeting with the customers (Team in Haaksbergen)
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+24.05 - Rewrote field-editing in the step-modal. Cleaner solution where fields can be reordered as well.
+27.05 - Added automatic mapping of fields at API-variable mapping
+27.05 - Added automatic mapping of fields at API-variable mapping
+27.05 - Added automatic mapping of fields at API-variable mapping with warnings if mapping failed
+27.05 - Made mapping select inputs searchable, non-empty (not possible to deselect something, only possible to select something else)
+27.05 - Added 'save successful' alert
+27.05 - Added 'save successful' alert
+27.05 - Added 'save successful' alert, added min/max zoom level to graph
+28.05 - JSON-rules-engine test page created
+29.05 - Made a start for the rules-designer page, looks terrible
+29.05 - Made a start for the rules-designer page, looks terrible, recursive Vue components are annoying
+29.05 - Meeting to discuss progress, what still to do and the presentation
+29.05 - Meeting to discuss progress, what still to do and the presentation
+30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
+30.05 - Replaced save-alert with an npm-package: 'vue-notifications', which is a cleaner solution
+30.05 - Added a loading screen to the designer, because it could cause errors if you tried to open something that wasn't loaded yet.
+30.05 - Fixed bug in field-editing.
+30.05 - Placed the variable API mappings in a collapse similar to the field-editing and rule-editing
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on saving them
+31.05 - Made a first working version of rules, worked on loading them
+31.05 - Made a first working version of rules, worked on loading them
+31.05 - Tiny layout changes, refactorings, bug-fixes
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+03.06 - Added api-variable-mapping if variables are removed
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+04.06 - Helping Alexander with results, working on fixing rules myself
+05.06 - Preparation for presentation, fixing tiny bug
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs
+06.06 - Rule removal, fixing other bugs + autofocus of search-modal
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Saving/loading of results, start to code
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Rules have now unique destinations, result-items are removed upon losing access.
+08.06 - Fixed some (pass by reference vs pass by value) bugs
+09.06 - Some bugfixes
+09.06 - Some bugfixes
+09.06 - Start to fixing sidebar-layout
+09.06 - More bugfixing
+10.06 - Fixed bug that could cause unexpected behaviour
+11.06 - Made PR, fixed conflicts (the wrong way, but it works), fixed some bugs (again)
+11.06 - Start to workflow publising
+11.06 - Start to workflow publising
+11.06 - Start to workflow publising
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Added workflow-checks, workflow won't be published if it fails the checks
+12.06 - Work on patient side, changed slider to better working version
+12.06 - Work on patient side, added variable mapping for api call
+12.06 - Work on patient side, made API-calls for all models of the current step
+12.06 - Work on patient side, saved rules/results of the current step
+12.06 - Work on patient side, Make next step show up based on rules and facts with the rules-engine
+13.06 - Work on patient side, showing of results
+13.06 - Work on patient side, showing of results
+13.06 - Work on patient side, showing of results
+
+
+
+
+

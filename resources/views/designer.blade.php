@@ -1,19 +1,42 @@
-@extends('layouts.app') @section('content') @include('partials.sidebar')
+@extends('layouts.app') 
+
+@section('content') 
+
+@include('partials.sidebar')
+
+<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 
 <div class="container-fluid height-100" id="designerDiv">
 
-    {{-- @include('partials.designer_modal') --}}
-    <modal-step :step-id="selectedStepId" :step="steps[selectedStepId]" :used-variables="usedVariables" :possible-variables="possibleVariables"
-        :child-nodes="childrenNodes" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+    <!-- Modal step -->
+    <modal-step :step-id="selectedStepId" :steps="steps" :used-variables="usedVariables" :children-steps="childrenSteps" :ancestor-variables="variablesUpToStep"
+        :ancestor-results="resultsUpToStep" :models="models" :changed="modalChanged" @change="applyChanges($event)"></modal-step>
+    <modal-confirm :title="confirmDialog.title" :message="confirmDialog.message" @approval="confirmDialog.approvalFunction"></modal-confirm>
+
+    <!-- Notifications -->
+    <notifications position="top center"></notifications>
+
+    <!-- Loading screen -->
+    <vue-loading :active.sync="isLoading"></vue-loading>
+
     <!-- Normal view -->
     <div class="row justify-content-center height-100">
-        <div class="col-sm-3">
-            <div class="row height-40 pb-2">
+        <div class="col-sm-3 column-fitting">
+            <div class="row fitting pb-2">
                 <div class="col px-2">
-                    <workflow-information :title="title" :description="description" @change="changeWorkflowDetails"></workflow-information>
+                    <div class="card height-100">
+                        <div class="card-header align-items-center">
+                            Workflow
+                            <button type="button" class="btn btn-primary ml-2" @click="saveWorkflow">Save Workflow</button>
+                        </div>
+
+                        <div class="card-body full-height">
+                            <details-editable :title="title" :description="description" @change="changeWorkflowDetails"></details-editable>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row height-60">
+            <div class="row remainder">
                 <div class="col px-2 pt-2">
                     <variable-view-list :all-variables="allVariables" :all-variables-used="timesUsedVariables"></variable-view-list>
                 </div>
@@ -24,8 +47,8 @@
                 <div class="card-header">
                     Designer
                     <button type="button" class="btn btn-primary ml-2" @click='fitView'>Fit</button>
+                    <button type="button" class="btn btn-success float-right" :disabled="!isDraft" @click="publishWorkflow">Publish</button>
                 </div>
-
                 <div class="card-body h-75" id="graphCardBody">
                     @if (session('status'))
                     <div class="alert alert-success">
@@ -43,11 +66,9 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="{{ asset('js/bootstrap-colorpalette.js') }}"></script>
-<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
-<link href="{{ asset('css/designer.css') }}" rel="stylesheet">
 <script src="{{ asset('js/designer.js') }}"></script>
 <script src="{{ asset('js/designerGraph.js') }}"></script>
+
 
 @endsection

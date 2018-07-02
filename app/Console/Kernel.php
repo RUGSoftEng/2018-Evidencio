@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Carbon;
+use App\User;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,8 +26,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+
+        // Remove accounts with unverified e-mail address after 24hrs
+        $schedule->call(function() {
+            \App\User::where('created_at','<=',Carbon::now()->subdays(1))->where('email_verified','is','false')->delete();
+        })->hourly();
     }
 
     /**

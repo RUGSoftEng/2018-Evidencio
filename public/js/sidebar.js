@@ -60,26 +60,26 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 273);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 47:
+/***/ 273:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(48);
+module.exports = __webpack_require__(274);
 
 
 /***/ }),
 
-/***/ 48:
+/***/ 274:
 /***/ (function(module, exports) {
 
 $(document).ready(function () {
     yaSimpleScrollbar.attach(document.getElementById('sidebar'));
 
-    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fo-icon icon-user">&#xe800;</i></button>');
+    $("#sidebarPlaceholder").html('<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn"><i class="fas fa-home"></i></button>');
 
     $('#dismiss, .overlay').on('click', function () {
         $('#sidebar').removeClass('active');

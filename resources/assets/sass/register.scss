@@ -1,0 +1,11 @@
+.custom-file-label
+{
+  overflow: hidden;
+}
+
+.form-group.required .col-form-label:after, .required-tooltip:before {
+   content:"*";
+   color:red;
+   font-weight: bold;
+   font-size: 1.3em;
+}

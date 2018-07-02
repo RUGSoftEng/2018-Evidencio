@@ -11,16 +11,21 @@ A more detailed description is available in the Requirements Document under the 
 
 Follow the instructions in the [Laravel documentation](https://laravel.com/docs/5.6/installation) to install required dependencies and the Laravel package itself.
 
-Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Please provide Evidencio API key here as well. Then run these commands inside the repository:
+Clone the repository and create your own `.env` file by copying `.env.example` and providing necessary data. Please provide Evidencio API key here as well and ensure that you have your database set up correctly. Then run this command inside the repository:
 
-    composer install
-    php artisan key:generate
+    ./install.sh
 
-To create the database structure please run the following command:
+You may need to run some of the commands in the installation script if there's a new migration or dependency.
 
-    php artisan migrate
+To enable the task scheduler, add the following cron entry:
 
-You will also need to run it every time there is a new database migration available.
+    * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+
+You can add this for example by running:
+
+    crontab -e
+
+and saving your file there
 
 ### How to run
 

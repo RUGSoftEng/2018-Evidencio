@@ -8,16 +8,12 @@ use App\Workflow;
 $numResult = 0;
 if (!empty($_GET['search'])) {
   //$decodeRes = EvidencioAPI::search($_GET['search']);
-  $result = (new Workflow)->search($_GET['search']);
+  $result = Workflow::search($_GET['search']);
   $numResult = count($result);
-
 }
-
 ?>
-
 @extends('layouts.app')
-
-@section('content')
+@section('content')@include('partials.sidebar')
 <br>
 {{--the search bar--}}
 <div class="container">
@@ -37,12 +33,12 @@ if (!empty($_GET['search'])) {
     <div class="alert alert-info">Search returned: <?php echo $numResult ?> result(s)</div>
     <ul class="list-group">
       <?php foreach ($result as $wflow): ?>
-        <li class="list-group-item"><a href="/workflow?model=<?php echo $wflow['id'] ?>"><h2><?php echo $wflow['title']; ?></h2></a>
+        <li class="list-group-item"><a href="/workflow/{{$wflow->id}}"><h2><?php echo $wflow['title']; ?></h2></a>
           <ul>
             <?php echo $wflow['description'] ?>
           </ul>
           <br />
-          Model Creator: <b><?php echo $wflow['name'] ?></b><br /> 4.5/5 Stars  |  <i><a href="/feedback">Provide Feedback</a></i>
+          Model Creator: <b><?php echo ($wflow['fname'] . ' '. $wflow['lname']) ?></b><br />
         </li>
       <?php endforeach;
     endif;
@@ -50,5 +46,5 @@ if (!empty($_GET['search'])) {
         <div class="alert alert-warning">No results found for : <?php echo $_GET['search']; ?> </div>
   <?php endif; ?>
 </div>
-
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 @endsection

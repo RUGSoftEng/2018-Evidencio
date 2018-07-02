@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LoadedEvidencioModel extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = ['model_id'];
+    protected $touches = ['workflow'];
+
+    public $timestamps = false;
 
     public function workflow()
     {
